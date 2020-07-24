@@ -16,11 +16,75 @@ namespace U4DosRandomizer
 
             var worldMapDS = new DiamondSquare(256, 184643518.256878, 82759876).getData(9726547);
 
-            var image = ToBitmap(worldMapDS);
+            var worldMapUlt = MapDiamondSquareToUltimaTiles(worldMapDS);
+            var image = ToBitmap(worldMapUlt);
             //FileStream stream = new FileStream("worldMap.bmp", FileMode.Create);
             image.Save("worldMap.bmp");
 
             //PrintWorldMapInfo();
+        }
+
+        private static byte[,] MapDiamondSquareToUltimaTiles(double[,] worldMapDS)
+        {
+            var worldMapFlattened = new double[255 * 255];
+
+            for (int x = 0; x < 255; x++)
+            {
+                for (int y = 0; y < 255; y++)
+                {
+                    worldMapFlattened[x + y * 255] = worldMapDS[x, y];
+                    //int res = Convert.ToInt32((worldMapDS[x, y] / double.MaxValue)*255);
+                    //Color newColor = Color.FromArgb(res, res, res);
+                    //image.SetPixel(x, y, newColor);
+                }
+            }
+
+            //var min = worldMapFlattened.Min();
+            //var max = worldMapFlattened.Max();
+            var worldMapFlattenedList = worldMapFlattened.ToList();
+            worldMapFlattenedList.Sort();
+
+            var rangeList = new List<Tuple<byte, double, double>>();
+            var lowerBound = worldMapFlattened.Min() - 1;
+            var upperBound = 0.0;
+            var percentSum = 0.0;
+            foreach (var key in percentInMap)
+            {
+                percentSum += key.Value;
+                var index = Convert.ToInt32(Math.Floor(worldMapFlattenedList.Count * percentSum));
+                upperBound = worldMapFlattenedList[index];
+                rangeList.Add(new Tuple<byte, double, double>(key.Key, lowerBound, upperBound));
+                lowerBound = upperBound;
+            }
+            var last = rangeList.Last();
+            rangeList[rangeList.Count - 1] = new Tuple<byte, double, double>(last.Item1, last.Item2, worldMapFlattened.Max());
+
+            var worldMapUlt = new byte[256,256];
+            for (int x = 0; x < 255; x++)
+            {
+                for (int y = 0; y < 255; y++)
+                {
+                    // Smush it down to the number of tile types we want
+                    //int res = Convert.ToInt32(Linear(worldMapDS[x, y], min, max, 0, percentInMap.Count));
+                    byte res = 99;
+                    foreach (var range in rangeList)
+                    {
+                        var value = worldMapDS[x, y];
+                        if (worldMapDS[x, y] > range.Item2 && worldMapDS[x, y] <= range.Item3)
+                        {
+                            res = range.Item1;
+                            break;
+                        }
+                    }
+
+                    // Spread it back out so we can see some color differences
+                    //res = Convert.ToInt32(Linear(res, 0, percentInMap.Count, 0, 255));
+                    //Color newColor = Color.FromArgb(res, res, res);
+                    worldMapUlt[x, y] = res;
+                }
+            }
+
+            return worldMapUlt;
         }
 
         private static void PrintWorldMapInfo()
@@ -53,63 +117,14 @@ namespace U4DosRandomizer
             }
         }
 
-        private static Bitmap ToBitmap(double[,] worldMapDS)
+        private static Bitmap ToBitmap(byte[,] worldMapUlt)
         {
-            var worldMapFlattened = new double[255*255];
-
-            for(int x = 0; x < 255; x++)
-            {
-                for(int y = 0; y < 255; y++)
-                {
-                    worldMapFlattened[x + y * 255] = worldMapDS[x, y];
-                    //int res = Convert.ToInt32((worldMapDS[x, y] / double.MaxValue)*255);
-                    //Color newColor = Color.FromArgb(res, res, res);
-                    //image.SetPixel(x, y, newColor);
-                }
-            }
-
-            //var min = worldMapFlattened.Min();
-            //var max = worldMapFlattened.Max();
-            var worldMapFlattenedList = worldMapFlattened.ToList();
-            worldMapFlattenedList.Sort();
-
-            var rangeList = new List<Tuple<byte, double, double>>();
-            var lowerBound = worldMapFlattened.Min()-1;
-            var upperBound = 0.0;
-            var percentSum = 0.0;
-            foreach(var key in percentInMap)
-            {
-                percentSum += key.Value;
-                var index = Convert.ToInt32(Math.Floor(worldMapFlattenedList.Count * percentSum));
-                upperBound = worldMapFlattenedList[index];
-                rangeList.Add(new Tuple<byte, double, double>(key.Key, lowerBound, upperBound));
-                lowerBound = upperBound;
-            }
-            var last = rangeList.Last();
-            rangeList[rangeList.Count - 1] = new Tuple<byte, double, double>(last.Item1, last.Item2, worldMapFlattened.Max());
-
             var image = new Bitmap(256, 256);
             for (int x = 0; x < 255; x++)
             {
                 for (int y = 0; y < 255; y++)
                 {
-                    // Smush it down to the number of tile types we want
-                    //int res = Convert.ToInt32(Linear(worldMapDS[x, y], min, max, 0, percentInMap.Count));
-                    byte res = 99;
-                    foreach (var range in rangeList)
-                    {
-                        var value = worldMapDS[x, y];
-                        if (worldMapDS[x, y] > range.Item2 && worldMapDS[x, y] <= range.Item3)
-                        {
-                            res = range.Item1;
-                            break;
-                        }
-                    }
-
-                    // Spread it back out so we can see some color differences
-                    //res = Convert.ToInt32(Linear(res, 0, percentInMap.Count, 0, 255));
-                    //Color newColor = Color.FromArgb(res, res, res);
-                    image.SetPixel(x, y, colorMap[res]);
+                    image.SetPixel(x, y, colorMap[worldMapUlt[x,y]]);
                 }
             }
 
