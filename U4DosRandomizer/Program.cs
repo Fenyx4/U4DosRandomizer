@@ -17,6 +17,7 @@ namespace U4DosRandomizer
             var worldMapDS = new DiamondSquare(256, 184643518.256878, 82759876).getData(9726547);
 
             var worldMapUlt = MapDiamondSquareToUltimaTiles(worldMapDS);
+            WriteToOriginalFormat(worldMapUlt);
             var image = ToBitmap(worldMapUlt);
             //FileStream stream = new FileStream("worldMap.bmp", FileMode.Create);
             image.Save("worldMap.bmp");
@@ -24,15 +25,36 @@ namespace U4DosRandomizer
             //PrintWorldMapInfo();
         }
 
+        private static void WriteToOriginalFormat(byte[,] worldMapUlt)
+        {
+            int chunkwidth = 32;
+            int chunkSize = chunkwidth * chunkwidth;
+            byte[] chunk = new byte[chunkSize];
+            var worldMap = new System.IO.BinaryWriter(new System.IO.FileStream("NEWWORLD.MAP", System.IO.FileMode.OpenOrCreate));
+
+            for (int chunkCount = 0; chunkCount < 64; chunkCount++)
+            {
+                // Copy the chunk over
+                for (int i = 0; i < chunkSize; i++)
+                {
+                    chunk[i] = worldMapUlt[i % chunkwidth + chunkCount % 8 * chunkwidth, i / chunkwidth + chunkCount / 8 * chunkwidth];
+                }
+
+                worldMap.Write(chunk);
+            }
+
+            worldMap.Close();
+        }
+
         private static byte[,] MapDiamondSquareToUltimaTiles(double[,] worldMapDS)
         {
-            var worldMapFlattened = new double[255 * 255];
+            var worldMapFlattened = new double[256 * 256];
 
-            for (int x = 0; x < 255; x++)
+            for (int x = 0; x < 256; x++)
             {
-                for (int y = 0; y < 255; y++)
+                for (int y = 0; y < 256; y++)
                 {
-                    worldMapFlattened[x + y * 255] = worldMapDS[x, y];
+                    worldMapFlattened[x + y * 256] = worldMapDS[x, y];
                     //int res = Convert.ToInt32((worldMapDS[x, y] / double.MaxValue)*255);
                     //Color newColor = Color.FromArgb(res, res, res);
                     //image.SetPixel(x, y, newColor);
@@ -60,9 +82,9 @@ namespace U4DosRandomizer
             rangeList[rangeList.Count - 1] = new Tuple<byte, double, double>(last.Item1, last.Item2, worldMapFlattened.Max());
 
             var worldMapUlt = new byte[256,256];
-            for (int x = 0; x < 255; x++)
+            for (int x = 0; x < 256; x++)
             {
-                for (int y = 0; y < 255; y++)
+                for (int y = 0; y < 256; y++)
                 {
                     // Smush it down to the number of tile types we want
                     //int res = Convert.ToInt32(Linear(worldMapDS[x, y], min, max, 0, percentInMap.Count));
@@ -120,9 +142,9 @@ namespace U4DosRandomizer
         private static Bitmap ToBitmap(byte[,] worldMapUlt)
         {
             var image = new Bitmap(256, 256);
-            for (int x = 0; x < 255; x++)
+            for (int x = 0; x < 256; x++)
             {
-                for (int y = 0; y < 255; y++)
+                for (int y = 0; y < 256; y++)
                 {
                     image.SetPixel(x, y, colorMap[worldMapUlt[x,y]]);
                 }
