@@ -15,9 +15,14 @@ namespace U4DosRandomizer
             Console.WriteLine("Hello World!");
 
             var worldMapDS = new DiamondSquare(256, 184643518.256878, 82759876).getData(9726547);
+            var avatar = LoadAvatar();
 
             var worldMapUlt = MapDiamondSquareToUltimaTiles(worldMapDS);
-            WriteToOriginalFormat(worldMapUlt);
+            // Original game only had single tiles in very special circumstances
+            worldMapUlt = RemoveSingleTiles(worldMapUlt);
+            Avatar.MoveMoongates(worldMapUlt, avatar);
+            WriteMapToOriginalFormat(worldMapUlt);
+            WriteToAvatar(avatar);
             var image = ToBitmap(worldMapUlt);
             //FileStream stream = new FileStream("worldMap.bmp", FileMode.Create);
             image.Save("worldMap.bmp");
@@ -25,12 +30,54 @@ namespace U4DosRandomizer
             //PrintWorldMapInfo();
         }
 
-        private static void WriteToOriginalFormat(byte[,] worldMapUlt)
+        private static void WriteToAvatar(byte[] avatar)
+        {
+            var avatarOut = new System.IO.BinaryWriter(new System.IO.FileStream("AVATAR.EXE", System.IO.FileMode.OpenOrCreate));
+
+            avatarOut.Write(avatar);
+
+            avatarOut.Close();
+        }
+
+        private static byte[] LoadAvatar()
+        {
+            var avatar = new System.IO.FileStream("ULT\\AVATAR.EXE", System.IO.FileMode.Open);
+            var avatarBytes = avatar.ReadAllBytes();
+            return avatarBytes;
+        }
+
+        private static byte[,] RemoveSingleTiles(byte[,] worldMapUlt)
+        {
+            for(int x = 0; x < 256; x++)
+            {
+                for(int y = 0; y < 256; y++)
+                {
+                    var adjacentTiles = new byte[] { worldMapUlt[Wrap(x + 1), y], worldMapUlt[Wrap(x - 1), y], worldMapUlt[x, Wrap(y + 1)], worldMapUlt[x, Wrap(y - 1)] };
+                    if(!adjacentTiles.Contains(worldMapUlt[x,y]))
+                    {
+                        var mostUsedAdjacentTile = (from item in adjacentTiles
+                                     group item by item into g
+                                     orderby g.Count() descending
+                                     select g.Key).First();
+                        worldMapUlt[x, y] = mostUsedAdjacentTile;
+                    }
+                }
+            }
+
+            return worldMapUlt;
+        }
+
+        public static int Wrap(int input, int divisor = 256)
+        {
+            return (input % divisor + divisor) % divisor;
+        }
+
+        private static void WriteMapToOriginalFormat(byte[,] worldMapUlt)
         {
             int chunkwidth = 32;
             int chunkSize = chunkwidth * chunkwidth;
             byte[] chunk = new byte[chunkSize];
-            var worldMap = new System.IO.BinaryWriter(new System.IO.FileStream("NEWWORLD.MAP", System.IO.FileMode.OpenOrCreate));
+            var worldMap = new System.IO.BinaryWriter(new System.IO.FileStream("WORLD.MAP", System.IO.FileMode.OpenOrCreate));
 
             for (int chunkCount = 0; chunkCount < 64; chunkCount++)
             {
@@ -174,6 +221,8 @@ namespace U4DosRandomizer
             {6, Color.FromArgb(108,112+108,108) },
             {7, Color.FromArgb(112+45,112+45,112+45) },
             {8, Color.FromArgb(112+15,112+15,112+15) },
+            {70, Color.Orange },
+            {76, Color.Red },
         };
 
         static private Dictionary<byte, double> percentInMap = new Dictionary<byte, double>()
