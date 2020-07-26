@@ -21,6 +21,7 @@ namespace U4DosRandomizer
             // Original game only had single tiles in very special circumstances
             worldMapUlt = RemoveSingleTiles(worldMapUlt);
             Avatar.MoveMoongates(worldMapUlt, avatar);
+            Avatar.PlaceAllItems(avatar);
             WriteMapToOriginalFormat(worldMapUlt);
             WriteToAvatar(avatar);
             var image = ToBitmap(worldMapUlt);
