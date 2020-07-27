@@ -26,6 +26,38 @@ namespace U4DosRandomizer
             return;
         }
 
+        public static void MoveTowns(byte[,] worldMapUlt, byte[] avatar, UltimaData data)
+        {
+            // throw in a town to make it easier to find
+            for (int offset = 0; offset < 32; offset++)
+            {
+                byte tile = 10;
+                if (offset < 4)
+                {
+                    tile = 11;
+                }
+                else if (offset < 16)
+                {
+                    tile = 10;
+                }
+                else if (offset < 24)
+                {
+                    tile = 9;
+                }
+                else if (offset < 24+8)
+                {
+                    tile = 30;
+                }
+                worldMapUlt[202, 200 + offset] = tile;
+            }
+
+            for (byte offset = 0; offset < 32; offset++)
+            {
+                avatar[AREA_X_OFFSET + offset] = 202;
+                avatar[AREA_Y_OFFSET + offset] = Convert.ToByte(200 + offset);
+            }
+        }
+
         public static void PlaceAllItems(byte[] avatar)
         {
             for (byte offset = 0; offset < 24; offset++)
@@ -43,6 +75,41 @@ namespace U4DosRandomizer
         private static int MOONGATE_Y_OFFSET = 0x0fad9;
         private static int AREA_X_OFFSET = 0x0fb01; // towns, cities, castles, dungeons, shrines
         private static int AREA_Y_OFFSET = 0x0fb21;
+        /*
+         * https://github.com/ergonomy-joe/u4-decompiled/blob/master/SRC/U4_LOC.H
+         * 0 - Britannia (from the west???)
+         * 1 - Lycaeum (also west)
+         * 2 - Empath Abbey
+         * 3 - Serpents Hold
+         * 4 - Moonglow
+         * 5 - Britain
+         * 6 - Jhelom
+         * 7 - Yew
+         * 8 - Minoc
+         * 9 - Trinsic
+         * 10 - Skara Brae
+         * 11 - Magincia
+         * 12 - Paws
+         * 13 - Buccaneer's Den
+         * 14 - Vesper
+         * 15 - Cove
+         * 16 - Deciet
+         * 17 - Despise
+         * 18 - Destard
+         * 19 - Wrong
+         * 20 - Covetous
+         * 21 - Shame
+         * 22 - Hythloth
+         * 23 - The Great Stygian Abyss
+         * 24 - Honesty
+         * 25 - Compassion
+         * 26 - Valor
+         * 27 - Justice
+         * 28 - Sacrifice
+         * 29 - Honor
+         * 30 - Spirituality
+         * 31 - Humility
+         */
         private static int PIRATE_COVE_X_OFFSET = 0x0fba9; // length 8
         private static int PIRATE_COVE_Y_OFFSET = 0x0fbb1; // length 8
         private static int PIRATE_COVE_SHIP_TILES = 0x0fbb9; // length 8 (What is this?)
@@ -68,6 +135,7 @@ namespace U4DosRandomizer
             0x3	2	 ??? (a pointer?)
          */
         /*
+         * https://github.com/ergonomy-joe/u4-decompiled/blob/master/SRC/U4_SRCH.C#L246
          * 0 - Mandrake
          * 1 - Mandrake
          * 2 - Nightshade

@@ -22,6 +22,7 @@ namespace U4DosRandomizer
             worldMapUlt = RemoveSingleTiles(worldMapUlt);
             Avatar.MoveMoongates(worldMapUlt, avatar);
             Avatar.PlaceAllItems(avatar);
+            Avatar.MoveTowns(worldMapUlt, avatar, null);
             WriteMapToOriginalFormat(worldMapUlt);
             WriteToAvatar(avatar);
             var image = ToBitmap(worldMapUlt);
@@ -194,7 +195,15 @@ namespace U4DosRandomizer
             {
                 for (int y = 0; y < 256; y++)
                 {
-                    image.SetPixel(x, y, colorMap[worldMapUlt[x,y]]);
+                    if( colorMap.ContainsKey(worldMapUlt[x,y]) )
+                    {
+                        image.SetPixel(x, y, colorMap[worldMapUlt[x, y]]);
+                    }
+                    else
+                    {
+                        image.SetPixel(x, y, Color.White);
+                    }
+                    
                 }
             }
 
