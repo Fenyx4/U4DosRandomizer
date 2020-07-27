@@ -14,15 +14,23 @@ namespace U4DosRandomizer
         {
             Console.WriteLine("Hello World!");
 
+            var seed = 9726547;
+            var random = new Random(seed);
             var worldMapDS = new DiamondSquare(256, 184643518.256878, 82759876).getData(9726547);
-            var avatar = LoadAvatar();
-
             var worldMapUlt = MapDiamondSquareToUltimaTiles(worldMapDS);
             // Original game only had single tiles in very special circumstances
             worldMapUlt = RemoveSingleTiles(worldMapUlt);
+            var avatar = LoadAvatar();
+
+            var ultimaData = new UltimaData();
+            //Completely random location placements of buildings still. Just trying to make sure I'm editing the files correctly right now. Not looking for a cohesive map that makes sense.
+            RandomizeLocations(ultimaData, random);
+
+            WorldMap.MoveBuildings(worldMapUlt, ultimaData);
+
             Avatar.MoveMoongates(worldMapUlt, avatar);
             Avatar.PlaceAllItems(avatar);
-            Avatar.MoveTowns(worldMapUlt, avatar, null);
+            Avatar.MoveBuildings(avatar, ultimaData);
             WriteMapToOriginalFormat(worldMapUlt);
             WriteToAvatar(avatar);
             var image = ToBitmap(worldMapUlt);
@@ -30,6 +38,67 @@ namespace U4DosRandomizer
             image.Save("worldMap.bmp");
 
             //PrintWorldMapInfo();
+        }
+
+        private static void RandomizeLocations(UltimaData ultimaData, Random random)
+        {
+            // LCB
+            Location lcb = RandomizeLocation(random, 13);
+            ultimaData.LCB.Add(lcb);
+            Location loc = new Location();
+            loc.X = Convert.ToByte(lcb.X - 1);
+            loc.Y = Convert.ToByte(lcb.Y);
+            loc.Tile = 14;
+            ultimaData.LCB.Add(loc);
+            loc = new Location();
+            loc.X = Convert.ToByte(lcb.X + 1);
+            loc.Y = Convert.ToByte(lcb.Y);
+            loc.Tile = 15;
+            ultimaData.LCB.Add(loc);
+
+            // Castles
+            loc = RandomizeLocation(random, 11);
+            ultimaData.Castles.Add(loc);
+            loc = RandomizeLocation(random, 11);
+            ultimaData.Castles.Add(loc);
+            loc = RandomizeLocation(random, 11);
+            ultimaData.Castles.Add(loc);
+
+            // Towns
+            loc = RandomizeLocation(random, 10);
+            ultimaData.Towns.Add(loc);
+            loc = RandomizeLocation(random, 10);
+            ultimaData.Towns.Add(loc);
+            loc = RandomizeLocation(random, 10);
+            ultimaData.Towns.Add(loc);
+            loc = RandomizeLocation(random, 10);
+            ultimaData.Towns.Add(loc);
+            loc = RandomizeLocation(random, 10);
+            ultimaData.Towns.Add(loc);
+            loc = RandomizeLocation(random, 10);
+            ultimaData.Towns.Add(loc);
+            loc = RandomizeLocation(random, 10);
+            ultimaData.Towns.Add(loc);
+            loc = RandomizeLocation(random, 10);
+            ultimaData.Towns.Add(loc);
+
+            loc = RandomizeLocation(random, 12);
+            ultimaData.Towns.Add(loc);
+            loc = RandomizeLocation(random, 12);
+            ultimaData.Towns.Add(loc);
+            loc = RandomizeLocation(random, 12);
+            ultimaData.Towns.Add(loc);
+            loc = RandomizeLocation(random, 12);
+            ultimaData.Towns.Add(loc);
+        }
+
+        private static Location RandomizeLocation(Random random, byte tile)
+        {
+            var loc = new Location();
+            loc.X = Convert.ToByte(random.Next(0, 256));
+            loc.Y = Convert.ToByte(random.Next(0, 256));
+            loc.Tile = tile;
+            return loc;
         }
 
         private static void WriteToAvatar(byte[] avatar)
