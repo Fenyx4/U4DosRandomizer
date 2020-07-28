@@ -8,14 +8,11 @@ namespace U4DosRandomizer
     {
         public static void MoveMoongates(byte[,] worldMapUlt, byte[] avatar)
         {
-            //throw in a lava to make it easy to find
-            for (int offset = 0; offset < 8; offset++)
-            {
-                worldMapUlt[200, 200 + offset] = 76;
-            }
-
-            int moongateXOffset = 0x0fad1;
-            int moongateYOffset = 0x0fad9;
+            ////throw in a lava to make it easy to find
+            //for (int offset = 0; offset < 8; offset++)
+            //{
+            //    worldMapUlt[200, 200 + offset] = 76;
+            //}
 
             for (byte offset = 0; offset < 8; offset++)
             {

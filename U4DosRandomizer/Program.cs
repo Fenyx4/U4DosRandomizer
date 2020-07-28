@@ -14,15 +14,19 @@ namespace U4DosRandomizer
         {
             Console.WriteLine("Hello World!");
 
+            var ultimaData = new UltimaData();
+
             var seed = 9726547;
             var random = new Random(seed);
             var worldMapDS = new DiamondSquare(256, 184643518.256878, 82759876).getData(9726547);
             var worldMapUlt = MapDiamondSquareToUltimaTiles(worldMapDS);
             // Original game only had single tiles in very special circumstances
             worldMapUlt = RemoveSingleTiles(worldMapUlt);
+            worldMapUlt = AddRivers(worldMapUlt, worldMapDS, ultimaData, random);
+            worldMapUlt = AddBridges(worldMapUlt);
+            worldMapUlt = AddLava(worldMapUlt);
             var avatar = LoadAvatar();
 
-            var ultimaData = new UltimaData();
             //Completely random location placements of buildings still. Just trying to make sure I'm editing the files correctly right now. Not looking for a cohesive map that makes sense.
             RandomizeLocations(ultimaData, random);
 
@@ -40,18 +44,147 @@ namespace U4DosRandomizer
             //PrintWorldMapInfo();
         }
 
+        private static byte[,] AddLava(byte[,] worldMapUlt)
+        {
+            return worldMapUlt;
+        }
+
+        private static byte[,] AddBridges(byte[,] worldMapUlt)
+        {
+            return worldMapUlt;
+        }
+
+        private static byte[,] AddRivers(byte[,] worldMapUlt, double[,] worldMapDS, UltimaData data, Random random)
+        {
+            // There are ~32 in the original Ultima map
+            int totalNumOfRivers = 7 + random.Next(1, 3) + random.Next(1, 3);
+            var surroundingPoints = new List<Point>();
+
+            for(int dist = 1; dist <= 3; dist++)
+            {
+                surroundingPoints.Add(new Point(1 * dist, 0));
+                surroundingPoints.Add(new Point(-1 * dist, 0));
+                surroundingPoints.Add(new Point(0, 1 * dist));
+                surroundingPoints.Add(new Point(0, -1 * dist));
+            }
+
+
+            // Pick a random spot that isn't water
+            // Head uphill from there until you reach a high point
+            // Go down hill from all the highpoints marking the path for a river
+
+            var highPoints = new HashSet<Point>();
+            for (int riverNum = 0; riverNum < totalNumOfRivers; riverNum++)
+            {
+                var randomPoint = FindRandomPointHigherThan(4, worldMapUlt, random);
+
+                // Track previous point so I can step back one when I find the highest point
+                var prevPoint = randomPoint;
+                var currPoint = randomPoint;
+                Point? foundHighPoint = null;
+                while (foundHighPoint == null)
+                {
+                    //worldMapUlt[prevPoint.X, prevPoint.Y] = 0xA1;
+                    var highestDirection = surroundingPoints.OrderByDescending(p => worldMapDS[Wrap(currPoint.X + (p.X)), Wrap(currPoint.Y + (p.Y))]).First();
+
+                    if (worldMapDS[currPoint.X, currPoint.Y] < worldMapDS[Wrap(currPoint.X + (highestDirection.X)), Wrap(currPoint.Y + (highestDirection.Y))])
+                    {
+                        prevPoint = currPoint;
+                        //int distance = Convert.ToInt32(Math.Sqrt(highestDirection.Item1 * highestDirection.Item1 + highestDirection.Item2 * highestDirection.Item2));
+                        int distance = Math.Abs(highestDirection.X != 0 ? highestDirection.X : highestDirection.Y);
+                        currPoint = new Point(Wrap(currPoint.X + highestDirection.X / distance), Wrap(currPoint.Y + highestDirection.Y / distance));
+                    }
+                    else
+                    {
+                        foundHighPoint = currPoint;
+                    }
+                }
+
+                //worldMapUlt[prevPoint.X, prevPoint.Y] = 76;
+                highPoints.Add(prevPoint);
+            }
+
+            var paths = new List<List<Point>>();
+            foreach(var highPoint in highPoints)
+            { 
+                List<Point> pathToWater = new List<Point>();
+                pathToWater.Add(highPoint);
+                var currPoint = highPoint;
+                var foundWater = false;
+                Point lastDirection = new Point(0, 1);
+                while(!foundWater)
+                {
+                    var lowestDirection = surroundingPoints.OrderBy(p => worldMapDS[Wrap(currPoint.X + (p.X)), Wrap(currPoint.Y + (p.Y))]).First();
+                    var lowestPoint = new Point(Wrap(currPoint.X + (lowestDirection.X)), Wrap(currPoint.Y + (lowestDirection.Y)));
+
+                    if (//worldMapDS[currPoint.X, currPoint.Y] >= worldMapDS[lowestPoint.X, lowestPoint.Y] &&
+                        !pathToWater.Contains(lowestPoint))
+                    {
+                        lastDirection = lowestDirection;
+                    }
+                    // Else keep moving in the same direction as last time
+
+                    int distance = Math.Abs(lastDirection.X != 0 ? lastDirection.X : lastDirection.Y);
+                    currPoint = new Point(Wrap(currPoint.X + lastDirection.X / distance), Wrap(currPoint.Y + lastDirection.Y / distance));
+                    pathToWater.Add(currPoint);
+
+                    if (worldMapUlt[currPoint.X, currPoint.Y] < 3)
+                    {
+                        foundWater = true;
+                    }
+
+                    worldMapUlt[currPoint.X, currPoint.Y] = 0x70;
+                }
+
+                paths.Add(pathToWater);
+            }
+
+            foreach(var path in paths)
+            {
+                //Choose ransom spot along the path for the headwater
+                //var start = random.Next(0, path.Count);
+                // That is weighted towards the start of the path
+                var max = path.Count-10;
+                var min = 10;
+                var start = Convert.ToInt32(Math.Floor(Math.Abs(random.NextDouble() - random.NextDouble()) * (1 + max - min) + min));
+                for(int i = start; i < path.Count; i++)
+                {
+                    worldMapUlt[path[i].X, path[i].Y] = 0x02;
+                }
+            }
+
+            return worldMapUlt;
+        }
+
+        private static Point FindRandomPointHigherThan(int tile, byte[,] worldMapUlt, Random random)
+        {
+            Point? result = null;
+            while(result == null)
+            {
+                var x = random.Next(0, 256);
+                var y = random.Next(0, 256);
+
+                if(worldMapUlt[x,y] > tile)
+                {
+                    result = new Point(x, y);
+                }
+            }
+
+            return result.Value;
+        }
+
         private static void RandomizeLocations(UltimaData ultimaData, Random random)
         {
             // LCB
-            Location lcb = RandomizeLocation(random, 13);
+            Location lcb = RandomizeLocation(random, 14);
             ultimaData.LCB.Add(lcb);
             Location loc = new Location();
-            loc.X = Convert.ToByte(lcb.X - 1);
+            loc.X = Convert.ToByte(lcb.X + 1);
             loc.Y = Convert.ToByte(lcb.Y);
-            loc.Tile = 14;
+            loc.Tile = 13;
             ultimaData.LCB.Add(loc);
             loc = new Location();
-            loc.X = Convert.ToByte(lcb.X + 1);
+            loc.X = Convert.ToByte(lcb.X + 2);
             loc.Y = Convert.ToByte(lcb.Y);
             loc.Tile = 15;
             ultimaData.LCB.Add(loc);
@@ -302,6 +435,7 @@ namespace U4DosRandomizer
             {8, Color.FromArgb(112+15,112+15,112+15) },
             {70, Color.Orange },
             {76, Color.Red },
+            {0xA1, Color.Purple },
         };
 
         static private Dictionary<byte, double> percentInMap = new Dictionary<byte, double>()
@@ -309,8 +443,8 @@ namespace U4DosRandomizer
             {0,0.519012451171875},
             {1,0.15771484375},
             {2,0.0294952392578125},
-            {3,0.010162353515625},
-            {4,0.1092376708984375},
+            //{3,0.010162353515625},
+            {4,0.1092376708984375+0.010162353515625}, // Adding on the swamps cuz I think I'll add those in later
             {5,0.07513427734375},
             {6,0.03515625},
             {7,0.0355224609375},
