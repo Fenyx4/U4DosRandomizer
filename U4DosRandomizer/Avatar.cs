@@ -6,7 +6,7 @@ namespace U4DosRandomizer
 {
     public class Avatar
     {
-        public static void MoveMoongates(byte[,] worldMapUlt, byte[] avatar)
+        public static void MoveMoongates(WorldMap worldMap, byte[] avatar)
         {
             ////throw in a lava to make it easy to find
             //for (int offset = 0; offset < 8; offset++)
