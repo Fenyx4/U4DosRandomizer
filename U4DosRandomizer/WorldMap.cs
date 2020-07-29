@@ -97,7 +97,7 @@ namespace U4DosRandomizer
 
         public Coordinate GetCoordinate(int x, int y)
         {
-            return new Coordinate(Convert.ToByte(Wrap(x + 1)), Convert.ToByte(Wrap(y)), _worldMapTiles);
+            return new Coordinate(Convert.ToByte(Wrap(x)), Convert.ToByte(Wrap(y)), _worldMapTiles);
         }
 
         public void CleanupAndAddFeatures(Random random)
@@ -106,6 +106,7 @@ namespace U4DosRandomizer
             AddRivers(random);
             AddBridges();
             AddLava();
+            AddSwamp();
         }
 
         private void RemoveSingleTiles()
@@ -132,11 +133,19 @@ namespace U4DosRandomizer
 
         private void AddLava()
         {
+            // TODO
+            return;
+        }
+
+        private void AddSwamp()
+        {
+            // TODO
             return;
         }
 
         private void AddBridges()
         {
+            // TODO
             return;
         }
 
@@ -246,6 +255,8 @@ namespace U4DosRandomizer
                 }
             }
 
+            // TODO: Make rivers fork
+
             return;
         }
 
@@ -299,9 +310,9 @@ namespace U4DosRandomizer
         {
             {0,0.519012451171875},
             {1,0.15771484375},
-            {2,0.0294952392578125},
-            //{3,0.010162353515625},
-            {4,0.1092376708984375+0.010162353515625}, // Adding on the swamps cuz I think I'll add those in later
+            //{2,0.0294952392578125}, Kill shallow water for now... May want to special place that
+            //{3,0.010162353515625}, Kill swamps want to special place those
+            {4,0.1092376708984375+0.010162353515625+0.0294952392578125}, // Adding on the swamps cuz I think I'll add those in later
             {5,0.07513427734375},
             {6,0.03515625},
             {7,0.0355224609375},

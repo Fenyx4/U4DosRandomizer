@@ -25,8 +25,8 @@ namespace U4DosRandomizer
 
         public static void MoveBuildings(byte[] avatar, UltimaData data)
         {
-            avatar[AREA_X_OFFSET + LOC_LCB] = data.LCB[1].X;
-            avatar[AREA_Y_OFFSET + LOC_LCB] = data.LCB[1].Y;
+            avatar[AREA_X_OFFSET + LOC_LCB] = data.LCB[0].X;
+            avatar[AREA_Y_OFFSET + LOC_LCB] = data.LCB[0].Y;
 
             for(var offset = 0; offset < data.Castles.Count; offset++)
             {

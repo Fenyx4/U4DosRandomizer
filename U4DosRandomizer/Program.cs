@@ -16,9 +16,13 @@ namespace U4DosRandomizer
 
             var ultimaData = new UltimaData();
 
-            var seed = 9726547;
+            //var seed = 9726547;
+            var seed = 1033542421;
+            //var seed = Environment.TickCount;
+            System.IO.File.WriteAllText(@"seed.txt", seed.ToString());
+            Console.WriteLine("Seed: " + seed);
             var random = new Random(seed);
-            var worldMapDS = new DiamondSquare(WorldMap.SIZE, 184643518.256878, 82759876).getData(9726547);
+            var worldMapDS = new DiamondSquare(WorldMap.SIZE, 184643518.256878, 82759876).getData(random);
             var worldMap = new WorldMap(worldMapDS);
             worldMap.CleanupAndAddFeatures(random);
             // Original game only had single tiles in very special circumstances
@@ -48,56 +52,92 @@ namespace U4DosRandomizer
         private static void RandomizeLocations(UltimaData ultimaData, WorldMap worldMap, Random random)
         {
             // LCB
-            Coordinate lcb = RandomizeLocation(random, 14, worldMap);
-            ultimaData.LCB.Add(lcb);
-            Coordinate loc = worldMap.GetCoordinate(lcb.X + 1, lcb.Y);
-            loc.SetTile(13);
-            ultimaData.LCB.Add(loc);
-            loc = worldMap.GetCoordinate(lcb.X + 2, lcb.Y);
-            loc.SetTile(15);
-            ultimaData.LCB.Add(loc);
+            var placed = false;
+            while (!placed)
+            {
+                var lcb = GetRandomCoordinate(random, worldMap);
+                var lcbEntrance = worldMap.GetCoordinate(lcb.X, lcb.Y + 1);
+
+                if (IsWalkableGround(lcb) && IsWalkableGround(lcbEntrance))
+                {
+                    lcb.SetTile(14);
+                    ultimaData.LCB.Add(lcb);
+                    Coordinate lcbSide = worldMap.GetCoordinate(lcb.X - 1, lcb.Y);
+                    lcbSide.SetTile(13);
+                    ultimaData.LCB.Add(lcbSide);
+                    lcbSide = worldMap.GetCoordinate(lcb.X + 1, lcb.Y);
+                    lcbSide.SetTile(15);
+                    ultimaData.LCB.Add(lcbSide);
+                    
+                    placed = true;
+                }
+            }
 
             // Castles
-            loc = RandomizeLocation(random, 11, worldMap);
+            var loc = RandomizeLocation(random, 11, worldMap, IsWalkableGround );
             ultimaData.Castles.Add(loc);
-            loc = RandomizeLocation(random, 11, worldMap);
+            loc = RandomizeLocation(random, 11, worldMap, IsWalkableGround);
             ultimaData.Castles.Add(loc);
-            loc = RandomizeLocation(random, 11, worldMap);
+            loc = RandomizeLocation(random, 11, worldMap, IsWalkableGround);
             ultimaData.Castles.Add(loc);
 
             // Towns
-            loc = RandomizeLocation(random, 10, worldMap);
+            loc = RandomizeLocation(random, 10, worldMap, IsWalkableGround);
             ultimaData.Towns.Add(loc);
-            loc = RandomizeLocation(random, 10, worldMap);
+            loc = RandomizeLocation(random, 10, worldMap, IsWalkableGround);
             ultimaData.Towns.Add(loc);
-            loc = RandomizeLocation(random, 10, worldMap);
+            loc = RandomizeLocation(random, 10, worldMap, IsWalkableGround);
             ultimaData.Towns.Add(loc);
-            loc = RandomizeLocation(random, 10, worldMap);
+            loc = RandomizeLocation(random, 10, worldMap, IsWalkableGround);
             ultimaData.Towns.Add(loc);
-            loc = RandomizeLocation(random, 10, worldMap);
+            loc = RandomizeLocation(random, 10, worldMap, IsWalkableGround);
             ultimaData.Towns.Add(loc);
-            loc = RandomizeLocation(random, 10, worldMap);
+            loc = RandomizeLocation(random, 10, worldMap, IsWalkableGround);
             ultimaData.Towns.Add(loc);
-            loc = RandomizeLocation(random, 10, worldMap);
+            loc = RandomizeLocation(random, 10, worldMap, IsWalkableGround);
             ultimaData.Towns.Add(loc);
-            loc = RandomizeLocation(random, 10, worldMap);
+            loc = RandomizeLocation(random, 10, worldMap, IsWalkableGround);
             ultimaData.Towns.Add(loc);
 
-            loc = RandomizeLocation(random, 12, worldMap);
+            loc = RandomizeLocation(random, 12, worldMap, IsWalkableGround);
             ultimaData.Towns.Add(loc);
-            loc = RandomizeLocation(random, 12, worldMap);
+            loc = RandomizeLocation(random, 12, worldMap, IsWalkableGround);
             ultimaData.Towns.Add(loc);
-            loc = RandomizeLocation(random, 12, worldMap);
+            loc = RandomizeLocation(random, 12, worldMap, IsWalkableGround);
             ultimaData.Towns.Add(loc);
-            loc = RandomizeLocation(random, 12, worldMap);
+            loc = RandomizeLocation(random, 12, worldMap, IsWalkableGround);
             ultimaData.Towns.Add(loc);
+        }
+
+        private static bool IsWalkableGround(Coordinate coord)
+        {
+            return coord.GetTile() >= 3 && coord.GetTile() <= 7;
+        }
+
+        private static Coordinate GetRandomCoordinate(Random random, WorldMap worldMap)
+        {
+            var loc = worldMap.GetCoordinate(random.Next(0, WorldMap.SIZE), random.Next(0, WorldMap.SIZE));
+            return loc;
         }
 
         private static Coordinate RandomizeLocation(Random random, byte tile, WorldMap worldMap)
         {
-            var loc = worldMap.GetCoordinate(random.Next(0, WorldMap.SIZE), random.Next(0, WorldMap.SIZE));
+            var loc = GetRandomCoordinate(random, worldMap);
             loc.SetTile(tile);
             return loc;
+        }
+
+        private static Coordinate RandomizeLocation(Random random, byte tile, WorldMap worldMap, Func<Coordinate, bool> criteria)
+        {
+            while (true)
+            {
+                var loc = GetRandomCoordinate(random, worldMap);
+                if (criteria(loc))
+                {
+                    loc.SetTile(tile);
+                    return loc;
+                }
+            }
         }
 
         private static void WriteToAvatar(byte[] avatar)

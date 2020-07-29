@@ -32,6 +32,11 @@ namespace U4DosRandomizer
             return diamondSquareAlgorithm(r);
         }
 
+        public double[,] getData(Random random)
+        {
+            return diamondSquareAlgorithm(random);
+        }
+
         private double[,] diamondSquareAlgorithm(Random r)
         {
             //size of grid to generate, note this must be a
