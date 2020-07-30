@@ -29,6 +29,9 @@ namespace U4DosRandomizer
 
             var avatar = LoadAvatar();
 
+            var talk = new Talk();
+            talk.Load();
+
             //Completely random location placements of buildings still. Just trying to make sure I'm editing the files correctly right now. Not looking for a cohesive map that makes sense.
             RandomizeLocations(ultimaData, worldMap, random);
 
