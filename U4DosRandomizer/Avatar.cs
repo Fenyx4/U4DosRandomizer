@@ -6,7 +6,7 @@ namespace U4DosRandomizer
 {
     public class Avatar
     {
-        public static void MoveMoongates(WorldMap worldMap, byte[] avatar)
+        public static void MoveMoongates(byte[] avatar, UltimaData data)
         {
             ////throw in a lava to make it easy to find
             //for (int offset = 0; offset < 8; offset++)
@@ -14,10 +14,10 @@ namespace U4DosRandomizer
             //    worldMapUlt[200, 200 + offset] = 76;
             //}
 
-            for (byte offset = 0; offset < 8; offset++)
+            for (byte offset = 0; offset < data.Moongates.Count; offset++)
             {
-                avatar[MOONGATE_X_OFFSET + offset] = 200;
-                avatar[MOONGATE_Y_OFFSET + offset] = Convert.ToByte(200 + offset);
+                avatar[MOONGATE_X_OFFSET + offset] = data.Moongates[offset].X;
+                avatar[MOONGATE_Y_OFFSET + offset] = data.Moongates[offset].Y;
             }
 
             return;
@@ -38,6 +38,22 @@ namespace U4DosRandomizer
             {
                 avatar[AREA_X_OFFSET + LOC_TOWNS + offset] = data.Towns[offset].X;
                 avatar[AREA_Y_OFFSET + LOC_TOWNS + offset] = data.Towns[offset].Y;
+            }
+
+            for (var offset = 0; offset < data.Shrines.Count; offset++)
+            {
+                // Skip Spirituality
+                if (offset != 6)
+                {
+                    avatar[AREA_X_OFFSET + LOC_SHRINES + offset] = data.Shrines[offset].X;
+                    avatar[AREA_Y_OFFSET + LOC_SHRINES + offset] = data.Shrines[offset].Y;
+                }
+            }
+
+            for (var offset = 0; offset < data.Dungeons.Count; offset++)
+            {
+                avatar[AREA_X_OFFSET + LOC_DUNGEONS + offset] = data.Shrines[offset].X;
+                avatar[AREA_Y_OFFSET + LOC_DUNGEONS + offset] = data.Shrines[offset].Y;
             }
         }
 

@@ -256,8 +256,39 @@ namespace U4DosRandomizer
             }
 
             // TODO: Make rivers fork
+            // TODO: Surround all rivers with scrub and/or swamps?
 
             return;
+        }
+
+        public List<Coordinate> FindAllByPattern(int[,] pattern)
+        {
+            var validCoordinates = new List<Coordinate>();
+            for(int map_x = 0; map_x < SIZE; map_x++)
+            {
+                for (int map_y = 0; map_y < SIZE; map_y++)
+                {
+                    var matchesAll = true;
+                    for (int pat_x = 0; pat_x < pattern.GetLength(0); pat_x++)
+                    {
+                        for (int pat_y = 0; pat_y < pattern.GetLength(1); pat_y++)
+                        {
+                            var tile = _worldMapTiles[Wrap(map_x + pat_x), Wrap(map_y + pat_y)];
+                            if (_worldMapTiles[Wrap(map_x+pat_x), Wrap(map_y+pat_y)] != pattern[pat_x, pat_y] && pattern[pat_x, pat_y] != -1)
+                            {
+                                matchesAll = false;
+                            }
+                        }
+                    }
+
+                    if(matchesAll)
+                    {
+                        validCoordinates.Add(new Coordinate(map_x, map_y, _worldMapTiles));
+                    }
+                }
+            }
+
+            return validCoordinates;
         }
 
         //public delegate float NodeHuersticValue(Coordinate coord, IsNodeValid matchesGoal);

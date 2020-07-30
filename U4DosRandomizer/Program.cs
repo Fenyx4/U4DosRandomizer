@@ -34,7 +34,7 @@ namespace U4DosRandomizer
 
             //WorldMap.MoveBuildings(worldMapUlt, ultimaData);
 
-            Avatar.MoveMoongates(worldMap, avatar);
+            Avatar.MoveMoongates(avatar, ultimaData);
             Avatar.PlaceAllItems(avatar);
             Avatar.MoveBuildings(avatar, ultimaData);
             var worldFile = new System.IO.BinaryWriter(new System.IO.FileStream("WORLD.MAP", System.IO.FileMode.OpenOrCreate));
@@ -96,9 +96,10 @@ namespace U4DosRandomizer
             ultimaData.Towns.Add(loc);
             loc = RandomizeLocation(random, 10, worldMap, IsWalkableGround);
             ultimaData.Towns.Add(loc);
-            loc = RandomizeLocation(random, 10, worldMap, IsWalkableGround);
+            loc = RandomizeLocation(random, 29, worldMap, IsWalkableGround);
             ultimaData.Towns.Add(loc);
 
+            // Villages
             loc = RandomizeLocation(random, 12, worldMap, IsWalkableGround);
             ultimaData.Towns.Add(loc);
             loc = RandomizeLocation(random, 12, worldMap, IsWalkableGround);
@@ -107,11 +108,107 @@ namespace U4DosRandomizer
             ultimaData.Towns.Add(loc);
             loc = RandomizeLocation(random, 12, worldMap, IsWalkableGround);
             ultimaData.Towns.Add(loc);
+
+            // Shrines
+            loc = RandomizeLocation(random, 30, worldMap, IsWalkableGround);
+            ultimaData.Shrines.Add(loc);
+            loc = RandomizeLocation(random, 30, worldMap, IsWalkableGround);
+            ultimaData.Shrines.Add(loc);
+            loc = RandomizeLocation(random, 30, worldMap, IsWalkableGround);
+            ultimaData.Shrines.Add(loc);
+            loc = RandomizeLocation(random, 30, worldMap, IsWalkableGround);
+            ultimaData.Shrines.Add(loc);
+            loc = RandomizeLocation(random, 30, worldMap, IsWalkableGround);
+            ultimaData.Shrines.Add(loc);
+            loc = RandomizeLocation(random, 30, worldMap, IsWalkableGround);
+            ultimaData.Shrines.Add(loc);
+            loc = RandomizeLocation(random, 30, worldMap, IsWalkableGround);
+            ultimaData.Shrines.Add(loc);
+            loc = RandomizeLocation(random, 30, worldMap, IsWalkableGround);
+            ultimaData.Shrines.Add(loc);
+
+            // Moongates
+            loc = RandomizeLocation(random, 4, worldMap, IsGrass);
+            ultimaData.Moongates.Add(loc);
+            loc = RandomizeLocation(random, 4, worldMap, IsGrass);
+            ultimaData.Moongates.Add(loc);
+            loc = RandomizeLocation(random, 4, worldMap, IsGrass);
+            ultimaData.Moongates.Add(loc);
+            loc = RandomizeLocation(random, 4, worldMap, IsGrass);
+            ultimaData.Moongates.Add(loc);
+            loc = RandomizeLocation(random, 4, worldMap, IsGrass);
+            ultimaData.Moongates.Add(loc);
+            loc = RandomizeLocation(random, 4, worldMap, IsGrass);
+            ultimaData.Moongates.Add(loc);
+            loc = RandomizeLocation(random, 4, worldMap, IsGrass);
+            ultimaData.Moongates.Add(loc);
+            loc = RandomizeLocation(random, 4, worldMap, IsGrass);
+            ultimaData.Moongates.Add(loc);
+
+            // Dungeons
+            // TODO: Change this to be grab all mountains, then check if you can path to something landable by balloon or ship
+            var pattern = new int[1, 2];
+            pattern[0, 0] = 8;
+            pattern[0, 1] = 7; // TODO add a wildcard. Something for "Walkable" or "Not mountain"
+            var validLocations = worldMap.FindAllByPattern(pattern);
+            var randomIdx = random.Next(0, validLocations.Count);
+            loc = validLocations[randomIdx];
+            loc.SetTile(9);
+            ultimaData.Dungeons.Add(loc);
+            validLocations.RemoveAt(randomIdx);
+
+            randomIdx = random.Next(0, validLocations.Count);
+            loc = validLocations[randomIdx];
+            loc.SetTile(9);
+            ultimaData.Dungeons.Add(loc);
+            validLocations.RemoveAt(randomIdx);
+
+            randomIdx = random.Next(0, validLocations.Count);
+            loc = validLocations[randomIdx];
+            loc.SetTile(9);
+            ultimaData.Dungeons.Add(loc);
+            validLocations.RemoveAt(randomIdx);
+
+            randomIdx = random.Next(0, validLocations.Count);
+            loc = validLocations[randomIdx];
+            loc.SetTile(9);
+            ultimaData.Dungeons.Add(loc);
+            validLocations.RemoveAt(randomIdx);
+
+            randomIdx = random.Next(0, validLocations.Count);
+            loc = validLocations[randomIdx];
+            loc.SetTile(9);
+            ultimaData.Dungeons.Add(loc);
+            validLocations.RemoveAt(randomIdx);
+
+            randomIdx = random.Next(0, validLocations.Count);
+            loc = validLocations[randomIdx];
+            loc.SetTile(9);
+            ultimaData.Dungeons.Add(loc);
+            validLocations.RemoveAt(randomIdx);
+
+            randomIdx = random.Next(0, validLocations.Count);
+            loc = validLocations[randomIdx];
+            loc.SetTile(9);
+            ultimaData.Dungeons.Add(loc);
+            validLocations.RemoveAt(randomIdx);
+
+            // TODO: Something special for Stygian Abyss
+            randomIdx = random.Next(0, validLocations.Count);
+            loc = validLocations[randomIdx];
+            loc.SetTile(9);
+            ultimaData.Dungeons.Add(loc);
+            validLocations.RemoveAt(randomIdx);
         }
 
         private static bool IsWalkableGround(Coordinate coord)
         {
             return coord.GetTile() >= 3 && coord.GetTile() <= 7;
+        }
+
+        private static bool IsGrass(Coordinate coord)
+        {
+            return coord.GetTile() == 4;
         }
 
         private static Coordinate GetRandomCoordinate(Random random, WorldMap worldMap)
