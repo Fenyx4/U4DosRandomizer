@@ -19,5 +19,7 @@ namespace U4DosRandomizer
         public string Yes { get; internal set; }
         public string No { get; internal set; }
         public string Question { get; internal set; }
+        public string KeywordResponse1 { get; internal set; }
+        public string KeywordResponse2 { get; internal set; }
     }
 }

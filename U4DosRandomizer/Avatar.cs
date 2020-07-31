@@ -6,6 +6,28 @@ namespace U4DosRandomizer
 {
     public class Avatar
     {
+        public static void LoadItemLocations(byte[] avatar, UltimaData data)
+        {
+            for(int offset = 0; offset < 24; offset++)
+            {
+                var item = new Item();
+                item.Location = avatar[ITEM_LOCATIONS_OFFSET + offset * 5];
+                item.X = avatar[ITEM_LOCATIONS_OFFSET + offset * 5 + 1];
+                item.Y = avatar[ITEM_LOCATIONS_OFFSET + offset * 5 + 2];
+                data.Items.Add(item);
+            }
+        }
+
+        public static void SaveItemLocations(byte[] avatar, UltimaData data)
+        {
+            for (var offset = 0; offset < 24; offset++)
+            {
+                avatar[ITEM_LOCATIONS_OFFSET + offset * 5] = data.Items[offset].Location;
+                avatar[ITEM_LOCATIONS_OFFSET + offset * 5 + 1] = data.Items[offset].X;
+                avatar[ITEM_LOCATIONS_OFFSET + offset * 5 + 2] = data.Items[offset].Y;
+            }
+        }
+
         public static void MoveMoongates(byte[] avatar, UltimaData data)
         {
             ////throw in a lava to make it easy to find
@@ -25,19 +47,19 @@ namespace U4DosRandomizer
 
         public static void MoveBuildings(byte[] avatar, UltimaData data)
         {
-            avatar[AREA_X_OFFSET + LOC_LCB] = data.LCB[0].X;
-            avatar[AREA_Y_OFFSET + LOC_LCB] = data.LCB[0].Y;
+            avatar[AREA_X_OFFSET + LOC_LCB-1] = data.LCB[0].X;
+            avatar[AREA_Y_OFFSET + LOC_LCB-1] = data.LCB[0].Y;
 
             for(var offset = 0; offset < data.Castles.Count; offset++)
             {
-                avatar[AREA_X_OFFSET + LOC_CASTLES + offset] = data.Castles[offset].X;
-                avatar[AREA_Y_OFFSET + LOC_CASTLES + offset] = data.Castles[offset].Y;
+                avatar[AREA_X_OFFSET + LOC_CASTLES + offset - 1] = data.Castles[offset].X;
+                avatar[AREA_Y_OFFSET + LOC_CASTLES + offset - 1] = data.Castles[offset].Y;
             }
 
             for (var offset = 0; offset < data.Towns.Count; offset++)
             {
-                avatar[AREA_X_OFFSET + LOC_TOWNS + offset] = data.Towns[offset].X;
-                avatar[AREA_Y_OFFSET + LOC_TOWNS + offset] = data.Towns[offset].Y;
+                avatar[AREA_X_OFFSET + LOC_TOWNS + offset - 1] = data.Towns[offset].X;
+                avatar[AREA_Y_OFFSET + LOC_TOWNS + offset - 1] = data.Towns[offset].Y;
             }
 
             for (var offset = 0; offset < data.Shrines.Count; offset++)
@@ -45,28 +67,16 @@ namespace U4DosRandomizer
                 // Skip Spirituality
                 if (offset != 6)
                 {
-                    avatar[AREA_X_OFFSET + LOC_SHRINES + offset] = data.Shrines[offset].X;
-                    avatar[AREA_Y_OFFSET + LOC_SHRINES + offset] = data.Shrines[offset].Y;
+                    avatar[AREA_X_OFFSET + LOC_SHRINES + offset - 1] = data.Shrines[offset].X;
+                    avatar[AREA_Y_OFFSET + LOC_SHRINES + offset - 1] = data.Shrines[offset].Y;
                 }
             }
 
             for (var offset = 0; offset < data.Dungeons.Count; offset++)
             {
-                avatar[AREA_X_OFFSET + LOC_DUNGEONS + offset] = data.Shrines[offset].X;
-                avatar[AREA_Y_OFFSET + LOC_DUNGEONS + offset] = data.Shrines[offset].Y;
+                avatar[AREA_X_OFFSET + LOC_DUNGEONS + offset - 1] = data.Shrines[offset].X;
+                avatar[AREA_Y_OFFSET + LOC_DUNGEONS + offset - 1] = data.Shrines[offset].Y;
             }
-        }
-
-        public static void PlaceAllItems(byte[] avatar)
-        {
-            for (byte offset = 0; offset < 24; offset++)
-            {
-                avatar[ITEM_LOCATIONS_OFFSET + (offset * 5)] = 0;
-                avatar[ITEM_LOCATIONS_OFFSET + (offset * 5) + 1] = 201;
-                avatar[ITEM_LOCATIONS_OFFSET + (offset * 5) + 2] = Convert.ToByte(200 + offset);
-            }
-
-            return;
         }
 
         // https://wiki.ultimacodex.com/wiki/Ultima_IV_Internal_Formats#AVATAR.EXE
@@ -74,11 +84,47 @@ namespace U4DosRandomizer
         private static int MOONGATE_Y_OFFSET = 0x0fad9;
         private static int AREA_X_OFFSET = 0x0fb01; // towns, cities, castles, dungeons, shrines
         private static int AREA_Y_OFFSET = 0x0fb21;
-        private static int LOC_LCB = 0x00;
+        private static int LOC_BUILDINGS = 0x01;
+
         private static int LOC_CASTLES = 0x01;
-        private static int LOC_TOWNS = 0x04;
-        private static int LOC_DUNGEONS = 0x10;
-        private static int LOC_SHRINES = 0x18;
+        private static int LOC_LCB = 0x01;
+        private static int LOC_LYCAEUM = 0x02;
+        private static int LOC_EMPATH = 0x03;
+        private static int LOC_SERPENT = 0x04;
+
+        private static int LOC_TOWNS = 0x05;
+        private static int LOC_MOONGLOW = 0x05;
+        private static int LOC_BRITAIN = 0x06;
+        private static int LOC_JHELOM = 0x07;
+        private static int LOC_YEW = 0x08;
+        private static int LOC_MINOC = 0x09;
+        private static int LOC_TRINSIC = 0x0a;
+        private static int LOC_SKARA = 0x0b;
+        private static int LOC_MAGINCIA = 0x0c;
+        private static int LOC_PAWS = 0x0d;
+        private static int LOC_DEN = 0x0e;
+        private static int LOC_VESPER = 0x0f;
+        private static int LOC_COVE = 0x10;
+
+        private static int LOC_DUNGEONS = 0x11;
+        private static int LOC_DECEIT = 0x11;
+        private static int LOC_DESPISE = 0x12;
+        private static int LOC_DESTARD = 0x13;
+        private static int LOC_WRONG = 0x14;
+        private static int LOC_COVETOUS = 0x15;
+        private static int LOC_SHAME = 0x16;
+        private static int LOC_HYTHLOTH = 0x17;
+        private static int LOC_ABYSS = 0x18;
+
+        private static int LOC_SHRINES = 0x19;
+        private static int LOC_HONESTY = 0x19;
+        private static int LOC_COMPASSION = 0x1a;
+        private static int LOC_VALOR = 0x1b;
+        private static int LOC_JUSTICE = 0x1c;
+        private static int LOC_SACRIFICE = 0x1d;
+        private static int LOC_HONOR = 0x1e;
+        private static int LOC_SPIRITUALITY = 0x1f;
+        private static int LOC_HUMILITY = 0x20;
         /*
          * https://github.com/ergonomy-joe/u4-decompiled/blob/master/SRC/U4_LOC.H
          * 0 - Britannia
@@ -138,6 +184,30 @@ namespace U4DosRandomizer
             0x2	1	Y Coordinate of Item
             0x3	2	 ??? (a pointer?)
          */
+        public static int ITEM_MANDRAKE = 0;
+        public static int ITEM_MANDRAKE2 = 1;
+        public static int ITEM_NIGHTSHADE = 2;
+        public static int ITEM_NIGHTSHADE2 = 3;
+        public static int ITEM_BELL = 4; // Bell of Courage
+        public static int ITEM_HORN = 5; // Silver Horn
+        public static int ITEM_WHEEL = 6; // Wheel of H.M.S. Cape
+        public static int ITEM_SKULL = 7; // Skull of Mondain
+        public static int ITEM_BLACK_STONE = 8;
+        public static int ITEM_WHITE_STONE = 9;
+        public static int ITEM_BOOK = 10; // Book of Truth
+        public static int ITEM_CANDLE = 11; //
+        public static int ITEM_TELESCOPE = 12; // telescope (Crashes if moved (probably fine in any other town))
+        public static int ITEM_ARMOR = 13; // Mystic Armor
+        public static int ITEM_WEAPON = 14; // Mystic Weapon
+        public static int ITEM_RUNE_HONESTY = 15;
+        public static int ITEM_RUNE_COMPASSION = 16;
+        public static int ITEM_RUNE_VALOR = 17;
+        public static int ITEM_RUNE_JUSTICE = 18;
+        public static int ITEM_RUNE_SACRIFICE = 19;
+        public static int ITEM_RUNE_HONOR = 20;
+        public static int ITEM_RUNE_SPIRITUALITY = 21;
+        public static int ITEM_RUNE_HUMILITY = 22;
+
         /*
          * https://github.com/ergonomy-joe/u4-decompiled/blob/master/SRC/U4_SRCH.C#L246
          * 0 - Mandrake

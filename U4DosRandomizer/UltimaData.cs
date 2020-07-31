@@ -10,6 +10,7 @@ namespace U4DosRandomizer
         public List<Coordinate> Shrines { get; set; }
         public List<Coordinate> Moongates { get; set; }
         public List<Coordinate> Dungeons { get; set; }
+        public List<Item> Items { get; set; }
 
         public UltimaData()
         {
@@ -19,6 +20,7 @@ namespace U4DosRandomizer
             Shrines = new List<Coordinate>();
             Moongates = new List<Coordinate>();
             Dungeons = new List<Coordinate>();
+            Items = new List<Item>();
         }
     }
 }

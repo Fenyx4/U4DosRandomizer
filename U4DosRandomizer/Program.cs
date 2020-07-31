@@ -28,22 +28,33 @@ namespace U4DosRandomizer
             // Original game only had single tiles in very special circumstances
 
             var avatar = LoadAvatar();
+            Avatar.LoadItemLocations(avatar, ultimaData);
 
             var talk = new Talk();
             talk.Load();
+            
 
             //Completely random location placements of buildings still. Just trying to make sure I'm editing the files correctly right now. Not looking for a cohesive map that makes sense.
             RandomizeLocations(ultimaData, worldMap, random);
+            // TODO: Change starting locations for new characters to match towns
+
+            ultimaData.Items[Avatar.ITEM_BELL].X = ultimaData.LCB[0].X;
+            ultimaData.Items[Avatar.ITEM_BELL].Y = Convert.ToByte(ultimaData.LCB[0].Y+1);
 
             //WorldMap.MoveBuildings(worldMapUlt, ultimaData);
 
             Avatar.MoveMoongates(avatar, ultimaData);
-            Avatar.PlaceAllItems(avatar);
+            //Avatar.PlaceAllItems(avatar);
             Avatar.MoveBuildings(avatar, ultimaData);
             var worldFile = new System.IO.BinaryWriter(new System.IO.FileStream("WORLD.MAP", System.IO.FileMode.OpenOrCreate));
             worldMap.WriteMapToOriginalFormat(worldFile);
             worldFile.Close();
+
+            Avatar.SaveItemLocations(avatar, ultimaData);
             WriteToAvatar(avatar);
+            talk.Update(ultimaData);
+            talk.Save();
+
             var image = worldMap.ToBitmap();
             //FileStream stream = new FileStream("worldMap.bmp", FileMode.Create);
             image.Save("worldMap.bmp");
