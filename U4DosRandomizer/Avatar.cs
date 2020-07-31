@@ -1,65 +1,109 @@
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.IO;
+using System.Security.Cryptography;
 using System.Text;
 
 namespace U4DosRandomizer
 {
     public class Avatar
     {
-        public static void LoadItemLocations(byte[] avatar, UltimaData data)
+        private SHA256 Sha256 = SHA256.Create();
+        private byte[] avatarBytes;
+
+        public void Load(UltimaData data)
         {
-            for(int offset = 0; offset < 24; offset++)
+            //WriteHashes();
+            var hashes = ReadHashes();
+
+            var file = "ULT\\AVATAR.EXE";
+
+            var hash = HashHelper.GetHashSha256(file);
+            var wtf = HashHelper.BytesToString(hash);
+            if (hashes["AVATAR.EXE"] == HashHelper.BytesToString(hash))
+            {
+                File.Copy(file, $"{file}.orig", true);
+            }
+            else
+            {
+                hash = HashHelper.GetHashSha256($"{file}.orig");
+                if (hashes["AVATAR.EXE"] != HashHelper.BytesToString(hash))
+                {
+                    throw new FileNotFoundException($"Original version of {file} not found.");
+                }
+            }
+
+            var avatarStream = new System.IO.FileStream($"{file}.orig", System.IO.FileMode.Open);
+            avatarBytes = avatarStream.ReadAllBytes();
+
+            for (int offset = 0; offset < 24; offset++)
             {
                 var item = new Item();
-                item.Location = avatar[ITEM_LOCATIONS_OFFSET + offset * 5];
-                item.X = avatar[ITEM_LOCATIONS_OFFSET + offset * 5 + 1];
-                item.Y = avatar[ITEM_LOCATIONS_OFFSET + offset * 5 + 2];
+                item.Location = avatarBytes[ITEM_LOCATIONS_OFFSET + offset * 5];
+                item.X = avatarBytes[ITEM_LOCATIONS_OFFSET + offset * 5 + 1];
+                item.Y = avatarBytes[ITEM_LOCATIONS_OFFSET + offset * 5 + 2];
                 data.Items.Add(item);
             }
         }
 
-        public static void SaveItemLocations(byte[] avatar, UltimaData data)
+        public Dictionary<string, string> ReadHashes()
+        {
+            var hashJson = System.IO.File.ReadAllText("hashes\\avatar_hash.json");
+
+            var hashes = JsonConvert.DeserializeObject<Dictionary<string, string>>(hashJson);
+
+            return hashes;
+        }
+
+        public void WriteHashes()
+        {
+            var file = "ULT\\AVATAR.EXE";
+
+            var townTalkHash = new Dictionary<string, string>();
+
+            var hash = HashHelper.GetHashSha256(file);
+            Console.WriteLine($"{file}: {HashHelper.BytesToString(hash)}");
+            townTalkHash.Add(Path.GetFileName(file), HashHelper.BytesToString(hash));
+
+            string json = JsonConvert.SerializeObject(townTalkHash); // the dictionary is inside client object
+                                                                     //write string to file
+            System.IO.File.WriteAllText(@"avatar_hash.json", json);
+        }
+
+        public void Update(UltimaData data)
         {
             for (var offset = 0; offset < 24; offset++)
             {
-                avatar[ITEM_LOCATIONS_OFFSET + offset * 5] = data.Items[offset].Location;
-                avatar[ITEM_LOCATIONS_OFFSET + offset * 5 + 1] = data.Items[offset].X;
-                avatar[ITEM_LOCATIONS_OFFSET + offset * 5 + 2] = data.Items[offset].Y;
+                avatarBytes[ITEM_LOCATIONS_OFFSET + offset * 5] = data.Items[offset].Location;
+                avatarBytes[ITEM_LOCATIONS_OFFSET + offset * 5 + 1] = data.Items[offset].X;
+                avatarBytes[ITEM_LOCATIONS_OFFSET + offset * 5 + 2] = data.Items[offset].Y;
             }
-        }
 
-        public static void MoveMoongates(byte[] avatar, UltimaData data)
-        {
             ////throw in a lava to make it easy to find
             //for (int offset = 0; offset < 8; offset++)
             //{
             //    worldMapUlt[200, 200 + offset] = 76;
             //}
-
             for (byte offset = 0; offset < data.Moongates.Count; offset++)
             {
-                avatar[MOONGATE_X_OFFSET + offset] = data.Moongates[offset].X;
-                avatar[MOONGATE_Y_OFFSET + offset] = data.Moongates[offset].Y;
+                avatarBytes[MOONGATE_X_OFFSET + offset] = data.Moongates[offset].X;
+                avatarBytes[MOONGATE_Y_OFFSET + offset] = data.Moongates[offset].Y;
             }
 
-            return;
-        }
-
-        public static void MoveBuildings(byte[] avatar, UltimaData data)
-        {
-            avatar[AREA_X_OFFSET + LOC_LCB - 1] = data.LCB[0].X;
-            avatar[AREA_Y_OFFSET + LOC_LCB-1] = data.LCB[0].Y;
+            avatarBytes[AREA_X_OFFSET + LOC_LCB - 1] = data.LCB[0].X;
+            avatarBytes[AREA_Y_OFFSET + LOC_LCB - 1] = data.LCB[0].Y;
 
             for (var offset = 0; offset < data.Castles.Count; offset++)
             {
-                avatar[AREA_X_OFFSET + LOC_CASTLES + offset] = data.Castles[offset].X;
-                avatar[AREA_Y_OFFSET + LOC_CASTLES + offset] = data.Castles[offset].Y;
+                avatarBytes[AREA_X_OFFSET + LOC_CASTLES + offset] = data.Castles[offset].X;
+                avatarBytes[AREA_Y_OFFSET + LOC_CASTLES + offset] = data.Castles[offset].Y;
             }
 
             for (var offset = 0; offset < data.Towns.Count; offset++)
             {
-                avatar[AREA_X_OFFSET + LOC_TOWNS + offset - 1] = data.Towns[offset].X;
-                avatar[AREA_Y_OFFSET + LOC_TOWNS + offset - 1] = data.Towns[offset].Y;
+                avatarBytes[AREA_X_OFFSET + LOC_TOWNS + offset - 1] = data.Towns[offset].X;
+                avatarBytes[AREA_Y_OFFSET + LOC_TOWNS + offset - 1] = data.Towns[offset].Y;
             }
 
             for (var offset = 0; offset < data.Shrines.Count; offset++)
@@ -67,16 +111,25 @@ namespace U4DosRandomizer
                 // Skip Spirituality
                 if (offset != 6)
                 {
-                    avatar[AREA_X_OFFSET + LOC_SHRINES + offset - 1] = data.Shrines[offset].X;
-                    avatar[AREA_Y_OFFSET + LOC_SHRINES + offset - 1] = data.Shrines[offset].Y;
+                    avatarBytes[AREA_X_OFFSET + LOC_SHRINES + offset - 1] = data.Shrines[offset].X;
+                    avatarBytes[AREA_Y_OFFSET + LOC_SHRINES + offset - 1] = data.Shrines[offset].Y;
                 }
             }
 
             for (var offset = 0; offset < data.Dungeons.Count; offset++)
             {
-                avatar[AREA_X_OFFSET + LOC_DUNGEONS + offset - 1] = data.Dungeons[offset].X;
-                avatar[AREA_Y_OFFSET + LOC_DUNGEONS + offset - 1] = data.Dungeons[offset].Y;
+                avatarBytes[AREA_X_OFFSET + LOC_DUNGEONS + offset - 1] = data.Dungeons[offset].X;
+                avatarBytes[AREA_Y_OFFSET + LOC_DUNGEONS + offset - 1] = data.Dungeons[offset].Y;
             }
+        }
+
+        public void Save()
+        {
+            var avatarOut = new System.IO.BinaryWriter(new System.IO.FileStream("ULT\\AVATAR.EXE", System.IO.FileMode.OpenOrCreate));
+
+            avatarOut.Write(avatarBytes);
+
+            avatarOut.Close();
         }
 
         // https://wiki.ultimacodex.com/wiki/Ultima_IV_Internal_Formats#AVATAR.EXE

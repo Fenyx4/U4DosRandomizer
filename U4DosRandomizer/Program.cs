@@ -25,17 +25,14 @@ namespace U4DosRandomizer
             var worldMapDS = new DiamondSquare(WorldMap.SIZE, 184643518.256878, 82759876).getData(random);
             var worldMap = new WorldMap(worldMapDS);
             worldMap.CleanupAndAddFeatures(random);
-            // Original game only had single tiles in very special circumstances
-
-            var avatar = LoadAvatar();
-            Avatar.LoadItemLocations(avatar, ultimaData);
+            
+            var avatar = new Avatar();
+            avatar.Load(ultimaData);
 
             var talk = new Talk();
             talk.Load();
 
-            //TODO Randomize mantras o_0
-
-            
+            //TODO Randomize mantras o_0           
             
 
             //Completely random location placements of buildings still. Just trying to make sure I'm editing the files correctly right now. Not looking for a cohesive map that makes sense.
@@ -49,15 +46,13 @@ namespace U4DosRandomizer
 
             //WorldMap.MoveBuildings(worldMapUlt, ultimaData);
 
-            Avatar.MoveMoongates(avatar, ultimaData);
-            //Avatar.PlaceAllItems(avatar);
-            Avatar.MoveBuildings(avatar, ultimaData);
+            avatar.Update(ultimaData);
+            avatar.Save();
+            
             var worldFile = new System.IO.BinaryWriter(new System.IO.FileStream("WORLD.MAP", System.IO.FileMode.OpenOrCreate));
             worldMap.WriteMapToOriginalFormat(worldFile);
             worldFile.Close();
 
-            Avatar.SaveItemLocations(avatar, ultimaData);
-            WriteToAvatar(avatar);
             talk.Update(ultimaData);
             talk.Save();
 
@@ -257,23 +252,6 @@ namespace U4DosRandomizer
                 }
             }
         }
-
-        private static void WriteToAvatar(byte[] avatar)
-        {
-            var avatarOut = new System.IO.BinaryWriter(new System.IO.FileStream("AVATAR.EXE", System.IO.FileMode.OpenOrCreate));
-
-            avatarOut.Write(avatar);
-
-            avatarOut.Close();
-        }
-
-        private static byte[] LoadAvatar()
-        {
-            var avatar = new System.IO.FileStream("ULT\\AVATAR.EXE", System.IO.FileMode.Open);
-            var avatarBytes = avatar.ReadAllBytes();
-            return avatarBytes;
-        }
-
         
         private static void PrintWorldMapInfo()
         {

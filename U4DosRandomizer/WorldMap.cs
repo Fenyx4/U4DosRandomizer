@@ -102,6 +102,7 @@ namespace U4DosRandomizer
 
         public void CleanupAndAddFeatures(Random random)
         {
+            // Original game only had single tiles in very special circumstances
             RemoveSingleTiles();
             AddRivers(random);
             AddBridges();

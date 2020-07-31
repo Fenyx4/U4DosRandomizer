@@ -3,7 +3,6 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Security.Cryptography;
 using System.Text;
 using System.Text.RegularExpressions;
 
@@ -11,7 +10,6 @@ namespace U4DosRandomizer
 {
     public class Talk
     {
-        private SHA256 Sha256 = SHA256.Create();
         private Dictionary<string, List<Person>> towns = new Dictionary<string, List<Person>>();
 
         public void Load()
@@ -22,15 +20,15 @@ namespace U4DosRandomizer
             var personBytes = new byte[0x120];
             foreach(var file in files)
             {
-                var hash = GetHashSha256(file);
-                if(hashes[Path.GetFileName(file)] == BytesToString(hash))
+                var hash = HashHelper.GetHashSha256(file);
+                if(hashes[Path.GetFileName(file)] == HashHelper.BytesToString(hash))
                 {
                     File.Copy(file, $"{file}.orig", true);
                 }
                 else
                 {
-                    hash = GetHashSha256($"{file}.orig");
-                    if(hashes[Path.GetFileName(file)] != BytesToString(hash))
+                    hash = HashHelper.GetHashSha256($"{file}.orig");
+                    if(hashes[Path.GetFileName(file)] != HashHelper.BytesToString(hash))
                     {
                         throw new FileNotFoundException($"Original version of {file} not found.");
                     }
@@ -255,30 +253,14 @@ namespace U4DosRandomizer
 
             foreach (var file in files)
             {
-                var hash = GetHashSha256(file);
-                Console.WriteLine($"{file}: {BytesToString(hash)}");
-                townTalkHash.Add(Path.GetFileName(file), BytesToString(hash));
+                var hash = HashHelper.GetHashSha256(file);
+                Console.WriteLine($"{file}: {HashHelper.BytesToString(hash)}");
+                townTalkHash.Add(Path.GetFileName(file), HashHelper.BytesToString(hash));
             }
 
             string json = JsonConvert.SerializeObject(townTalkHash); // the dictionary is inside client object
                                                                     //write string to file
             System.IO.File.WriteAllText(@"talk_hash.json", json);
-        }
-
-        private byte[] GetHashSha256(string filename)
-        {
-            using (FileStream stream = File.OpenRead(filename))
-            {
-                return Sha256.ComputeHash(stream);
-            }
-        }
-
-        // Return a byte array as a sequence of hex values.
-        public static string BytesToString(byte[] bytes)
-        {
-            string result = "";
-            foreach (byte b in bytes) result += b.ToString("x2");
-            return result;
         }
     }
 }
