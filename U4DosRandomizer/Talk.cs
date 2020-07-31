@@ -5,6 +5,7 @@ using System.IO;
 using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
+using System.Text.RegularExpressions;
 
 namespace U4DosRandomizer
 {
@@ -68,16 +69,91 @@ namespace U4DosRandomizer
 
         public void Update(UltimaData ultimaData)
         {
-            Person garam = FindPerson("Garam");
-            garam.KeywordResponse2 = $"The bell of courage lies at the bottom of a deep well at sea found at {GetSextantText(ultimaData.Items[Avatar.ITEM_BELL])}";
+            // --- Items ---
+            var person = FindPerson("Garam");
+            var bell = GetSextantText(ultimaData.Items[Avatar.ITEM_BELL]);
+            person.KeywordResponse2 = ReplaceSextantText(person.KeywordResponse2, GetSextantText(ultimaData.Items[Avatar.ITEM_BELL]));
+
+            person = FindPerson("Jude");
+            person.KeywordResponse2 = ReplaceSextantText(person.KeywordResponse2, GetSextantText(ultimaData.Items[Avatar.ITEM_SKULL]));
+
+            person = FindPerson("Virgil");
+            person.KeywordResponse2 = ReplaceSextantText(person.KeywordResponse2, GetSextantText(ultimaData.Items[Avatar.ITEM_NIGHTSHADE]));
+
+            person = FindPerson("Virgil");
+            person.KeywordResponse2 = ReplaceSextantText(person.KeywordResponse2, GetSextantText(ultimaData.Towns[Avatar.LOC_MAGINCIA - 1]));
+
+            // TODO Mandrake
+            person = FindPerson("Calumny");
+
+            // TODO Horn
+            person = FindPerson("Malchor");
+
+            // TODO Wheel
+            person = FindPerson("Lassorn");
+
+            // TODO Move black stone to moongate
+
+            // TODO White stone
+            person = FindPerson("Isaac");
+
+            // TODO Book, candle, runes, mystic armor and mystic weapons I'm leaving along for now. Not randomizing stuff in towns yet.
+
+            // --- End Items ---
+
+            // --- Shrines ---
+            // TODO Humility
+            person = FindPerson("Simple");
+            person = FindPerson("Wierdrum");
+
+            // TODO Compassion
+            person = FindPerson("Shapero");
+
+            // TODO Sacrifice
+            person = FindPerson("Merida");
+
+            // TODO Justice
+            person = FindPerson("Druid");
+
+            // TODO Honesty
+            person = FindPerson("Calabrini");
+
+            // TODO Honor
+            person = FindPerson("Dergin");
+
+            // TODO Spirituality - Do I move this one?
+            person = FindPerson("the Ankh of\nSpirituality");
+
+            // TODO Valor - The location of the shrine of Valor isn't mentioned by anyone. Probably because of how obvious it is. Do I add some text to someone to give its location?
+            
+
+
+
+            // --- End Shrines ---
+
+            // --- Towns and Castles ---
+            // TODO Lord British gives locations for all the towns and castles
+
+            // --- End Towns and Castles ---
+
+            // --- Other ---
+            // TODO: Pirate location? Bucaneer's Den?
+            person = FindPerson("Wilmoore");
 
         }
 
         // https://github.com/ergonomy-joe/u4-decompiled/blob/c2c2108fa3bb346bcd1d8c207c526f33a4c8f5ef/SRC/U4_LOCAT.C#L20
-        private string GetSextantText(Item item)
+        public static string GetSextantText(ICoordinate item)
         {
             //lat-N'A" long-L'A"
-            return $"lat-{(char)((item.Y >> 4) +'A')}'{(char)((item.Y & 0xF) + 'A')}\" long-{(char)((item.X >> 4) + 'A')}'{(char)((item.X & 0xF) + 'A')}\"";
+            return $"lat-{(char)((item.Y >> 4) +'A')}'{(char)((item.Y & 0xF) + 'A')}\"\nlong-{(char)((item.X >> 4) + 'A')}'{(char)((item.X & 0xF) + 'A')}\"";
+        }
+
+        private string ReplaceSextantText(string text, string latLong)
+        {
+            var rx = new Regex("lat-[A-Z]'[A-Z]\".long-[A-Z]'[A-Z]\"", RegexOptions.IgnoreCase | RegexOptions.Singleline);
+            var result = rx.Replace(text, latLong);
+            return result;
         }
 
         private Person FindPerson(string name)

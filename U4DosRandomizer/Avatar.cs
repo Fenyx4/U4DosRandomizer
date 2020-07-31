@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Text;
 
@@ -47,13 +47,13 @@ namespace U4DosRandomizer
 
         public static void MoveBuildings(byte[] avatar, UltimaData data)
         {
-            avatar[AREA_X_OFFSET + LOC_LCB-1] = data.LCB[0].X;
+            avatar[AREA_X_OFFSET + LOC_LCB - 1] = data.LCB[0].X;
             avatar[AREA_Y_OFFSET + LOC_LCB-1] = data.LCB[0].Y;
 
-            for(var offset = 0; offset < data.Castles.Count; offset++)
+            for (var offset = 0; offset < data.Castles.Count; offset++)
             {
-                avatar[AREA_X_OFFSET + LOC_CASTLES + offset - 1] = data.Castles[offset].X;
-                avatar[AREA_Y_OFFSET + LOC_CASTLES + offset - 1] = data.Castles[offset].Y;
+                avatar[AREA_X_OFFSET + LOC_CASTLES + offset] = data.Castles[offset].X;
+                avatar[AREA_Y_OFFSET + LOC_CASTLES + offset] = data.Castles[offset].Y;
             }
 
             for (var offset = 0; offset < data.Towns.Count; offset++)
@@ -74,8 +74,8 @@ namespace U4DosRandomizer
 
             for (var offset = 0; offset < data.Dungeons.Count; offset++)
             {
-                avatar[AREA_X_OFFSET + LOC_DUNGEONS + offset - 1] = data.Shrines[offset].X;
-                avatar[AREA_Y_OFFSET + LOC_DUNGEONS + offset - 1] = data.Shrines[offset].Y;
+                avatar[AREA_X_OFFSET + LOC_DUNGEONS + offset - 1] = data.Dungeons[offset].X;
+                avatar[AREA_Y_OFFSET + LOC_DUNGEONS + offset - 1] = data.Dungeons[offset].Y;
             }
         }
 
@@ -100,7 +100,7 @@ namespace U4DosRandomizer
         private static int LOC_MINOC = 0x09;
         private static int LOC_TRINSIC = 0x0a;
         private static int LOC_SKARA = 0x0b;
-        private static int LOC_MAGINCIA = 0x0c;
+        public static int LOC_MAGINCIA = 0x0c;
         private static int LOC_PAWS = 0x0d;
         private static int LOC_DEN = 0x0e;
         private static int LOC_VESPER = 0x0f;

@@ -6,50 +6,50 @@ using U4DosRandomizer.BlueRajaPriorityQueue;
 
 namespace U4DosRandomizer
 {
-	public delegate bool IsNodeValid(Coordinate coord);
-	public delegate float NodeHuersticValue(Coordinate coord, IsNodeValid matchesGoal);
+	public delegate bool IsNodeValid(Tile coord);
+	public delegate float NodeHuersticValue(Tile coord, IsNodeValid matchesGoal);
 
 	public class Search
     {
-		public static List<Coordinate> GetPath(int sizeX, int sizeY, List<Coordinate> startNodes, IsNodeValid matchesGoal, IsNodeValid validNode, NodeHuersticValue heuristic = null)
+		public static List<Tile> GetPath(int sizeX, int sizeY, List<Tile> startNodes, IsNodeValid matchesGoal, IsNodeValid validNode, NodeHuersticValue heuristic = null)
 		{
 			if (heuristic == null)
 			{
-				heuristic = delegate (Coordinate n, IsNodeValid m) {
+				heuristic = delegate (Tile n, IsNodeValid m) {
 					return 0;
 				};
 			}
 
-			HashSet<Coordinate> closedset = new HashSet<Coordinate>(); // The set of nodes already evaluated
-			HashSet<Coordinate> openset = new HashSet<Coordinate>(); // The set of tentative nodes to be evaluated, initially containing the start node
+			HashSet<Tile> closedset = new HashSet<Tile>(); // The set of nodes already evaluated
+			HashSet<Tile> openset = new HashSet<Tile>(); // The set of tentative nodes to be evaluated, initially containing the start node
 			foreach (var node in startNodes)
 			{
 				openset.Add(node);
 			}
-			Dictionary<Coordinate, Coordinate> came_from = new Dictionary<Coordinate, Coordinate>(); // The map of navigated nodes.
+			Dictionary<Tile, Tile> came_from = new Dictionary<Tile, Tile>(); // The map of navigated nodes.
 
-			Dictionary<Coordinate, int> g_score = new Dictionary<Coordinate, int>();
-			foreach (Coordinate node in startNodes)
+			Dictionary<Tile, int> g_score = new Dictionary<Tile, int>();
+			foreach (Tile node in startNodes)
 			{
 				g_score.Add(node, 0);
 			}
 
-			HeapPriorityQueue<PriorityQueueCoordinate<Coordinate>> f_score = new HeapPriorityQueue<PriorityQueueCoordinate<Coordinate>>(sizeX * sizeY);
-			foreach (Coordinate node in g_score.Keys)
+			HeapPriorityQueue<PriorityQueueCoordinate<Tile>> f_score = new HeapPriorityQueue<PriorityQueueCoordinate<Tile>>(sizeX * sizeY);
+			foreach (Tile node in g_score.Keys)
 			{
-				f_score.Enqueue(new PriorityQueueCoordinate<Coordinate>(node), g_score[node] + heuristic(node, matchesGoal));
+				f_score.Enqueue(new PriorityQueueCoordinate<Tile>(node), g_score[node] + heuristic(node, matchesGoal));
 			}
 
 
 			while (openset.Count > 0)
 			{
 				// Find queued index with lowest score
-				Coordinate current = f_score.Dequeue().GetCoord();
+				Tile current = f_score.Dequeue().GetCoord();
 
 				if (matchesGoal(current))
 				{
 					// Walk backwards through the list and build the path
-					List<Coordinate> path = new List<Coordinate>();
+					List<Tile> path = new List<Tile>();
 					while (true)
 					{
 						path.Insert(0, current);
@@ -64,7 +64,7 @@ namespace U4DosRandomizer
 
 				openset.Remove(current);
 				closedset.Add(current);
-				foreach (Coordinate neighbor in current.NeighborCoordinates())
+				foreach (Tile neighbor in current.NeighborCoordinates())
 				{
 					if (closedset.Contains(neighbor))
 					{
@@ -86,7 +86,7 @@ namespace U4DosRandomizer
 					{
 						came_from[neighbor] = current;
 						g_score[neighbor] = tentative_g_score;
-						f_score.Enqueue(new PriorityQueueCoordinate<Coordinate>(neighbor), g_score[neighbor] + heuristic(neighbor, matchesGoal));
+						f_score.Enqueue(new PriorityQueueCoordinate<Tile>(neighbor), g_score[neighbor] + heuristic(neighbor, matchesGoal));
 						if (!openset.Contains(neighbor))
 						{
 							openset.Add(neighbor);
@@ -96,7 +96,7 @@ namespace U4DosRandomizer
 			}
 
 			//No path found
-			return new List<Coordinate>();
+			return new List<Tile>();
 		}
 
         

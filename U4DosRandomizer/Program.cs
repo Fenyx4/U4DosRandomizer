@@ -32,11 +32,17 @@ namespace U4DosRandomizer
 
             var talk = new Talk();
             talk.Load();
+
+            //TODO Randomize mantras o_0
+
+            
             
 
             //Completely random location placements of buildings still. Just trying to make sure I'm editing the files correctly right now. Not looking for a cohesive map that makes sense.
             RandomizeLocations(ultimaData, worldMap, random);
             // TODO: Change starting locations for new characters to match towns
+
+            Console.WriteLine(Talk.GetSextantText(ultimaData.LCB[0]));
 
             ultimaData.Items[Avatar.ITEM_BELL].X = ultimaData.LCB[0].X;
             ultimaData.Items[Avatar.ITEM_BELL].Y = Convert.ToByte(ultimaData.LCB[0].Y+1);
@@ -76,7 +82,7 @@ namespace U4DosRandomizer
                 {
                     lcb.SetTile(14);
                     ultimaData.LCB.Add(lcb);
-                    Coordinate lcbSide = worldMap.GetCoordinate(lcb.X - 1, lcb.Y);
+                    Tile lcbSide = worldMap.GetCoordinate(lcb.X - 1, lcb.Y);
                     lcbSide.SetTile(13);
                     ultimaData.LCB.Add(lcbSide);
                     lcbSide = worldMap.GetCoordinate(lcb.X + 1, lcb.Y);
@@ -140,6 +146,7 @@ namespace U4DosRandomizer
             ultimaData.Shrines.Add(loc);
             loc = RandomizeLocation(random, 30, worldMap, IsWalkableGround);
             ultimaData.Shrines.Add(loc);
+            // TODO: Shrine of humility hordes of daemons
 
             // Moongates
             loc = RandomizeLocation(random, 4, worldMap, IsGrass);
@@ -215,30 +222,30 @@ namespace U4DosRandomizer
             validLocations.RemoveAt(randomIdx);
         }
 
-        private static bool IsWalkableGround(Coordinate coord)
+        private static bool IsWalkableGround(Tile coord)
         {
             return coord.GetTile() >= 3 && coord.GetTile() <= 7;
         }
 
-        private static bool IsGrass(Coordinate coord)
+        private static bool IsGrass(Tile coord)
         {
             return coord.GetTile() == 4;
         }
 
-        private static Coordinate GetRandomCoordinate(Random random, WorldMap worldMap)
+        private static Tile GetRandomCoordinate(Random random, WorldMap worldMap)
         {
             var loc = worldMap.GetCoordinate(random.Next(0, WorldMap.SIZE), random.Next(0, WorldMap.SIZE));
             return loc;
         }
 
-        private static Coordinate RandomizeLocation(Random random, byte tile, WorldMap worldMap)
+        private static Tile RandomizeLocation(Random random, byte tile, WorldMap worldMap)
         {
             var loc = GetRandomCoordinate(random, worldMap);
             loc.SetTile(tile);
             return loc;
         }
 
-        private static Coordinate RandomizeLocation(Random random, byte tile, WorldMap worldMap, Func<Coordinate, bool> criteria)
+        private static Tile RandomizeLocation(Random random, byte tile, WorldMap worldMap, Func<Tile, bool> criteria)
         {
             while (true)
             {

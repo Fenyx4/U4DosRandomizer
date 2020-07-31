@@ -5,7 +5,7 @@ using U4DosRandomizer.BlueRajaPriorityQueue;
 
 namespace U4DosRandomizer
 {
-	public class PriorityQueueCoordinate<T> : PriorityQueueNode, ICoordinate where T : ICoordinate
+	public class PriorityQueueCoordinate<T> : PriorityQueueNode, ITile where T : ITile
 	{
 		private T _coord;
 		public PriorityQueueCoordinate(T coord)
@@ -25,7 +25,7 @@ namespace U4DosRandomizer
 
 		public byte Y => _coord.Y;
 
-		byte ICoordinate.GetTile()
+		byte ITile.GetTile()
 		{
 			return _coord.GetTile();
 

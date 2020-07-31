@@ -95,9 +95,9 @@ namespace U4DosRandomizer
             return worldMapUlt;
         }
 
-        public Coordinate GetCoordinate(int x, int y)
+        public Tile GetCoordinate(int x, int y)
         {
-            return new Coordinate(Convert.ToByte(Wrap(x)), Convert.ToByte(Wrap(y)), _worldMapTiles);
+            return new Tile(Convert.ToByte(Wrap(x)), Convert.ToByte(Wrap(y)), _worldMapTiles);
         }
 
         public void CleanupAndAddFeatures(Random random)
@@ -168,7 +168,7 @@ namespace U4DosRandomizer
             // Head uphill from there until you reach a high point
             // Go down hill from all the highpoints marking the path for a river
 
-            var highPoints = new HashSet<Coordinate>();
+            var highPoints = new HashSet<Tile>();
             for (int riverNum = 0; riverNum < totalNumOfRivers; riverNum++)
             {
                 var randomPoint = FindRandomPointHigherThan(4, _worldMapTiles, random);
@@ -176,7 +176,7 @@ namespace U4DosRandomizer
                 // Track previous point so I can step back one when I find the highest point
                 var prevPoint = randomPoint;
                 var currPoint = randomPoint;
-                Coordinate foundHighPoint = null;
+                Tile foundHighPoint = null;
                 while (foundHighPoint == null)
                 {
                     //_worldMapTiles[prevPoint.X, prevPoint.Y] = 0xA1;
@@ -187,7 +187,7 @@ namespace U4DosRandomizer
                         prevPoint = currPoint;
                         //int distance = Convert.ToInt32(Math.Sqrt(highestDirection.Item1 * highestDirection.Item1 + highestDirection.Item2 * highestDirection.Item2));
                         int distance = Math.Abs(highestDirection.X != 0 ? highestDirection.X : highestDirection.Y);
-                        currPoint = new Coordinate(Wrap(currPoint.X + highestDirection.X / distance), Wrap(currPoint.Y + highestDirection.Y / distance), _worldMapTiles);
+                        currPoint = new Tile(Wrap(currPoint.X + highestDirection.X / distance), Wrap(currPoint.Y + highestDirection.Y / distance), _worldMapTiles);
                     }
                     else
                     {
@@ -199,11 +199,11 @@ namespace U4DosRandomizer
                 highPoints.Add(prevPoint);
             }
 
-            var paths = new List<List<Coordinate>>();
+            var paths = new List<List<Tile>>();
             foreach (var highPoint in highPoints)
             {
                 // find shortest path
-                var path = Search.GetPath(WorldMap.SIZE, WorldMap.SIZE, new List<Coordinate> { highPoint }, IsCoordinateWater, delegate { return true; }, FindWaterHueristic);
+                var path = Search.GetPath(WorldMap.SIZE, WorldMap.SIZE, new List<Tile> { highPoint }, IsCoordinateWater, delegate { return true; }, FindWaterHueristic);
                 paths.Add(path);
                 //List<Point> pathToWater = new List<Point>();
                 //pathToWater.Add(highPoint);
@@ -261,9 +261,9 @@ namespace U4DosRandomizer
             return;
         }
 
-        public List<Coordinate> FindAllByPattern(int[,] pattern)
+        public List<Tile> FindAllByPattern(int[,] pattern)
         {
-            var validCoordinates = new List<Coordinate>();
+            var validCoordinates = new List<Tile>();
             for(int map_x = 0; map_x < SIZE; map_x++)
             {
                 for (int map_y = 0; map_y < SIZE; map_y++)
@@ -283,7 +283,7 @@ namespace U4DosRandomizer
 
                     if(matchesAll)
                     {
-                        validCoordinates.Add(new Coordinate(map_x, map_y, _worldMapTiles));
+                        validCoordinates.Add(new Tile(map_x, map_y, _worldMapTiles));
                     }
                 }
             }
@@ -292,7 +292,7 @@ namespace U4DosRandomizer
         }
 
         //public delegate float NodeHuersticValue(Coordinate coord, IsNodeValid matchesGoal);
-        private float FindWaterHueristic(Coordinate coord, IsNodeValid matchesGoal)
+        private float FindWaterHueristic(Tile coord, IsNodeValid matchesGoal)
         {
             if( matchesGoal(coord))
             { 
@@ -305,14 +305,14 @@ namespace U4DosRandomizer
             return Convert.ToSingle(value / range);
         }
 
-        private static bool IsCoordinateWater(ICoordinate coordinate)
+        private static bool IsCoordinateWater(ITile coordinate)
         {
             return coordinate.GetTile() < 2;
         }
 
-        private static Coordinate FindRandomPointHigherThan(int tile, byte[,] worldMapUlt, Random random)
+        private static Tile FindRandomPointHigherThan(int tile, byte[,] worldMapUlt, Random random)
         {
-            Coordinate result = null;
+            Tile result = null;
             while (result == null)
             {
                 var x = random.Next(0, 256);
@@ -320,7 +320,7 @@ namespace U4DosRandomizer
 
                 if (worldMapUlt[x, y] > tile)
                 {
-                    result = new Coordinate(x, y, worldMapUlt);
+                    result = new Tile(x, y, worldMapUlt);
                 }
             }
 
