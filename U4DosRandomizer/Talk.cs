@@ -71,7 +71,6 @@ namespace U4DosRandomizer
         {
             // --- Items ---
             var person = FindPerson("Garam");
-            var bell = GetSextantText(ultimaData.Items[Avatar.ITEM_BELL]);
             person.KeywordResponse2 = ReplaceSextantText(person.KeywordResponse2, GetSextantText(ultimaData.Items[Avatar.ITEM_BELL]));
 
             person = FindPerson("Jude");
@@ -83,52 +82,74 @@ namespace U4DosRandomizer
             person = FindPerson("Virgil");
             person.KeywordResponse2 = ReplaceSextantText(person.KeywordResponse2, GetSextantText(ultimaData.Towns[Avatar.LOC_MAGINCIA - 1]));
 
-            // TODO Mandrake
+            // Mandrake
+            // TODO make response descriptive
             person = FindPerson("Calumny");
+            person.KeywordResponse2 = $"Mandrake is found near {GetSextantText(ultimaData.Items[Avatar.ITEM_MANDRAKE])}\nand\n{GetSextantText(ultimaData.Items[Avatar.ITEM_MANDRAKE2])} ";
 
-            // TODO Horn
+            // Horn
+            // TODO make response descriptive
             person = FindPerson("Malchor");
+            person.KeywordResponse2 = $"Some say that\nthe silver horn\nis buried at\n{GetSextantText(ultimaData.Items[Avatar.ITEM_HORN])}";
 
-            // TODO Wheel
+            // Wheel
+            // TODO make response descriptive
             person = FindPerson("Lassorn");
+            person.KeywordResponse2 = $"She went down in\nthe deep waters\nat\n{GetSextantText(ultimaData.Items[Avatar.ITEM_WHEEL])}!";
 
             // TODO Move black stone to moongate
 
-            // TODO White stone
+            // White stone
+            // TODO make response descriptive
             person = FindPerson("Isaac");
+            person.KeywordResponse2 = $"The white stone\nsits atop the\nmountains at\n{GetSextantText(ultimaData.Items[Avatar.ITEM_WHITE_STONE])}.\nIt can only be\nreached by one\nwho floats\nwithin the\nclouds.";
 
             // TODO Book, candle, runes, mystic armor and mystic weapons I'm leaving along for now. Not randomizing stuff in towns yet.
 
             // --- End Items ---
 
             // --- Shrines ---
-            // TODO Humility
+            // Humility
+            // TODO make response descriptive
             person = FindPerson("Simple");
+            person.KeywordResponse2 = $"The shrine lies\nnear\n{GetSextantText(ultimaData.Shrines[Avatar.LOC_HUMILITY - Avatar.LOC_SHRINES])} and\nis guarded by\nendless hoards\nof daemons!";
             person = FindPerson("Wierdrum");
+            person.KeywordResponse2 = $"Yes, I have been\nto the shrine,\nit lies near\n{GetSextantText(ultimaData.Shrines[Avatar.LOC_HUMILITY - Avatar.LOC_SHRINES])}!";
 
-            // TODO Compassion
+            // Compassion
+            // TODO make response descriptive
             person = FindPerson("Shapero");
+            person.KeywordResponse2 = $"Find the shrine\nof compassion\nat\n{GetSextantText(ultimaData.Shrines[Avatar.LOC_COMPASSION - Avatar.LOC_SHRINES])}!";
 
-            // TODO Sacrifice
+            // Sacrifice
+            // TODO make response descriptive
             person = FindPerson("Merida");
+            person.KeywordResponse2 = $"The shrine is at\n{GetSextantText(ultimaData.Shrines[Avatar.LOC_SACRIFICE - Avatar.LOC_SHRINES])}!";
 
-            // TODO Justice
+            // Justice
+            // TODO make response descriptive
             person = FindPerson("Druid");
+            person.KeywordResponse2 = $"The shrine is at\n{GetSextantText(ultimaData.Shrines[Avatar.LOC_JUSTICE - Avatar.LOC_SHRINES])}!";
 
-            // TODO Honesty
+            // Honesty
+            // TODO make response descriptive
             person = FindPerson("Calabrini");
+            person.No = $"Perhaps, the\nshrine which\nlies at\n{GetSextantText(ultimaData.Shrines[Avatar.LOC_HONESTY - Avatar.LOC_SHRINES])}!";
 
-            // TODO Honor
+            // Honor
+            // TODO make response descriptive
             person = FindPerson("Dergin");
+            person.No = $"The shrine lies at\n{GetSextantText(ultimaData.Shrines[Avatar.LOC_JUSTICE - Avatar.LOC_SHRINES])}!";
 
             // TODO Spirituality - Do I move this one?
             person = FindPerson("the Ankh of\nSpirituality");
 
-            // TODO Valor - The location of the shrine of Valor isn't mentioned by anyone. Probably because of how obvious it is. Do I add some text to someone to give its location?
+            // Valor
+            // No on gives the directions to Valor so I grabbed his reponse that talked about the shrine and usurped it
+            // TODO make response descriptive
+            person = FindPerson("Sir Hrothgar");
+            person.No = $"Thou should seek\nthe shrine of\nvalor at\n{GetSextantText(ultimaData.Shrines[Avatar.LOC_VALOR - Avatar.LOC_SHRINES])}!";
             
-
-
-
             // --- End Shrines ---
 
             // --- Towns and Castles ---

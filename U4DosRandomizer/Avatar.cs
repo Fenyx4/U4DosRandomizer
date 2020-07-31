@@ -116,15 +116,15 @@ namespace U4DosRandomizer
         private static int LOC_HYTHLOTH = 0x17;
         private static int LOC_ABYSS = 0x18;
 
-        private static int LOC_SHRINES = 0x19;
-        private static int LOC_HONESTY = 0x19;
-        private static int LOC_COMPASSION = 0x1a;
-        private static int LOC_VALOR = 0x1b;
-        private static int LOC_JUSTICE = 0x1c;
-        private static int LOC_SACRIFICE = 0x1d;
-        private static int LOC_HONOR = 0x1e;
-        private static int LOC_SPIRITUALITY = 0x1f;
-        private static int LOC_HUMILITY = 0x20;
+        public static int LOC_SHRINES = 0x19;
+        public static int LOC_HONESTY = 0x19;
+        public static int LOC_COMPASSION = 0x1a;
+        public static int LOC_VALOR = 0x1b;
+        public static int LOC_JUSTICE = 0x1c;
+        public static int LOC_SACRIFICE = 0x1d;
+        public static int LOC_HONOR = 0x1e;
+        public static int LOC_SPIRITUALITY = 0x1f;
+        public static int LOC_HUMILITY = 0x20;
         /*
          * https://github.com/ergonomy-joe/u4-decompiled/blob/master/SRC/U4_LOC.H
          * 0 - Britannia
