@@ -77,13 +77,13 @@ namespace U4DosRandomizer
             loc = possibleLocations[random.Next(0, possibleLocations.Count)];
             ultimaData.Items[Avatar.ITEM_SKULL].X = loc.X;
             ultimaData.Items[Avatar.ITEM_SKULL].Y = loc.Y;
-            MakeSkullShape(worldMap, loc, "shapes\\skull");
+            ApplyShape(worldMap, loc, "shapes\\skull");
 
             possibleLocations = worldMap.GetAllMatchingTiles(c => AreaIsAll(worldMap, 0, 7, c));
             loc = possibleLocations[random.Next(0, possibleLocations.Count)];
             ultimaData.Items[Avatar.ITEM_BELL].X = loc.X;
             ultimaData.Items[Avatar.ITEM_BELL].Y = loc.Y;
-            MakeBellShape(worldMap, loc);
+            ApplyShape(worldMap, loc, "shapes\\bell");
 
             loc = GetRandomCoordinate(random, worldMap, IsWalkableGround);
             ultimaData.Items[Avatar.ITEM_HORN].X = loc.X;
@@ -93,70 +93,35 @@ namespace U4DosRandomizer
             loc = possibleLocations[random.Next(0, possibleLocations.Count)];
             ultimaData.Items[Avatar.ITEM_WHEEL].X = loc.X;
             ultimaData.Items[Avatar.ITEM_WHEEL].Y = loc.Y;
+
+            // TODO: Do I move the black stone?
+            ultimaData.Items[Avatar.ITEM_WHEEL].X = ultimaData.Moongates[0].X;
+            ultimaData.Items[Avatar.ITEM_BLACK_STONE].Y = ultimaData.Moongates[0].Y;
+
+            // White stone
+            possibleLocations = worldMap.GetAllMatchingTiles(c => AreaIsAll(worldMap, 8, 4, c));
+            loc = possibleLocations[random.Next(0, possibleLocations.Count)];
+            ultimaData.Items[Avatar.ITEM_WHITE_STONE].X = Convert.ToByte(loc.X-1);
+            ultimaData.Items[Avatar.ITEM_WHITE_STONE].Y = loc.Y;
+            ApplyShape(worldMap, loc, "shapes\\white");
         }
 
-        private static void MakeSkullShape(WorldMap worldMap, Tile loc, string file)
+        private static void ApplyShape(WorldMap worldMap, Tile loc, string file)
         {
             var shape = new System.IO.FileStream($"{file}", System.IO.FileMode.Open);
             var length = shape.ReadByte();
             var shapeBytes = shape.ReadAllBytes();
 
             int radius = length / 2;
-            for(int y = 0; y < length; y++)
+            for (int y = 0; y < length; y++)
             {
                 for (int x = 0; x < length; x++)
                 {
-                    var idx = x + y * 14;
+                    var idx = x + y * length;
                     var tile = shapeBytes[idx];
                     worldMap.GetCoordinate(loc.X - radius + x, loc.Y - radius + y).SetTile(tile);
                 }
-            }            
-        }
-
-        private static void MakeBellShape(WorldMap worldMap, Tile loc)
-        {
-            worldMap.GetCoordinate(loc.X - 1, loc.Y - 3).SetTile(1);
-            worldMap.GetCoordinate(loc.X + 0, loc.Y - 3).SetTile(1);
-            worldMap.GetCoordinate(loc.X + 1, loc.Y - 3).SetTile(1);
-            worldMap.GetCoordinate(loc.X - 2, loc.Y - 2).SetTile(1);
-            worldMap.GetCoordinate(loc.X - 1, loc.Y - 2).SetTile(1);
-            worldMap.GetCoordinate(loc.X + 0, loc.Y - 2).SetTile(1);
-            worldMap.GetCoordinate(loc.X + 1, loc.Y - 2).SetTile(1);
-            worldMap.GetCoordinate(loc.X + 2, loc.Y - 2).SetTile(1);
-
-            worldMap.GetCoordinate(loc.X - 3, loc.Y - 1).SetTile(1);
-            worldMap.GetCoordinate(loc.X - 2, loc.Y - 1).SetTile(1);
-            worldMap.GetCoordinate(loc.X - 1, loc.Y - 1).SetTile(2);
-            worldMap.GetCoordinate(loc.X + 0, loc.Y - 1).SetTile(2);
-            worldMap.GetCoordinate(loc.X + 1, loc.Y - 1).SetTile(2);
-            worldMap.GetCoordinate(loc.X + 2, loc.Y - 1).SetTile(1);
-            worldMap.GetCoordinate(loc.X + 3, loc.Y - 1).SetTile(1);
-
-            worldMap.GetCoordinate(loc.X - 3, loc.Y - 0).SetTile(1);
-            worldMap.GetCoordinate(loc.X - 2, loc.Y - 0).SetTile(1);
-            worldMap.GetCoordinate(loc.X - 1, loc.Y - 0).SetTile(2);
-            worldMap.GetCoordinate(loc.X + 0, loc.Y - 0).SetTile(0);
-            worldMap.GetCoordinate(loc.X + 1, loc.Y - 0).SetTile(2);
-            worldMap.GetCoordinate(loc.X + 2, loc.Y - 0).SetTile(1);
-            worldMap.GetCoordinate(loc.X + 3, loc.Y - 0).SetTile(1);
-
-            worldMap.GetCoordinate(loc.X - 3, loc.Y + 1).SetTile(1);
-            worldMap.GetCoordinate(loc.X - 2, loc.Y + 1).SetTile(1);
-            worldMap.GetCoordinate(loc.X - 1, loc.Y + 1).SetTile(2);
-            worldMap.GetCoordinate(loc.X + 0, loc.Y + 1).SetTile(1);
-            worldMap.GetCoordinate(loc.X + 1, loc.Y + 1).SetTile(2);
-            worldMap.GetCoordinate(loc.X + 2, loc.Y + 1).SetTile(1);
-            worldMap.GetCoordinate(loc.X + 3, loc.Y + 1).SetTile(1);
-
-            worldMap.GetCoordinate(loc.X - 2, loc.Y + 2).SetTile(1);
-            worldMap.GetCoordinate(loc.X - 1, loc.Y + 2).SetTile(1);
-            worldMap.GetCoordinate(loc.X + 0, loc.Y + 2).SetTile(1);
-            worldMap.GetCoordinate(loc.X + 1, loc.Y + 2).SetTile(1);
-            worldMap.GetCoordinate(loc.X + 2, loc.Y + 2).SetTile(1);
-
-            worldMap.GetCoordinate(loc.X - 1, loc.Y + 3).SetTile(1);
-            worldMap.GetCoordinate(loc.X + 0, loc.Y + 3).SetTile(1);
-            worldMap.GetCoordinate(loc.X + 1, loc.Y + 3).SetTile(1);
+            }
         }
 
         private static bool AreaIsAll(WorldMap worldMap, int tile, int length, ICoordinate coordinate)
@@ -246,8 +211,8 @@ namespace U4DosRandomizer
             ultimaData.Shrines.Add(loc);
             loc = RandomizeLocation(random, 30, worldMap, IsWalkableGround);
             ultimaData.Shrines.Add(loc);
-            loc = RandomizeLocation(random, 30, worldMap, IsWalkableGround);
-            ultimaData.Shrines.Add(loc);
+            //loc = RandomizeLocation(random, 30, worldMap, IsWalkableGround);
+            ultimaData.Shrines.Add(null); // Empty spot for spirit
             loc = RandomizeLocation(random, 30, worldMap, IsWalkableGround);
             ultimaData.Shrines.Add(loc);
             loc = RandomizeLocation(random, 30, worldMap, IsWalkableGround);

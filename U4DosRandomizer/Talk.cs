@@ -95,10 +95,12 @@ namespace U4DosRandomizer
             person = FindPerson("Lassorn");
             person.KeywordResponse2 = $"She went down in\nthe deep waters\nat\n{GetSextantText(ultimaData.Items[Avatar.ITEM_WHEEL])}!";
 
-            // TODO Move black stone to moongate
+            // TODO Black stone currently at the moongate will need to change this text if we ever do randomize it
+            person = FindPerson("Merlin");
 
             // White stone
             // TODO make response descriptive
+            // TODO update shrine text
             person = FindPerson("Isaac");
             person.KeywordResponse2 = $"The white stone\nsits atop the\nmountains at\n{GetSextantText(ultimaData.Items[Avatar.ITEM_WHITE_STONE])}.\nIt can only be\nreached by one\nwho floats\nwithin the\nclouds.";
 
