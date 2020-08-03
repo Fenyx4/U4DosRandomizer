@@ -20,7 +20,6 @@ namespace U4DosRandomizer
             var file = "ULT\\AVATAR.EXE";
 
             var hash = HashHelper.GetHashSha256(file);
-            var wtf = HashHelper.BytesToString(hash);
             if (hashes["AVATAR.EXE"] == HashHelper.BytesToString(hash))
             {
                 File.Copy(file, $"{file}.orig", true);

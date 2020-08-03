@@ -100,6 +100,24 @@ namespace U4DosRandomizer
             return new Tile(Convert.ToByte(Wrap(x)), Convert.ToByte(Wrap(y)), _worldMapTiles);
         }
 
+        public List<Tile> GetAllMatchingTiles(Func<Tile, bool> criteria)
+        {
+            var tiles = new List<Tile>();
+            for (int x = 0; x < SIZE; x++)
+            {
+                for(int y = 0; y < SIZE; y++)
+                {
+                    var tile = GetCoordinate(x, y);
+                    if(criteria(GetCoordinate(x, y)))
+                    {
+                        tiles.Add(tile);
+                    }
+                }
+            }
+
+            return tiles;
+        }
+
         public void CleanupAndAddFeatures(Random random)
         {
             // Original game only had single tiles in very special circumstances

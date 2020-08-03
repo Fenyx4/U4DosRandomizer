@@ -16,7 +16,13 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Update="hashes\avatar_hash.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Update="hashes\talk_hash.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="shapes\skull">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
   </ItemGroup>

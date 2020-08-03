@@ -41,8 +41,8 @@ namespace U4DosRandomizer
 
             Console.WriteLine(Talk.GetSextantText(ultimaData.LCB[0]));
 
-            ultimaData.Items[Avatar.ITEM_BELL].X = ultimaData.LCB[0].X;
-            ultimaData.Items[Avatar.ITEM_BELL].Y = Convert.ToByte(ultimaData.LCB[0].Y+1);
+            RandomizeItems(ultimaData, worldMap, random);
+
 
             //WorldMap.MoveBuildings(worldMapUlt, ultimaData);
 
@@ -63,6 +63,117 @@ namespace U4DosRandomizer
             //PrintWorldMapInfo();
         }
 
+        private static void RandomizeItems(UltimaData ultimaData, WorldMap worldMap, Random random)
+        {
+            var loc = RandomizeLocation(random, 3, worldMap, IsWalkableGround);
+            ultimaData.Items[Avatar.ITEM_MANDRAKE].X = loc.X;
+            ultimaData.Items[Avatar.ITEM_MANDRAKE].Y = loc.Y;
+
+            loc = RandomizeLocation(random, 3, worldMap, (x) => x.GetTile() == 6);
+            ultimaData.Items[Avatar.ITEM_NIGHTSHADE].X = loc.X;
+            ultimaData.Items[Avatar.ITEM_NIGHTSHADE].Y = loc.Y;
+
+            var possibleLocations = worldMap.GetAllMatchingTiles(c => AreaIsAll(worldMap, 0, 14, c));
+            loc = possibleLocations[random.Next(0, possibleLocations.Count)];
+            ultimaData.Items[Avatar.ITEM_SKULL].X = loc.X;
+            ultimaData.Items[Avatar.ITEM_SKULL].Y = loc.Y;
+            MakeSkullShape(worldMap, loc, "shapes\\skull");
+
+            possibleLocations = worldMap.GetAllMatchingTiles(c => AreaIsAll(worldMap, 0, 7, c));
+            loc = possibleLocations[random.Next(0, possibleLocations.Count)];
+            ultimaData.Items[Avatar.ITEM_BELL].X = loc.X;
+            ultimaData.Items[Avatar.ITEM_BELL].Y = loc.Y;
+            MakeBellShape(worldMap, loc);
+
+            loc = GetRandomCoordinate(random, worldMap, IsWalkableGround);
+            ultimaData.Items[Avatar.ITEM_HORN].X = loc.X;
+            ultimaData.Items[Avatar.ITEM_HORN].Y = loc.Y;
+
+            possibleLocations = worldMap.GetAllMatchingTiles(c => c.GetTile() == 0);
+            loc = possibleLocations[random.Next(0, possibleLocations.Count)];
+            ultimaData.Items[Avatar.ITEM_WHEEL].X = loc.X;
+            ultimaData.Items[Avatar.ITEM_WHEEL].Y = loc.Y;
+        }
+
+        private static void MakeSkullShape(WorldMap worldMap, Tile loc, string file)
+        {
+            var shape = new System.IO.FileStream($"{file}", System.IO.FileMode.Open);
+            var length = shape.ReadByte();
+            var shapeBytes = shape.ReadAllBytes();
+
+            int radius = length / 2;
+            for(int y = 0; y < length; y++)
+            {
+                for (int x = 0; x < length; x++)
+                {
+                    var idx = x + y * 14;
+                    var tile = shapeBytes[idx];
+                    worldMap.GetCoordinate(loc.X - radius + x, loc.Y - radius + y).SetTile(tile);
+                }
+            }            
+        }
+
+        private static void MakeBellShape(WorldMap worldMap, Tile loc)
+        {
+            worldMap.GetCoordinate(loc.X - 1, loc.Y - 3).SetTile(1);
+            worldMap.GetCoordinate(loc.X + 0, loc.Y - 3).SetTile(1);
+            worldMap.GetCoordinate(loc.X + 1, loc.Y - 3).SetTile(1);
+            worldMap.GetCoordinate(loc.X - 2, loc.Y - 2).SetTile(1);
+            worldMap.GetCoordinate(loc.X - 1, loc.Y - 2).SetTile(1);
+            worldMap.GetCoordinate(loc.X + 0, loc.Y - 2).SetTile(1);
+            worldMap.GetCoordinate(loc.X + 1, loc.Y - 2).SetTile(1);
+            worldMap.GetCoordinate(loc.X + 2, loc.Y - 2).SetTile(1);
+
+            worldMap.GetCoordinate(loc.X - 3, loc.Y - 1).SetTile(1);
+            worldMap.GetCoordinate(loc.X - 2, loc.Y - 1).SetTile(1);
+            worldMap.GetCoordinate(loc.X - 1, loc.Y - 1).SetTile(2);
+            worldMap.GetCoordinate(loc.X + 0, loc.Y - 1).SetTile(2);
+            worldMap.GetCoordinate(loc.X + 1, loc.Y - 1).SetTile(2);
+            worldMap.GetCoordinate(loc.X + 2, loc.Y - 1).SetTile(1);
+            worldMap.GetCoordinate(loc.X + 3, loc.Y - 1).SetTile(1);
+
+            worldMap.GetCoordinate(loc.X - 3, loc.Y - 0).SetTile(1);
+            worldMap.GetCoordinate(loc.X - 2, loc.Y - 0).SetTile(1);
+            worldMap.GetCoordinate(loc.X - 1, loc.Y - 0).SetTile(2);
+            worldMap.GetCoordinate(loc.X + 0, loc.Y - 0).SetTile(0);
+            worldMap.GetCoordinate(loc.X + 1, loc.Y - 0).SetTile(2);
+            worldMap.GetCoordinate(loc.X + 2, loc.Y - 0).SetTile(1);
+            worldMap.GetCoordinate(loc.X + 3, loc.Y - 0).SetTile(1);
+
+            worldMap.GetCoordinate(loc.X - 3, loc.Y + 1).SetTile(1);
+            worldMap.GetCoordinate(loc.X - 2, loc.Y + 1).SetTile(1);
+            worldMap.GetCoordinate(loc.X - 1, loc.Y + 1).SetTile(2);
+            worldMap.GetCoordinate(loc.X + 0, loc.Y + 1).SetTile(1);
+            worldMap.GetCoordinate(loc.X + 1, loc.Y + 1).SetTile(2);
+            worldMap.GetCoordinate(loc.X + 2, loc.Y + 1).SetTile(1);
+            worldMap.GetCoordinate(loc.X + 3, loc.Y + 1).SetTile(1);
+
+            worldMap.GetCoordinate(loc.X - 2, loc.Y + 2).SetTile(1);
+            worldMap.GetCoordinate(loc.X - 1, loc.Y + 2).SetTile(1);
+            worldMap.GetCoordinate(loc.X + 0, loc.Y + 2).SetTile(1);
+            worldMap.GetCoordinate(loc.X + 1, loc.Y + 2).SetTile(1);
+            worldMap.GetCoordinate(loc.X + 2, loc.Y + 2).SetTile(1);
+
+            worldMap.GetCoordinate(loc.X - 1, loc.Y + 3).SetTile(1);
+            worldMap.GetCoordinate(loc.X + 0, loc.Y + 3).SetTile(1);
+            worldMap.GetCoordinate(loc.X + 1, loc.Y + 3).SetTile(1);
+        }
+
+        private static bool AreaIsAll(WorldMap worldMap, int tile, int length, ICoordinate coordinate)
+        {
+            int radius = length / 2;
+
+            var result = true;
+            for(int x = 0; x < length; x++)
+            {
+                for(int y = 0; y < length; y++)
+                {
+                    result = result && worldMap.GetCoordinate(coordinate.X - radius + x, coordinate.Y - radius + y).GetTile() == tile;
+                }
+            }
+
+            return result;
+        }
 
         private static void RandomizeLocations(UltimaData ultimaData, WorldMap worldMap, Random random)
         {
@@ -233,6 +344,18 @@ namespace U4DosRandomizer
             return loc;
         }
 
+        private static Tile GetRandomCoordinate(Random random, WorldMap worldMap, Func<Tile, bool> criteria)
+        {
+            while (true)
+            {
+                var loc = GetRandomCoordinate(random, worldMap);
+                if (criteria(loc))
+                {
+                    return loc;
+                }
+            }
+        }
+
         private static Tile RandomizeLocation(Random random, byte tile, WorldMap worldMap)
         {
             var loc = GetRandomCoordinate(random, worldMap);
@@ -242,15 +365,10 @@ namespace U4DosRandomizer
 
         private static Tile RandomizeLocation(Random random, byte tile, WorldMap worldMap, Func<Tile, bool> criteria)
         {
-            while (true)
-            {
-                var loc = GetRandomCoordinate(random, worldMap);
-                if (criteria(loc))
-                {
-                    loc.SetTile(tile);
-                    return loc;
-                }
-            }
+            var loc = GetRandomCoordinate(random, worldMap, criteria);
+
+            loc.SetTile(tile);
+            return loc;
         }
         
         private static void PrintWorldMapInfo()
