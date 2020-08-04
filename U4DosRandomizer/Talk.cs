@@ -100,9 +100,9 @@ namespace U4DosRandomizer
 
             // White stone
             // TODO make response descriptive
-            // TODO update shrine text
             person = FindPerson("Isaac");
             person.KeywordResponse2 = $"The white stone\nsits atop the\nmountains at\n{GetSextantText(ultimaData.Items[Avatar.ITEM_WHITE_STONE])}.\nIt can only be\nreached by one\nwho floats\nwithin the\nclouds.";
+            ultimaData.ShrineText[6*3+2] = $"If thou dost seek the White Stone search not under the ground but at {GetSextantText(ultimaData.Items[Avatar.ITEM_WHITE_STONE]).Replace('\n', ' ')}";
 
             // TODO Book, candle, runes, mystic armor and mystic weapons I'm leaving along for now. Not randomizing stuff in towns yet.
 

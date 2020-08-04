@@ -11,6 +11,7 @@ namespace U4DosRandomizer
         public List<Tile> Moongates { get; set; }
         public List<Tile> Dungeons { get; set; }
         public List<Item> Items { get; set; }
+        public List<string> ShrineText { get; set; }
 
         public UltimaData()
         {
@@ -21,6 +22,7 @@ namespace U4DosRandomizer
             Moongates = new List<Tile>();
             Dungeons = new List<Tile>();
             Items = new List<Item>();
+            ShrineText = new List<string>();
         }
     }
 }

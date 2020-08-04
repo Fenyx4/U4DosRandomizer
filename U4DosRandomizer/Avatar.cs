@@ -44,6 +44,30 @@ namespace U4DosRandomizer
                 item.Y = avatarBytes[ITEM_LOCATIONS_OFFSET + offset * 5 + 2];
                 data.Items.Add(item);
             }
+
+            OriginalShrineText = new List<string>();
+            OriginalShrineTextStartOffset = new List<int>();
+            var shrineTextBytes = new List<byte>();
+            var textOffset = SHRINE_TEXT_OFFSET;
+            for (int i = 0; i < 24; i++)
+            {
+                OriginalShrineTextStartOffset.Add(textOffset);
+                for (; avatarBytes[textOffset] != 0x0A && avatarBytes[textOffset] != 0x00; textOffset++)
+                {
+                    shrineTextBytes.Add(avatarBytes[textOffset]);
+                }
+                OriginalShrineText.Add(System.Text.Encoding.Default.GetString(shrineTextBytes.ToArray()));
+                shrineTextBytes.Clear();
+                if (avatarBytes[textOffset] == 0x0A)
+                {
+                    textOffset++;
+                }
+                textOffset++;
+            }
+
+            data.ShrineText.Clear();
+            data.ShrineText.AddRange(OriginalShrineText);
+
         }
 
         public Dictionary<string, string> ReadHashes()
@@ -108,7 +132,7 @@ namespace U4DosRandomizer
             for (var offset = 0; offset < data.Shrines.Count; offset++)
             {
                 // Skip Spirituality
-                if (offset != 6)
+                if (data.Shrines[offset] != null)
                 {
                     avatarBytes[AREA_X_OFFSET + LOC_SHRINES + offset - 1] = data.Shrines[offset].X;
                     avatarBytes[AREA_Y_OFFSET + LOC_SHRINES + offset - 1] = data.Shrines[offset].Y;
@@ -120,11 +144,26 @@ namespace U4DosRandomizer
                 avatarBytes[AREA_X_OFFSET + LOC_DUNGEONS + offset - 1] = data.Dungeons[offset].X;
                 avatarBytes[AREA_Y_OFFSET + LOC_DUNGEONS + offset - 1] = data.Dungeons[offset].Y;
             }
+
+            var avatarBytesList = new List<byte>(avatarBytes);
+            for (int i = 0; i < OriginalShrineText.Count; i++)
+            {
+                if (data.ShrineText[i].Length > OriginalShrineText[i].Length)
+                {
+                    throw new Exception($"Shrine text \"{data.ShrineText[i]}\" is too long.");
+                }
+                data.ShrineText[i] = data.ShrineText[i].PadRight(OriginalShrineText[i].Length, ' ');
+                
+                avatarBytesList.RemoveRange(OriginalShrineTextStartOffset[i], OriginalShrineText[i].Length);
+                avatarBytesList.InsertRange(OriginalShrineTextStartOffset[i], Encoding.ASCII.GetBytes(data.ShrineText[i]));
+
+            }
+            avatarBytes = avatarBytesList.ToArray();
         }
 
         public void Save()
         {
-            var avatarOut = new System.IO.BinaryWriter(new System.IO.FileStream("ULT\\AVATAR.EXE", System.IO.FileMode.OpenOrCreate));
+            var avatarOut = new System.IO.BinaryWriter(new System.IO.FileStream("ULT\\AVATAR.EXE", System.IO.FileMode.Truncate));
 
             avatarOut.Write(avatarBytes);
 
@@ -260,6 +299,8 @@ namespace U4DosRandomizer
         public static int ITEM_RUNE_SPIRITUALITY = 21;
         public static int ITEM_RUNE_HUMILITY = 22;
 
+        private static int SHRINE_TEXT_OFFSET = 0x16df2; 
+
         /*
          * https://github.com/ergonomy-joe/u4-decompiled/blob/master/SRC/U4_SRCH.C#L246
          * 0 - Mandrake
@@ -290,6 +331,9 @@ namespace U4DosRandomizer
          */
         private static int WHITE_STONE_LOCATION_TEXT = 0x17434;
         private static int BLACK_STONE_LOCATION_TEXT = 0x174F9;
+
+        private List<string> OriginalShrineText { get; set; }
+        private List<int> OriginalShrineTextStartOffset { get; set; }
     }
 }
 

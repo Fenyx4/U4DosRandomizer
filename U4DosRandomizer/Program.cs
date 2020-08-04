@@ -46,6 +46,9 @@ namespace U4DosRandomizer
 
             //WorldMap.MoveBuildings(worldMapUlt, ultimaData);
 
+            talk.Update(ultimaData);
+            talk.Save();
+
             avatar.Update(ultimaData);
             avatar.Save();
             
@@ -53,8 +56,7 @@ namespace U4DosRandomizer
             worldMap.WriteMapToOriginalFormat(worldFile);
             worldFile.Close();
 
-            talk.Update(ultimaData);
-            talk.Save();
+
 
             var image = worldMap.ToBitmap();
             //FileStream stream = new FileStream("worldMap.bmp", FileMode.Create);
