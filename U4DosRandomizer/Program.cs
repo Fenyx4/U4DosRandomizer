@@ -29,6 +29,9 @@ namespace U4DosRandomizer
             var avatar = new Avatar();
             avatar.Load(ultimaData);
 
+            var title = new Title();
+            title.Load(ultimaData);
+
             var talk = new Talk();
             talk.Load();
 
@@ -46,13 +49,16 @@ namespace U4DosRandomizer
 
             //WorldMap.MoveBuildings(worldMapUlt, ultimaData);
 
+            title.Update(ultimaData);
             talk.Update(ultimaData);
-            talk.Save();
-
             avatar.Update(ultimaData);
+
+            title.Save();
+            talk.Save();
             avatar.Save();
             
-            var worldFile = new System.IO.BinaryWriter(new System.IO.FileStream("WORLD.MAP", System.IO.FileMode.OpenOrCreate));
+            // TODO Move this to WorldMap so it is like the others
+            var worldFile = new System.IO.BinaryWriter(new System.IO.FileStream("ULT\\WORLD.MAP", System.IO.FileMode.OpenOrCreate));
             worldMap.WriteMapToOriginalFormat(worldFile);
             worldFile.Close();
 
@@ -293,11 +299,25 @@ namespace U4DosRandomizer
             loc.SetTile(9);
             ultimaData.Dungeons.Add(loc);
             validLocations.RemoveAt(randomIdx);
+
+            // Move starting positions to Towns
+            for (int i = 0; i < 8; i++)
+            {
+                var validPositions = worldMap.GetPathableTilesNear(ultimaData.Towns[i], 3, IsWalkable);
+                loc = validPositions[random.Next(0, validPositions.Count)];
+                ultimaData.StartingPositions[i].X = loc.X;
+                ultimaData.StartingPositions[i].Y = loc.Y;
+            }
         }
 
         private static bool IsWalkableGround(Tile coord)
         {
             return coord.GetTile() >= 3 && coord.GetTile() <= 7;
+        }
+
+        private static bool IsWalkable(Tile coord)
+        {
+            return (coord.GetTile() >= 3 && coord.GetTile() <= 7) || (coord.GetTile() >= 9 && coord.GetTile() <= 12);
         }
 
         private static bool IsGrass(Tile coord)

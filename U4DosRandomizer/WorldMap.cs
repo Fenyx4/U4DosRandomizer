@@ -190,7 +190,7 @@ namespace U4DosRandomizer
             var highPoints = new HashSet<Tile>();
             for (int riverNum = 0; riverNum < totalNumOfRivers; riverNum++)
             {
-                var randomPoint = FindRandomPointHigherThan(4, _worldMapTiles, random);
+                var randomPoint = FindRandomPointHigherThan(4, random);
 
                 // Track previous point so I can step back one when I find the highest point
                 var prevPoint = randomPoint;
@@ -329,7 +329,42 @@ namespace U4DosRandomizer
             return coordinate.GetTile() < 2;
         }
 
-        private static Tile FindRandomPointHigherThan(int tile, byte[,] worldMapUlt, Random random)
+        public List<Tile> GetTilesNear(Tile tile, int distance)
+        {
+            var results = new List<Tile>();
+            for(int x = -distance; x <= distance; x++)
+            {
+                for (int y = -distance; y <= distance; y++)
+                {
+                    int x_res = tile.X + x;
+                    int y_res = tile.Y + y;
+                    results.Add(new Tile(x_res, y_res, _worldMapTiles));
+                }
+            }
+
+            return results;
+        }
+
+        public List<Tile> GetPathableTilesNear(Tile tile, int distance, Func<Tile, bool> isWalkableGround)
+        {
+            var possibleTiles = GetTilesNear(tile, distance);
+            var results = new List<Tile>();
+
+            foreach(var possibleTile in possibleTiles)
+            {
+                if(Search.GetPath(SIZE, SIZE, new List<Tile> { possibleTile }, 
+                    m => m.Equals(tile),
+                    c => { return isWalkableGround(c); } ).Count > 0)
+                {
+                    results.Add(possibleTile);
+                }
+            }
+
+
+            return results;
+        }
+
+        private Tile FindRandomPointHigherThan(int tile, Random random)
         {
             Tile result = null;
             while (result == null)
@@ -337,9 +372,9 @@ namespace U4DosRandomizer
                 var x = random.Next(0, 256);
                 var y = random.Next(0, 256);
 
-                if (worldMapUlt[x, y] > tile)
+                if (_worldMapTiles[x, y] > tile)
                 {
-                    result = new Tile(x, y, worldMapUlt);
+                    result = new Tile(x, y, _worldMapTiles);
                 }
             }
 
