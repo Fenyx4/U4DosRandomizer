@@ -13,6 +13,7 @@ namespace U4DosRandomizer
         public List<Item> Items { get; set; }
         public List<string> ShrineText { get; set; }
         public List<Coordinate> StartingPositions { get; set; }
+        public List<string> LBText { get; internal set; }
 
         public UltimaData()
         {
@@ -25,6 +26,7 @@ namespace U4DosRandomizer
             Items = new List<Item>();
             ShrineText = new List<string>();
             StartingPositions = new List<Coordinate>();
+            LBText = new List<string>();
         }
     }
 }

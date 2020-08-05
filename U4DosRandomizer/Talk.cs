@@ -78,7 +78,7 @@ namespace U4DosRandomizer
             person.KeywordResponse2 = ReplaceSextantText(person.KeywordResponse2, GetSextantText(ultimaData.Items[Avatar.ITEM_NIGHTSHADE]));
 
             person = FindPerson("Virgil");
-            person.KeywordResponse2 = ReplaceSextantText(person.KeywordResponse2, GetSextantText(ultimaData.Towns[Avatar.LOC_MAGINCIA - 1]));
+            person.KeywordResponse2 = ReplaceSextantText(person.KeywordResponse2, GetSextantText(ultimaData.Towns[Avatar.LOC_MAGINCIA - Avatar.LOC_TOWNS]));
 
             // Mandrake
             // TODO make response descriptive
@@ -149,11 +149,22 @@ namespace U4DosRandomizer
             // TODO make response descriptive
             person = FindPerson("Sir Hrothgar");
             person.No = $"Thou should seek\nthe shrine of\nvalor at\n{GetSextantText(ultimaData.Shrines[Avatar.LOC_VALOR - Avatar.LOC_SHRINES])}!";
-            
+
             // --- End Shrines ---
 
             // --- Towns and Castles ---
-            // TODO Lord British gives locations for all the towns and castles
+            // TODO make response descriptive
+            ultimaData.LBText[3] = $"He says:\nMany truths can\nbe learned at\nthe Lycaeum.  It\nlies to the\n{CoordinateToCardinal(ultimaData.LCB[0], ultimaData.Castles[0])}!\n";
+            ultimaData.LBText[4] = $"He says:\nLook for the\nmeaning of Love\nat Empath Abbey.\nThe Abbey sits\n{CoordinateToCardinal(ultimaData.LCB[0], ultimaData.Castles[1])}!\n";
+            ultimaData.LBText[5] = $"\n\nHe says:\nSerpent's Castle\nto the {CoordinateToCardinal(ultimaData.LCB[0], ultimaData.Castles[2])}\nis where\nCourage should\nbe sought!\n";
+            ultimaData.LBText[6] = $"\nHe says:\nThe fair towne\nof Moonglow to\nthe {CoordinateToCardinal(ultimaData.LCB[0], ultimaData.Towns[Avatar.LOC_MOONGLOW-Avatar.LOC_TOWNS])} is\nwhere the virtue\nof Honesty\nthrives!\n";
+            ultimaData.LBText[7] = $"\n\nHe says:\nThe bards in\nBritain to the\n{CoordinateToCardinal(ultimaData.LCB[0], ultimaData.Towns[Avatar.LOC_BRITAIN - Avatar.LOC_TOWNS])}\nare well versed\nin\nCompassion!\n";
+            ultimaData.LBText[8] = $"\n\nHe says:\nMany valiant\nfighters come\nfrom Jhelom\nto the \n{CoordinateToCardinal(ultimaData.LCB[0], ultimaData.Towns[Avatar.LOC_JHELOM - Avatar.LOC_TOWNS])}!\n";
+            ultimaData.LBText[9] = $"\n\n\nHe says:\nIn the city of\nYew, to the\n{CoordinateToCardinal(ultimaData.LCB[0], ultimaData.Towns[Avatar.LOC_YEW - Avatar.LOC_TOWNS])}, \nJustice is\nserved!\n";
+            ultimaData.LBText[10] = $"\nHe says:\nMinoc, towne of\nself-sacrifice,\nlies {CoordinateToCardinal(ultimaData.LCB[0], ultimaData.Towns[Avatar.LOC_MINOC - Avatar.LOC_TOWNS])}!\n";
+            ultimaData.LBText[11] = $"\nHe says:\nThe Paladins who\nstrive for Honor\nare oft seen in\nTrinsic, to the {CoordinateToCardinal(ultimaData.LCB[0], ultimaData.Towns[Avatar.LOC_TRINSIC - Avatar.LOC_TOWNS])}!\n";
+            ultimaData.LBText[12] = $"\nHe says:\nIn Skara Brae\nthe Spiritual\npath is taught.\nFind it to the\n{CoordinateToCardinal(ultimaData.LCB[0], ultimaData.Towns[Avatar.LOC_SKARA - Avatar.LOC_TOWNS])}!\n";
+            ultimaData.LBText[13] = $"\n\n\nHe says:\nHumility is the\nfoundation of\nVirtue!  The\nruins of proud\nMagincia are a\ntestimony unto\nthe Virtue of\nHumility!\n\nFind the Ruins\nof Magincia to\nthe {CoordinateToCardinal(ultimaData.LCB[0], ultimaData.Towns[Avatar.LOC_MAGINCIA - Avatar.LOC_TOWNS])}!\n";
 
             // --- End Towns and Castles ---
 
@@ -175,6 +186,27 @@ namespace U4DosRandomizer
             var rx = new Regex("lat-[A-Z]'[A-Z]\".long-[A-Z]'[A-Z]\"", RegexOptions.IgnoreCase | RegexOptions.Singleline);
             var result = rx.Replace(text, latLong);
             return result;
+        }
+
+        public static string CoordinateToCardinal(ICoordinate origin, ICoordinate destination)
+        {
+            //var distanceSquared = ((destination.X - origin.X) * (destination.X - origin.X) + (destination.Y - origin.Y) * (destination.Y - origin.Y));
+            var delta_x = destination.X - origin.X;
+            var delta_y = destination.Y - origin.Y;
+            var radians = Math.Atan2(delta_y, delta_x);
+
+            radians -= (3 * Math.PI) / 2;
+            while (radians < 0)
+            {
+                radians += 2 * Math.PI;
+            }
+
+            double degrees = (180 / Math.PI) * radians;
+
+            //https://gist.github.com/adrianstevens/8163205
+            string[] cardinals = { "north", "northeast", "east", "southeast", "south", "southwest", "west", "northwest", "north" };
+            //var idx = (int)Math.Round(((double)radians % (Math.PI * 2) / (Math.PI / 4)));
+            return cardinals[(int)Math.Round(((double)degrees % 360) / 45)];
         }
 
         private Person FindPerson(string name)

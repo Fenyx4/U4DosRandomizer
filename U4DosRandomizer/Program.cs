@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Drawing2D;
@@ -40,12 +40,25 @@ namespace U4DosRandomizer
 
             //Completely random location placements of buildings still. Just trying to make sure I'm editing the files correctly right now. Not looking for a cohesive map that makes sense.
             RandomizeLocations(ultimaData, worldMap, random);
-            // TODO: Change starting locations for new characters to match towns
+            
+            // TODO: Pirate ship locations
+            // TODO: Special Stygian Abyss
+            // TODO: Special Hythloth?
+            // TODO: Balloon location
 
             Console.WriteLine(Talk.GetSextantText(ultimaData.LCB[0]));
 
             RandomizeItems(ultimaData, worldMap, random);
 
+            //var origin = new Coordinate() { X = 100, Y = 100 };
+            //Console.WriteLine($"North: {Talk.CoordinateToCardinal(origin, new Coordinate() { X = 100, Y = 99 })}");
+            //Console.WriteLine($"East: {Talk.CoordinateToCardinal(origin, new Coordinate() { X = 101, Y = 100 })}");
+            //Console.WriteLine($"South: {Talk.CoordinateToCardinal(origin, new Coordinate() { X = 100, Y = 101 })}");
+            //Console.WriteLine($"West: {Talk.CoordinateToCardinal(origin, new Coordinate() { X = 99, Y = 100 })}");
+            //Console.WriteLine($"Northeast: {Talk.CoordinateToCardinal(origin, new Coordinate() { X = 101, Y = 99 })}");
+            //Console.WriteLine($"Southeast: {Talk.CoordinateToCardinal(origin, new Coordinate() { X = 101, Y = 101 })}");
+            //Console.WriteLine($"Southwest: {Talk.CoordinateToCardinal(origin, new Coordinate() { X = 99, Y = 101 })}");
+            //Console.WriteLine($"Northwest: {Talk.CoordinateToCardinal(origin, new Coordinate() { X = 99, Y = 99 })}");
 
             //WorldMap.MoveBuildings(worldMapUlt, ultimaData);
 

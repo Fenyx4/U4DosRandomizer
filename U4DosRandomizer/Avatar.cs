@@ -64,9 +64,31 @@ namespace U4DosRandomizer
                 }
                 textOffset++;
             }
-
             data.ShrineText.Clear();
             data.ShrineText.AddRange(OriginalShrineText);
+
+            OriginalLBText = new List<string>();
+            OriginalLBTextStartOffset = new List<int>();
+            var lbTextBytes = new List<byte>();
+            textOffset = LB_TEXT_OFFSET;
+            // He has more text than 19 but there is some weird stuff after 19 that doesn't get turned into text well. And as far as I can tell we won't need any text after 19
+            for (int i = 0; i < 19; i++)
+            {
+                OriginalLBTextStartOffset.Add(textOffset);
+                for (; avatarBytes[textOffset] != 0x00 && avatarBytes[textOffset] != 0xAB; textOffset++)
+                {
+                    lbTextBytes.Add(avatarBytes[textOffset]);
+                }
+                OriginalLBText.Add(System.Text.Encoding.Default.GetString(lbTextBytes.ToArray()));
+                lbTextBytes.Clear();
+                if (avatarBytes[textOffset] == 0x0A || avatarBytes[textOffset] == 0xAB)
+                {
+                    textOffset++;
+                }
+                textOffset++;
+            }
+            data.LBText.Clear();
+            data.LBText.AddRange(OriginalLBText);
 
         }
 
@@ -158,6 +180,19 @@ namespace U4DosRandomizer
                 avatarBytesList.InsertRange(OriginalShrineTextStartOffset[i], Encoding.ASCII.GetBytes(data.ShrineText[i]));
 
             }
+
+            for (int i = 0; i < OriginalLBText.Count; i++)
+            {
+                if (data.LBText[i].Length > OriginalLBText[i].Length)
+                {
+                    throw new Exception($"LB text \"{data.LBText[i]}\" is too long.");
+                }
+                data.LBText[i] = data.LBText[i].PadRight(OriginalLBText[i].Length, ' ');
+
+                avatarBytesList.RemoveRange(OriginalLBTextStartOffset[i], OriginalLBText[i].Length);
+                avatarBytesList.InsertRange(OriginalLBTextStartOffset[i], Encoding.ASCII.GetBytes(data.LBText[i]));
+
+            }
             avatarBytes = avatarBytesList.ToArray();
         }
 
@@ -165,9 +200,13 @@ namespace U4DosRandomizer
         {
             var avatarOut = new System.IO.BinaryWriter(new System.IO.FileStream("ULT\\AVATAR.EXE", System.IO.FileMode.Truncate));
 
+            var avatarOut2 = new System.IO.BinaryWriter(new System.IO.FileStream("ULT\\AVATAR.bin", System.IO.FileMode.Truncate));
+
             avatarOut.Write(avatarBytes);
+            avatarOut2.Write(avatarBytes);
 
             avatarOut.Close();
+            avatarOut2.Close();
         }
 
         // https://wiki.ultimacodex.com/wiki/Ultima_IV_Internal_Formats#AVATAR.EXE
@@ -183,19 +222,19 @@ namespace U4DosRandomizer
         private static int LOC_EMPATH = 0x03;
         private static int LOC_SERPENT = 0x04;
 
-        private static int LOC_TOWNS = 0x05;
-        private static int LOC_MOONGLOW = 0x05;
-        private static int LOC_BRITAIN = 0x06;
-        private static int LOC_JHELOM = 0x07;
-        private static int LOC_YEW = 0x08;
-        private static int LOC_MINOC = 0x09;
-        private static int LOC_TRINSIC = 0x0a;
-        private static int LOC_SKARA = 0x0b;
+        public static int LOC_TOWNS = 0x05;
+        public static int LOC_MOONGLOW = 0x05;
+        public static int LOC_BRITAIN = 0x06;
+        public static int LOC_JHELOM = 0x07;
+        public static int LOC_YEW = 0x08;
+        public static int LOC_MINOC = 0x09;
+        public static int LOC_TRINSIC = 0x0a;
+        public static int LOC_SKARA = 0x0b;
         public static int LOC_MAGINCIA = 0x0c;
-        private static int LOC_PAWS = 0x0d;
-        private static int LOC_DEN = 0x0e;
-        private static int LOC_VESPER = 0x0f;
-        private static int LOC_COVE = 0x10;
+        public static int LOC_PAWS = 0x0d;
+        public static int LOC_DEN = 0x0e;
+        public static int LOC_VESPER = 0x0f;
+        public static int LOC_COVE = 0x10;
 
         private static int LOC_DUNGEONS = 0x11;
         private static int LOC_DECEIT = 0x11;
@@ -298,9 +337,6 @@ namespace U4DosRandomizer
         public static int ITEM_RUNE_HONOR = 20;
         public static int ITEM_RUNE_SPIRITUALITY = 21;
         public static int ITEM_RUNE_HUMILITY = 22;
-
-        private static int SHRINE_TEXT_OFFSET = 0x16df2; 
-
         /*
          * https://github.com/ergonomy-joe/u4-decompiled/blob/master/SRC/U4_SRCH.C#L246
          * 0 - Mandrake
@@ -329,11 +365,17 @@ namespace U4DosRandomizer
          * 23 - ??
          * All runes on the surface are bugged to be Great Stygian Abyss. I'll figure out which are which later although it doesn't really matter. They just have to be located in the right town.
          */
+
+        private static int LB_TEXT_OFFSET = 0x156ca;
+        private static int SHRINE_TEXT_OFFSET = 0x16df2;
+
         private static int WHITE_STONE_LOCATION_TEXT = 0x17434;
         private static int BLACK_STONE_LOCATION_TEXT = 0x174F9;
 
         private List<string> OriginalShrineText { get; set; }
         private List<int> OriginalShrineTextStartOffset { get; set; }
+        public List<string> OriginalLBText { get; private set; }
+        public List<int> OriginalLBTextStartOffset { get; private set; }
     }
 }
 
