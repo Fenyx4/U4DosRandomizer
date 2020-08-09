@@ -90,6 +90,11 @@ namespace U4DosRandomizer
             data.LBText.Clear();
             data.LBText.AddRange(OriginalLBText);
 
+            data.DaemonSpawnX1 = avatarBytes[DEMON_SPAWN_TRIGGER_X1_OFFSET];
+            data.DaemonSpawnX2 = avatarBytes[DEMON_SPAWN_TRIGGER_X2_OFFSET];
+            data.DaemonSpawnY1 = avatarBytes[DEMON_SPAWN_TRIGGER_Y1_OFFSET];
+            data.DaemonSpawnY2 = avatarBytes[DEMON_SPAWN_TRIGGER_Y2_OFFSET];
+            data.DaemonSpawnLocationX = avatarBytes[DEMON_SPAWN_LOCATION_X_OFFSET];
         }
 
         public Dictionary<string, string> ReadHashes()
@@ -194,6 +199,12 @@ namespace U4DosRandomizer
 
             }
             avatarBytes = avatarBytesList.ToArray();
+
+            avatarBytes[DEMON_SPAWN_TRIGGER_X1_OFFSET] = data.DaemonSpawnX1;
+            avatarBytes[DEMON_SPAWN_TRIGGER_X2_OFFSET] = data.DaemonSpawnX2;
+            avatarBytes[DEMON_SPAWN_TRIGGER_Y1_OFFSET] = data.DaemonSpawnY1;
+            avatarBytes[DEMON_SPAWN_TRIGGER_Y2_OFFSET] = data.DaemonSpawnY2;
+            avatarBytes[DEMON_SPAWN_LOCATION_X_OFFSET] = data.DaemonSpawnLocationX;
         }
 
         public void Save()
@@ -371,6 +382,12 @@ namespace U4DosRandomizer
 
         private static int WHITE_STONE_LOCATION_TEXT = 0x17434;
         private static int BLACK_STONE_LOCATION_TEXT = 0x174F9;
+
+        private static int DEMON_SPAWN_TRIGGER_X1_OFFSET = 0x2F17;
+        private static int DEMON_SPAWN_TRIGGER_X2_OFFSET = 0x2F1E;
+        private static int DEMON_SPAWN_TRIGGER_Y1_OFFSET = 0x2F25;
+        private static int DEMON_SPAWN_TRIGGER_Y2_OFFSET = 0x2F2C;
+        private static int DEMON_SPAWN_LOCATION_X_OFFSET = 0x29EA;
 
         private List<string> OriginalShrineText { get; set; }
         private List<int> OriginalShrineTextStartOffset { get; set; }

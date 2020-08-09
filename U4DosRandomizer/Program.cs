@@ -161,6 +161,32 @@ namespace U4DosRandomizer
             return result;
         }
 
+        private static bool GoodForHumility(WorldMap worldMap, ICoordinate coordinate)
+        {
+            var result = true;
+            for (int y = -4; y <= 1; y++)
+            {
+                for (int x = -1; x <= 1; x++)
+                {
+                    result = result && worldMap.GetCoordinate(coordinate.X + x, coordinate.Y + y).GetTile() == 8;
+                }
+            }
+
+            var entrance = worldMap.GetCoordinate(coordinate.X, coordinate.Y - 5);
+
+            result = result && IsWalkable(entrance);
+
+            if (result)
+            {
+                // Make sure we can reach it by boat or balloon
+                var path = Search.GetPath(256, 256, new List<Tile>() { entrance }, IsGrassOrSailable, IsWalkableOrSailable, null);
+
+                result = result && path.Count > 0;
+            }
+
+            return result;
+        }
+
         private static void RandomizeLocations(UltimaData ultimaData, WorldMap worldMap, Random random)
         {
             // LCB
@@ -236,11 +262,27 @@ namespace U4DosRandomizer
             ultimaData.Shrines.Add(null); // Empty spot for spirit
             loc = RandomizeLocation(random, 30, worldMap, IsWalkableGround);
             ultimaData.Shrines.Add(loc);
-            loc = RandomizeLocation(random, 30, worldMap, IsWalkableGround);
+            //loc = RandomizeLocation(random, 30, worldMap, IsWalkableGround);
+            //ultimaData.Shrines.Add(loc);
+            // TODO: Shrine prettier
+            var possibleLocations = worldMap.GetAllMatchingTiles(c => GoodForHumility(worldMap, c));
+            loc = possibleLocations[random.Next(0, possibleLocations.Count)];
+            loc.SetTile(30);
             ultimaData.Shrines.Add(loc);
-            // TODO: Shrine of humility hordes of daemons
+            for(int y = -4; y < 0; y++)
+            {
+                worldMap.GetCoordinate(loc.X, loc.Y + y).SetTile(7);
+            }
+            ultimaData.DaemonSpawnLocationX = loc.X;
+            ultimaData.DaemonSpawnX1 = WorldMap.Wrap(loc.X - 1);
+            ultimaData.DaemonSpawnX2 = WorldMap.Wrap(loc.X + 1);
+            ultimaData.DaemonSpawnY1 = WorldMap.Wrap(loc.Y - 4);
+            ultimaData.DaemonSpawnY2 = WorldMap.Wrap(loc.Y + 1);
+
+
 
             // Moongates
+            // TODO: Put Near towns
             loc = RandomizeLocation(random, 4, worldMap, IsGrass);
             ultimaData.Moongates.Add(loc);
             loc = RandomizeLocation(random, 4, worldMap, IsGrass);
@@ -331,6 +373,16 @@ namespace U4DosRandomizer
         private static bool IsWalkable(Tile coord)
         {
             return (coord.GetTile() >= 3 && coord.GetTile() <= 7) || (coord.GetTile() >= 9 && coord.GetTile() <= 12);
+        }
+
+        private static bool IsWalkableOrSailable(Tile coord)
+        {
+            return (coord.GetTile() >= 3 && coord.GetTile() <= 7) || (coord.GetTile() >= 9 && coord.GetTile() <= 12) || coord.GetTile() == 0 || coord.GetTile() == 1;
+        }
+
+        private static bool IsGrassOrSailable(Tile coord)
+        {
+            return coord.GetTile() == 4 || coord.GetTile() == 0 || coord.GetTile() == 1;
         }
 
         private static bool IsGrass(Tile coord)

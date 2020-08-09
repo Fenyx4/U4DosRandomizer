@@ -14,6 +14,11 @@ namespace U4DosRandomizer
         public List<string> ShrineText { get; set; }
         public List<Coordinate> StartingPositions { get; set; }
         public List<string> LBText { get; internal set; }
+        public byte DaemonSpawnX1 { get; internal set; }
+        public byte DaemonSpawnX2 { get; internal set; }
+        public byte DaemonSpawnY1 { get; internal set; }
+        public byte DaemonSpawnY2 { get; internal set; }
+        public byte DaemonSpawnLocationX { get; internal set; }
 
         public UltimaData()
         {
