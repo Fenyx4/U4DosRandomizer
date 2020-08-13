@@ -43,8 +43,6 @@ namespace U4DosRandomizer
             
             // TODO: Pirate ship locations
             // TODO: Special Stygian Abyss
-            // TODO: Special Hythloth?
-            // TODO: Balloon location
 
             Console.WriteLine(Talk.GetSextantText(ultimaData.LCB[0]));
 
@@ -127,7 +125,7 @@ namespace U4DosRandomizer
             ApplyShape(worldMap, loc, "shapes\\white");
         }
 
-        private static void ApplyShape(WorldMap worldMap, Tile loc, string file)
+        private static void ApplyShape(WorldMap worldMap, ICoordinate loc, string file)
         {
             var shape = new System.IO.FileStream($"{file}", System.IO.FileMode.Open);
             var length = shape.ReadByte();
@@ -140,7 +138,10 @@ namespace U4DosRandomizer
                 {
                     var idx = x + y * length;
                     var tile = shapeBytes[idx];
-                    worldMap.GetCoordinate(loc.X - radius + x, loc.Y - radius + y).SetTile(tile);
+                    if (tile != 0xFF)
+                    {
+                        worldMap.GetCoordinate(loc.X - radius + x, loc.Y - radius + y).SetTile(tile);
+                    }
                 }
             }
         }
@@ -189,6 +190,33 @@ namespace U4DosRandomizer
 
         private static void RandomizeLocations(UltimaData ultimaData, WorldMap worldMap, Random random)
         {
+            // Lay down Stygian Abyss first so it doesn't stomp on other things
+            // TODO: Make the entrance to the Abyss more random instead of laying down what is in the base game
+            // Find a reasonable mountainous area
+            var possibleLocations = worldMap.GetAllMatchingTiles(c => AreaIsAll(worldMap, 8, 3, c));
+            var stygian = possibleLocations[random.Next(0, possibleLocations.Count)];
+            // Get a path from the entrance to water
+            var entranceToStygian = worldMap.GetCoordinate(stygian.X - 14, stygian.Y - 9);
+            var entrancePathToWater = worldMap.GetRiverPath(entranceToStygian, c => { return c.GetTile() == 0; } );
+            var shapeLoc = new Coordinate(stygian.X - 2, stygian.Y - 7);
+            ApplyShape(worldMap, shapeLoc, "shapes\\abyss");
+
+            for (int i = 0; i < entrancePathToWater.Count; i++)
+            {
+                worldMap.GetCoordinate(entrancePathToWater[i].X, entrancePathToWater[i].Y).SetTile(0x01);
+            }
+
+            //Pirate Cove - Set locations based off Stygian location
+            var originalX = 0xe9; // Original Stygian location
+            var originalY = 0xe9;
+            for (var i = 0; i < ultimaData.PirateCove.Count; i++)
+            {
+                ultimaData.PirateCove[i].X = Convert.ToByte(ultimaData.PirateCove[i].X - originalX + stygian.X);
+                ultimaData.PirateCove[i].Y = Convert.ToByte(ultimaData.PirateCove[i].Y - originalY + stygian.Y);
+            }
+            ultimaData.PirateCoveSpawnTrigger = new Coordinate(ultimaData.PirateCoveSpawnTrigger.X - originalX + stygian.X, ultimaData.PirateCoveSpawnTrigger.Y - originalY + stygian.Y);
+            //worldMap.GetCoordinate(ultimaData.PirateCoveSpawnTrigger.X, ultimaData.PirateCoveSpawnTrigger.Y).SetTile(96);
+
             // LCB
             var placed = false;
             while (!placed)
@@ -265,7 +293,7 @@ namespace U4DosRandomizer
             //loc = RandomizeLocation(random, 30, worldMap, IsWalkableGround);
             //ultimaData.Shrines.Add(loc);
             // TODO: Shrine prettier
-            var possibleLocations = worldMap.GetAllMatchingTiles(c => GoodForHumility(worldMap, c));
+            possibleLocations = worldMap.GetAllMatchingTiles(c => GoodForHumility(worldMap, c));
             loc = possibleLocations[random.Next(0, possibleLocations.Count)];
             loc.SetTile(30);
             ultimaData.Shrines.Add(loc);
@@ -342,18 +370,37 @@ namespace U4DosRandomizer
             ultimaData.Dungeons.Add(loc);
             validLocations.RemoveAt(randomIdx);
 
-            randomIdx = random.Next(0, validLocations.Count);
-            loc = validLocations[randomIdx];
+            // special for Hythloth
+            // TODO: Hythloth prettier
+            possibleLocations = worldMap.GetAllMatchingTiles(c => AreaIsAll(worldMap, 8, 4, c));
+            loc = possibleLocations[random.Next(0, possibleLocations.Count)];
+            var path = Search.GetPath(WorldMap.SIZE, WorldMap.SIZE, new List<Tile>() { loc }, 
+                // Move at least 9 spaces away from from the entrance
+                c => { return 9 * 9 <= WorldMap.DistanceSquared(c, loc); },
+                // Only valid if all neighbors all also mountains
+                c => { return c.GetTile() == 8 && c.NeighborAndAdjacentCoordinates().All(n => n.GetTile() == 8); }, 
+                worldMap.GoDownhillHueristic);
+            for (int i = 0; i < 3; i++)
+            {
+                path[i].SetTile(4);
+            }
+            for (int i = 3; i < path.Count; i++)
+            {
+                path[i].SetTile(7);
+            }
             loc.SetTile(9);
+            //for(int i = 0; i < path.Count; i++)
+            //{
+            //    path[i].SetTile(WorldMap.Wrap( 96 + i));
+            //}
             ultimaData.Dungeons.Add(loc);
-            validLocations.RemoveAt(randomIdx);
+            ultimaData.BalloonSpawn = path.Last();
 
-            // TODO: Something special for Stygian Abyss
-            randomIdx = random.Next(0, validLocations.Count);
-            loc = validLocations[randomIdx];
-            loc.SetTile(9);
-            ultimaData.Dungeons.Add(loc);
-            validLocations.RemoveAt(randomIdx);
+
+            validLocations = worldMap.FindAllByPattern(pattern);
+
+            // Stygian Abyss
+            ultimaData.Dungeons.Add(stygian);
 
             // Move starting positions to Towns
             for (int i = 0; i < 8; i++)

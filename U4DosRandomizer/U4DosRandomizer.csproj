@@ -25,6 +25,9 @@
     <None Update="hashes\title_hash.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Update="shapes\abyss">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Update="shapes\bell">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
