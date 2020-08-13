@@ -157,7 +157,7 @@ namespace U4DosRandomizer
             ultimaData.LBText[3] = $"He says:\nMany truths can\nbe learned at\nthe Lycaeum.  It\nlies to the\n{CoordinateToCardinal(ultimaData.LCB[0], ultimaData.Castles[0])}!\n";
             ultimaData.LBText[4] = $"He says:\nLook for the\nmeaning of Love\nat Empath Abbey.\nThe Abbey sits\n{CoordinateToCardinal(ultimaData.LCB[0], ultimaData.Castles[1])}!\n";
             ultimaData.LBText[5] = $"\n\nHe says:\nSerpent's Castle\nto the {CoordinateToCardinal(ultimaData.LCB[0], ultimaData.Castles[2])}\nis where\nCourage should\nbe sought!\n";
-            ultimaData.LBText[6] = $"\nHe says:\nThe fair towne\nof Moonglow to\nthe {CoordinateToCardinal(ultimaData.LCB[0], ultimaData.Towns[Avatar.LOC_MOONGLOW-Avatar.LOC_TOWNS])} is\nwhere the virtue\nof Honesty\nthrives!\n";
+            ultimaData.LBText[6] = $"\nHe says:\nThe towne\nof Moonglow to\nthe {CoordinateToCardinal(ultimaData.LCB[0], ultimaData.Towns[Avatar.LOC_MOONGLOW-Avatar.LOC_TOWNS])} is\nwhere the virtue\nof Honesty\nthrives!\n";
             ultimaData.LBText[7] = $"\n\nHe says:\nThe bards in\nBritain to the\n{CoordinateToCardinal(ultimaData.LCB[0], ultimaData.Towns[Avatar.LOC_BRITAIN - Avatar.LOC_TOWNS])}\nare well versed\nin\nCompassion!\n";
             ultimaData.LBText[8] = $"\n\nHe says:\nMany valiant\nfighters come\nfrom Jhelom\nto the \n{CoordinateToCardinal(ultimaData.LCB[0], ultimaData.Towns[Avatar.LOC_JHELOM - Avatar.LOC_TOWNS])}!\n";
             ultimaData.LBText[9] = $"\n\n\nHe says:\nIn the city of\nYew, to the\n{CoordinateToCardinal(ultimaData.LCB[0], ultimaData.Towns[Avatar.LOC_YEW - Avatar.LOC_TOWNS])}, \nJustice is\nserved!\n";
