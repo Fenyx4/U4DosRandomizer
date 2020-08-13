@@ -9,5 +9,17 @@ namespace U4DosRandomizer
         public byte X { get; set; }
 
         public byte Y { get; set; }
-    }
+
+		public Coordinate(byte x, byte y)
+		{
+			this.X = x;
+			this.Y = y;
+		}
+
+		public Coordinate(int x, int y)
+		{
+			this.X = WorldMap.Wrap(x);
+			this.Y = WorldMap.Wrap(y);
+		}
+	}
 }

@@ -39,7 +39,7 @@ namespace U4DosRandomizer
 
             for (int offset = 0; offset < 8; offset++)
             {
-                data.StartingPositions.Add(new Coordinate() { X = titleBytes[START_X_OFFSET + offset], Y = titleBytes[START_Y_OFFSET + offset] });
+                data.StartingPositions.Add(new Coordinate(titleBytes[START_X_OFFSET + offset], titleBytes[START_Y_OFFSET + offset]));
             }
         }
 

@@ -18,8 +18,8 @@ namespace U4DosRandomizer
 
 		public Tile(int x, int y, byte[,] tiles)
 		{
-			this.X = Convert.ToByte(x);
-			this.Y = Convert.ToByte(y);
+			this.X = Wrap(x);
+			this.Y = Wrap(y);
 			this.Tiles = tiles;
 		}
 
@@ -53,6 +53,21 @@ namespace U4DosRandomizer
 			neighbors[1] = new Tile(Wrap(X + 1), Y, Tiles);
 			neighbors[2] = new Tile(X, Wrap(Y - 1), Tiles);
 			neighbors[3] = new Tile(X, Wrap(Y + 1), Tiles);
+
+			return neighbors;
+		}
+
+		public IEnumerable<Tile> NeighborAndAdjacentCoordinates()
+		{
+			Tile[] neighbors = new Tile[8];
+			neighbors[0] = new Tile(Wrap(X - 1), Y, Tiles);
+			neighbors[1] = new Tile(Wrap(X + 1), Y, Tiles);
+			neighbors[2] = new Tile(X, Wrap(Y - 1), Tiles);
+			neighbors[3] = new Tile(X, Wrap(Y + 1), Tiles);
+			neighbors[4] = new Tile(Wrap(X - 1), Wrap(Y - 1), Tiles);
+			neighbors[5] = new Tile(Wrap(X + 1), Wrap(Y - 1), Tiles);
+			neighbors[6] = new Tile(Wrap(X - 1), Wrap(Y - 1), Tiles);
+			neighbors[7] = new Tile(Wrap(X + 1), Wrap(Y + 1), Tiles);
 
 			return neighbors;
 		}

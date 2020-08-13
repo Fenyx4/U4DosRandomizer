@@ -19,6 +19,9 @@ namespace U4DosRandomizer
         public byte DaemonSpawnY1 { get; internal set; }
         public byte DaemonSpawnY2 { get; internal set; }
         public byte DaemonSpawnLocationX { get; internal set; }
+        public ICoordinate BalloonSpawn { get; internal set; }
+        public List<Coordinate> PirateCove { get; internal set; }
+        public Coordinate PirateCoveSpawnTrigger { get; internal set; }
 
         public UltimaData()
         {
@@ -32,6 +35,7 @@ namespace U4DosRandomizer
             ShrineText = new List<string>();
             StartingPositions = new List<Coordinate>();
             LBText = new List<string>();
+            PirateCove = new List<Coordinate>();
         }
     }
 }

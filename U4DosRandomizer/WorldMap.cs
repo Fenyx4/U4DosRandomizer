@@ -128,6 +128,13 @@ namespace U4DosRandomizer
             AddSwamp();
         }
 
+        public static int DistanceSquared(ICoordinate destination, ICoordinate origin)
+        {
+            var distanceSquared = ((destination.X - origin.X) * (destination.X - origin.X) + (destination.Y - origin.Y) * (destination.Y - origin.Y));
+
+            return distanceSquared;
+        }
+
         private void RemoveSingleTiles()
         {
             for (int x = 0; x < 256; x++)
@@ -222,43 +229,13 @@ namespace U4DosRandomizer
             foreach (var highPoint in highPoints)
             {
                 // find shortest path
-                var path = Search.GetPath(WorldMap.SIZE, WorldMap.SIZE, new List<Tile> { highPoint }, IsCoordinateWater, delegate { return true; }, FindWaterHueristic);
+                List<Tile> path = GetRiverPath(highPoint, IsCoordinateWater);
                 paths.Add(path);
-                //List<Point> pathToWater = new List<Point>();
-                //pathToWater.Add(highPoint);
-                //var currPoint = highPoint;
-                //var foundWater = false;
-                //Point lastDirection = new Point(0, 1);
-                //while(!foundWater)
-                //{
-                //    var lowestDirection = surroundingPoints.OrderBy(p => worldMapDS[Wrap(currPoint.X + (p.X)), Wrap(currPoint.Y + (p.Y))]).First();
-                //    var lowestPoint = new Point(Wrap(currPoint.X + (lowestDirection.X)), Wrap(currPoint.Y + (lowestDirection.Y)));
-
-                //    if (//worldMapDS[currPoint.X, currPoint.Y] >= worldMapDS[lowestPoint.X, lowestPoint.Y] &&
-                //        !pathToWater.Contains(lowestPoint))
-                //    {
-                //        lastDirection = lowestDirection;
-                //    }
-                //    // Else keep moving in the same direction as last time
-
-                //    int distance = Math.Abs(lastDirection.X != 0 ? lastDirection.X : lastDirection.Y);
-                //    currPoint = new Point(Wrap(currPoint.X + lastDirection.X / distance), Wrap(currPoint.Y + lastDirection.Y / distance));
-                //    pathToWater.Add(currPoint);
-
-                //    if (worldMapUlt[currPoint.X, currPoint.Y] < 3)
-                //    {
-                //        foundWater = true;
-                //    }
-
-                //    worldMapUlt[currPoint.X, currPoint.Y] = 0x70;
-                //}
-
-                //paths.Add(pathToWater);
             }
 
             foreach (var path in paths)
             {
-                //Choose ransom spot along the path for the headwater
+                //Choose random spot along the path for the headwater
                 //var start = random.Next(0, path.Count);
                 // That is weighted towards the start of the path
                 var max = path.Count - 10;
@@ -278,6 +255,11 @@ namespace U4DosRandomizer
             // TODO: Surround all rivers with scrub and/or swamps?
 
             return;
+        }
+
+        public List<Tile> GetRiverPath(Tile startTile, IsNodeValid matchesGoal)
+        {
+            return Search.GetPath(WorldMap.SIZE, WorldMap.SIZE, new List<Tile> { startTile }, matchesGoal, delegate { return true; }, GoDownhillHueristic);
         }
 
         public List<Tile> FindAllByPattern(int[,] pattern)
@@ -311,7 +293,7 @@ namespace U4DosRandomizer
         }
 
         //public delegate float NodeHuersticValue(Coordinate coord, IsNodeValid matchesGoal);
-        private float FindWaterHueristic(Tile coord, IsNodeValid matchesGoal)
+        public float GoDownhillHueristic(Tile coord, IsNodeValid matchesGoal)
         {
             if( matchesGoal(coord))
             { 

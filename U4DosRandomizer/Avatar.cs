@@ -95,6 +95,13 @@ namespace U4DosRandomizer
             data.DaemonSpawnY1 = avatarBytes[DEMON_SPAWN_TRIGGER_Y1_OFFSET];
             data.DaemonSpawnY2 = avatarBytes[DEMON_SPAWN_TRIGGER_Y2_OFFSET];
             data.DaemonSpawnLocationX = avatarBytes[DEMON_SPAWN_LOCATION_X_OFFSET];
+
+            for(int i = 0; i < 8; i++)
+            {
+                data.PirateCove.Add(new Coordinate(avatarBytes[i + PIRATE_COVE_X_OFFSET], avatarBytes[i + PIRATE_COVE_Y_OFFSET]));
+            }
+
+            data.PirateCoveSpawnTrigger = new Coordinate(avatarBytes[PIRATE_COVE_SPAWN_TRIGGER_X_OFFSET1], avatarBytes[PIRATE_COVE_SPAWN_TRIGGER_Y_OFFSET1]);
         }
 
         public Dictionary<string, string> ReadHashes()
@@ -172,6 +179,14 @@ namespace U4DosRandomizer
                 avatarBytes[AREA_Y_OFFSET + LOC_DUNGEONS + offset - 1] = data.Dungeons[offset].Y;
             }
 
+            avatarBytes[BALLOON_SPAWN_TRIGGER_X_OFFSET] = data.Dungeons[data.Dungeons.Count - 2].X;
+            avatarBytes[BALLOON_SPAWN_TRIGGER_Y_OFFSET] = data.Dungeons[data.Dungeons.Count - 2].Y;
+            avatarBytes[LBC_DUNGEON_EXIT_X_OFFSET] = data.Dungeons[data.Dungeons.Count - 2].X;
+            avatarBytes[LBC_DUNGEON_EXIT_Y_OFFSET] = data.Dungeons[data.Dungeons.Count - 2].Y;
+
+            avatarBytes[BALLOON_SPAWN_LOCATION_X_OFFSET] = data.BalloonSpawn.X;
+            avatarBytes[BALLOON_SPAWN_LOCATION_Y_OFFSET] = data.BalloonSpawn.Y;
+
             var avatarBytesList = new List<byte>(avatarBytes);
             for (int i = 0; i < OriginalShrineText.Count; i++)
             {
@@ -205,6 +220,18 @@ namespace U4DosRandomizer
             avatarBytes[DEMON_SPAWN_TRIGGER_Y1_OFFSET] = data.DaemonSpawnY1;
             avatarBytes[DEMON_SPAWN_TRIGGER_Y2_OFFSET] = data.DaemonSpawnY2;
             avatarBytes[DEMON_SPAWN_LOCATION_X_OFFSET] = data.DaemonSpawnLocationX;
+
+            for(int i = 0; i < data.PirateCove.Count; i++)
+            {
+                avatarBytes[PIRATE_COVE_X_OFFSET + i] = data.PirateCove[i].X;
+                avatarBytes[PIRATE_COVE_Y_OFFSET + i] = data.PirateCove[i].Y;
+            }
+
+            avatarBytes[PIRATE_COVE_SPAWN_TRIGGER_X_OFFSET1] = data.PirateCoveSpawnTrigger.X;
+            avatarBytes[PIRATE_COVE_SPAWN_TRIGGER_Y_OFFSET1] = data.PirateCoveSpawnTrigger.Y;
+            avatarBytes[PIRATE_COVE_SPAWN_TRIGGER_X_OFFSET2] = data.PirateCoveSpawnTrigger.X;
+            avatarBytes[PIRATE_COVE_SPAWN_TRIGGER_Y_OFFSET2] = data.PirateCoveSpawnTrigger.Y;
+            
         }
 
         public void Save()
@@ -303,7 +330,11 @@ namespace U4DosRandomizer
          */
         private static int PIRATE_COVE_X_OFFSET = 0x0fba9; // length 8
         private static int PIRATE_COVE_Y_OFFSET = 0x0fbb1; // length 8
-        private static int PIRATE_COVE_SHIP_TILES = 0x0fbb9; // length 8 (What is this?)
+        private static int PIRATE_COVE_SHIP_TILES = 0x0fbb9; // length 8 (Direction pirates are facing)
+        private static int PIRATE_COVE_SPAWN_TRIGGER_Y_OFFSET1 = 0x03084;
+        private static int PIRATE_COVE_SPAWN_TRIGGER_X_OFFSET1 = 0x0308B;
+        private static int PIRATE_COVE_SPAWN_TRIGGER_Y_OFFSET2 = 0x03123;
+        private static int PIRATE_COVE_SPAWN_TRIGGER_X_OFFSET2 = 0x0312A;
         private static int MONSTER_HP_OFFSET = 0x11685; // length 52
         private static int MONSTER_LEADER_TYPES_OFFSET = 0x116b9; // length 36
         private static int MONSTER_ENCOUNTER_SIZE_OFFSET = 0x116dd; // length 36
@@ -389,10 +420,20 @@ namespace U4DosRandomizer
         private static int DEMON_SPAWN_TRIGGER_Y2_OFFSET = 0x2F2C;
         private static int DEMON_SPAWN_LOCATION_X_OFFSET = 0x29EA;
 
+        private static int BALLOON_SPAWN_TRIGGER_X_OFFSET = 0x29A8;
+        private static int BALLOON_SPAWN_TRIGGER_Y_OFFSET = 0x29AF;
+
+        private static int BALLOON_SPAWN_LOCATION_X_OFFSET = 0x29BE;
+        private static int BALLOON_SPAWN_LOCATION_Y_OFFSET = 0x29C3;
+
+        private static int LBC_DUNGEON_EXIT_X_OFFSET = 0x4766;
+        private static int LBC_DUNGEON_EXIT_Y_OFFSET = 0x476B;
+
         private List<string> OriginalShrineText { get; set; }
         private List<int> OriginalShrineTextStartOffset { get; set; }
         public List<string> OriginalLBText { get; private set; }
         public List<int> OriginalLBTextStartOffset { get; private set; }
+
     }
 }
 
