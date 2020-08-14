@@ -137,6 +137,16 @@ namespace U4DosRandomizer
                 avatarBytes[ITEM_LOCATIONS_OFFSET + offset * 5 + 2] = data.Items[offset].Y;
             }
 
+            // Use these items at the entrance to the abyss
+            avatarBytes[ITEM_USE_TRIGGER_BELL_X_OFFSET] = data.Dungeons[data.Dungeons.Count - 1].X;
+            avatarBytes[ITEM_USE_TRIGGER_BELL_Y_OFFSET] = data.Dungeons[data.Dungeons.Count - 1].Y;
+            avatarBytes[ITEM_USE_TRIGGER_BOOK_X_OFFSET] = data.Dungeons[data.Dungeons.Count - 1].X;
+            avatarBytes[ITEM_USE_TRIGGER_BOOK_Y_OFFSET] = data.Dungeons[data.Dungeons.Count - 1].Y;
+            avatarBytes[ITEM_USE_TRIGGER_CANDLE_X_OFFSET] = data.Dungeons[data.Dungeons.Count - 1].X;
+            avatarBytes[ITEM_USE_TRIGGER_CANDLE_Y_OFFSET] = data.Dungeons[data.Dungeons.Count - 1].Y;
+            avatarBytes[ITEM_USE_TRIGGER_SKULL_X_OFFSET] = data.Dungeons[data.Dungeons.Count - 1].X;
+            avatarBytes[ITEM_USE_TRIGGER_SKULL_Y_OFFSET] = data.Dungeons[data.Dungeons.Count - 1].Y;
+
             ////throw in a lava to make it easy to find
             //for (int offset = 0; offset < 8; offset++)
             //{
@@ -428,6 +438,18 @@ namespace U4DosRandomizer
 
         private static int LBC_DUNGEON_EXIT_X_OFFSET = 0x4766;
         private static int LBC_DUNGEON_EXIT_Y_OFFSET = 0x476B;
+
+        private static int ITEM_USE_TRIGGER_BELL_X_OFFSET = 0x0693;
+        private static int ITEM_USE_TRIGGER_BELL_Y_OFFSET = 0x069A;
+        private static int ITEM_USE_TRIGGER_BOOK_X_OFFSET = 0x06CC;
+        private static int ITEM_USE_TRIGGER_BOOK_Y_OFFSET = 0x06D3;
+        private static int ITEM_USE_TRIGGER_CANDLE_X_OFFSET = 0x0711;
+        private static int ITEM_USE_TRIGGER_CANDLE_Y_OFFSET = 0x0718;
+        private static int ITEM_USE_TRIGGER_SKULL_X_OFFSET = 0x07E3;
+        private static int ITEM_USE_TRIGGER_SKULL_Y_OFFSET = 0x07EA;
+
+        private static int UNKNOWN_EXIT_LOCATIONS_X = 0xFEAD; // Length 13 - Not sure what these are for yet. Appear to be exit coords for when you fail tests in the Abyss https://github.com/ergonomy-joe/u4-decompiled/blob/c2c2108fa3bb346bcd1d8c207c526f33a4c8f5ef/SRC/U4_END.C#L37
+        private static int UNKNOWN_EXIT_LOCATIONS_Y = 0xFEBA;
 
         private List<string> OriginalShrineText { get; set; }
         private List<int> OriginalShrineTextStartOffset { get; set; }
