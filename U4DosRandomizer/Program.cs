@@ -195,9 +195,15 @@ namespace U4DosRandomizer
             var stygian = possibleLocations[random.Next(0, possibleLocations.Count)];
             // Get a path from the entrance to water
             var entranceToStygian = worldMap.GetCoordinate(stygian.X - 14, stygian.Y - 9);
-            var entrancePathToWater = worldMap.GetRiverPath(entranceToStygian, c => { return c.GetTile() == 0; } );
+            //var entrancePathToWater = worldMap.GetRiverPath(entranceToStygian, c => { return c.GetTile() == 0; } );
+            
             var shapeLoc = new Coordinate(stygian.X - 2, stygian.Y - 7);
             ApplyShape(worldMap, shapeLoc, "shapes\\abyss");
+
+            var entrancePathToWater = Search.GetPath(WorldMap.SIZE, WorldMap.SIZE, new List<Tile> { entranceToStygian },
+                c => { return c.GetTile() == 0; }, // Find deep water to help make sure a boat can reach here. TODO: Make sure it reaches the ocean.
+                c => { return !( WorldMap.Between(c.X, shapeLoc.X - 12, shapeLoc.X + 12) && WorldMap.Between(c.X, shapeLoc.X - 12, shapeLoc.X + 12)); },
+                worldMap.GoDownhillHueristic);
 
             for (int i = 0; i < entrancePathToWater.Count; i++)
             {
