@@ -102,6 +102,8 @@ namespace U4DosRandomizer
             }
 
             data.PirateCoveSpawnTrigger = new Coordinate(avatarBytes[PIRATE_COVE_SPAWN_TRIGGER_X_OFFSET1], avatarBytes[PIRATE_COVE_SPAWN_TRIGGER_Y_OFFSET1]);
+
+            data.WhirlpoolExit = new Coordinate(avatarBytes[WHIRLPOOL_EXIT_X_OFFSET], avatarBytes[WHIRLPOOL_EXIT_Y_OFFSET]);
         }
 
         public Dictionary<string, string> ReadHashes()
@@ -241,7 +243,10 @@ namespace U4DosRandomizer
             avatarBytes[PIRATE_COVE_SPAWN_TRIGGER_Y_OFFSET1] = data.PirateCoveSpawnTrigger.Y;
             avatarBytes[PIRATE_COVE_SPAWN_TRIGGER_X_OFFSET2] = data.PirateCoveSpawnTrigger.X;
             avatarBytes[PIRATE_COVE_SPAWN_TRIGGER_Y_OFFSET2] = data.PirateCoveSpawnTrigger.Y;
-            
+
+            avatarBytes[WHIRLPOOL_EXIT_X_OFFSET] = data.WhirlpoolExit.X;
+            avatarBytes[WHIRLPOOL_EXIT_Y_OFFSET] = data.WhirlpoolExit.Y;
+
         }
 
         public void Save()
@@ -447,6 +452,9 @@ namespace U4DosRandomizer
         private static int ITEM_USE_TRIGGER_CANDLE_Y_OFFSET = 0x0718;
         private static int ITEM_USE_TRIGGER_SKULL_X_OFFSET = 0x07E3;
         private static int ITEM_USE_TRIGGER_SKULL_Y_OFFSET = 0x07EA;
+
+        private static int WHIRLPOOL_EXIT_X_OFFSET = 0x7A92;
+        private static int WHIRLPOOL_EXIT_Y_OFFSET = 0x7A97;
 
         private static int UNKNOWN_EXIT_LOCATIONS_X = 0xFEAD; // Length 13 - Not sure what these are for yet. Appear to be exit coords for when you fail tests in the Abyss https://github.com/ergonomy-joe/u4-decompiled/blob/c2c2108fa3bb346bcd1d8c207c526f33a4c8f5ef/SRC/U4_END.C#L37
         private static int UNKNOWN_EXIT_LOCATIONS_Y = 0xFEBA;
