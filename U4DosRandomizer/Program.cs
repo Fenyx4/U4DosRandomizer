@@ -17,7 +17,8 @@ namespace U4DosRandomizer
             var ultimaData = new UltimaData();
 
             //var seed = 9726547;
-            var seed = 1033542421;
+            //var seed = 1033542421;
+            var seed = 780076218;
             //var seed = Environment.TickCount;
             System.IO.File.WriteAllText(@"seed.txt", seed.ToString());
             Console.WriteLine("Seed: " + seed);
@@ -40,9 +41,6 @@ namespace U4DosRandomizer
 
             //Completely random location placements of buildings still. Just trying to make sure I'm editing the files correctly right now. Not looking for a cohesive map that makes sense.
             RandomizeLocations(ultimaData, worldMap, random);
-            
-            // TODO: Pirate ship locations
-            // TODO: Special Stygian Abyss
 
             Console.WriteLine(Talk.GetSextantText(ultimaData.LCB[0]));
 
@@ -410,6 +408,12 @@ namespace U4DosRandomizer
                 ultimaData.StartingPositions[i].X = loc.X;
                 ultimaData.StartingPositions[i].Y = loc.Y;
             }
+
+            // Whirlpool normally exits in Lock Lake
+            // TODO: Put it somewhere more thematic
+            // For now stick it in the middle of some deep water somewhere
+            loc = GetRandomCoordinate(random, worldMap, c => c.GetTile() == 0);
+            ultimaData.WhirlpoolExit = new Coordinate(loc.X, loc.Y);
         }
 
         private static bool IsWalkableGround(Tile coord)
