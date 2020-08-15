@@ -268,6 +268,18 @@ namespace U4DosRandomizer
             return;
         }
 
+        public static bool Between(byte x, int v1, int v2)
+        {
+            if (v1 <= v2)
+            {
+                return x >= v1 && x <= v2;
+            }
+            else
+            {
+                return x >= v1 || x <= v2;
+            }
+        }
+
         public List<Tile> GetRiverPath(Tile startTile, IsNodeValid matchesGoal)
         {
             return Search.GetPath(WorldMap.SIZE, WorldMap.SIZE, new List<Tile> { startTile }, matchesGoal, delegate { return true; }, GoDownhillHueristic);
