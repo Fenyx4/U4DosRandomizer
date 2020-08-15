@@ -128,9 +128,20 @@ namespace U4DosRandomizer
             AddSwamp();
         }
 
+        //https://stackoverflow.com/questions/3041366/shortest-distance-between-points-on-a-toroidally-wrapped-x-and-y-wrapping-ma
         public static int DistanceSquared(ICoordinate destination, ICoordinate origin)
         {
-            var distanceSquared = ((destination.X - origin.X) * (destination.X - origin.X) + (destination.Y - origin.Y) * (destination.Y - origin.Y));
+            var deltaX = Math.Abs(destination.X - origin.X);
+            if(deltaX > SIZE/2)
+            {
+                deltaX = SIZE - deltaX;
+            }
+            var deltaY = Math.Abs(destination.Y - origin.Y);
+            if (deltaY > SIZE / 2)
+            {
+                deltaY = SIZE - deltaY;
+            }
+            var distanceSquared = (deltaX * deltaX + deltaY * deltaY);
 
             return distanceSquared;
         }
