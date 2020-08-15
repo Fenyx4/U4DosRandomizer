@@ -104,10 +104,10 @@ namespace U4DosRandomizer
                         //note we must use mod  and add DATA_SIZE for subtraction 
                         //so that we can wrap around the array to find the corners
                         double avg =
-                          data[(x - halfSide + DATA_SIZE) % DATA_SIZE, y] + //left of center
-                          data[(x + halfSide) % DATA_SIZE, y] + //right of center
-                          data[x, (y + halfSide) % DATA_SIZE] + //below center
-                          data[x, (y - halfSide + DATA_SIZE) % DATA_SIZE]; //above center
+                          data[(x - halfSide + _terrainPoints) % _terrainPoints, y] + //left of center
+                          data[(x + halfSide) % _terrainPoints, y] + //right of center
+                          data[x, (y + halfSide) % _terrainPoints] + //below center
+                          data[x, (y - halfSide + _terrainPoints) % _terrainPoints]; //above center
                         avg /= 4.0;
 
                         //new value = average plus random offset
