@@ -215,8 +215,8 @@ namespace U4DosRandomizer
             var originalY = 0xe9;
             for (var i = 0; i < ultimaData.PirateCove.Count; i++)
             {
-                ultimaData.PirateCove[i].X = Convert.ToByte(ultimaData.PirateCove[i].X - originalX + stygian.X);
-                ultimaData.PirateCove[i].Y = Convert.ToByte(ultimaData.PirateCove[i].Y - originalY + stygian.Y);
+                ultimaData.PirateCove[i].X = Convert.ToByte(WorldMap.Wrap(ultimaData.PirateCove[i].X - originalX + stygian.X));
+                ultimaData.PirateCove[i].Y = Convert.ToByte(WorldMap.Wrap(ultimaData.PirateCove[i].Y - originalY + stygian.Y));
             }
             ultimaData.PirateCoveSpawnTrigger = new Coordinate(ultimaData.PirateCoveSpawnTrigger.X - originalX + stygian.X, ultimaData.PirateCoveSpawnTrigger.Y - originalY + stygian.Y);
             //worldMap.GetCoordinate(ultimaData.PirateCoveSpawnTrigger.X, ultimaData.PirateCoveSpawnTrigger.Y).SetTile(96);
