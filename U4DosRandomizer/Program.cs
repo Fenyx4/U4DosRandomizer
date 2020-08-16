@@ -18,7 +18,7 @@ namespace U4DosRandomizer
 
             //var seed = 9726547;
             //var seed = 1033542421;
-            var seed = 788829500;
+            var seed = 869369937;
             //var seed = Environment.TickCount;
             System.IO.File.AppendAllText(@"seed.txt", seed.ToString() + Environment.NewLine);
             Console.WriteLine("Seed: " + seed);
@@ -382,6 +382,7 @@ namespace U4DosRandomizer
             while (path.Count == 0)
             {
                 loc = possibleLocations[random.Next(0, possibleLocations.Count)];
+                possibleLocations.Remove(loc);
                 path = Search.GetPath(WorldMap.SIZE, WorldMap.SIZE, new List<Tile>() { loc },
                     // Move at least 9 spaces away from from the entrance
                     c => { return 9 * 9 <= WorldMap.DistanceSquared(c, loc); },
