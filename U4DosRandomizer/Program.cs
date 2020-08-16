@@ -18,9 +18,9 @@ namespace U4DosRandomizer
 
             //var seed = 9726547;
             //var seed = 1033542421;
-            var seed = 780076218;
+            var seed = 788829500;
             //var seed = Environment.TickCount;
-            System.IO.File.WriteAllText(@"seed.txt", seed.ToString());
+            System.IO.File.AppendAllText(@"seed.txt", seed.ToString() + Environment.NewLine);
             Console.WriteLine("Seed: " + seed);
             var random = new Random(seed);
             var worldMapDS = new DiamondSquare(WorldMap.SIZE, 184643518.256878, 82759876).getData(random);
@@ -377,13 +377,22 @@ namespace U4DosRandomizer
             // special for Hythloth
             // TODO: Hythloth prettier
             possibleLocations = worldMap.GetAllMatchingTiles(c => AreaIsAll(worldMap, 8, 4, c));
-            loc = possibleLocations[random.Next(0, possibleLocations.Count)];
-            var path = Search.GetPath(WorldMap.SIZE, WorldMap.SIZE, new List<Tile>() { loc }, 
-                // Move at least 9 spaces away from from the entrance
-                c => { return 9 * 9 <= WorldMap.DistanceSquared(c, loc); },
-                // Only valid if all neighbors all also mountains
-                c => { return c.GetTile() == 8 && c.NeighborAndAdjacentCoordinates().All(n => n.GetTile() == 8); }, 
-                worldMap.GoDownhillHueristic);
+            
+            List<Tile> path = new List<Tile>();
+            while (path.Count == 0)
+            {
+                loc = possibleLocations[random.Next(0, possibleLocations.Count)];
+                path = Search.GetPath(WorldMap.SIZE, WorldMap.SIZE, new List<Tile>() { loc },
+                    // Move at least 9 spaces away from from the entrance
+                    c => { return 9 * 9 <= WorldMap.DistanceSquared(c, loc); },
+                    // Only valid if all neighbors all also mountains
+                    c => { return c.GetTile() == 8 && c.NeighborAndAdjacentCoordinates().All(n => n.GetTile() == 8); },
+                    worldMap.GoDownhillHueristic);
+                if(path.Count == 0)
+                {
+                    Console.WriteLine("Failed Hythloth placement. Retrying.");
+                }
+            }
             for (int i = 0; i < 3; i++)
             {
                 path[i].SetTile(4);
