@@ -66,7 +66,7 @@ namespace U4DosRandomizer
 			neighbors[3] = new Tile(X, Wrap(Y + 1), Tiles);
 			neighbors[4] = new Tile(Wrap(X - 1), Wrap(Y - 1), Tiles);
 			neighbors[5] = new Tile(Wrap(X + 1), Wrap(Y - 1), Tiles);
-			neighbors[6] = new Tile(Wrap(X - 1), Wrap(Y - 1), Tiles);
+			neighbors[6] = new Tile(Wrap(X - 1), Wrap(Y + 1), Tiles);
 			neighbors[7] = new Tile(Wrap(X + 1), Wrap(Y + 1), Tiles);
 
 			return neighbors;
