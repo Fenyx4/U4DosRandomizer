@@ -17,8 +17,8 @@ namespace U4DosRandomizer
             var ultimaData = new UltimaData();
 
             //var seed = 9726547;
-            //var seed = 1033542421;
-            var seed = 869369937;
+            var seed = 870427109;
+            //var seed = 869369937;
             //var seed = Environment.TickCount;
             System.IO.File.AppendAllText(@"seed.txt", seed.ToString() + Environment.NewLine);
             Console.WriteLine("Seed: " + seed);
@@ -40,11 +40,11 @@ namespace U4DosRandomizer
             
 
             //Completely random location placements of buildings still. Just trying to make sure I'm editing the files correctly right now. Not looking for a cohesive map that makes sense.
-            RandomizeLocations(ultimaData, worldMap, random);
+            var exclude = RandomizeLocations(ultimaData, worldMap, random);
 
             Console.WriteLine(Talk.GetSextantText(ultimaData.LCB[0]));
 
-            RandomizeItems(ultimaData, worldMap, random);
+            RandomizeItems(ultimaData, worldMap, random, exclude);
 
             //var origin = new Coordinate() { X = 100, Y = 100 };
             //Console.WriteLine($"North: {Talk.CoordinateToCardinal(origin, new Coordinate() { X = 100, Y = 99 })}");
@@ -80,33 +80,33 @@ namespace U4DosRandomizer
             //PrintWorldMapInfo();
         }
 
-        private static void RandomizeItems(UltimaData ultimaData, WorldMap worldMap, Random random)
+        private static void RandomizeItems(UltimaData ultimaData, WorldMap worldMap, Random random, List<Tile> exclude)
         {
-            var loc = RandomizeLocation(random, 3, worldMap, IsWalkableGround);
+            var loc = RandomizeLocation(random, 3, worldMap, IsWalkableGround, exclude);
             ultimaData.Items[Avatar.ITEM_MANDRAKE].X = loc.X;
             ultimaData.Items[Avatar.ITEM_MANDRAKE].Y = loc.Y;
 
-            loc = RandomizeLocation(random, 3, worldMap, (x) => x.GetTile() == 6);
+            loc = RandomizeLocation(random, 3, worldMap, (x) => x.GetTile() == 6, exclude);
             ultimaData.Items[Avatar.ITEM_NIGHTSHADE].X = loc.X;
             ultimaData.Items[Avatar.ITEM_NIGHTSHADE].Y = loc.Y;
 
-            var possibleLocations = worldMap.GetAllMatchingTiles(c => AreaIsAll(worldMap, 0, 14, c));
+            var possibleLocations = worldMap.GetAllMatchingTiles(c => AreaIsAll(worldMap, 0, 14, c) && !exclude.Contains(c));
             loc = possibleLocations[random.Next(0, possibleLocations.Count)];
             ultimaData.Items[Avatar.ITEM_SKULL].X = loc.X;
             ultimaData.Items[Avatar.ITEM_SKULL].Y = loc.Y;
             ApplyShape(worldMap, loc, "shapes\\skull");
 
-            possibleLocations = worldMap.GetAllMatchingTiles(c => AreaIsAll(worldMap, 0, 7, c));
+            possibleLocations = worldMap.GetAllMatchingTiles(c => AreaIsAll(worldMap, 0, 7, c) && !exclude.Contains(c));
             loc = possibleLocations[random.Next(0, possibleLocations.Count)];
             ultimaData.Items[Avatar.ITEM_BELL].X = loc.X;
             ultimaData.Items[Avatar.ITEM_BELL].Y = loc.Y;
             ApplyShape(worldMap, loc, "shapes\\bell");
 
-            loc = GetRandomCoordinate(random, worldMap, IsWalkableGround);
+            loc = GetRandomCoordinate(random, worldMap, IsWalkableGround, exclude);
             ultimaData.Items[Avatar.ITEM_HORN].X = loc.X;
             ultimaData.Items[Avatar.ITEM_HORN].Y = loc.Y;
 
-            possibleLocations = worldMap.GetAllMatchingTiles(c => c.GetTile() == 0);
+            possibleLocations = worldMap.GetAllMatchingTiles(c => c.GetTile() == 0 && !exclude.Contains(c));
             loc = possibleLocations[random.Next(0, possibleLocations.Count)];
             ultimaData.Items[Avatar.ITEM_WHEEL].X = loc.X;
             ultimaData.Items[Avatar.ITEM_WHEEL].Y = loc.Y;
@@ -116,7 +116,7 @@ namespace U4DosRandomizer
             ultimaData.Items[Avatar.ITEM_BLACK_STONE].Y = ultimaData.Moongates[0].Y;
 
             // White stone
-            possibleLocations = worldMap.GetAllMatchingTiles(c => AreaIsAll(worldMap, 8, 4, c));
+            possibleLocations = worldMap.GetAllMatchingTiles(c => AreaIsAll(worldMap, 8, 4, c) && !exclude.Contains(c));
             loc = possibleLocations[random.Next(0, possibleLocations.Count)];
             ultimaData.Items[Avatar.ITEM_WHITE_STONE].X = Convert.ToByte(loc.X-1);
             ultimaData.Items[Avatar.ITEM_WHITE_STONE].Y = loc.Y;
@@ -178,7 +178,7 @@ namespace U4DosRandomizer
             if (result)
             {
                 // Make sure we can reach it by boat or balloon
-                var path = Search.GetPath(256, 256, new List<Tile>() { entrance }, IsGrassOrSailable, IsWalkableOrSailable, null);
+                var path = Search.GetPath(256, 256, entrance, IsGrassOrSailable, IsWalkableOrSailable, null);
 
                 result = result && path.Count > 0;
             }
@@ -186,8 +186,9 @@ namespace U4DosRandomizer
             return result;
         }
 
-        private static void RandomizeLocations(UltimaData ultimaData, WorldMap worldMap, Random random)
+        private static List<Tile> RandomizeLocations(UltimaData ultimaData, WorldMap worldMap, Random random)
         {
+            var excludeLocations = new List<Tile>();
             // Lay down Stygian Abyss first so it doesn't stomp on other things
             // TODO: Make the entrance to the Abyss more random instead of laying down what is in the base game
             // Find a reasonable mountainous area
@@ -196,18 +197,26 @@ namespace U4DosRandomizer
             // Get a path from the entrance to water
             var entranceToStygian = worldMap.GetCoordinate(stygian.X - 14, stygian.Y - 9);
             //var entrancePathToWater = worldMap.GetRiverPath(entranceToStygian, c => { return c.GetTile() == 0; } );
-            
+
             var shapeLoc = new Coordinate(stygian.X - 2, stygian.Y - 7);
             ApplyShape(worldMap, shapeLoc, "shapes\\abyss");
 
-            var entrancePathToWater = Search.GetPath(WorldMap.SIZE, WorldMap.SIZE, new List<Tile> { entranceToStygian },
+            var entrancePathToWater = Search.GetPath(WorldMap.SIZE, WorldMap.SIZE, entranceToStygian,
                 c => { return c.GetTile() == 0; }, // Find deep water to help make sure a boat can reach here. TODO: Make sure it reaches the ocean.
-                c => { return !( WorldMap.Between(c.X, shapeLoc.X - 12, shapeLoc.X + 12) && WorldMap.Between(c.X, shapeLoc.X - 12, shapeLoc.X + 12)); },
+                c => { return !(WorldMap.Between(c.X, shapeLoc.X - 12, shapeLoc.X + 12) && WorldMap.Between(c.Y, shapeLoc.Y - 12, shapeLoc.Y + 12)); },
                 worldMap.GoDownhillHueristic);
 
             for (int i = 0; i < entrancePathToWater.Count; i++)
             {
                 worldMap.GetCoordinate(entrancePathToWater[i].X, entrancePathToWater[i].Y).SetTile(0x01);
+            }
+
+            for (int x = -12; x <= 12; x++)
+            {
+                for (int y = -12; y <= 12; y++)
+                {
+                    excludeLocations.Add(worldMap.GetCoordinate(shapeLoc.X + x, shapeLoc.Y + y));
+                }
             }
 
             //Pirate Cove - Set locations based off Stygian location
@@ -228,7 +237,7 @@ namespace U4DosRandomizer
                 var lcb = GetRandomCoordinate(random, worldMap);
                 var lcbEntrance = worldMap.GetCoordinate(lcb.X, lcb.Y + 1);
 
-                if (IsWalkableGround(lcb) && IsWalkableGround(lcbEntrance))
+                if (IsWalkableGround(lcb) && IsWalkableGround(lcbEntrance) && !excludeLocations.Contains(lcb))
                 {
                     lcb.SetTile(14);
                     ultimaData.LCB.Add(lcb);
@@ -238,70 +247,61 @@ namespace U4DosRandomizer
                     lcbSide = worldMap.GetCoordinate(lcb.X + 1, lcb.Y);
                     lcbSide.SetTile(15);
                     ultimaData.LCB.Add(lcbSide);
-                    
+
                     placed = true;
                 }
             }
 
+            // Buildings
+            possibleLocations = worldMap.GetAllMatchingTiles(IsWalkableGround);
+            possibleLocations.RemoveAll(c => excludeLocations.Contains(c));
             // Castles
-            var loc = RandomizeLocation(random, 11, worldMap, IsWalkableGround );
-            ultimaData.Castles.Add(loc);
-            loc = RandomizeLocation(random, 11, worldMap, IsWalkableGround);
-            ultimaData.Castles.Add(loc);
-            loc = RandomizeLocation(random, 11, worldMap, IsWalkableGround);
-            ultimaData.Castles.Add(loc);
+            Tile loc = null;
+            for (int i = 0; i < 3; i++)
+            {
+                loc = RandomSelectFromListChangeAndRemove(random, possibleLocations, 11);
+                ultimaData.Castles.Add(loc);
+            }
 
             // Towns
-            loc = RandomizeLocation(random, 10, worldMap, IsWalkableGround);
-            ultimaData.Towns.Add(loc);
-            loc = RandomizeLocation(random, 10, worldMap, IsWalkableGround);
-            ultimaData.Towns.Add(loc);
-            loc = RandomizeLocation(random, 10, worldMap, IsWalkableGround);
-            ultimaData.Towns.Add(loc);
-            loc = RandomizeLocation(random, 10, worldMap, IsWalkableGround);
-            ultimaData.Towns.Add(loc);
-            loc = RandomizeLocation(random, 10, worldMap, IsWalkableGround);
-            ultimaData.Towns.Add(loc);
-            loc = RandomizeLocation(random, 10, worldMap, IsWalkableGround);
-            ultimaData.Towns.Add(loc);
-            loc = RandomizeLocation(random, 10, worldMap, IsWalkableGround);
-            ultimaData.Towns.Add(loc);
-            loc = RandomizeLocation(random, 29, worldMap, IsWalkableGround);
+            for(int i = 0; i < 7; i++)
+            {
+                loc = RandomSelectFromListChangeAndRemove(random, possibleLocations, 10);
+                ultimaData.Towns.Add(loc);
+
+            }
+            loc = RandomSelectFromListChangeAndRemove(random, possibleLocations, 29);
             ultimaData.Towns.Add(loc);
 
             // Villages
-            loc = RandomizeLocation(random, 12, worldMap, IsWalkableGround);
-            ultimaData.Towns.Add(loc);
-            loc = RandomizeLocation(random, 12, worldMap, IsWalkableGround);
-            ultimaData.Towns.Add(loc);
-            loc = RandomizeLocation(random, 12, worldMap, IsWalkableGround);
-            ultimaData.Towns.Add(loc);
-            loc = RandomizeLocation(random, 12, worldMap, IsWalkableGround);
-            ultimaData.Towns.Add(loc);
+            for (int i = 0; i < 4; i++)
+            {
+                loc = RandomSelectFromListChangeAndRemove(random, possibleLocations, 12);
+                ultimaData.Towns.Add(loc);
+            }
 
             // Shrines
-            loc = RandomizeLocation(random, 30, worldMap, IsWalkableGround);
-            ultimaData.Shrines.Add(loc);
-            loc = RandomizeLocation(random, 30, worldMap, IsWalkableGround);
-            ultimaData.Shrines.Add(loc);
-            loc = RandomizeLocation(random, 30, worldMap, IsWalkableGround);
-            ultimaData.Shrines.Add(loc);
-            loc = RandomizeLocation(random, 30, worldMap, IsWalkableGround);
-            ultimaData.Shrines.Add(loc);
-            loc = RandomizeLocation(random, 30, worldMap, IsWalkableGround);
-            ultimaData.Shrines.Add(loc);
-            //loc = RandomizeLocation(random, 30, worldMap, IsWalkableGround);
-            ultimaData.Shrines.Add(null); // Empty spot for spirit
-            loc = RandomizeLocation(random, 30, worldMap, IsWalkableGround);
-            ultimaData.Shrines.Add(loc);
-            //loc = RandomizeLocation(random, 30, worldMap, IsWalkableGround);
-            //ultimaData.Shrines.Add(loc);
+            for (int i = 0; i < 7; i++)
+            {
+                if (i == 5)
+                {
+                    // Empty spot for spirit
+                    ultimaData.Shrines.Add(null);
+                }
+                else
+                {
+                    loc = RandomSelectFromListChangeAndRemove(random, possibleLocations, 30);
+                    ultimaData.Shrines.Add(loc);
+                }
+            }
+            // Humility
             // TODO: Shrine prettier
             possibleLocations = worldMap.GetAllMatchingTiles(c => GoodForHumility(worldMap, c));
+            possibleLocations.RemoveAll(c => excludeLocations.Contains(c));
             loc = possibleLocations[random.Next(0, possibleLocations.Count)];
             loc.SetTile(30);
             ultimaData.Shrines.Add(loc);
-            for(int y = -4; y < 0; y++)
+            for (int y = -4; y < 0; y++)
             {
                 worldMap.GetCoordinate(loc.X, loc.Y + y).SetTile(7);
             }
@@ -315,81 +315,42 @@ namespace U4DosRandomizer
 
             // Moongates
             // TODO: Put Near towns
-            loc = RandomizeLocation(random, 4, worldMap, IsGrass);
-            ultimaData.Moongates.Add(loc);
-            loc = RandomizeLocation(random, 4, worldMap, IsGrass);
-            ultimaData.Moongates.Add(loc);
-            loc = RandomizeLocation(random, 4, worldMap, IsGrass);
-            ultimaData.Moongates.Add(loc);
-            loc = RandomizeLocation(random, 4, worldMap, IsGrass);
-            ultimaData.Moongates.Add(loc);
-            loc = RandomizeLocation(random, 4, worldMap, IsGrass);
-            ultimaData.Moongates.Add(loc);
-            loc = RandomizeLocation(random, 4, worldMap, IsGrass);
-            ultimaData.Moongates.Add(loc);
-            loc = RandomizeLocation(random, 4, worldMap, IsGrass);
-            ultimaData.Moongates.Add(loc);
-            loc = RandomizeLocation(random, 4, worldMap, IsGrass);
-            ultimaData.Moongates.Add(loc);
+            possibleLocations = worldMap.GetAllMatchingTiles(IsGrass);
+            possibleLocations.RemoveAll(c => excludeLocations.Contains(c));
+            for (int i = 0; i < 8; i++)
+            { 
+                loc = RandomSelectFromListChangeAndRemove(random, possibleLocations, 4);
+                ultimaData.Moongates.Add(loc);
+            }
 
             // Dungeons
             // TODO: Change this to be grab all mountains, then check if you can path to something landable by balloon or ship
-            var pattern = new int[1, 2];
-            pattern[0, 0] = 8;
-            pattern[0, 1] = 7; // TODO add a wildcard. Something for "Walkable" or "Not mountain"
-            var validLocations = worldMap.FindAllByPattern(pattern);
-            var randomIdx = random.Next(0, validLocations.Count);
-            loc = validLocations[randomIdx];
-            loc.SetTile(9);
-            ultimaData.Dungeons.Add(loc);
-            validLocations.RemoveAt(randomIdx);
-
-            randomIdx = random.Next(0, validLocations.Count);
-            loc = validLocations[randomIdx];
-            loc.SetTile(9);
-            ultimaData.Dungeons.Add(loc);
-            validLocations.RemoveAt(randomIdx);
-
-            randomIdx = random.Next(0, validLocations.Count);
-            loc = validLocations[randomIdx];
-            loc.SetTile(9);
-            ultimaData.Dungeons.Add(loc);
-            validLocations.RemoveAt(randomIdx);
-
-            randomIdx = random.Next(0, validLocations.Count);
-            loc = validLocations[randomIdx];
-            loc.SetTile(9);
-            ultimaData.Dungeons.Add(loc);
-            validLocations.RemoveAt(randomIdx);
-
-            randomIdx = random.Next(0, validLocations.Count);
-            loc = validLocations[randomIdx];
-            loc.SetTile(9);
-            ultimaData.Dungeons.Add(loc);
-            validLocations.RemoveAt(randomIdx);
-
-            randomIdx = random.Next(0, validLocations.Count);
-            loc = validLocations[randomIdx];
-            loc.SetTile(9);
-            ultimaData.Dungeons.Add(loc);
-            validLocations.RemoveAt(randomIdx);
+            possibleLocations = worldMap.GetAllMatchingTiles(c => c.GetTile() == 8 && IsWalkableGround(worldMap.GetCoordinate(c.X, c.Y+1)) && Search.GetPath(WorldMap.SIZE, WorldMap.SIZE, c,
+                coord => { return IsGrass(coord) || coord.GetTile() == 0; },
+                IsWalkableOrSailable).Count > 0);
+            possibleLocations.RemoveAll(c => excludeLocations.Contains(c));
+            for (int i = 0; i < 6; i++)
+            {
+                loc = RandomSelectFromListChangeAndRemove(random, possibleLocations, 9);
+                ultimaData.Dungeons.Add(loc);
+            }
 
             // special for Hythloth
             // TODO: Hythloth prettier
             possibleLocations = worldMap.GetAllMatchingTiles(c => AreaIsAll(worldMap, 8, 4, c));
-            
+
             List<Tile> path = new List<Tile>();
             while (path.Count == 0)
             {
                 loc = possibleLocations[random.Next(0, possibleLocations.Count)];
                 possibleLocations.Remove(loc);
-                path = Search.GetPath(WorldMap.SIZE, WorldMap.SIZE, new List<Tile>() { loc },
+                path = Search.GetPath(WorldMap.SIZE, WorldMap.SIZE, loc,
                     // Move at least 9 spaces away from from the entrance
                     c => { return 9 * 9 <= WorldMap.DistanceSquared(c, loc); },
                     // Only valid if all neighbors all also mountains
                     c => { return c.GetTile() == 8 && c.NeighborAndAdjacentCoordinates().All(n => n.GetTile() == 8); },
                     worldMap.GoDownhillHueristic);
-                if(path.Count == 0)
+                if (path.Count == 0)
                 {
                     Console.WriteLine("Failed Hythloth placement. Retrying.");
                 }
@@ -410,9 +371,6 @@ namespace U4DosRandomizer
             ultimaData.Dungeons.Add(loc);
             ultimaData.BalloonSpawn = path.Last();
 
-
-            validLocations = worldMap.FindAllByPattern(pattern);
-
             // Stygian Abyss
             ultimaData.Dungeons.Add(stygian);
 
@@ -428,8 +386,20 @@ namespace U4DosRandomizer
             // Whirlpool normally exits in Lock Lake
             // TODO: Put it somewhere more thematic
             // For now stick it in the middle of some deep water somewhere
-            loc = GetRandomCoordinate(random, worldMap, c => c.GetTile() == 0);
+            loc = GetRandomCoordinate(random, worldMap, c => c.GetTile() == 0, excludeLocations);
             ultimaData.WhirlpoolExit = new Coordinate(loc.X, loc.Y);
+
+            return excludeLocations;
+        }
+
+        private static Tile RandomSelectFromListChangeAndRemove(Random random, List<Tile> possibleLocations, byte tile)
+        {
+            var randomIdx = random.Next(0, possibleLocations.Count);
+            var loc = possibleLocations[randomIdx];
+            loc.SetTile(tile);
+            possibleLocations.RemoveAt(randomIdx);
+
+            return loc;
         }
 
         private static bool IsWalkableGround(Tile coord)
@@ -463,12 +433,12 @@ namespace U4DosRandomizer
             return loc;
         }
 
-        private static Tile GetRandomCoordinate(Random random, WorldMap worldMap, Func<Tile, bool> criteria)
+        private static Tile GetRandomCoordinate(Random random, WorldMap worldMap, Func<Tile, bool> criteria, List<Tile> excludes)
         {
             while (true)
             {
                 var loc = GetRandomCoordinate(random, worldMap);
-                if (criteria(loc))
+                if (criteria(loc) && !excludes.Contains(loc))
                 {
                     return loc;
                 }
@@ -482,9 +452,9 @@ namespace U4DosRandomizer
             return loc;
         }
 
-        private static Tile RandomizeLocation(Random random, byte tile, WorldMap worldMap, Func<Tile, bool> criteria)
+        private static Tile RandomizeLocation(Random random, byte tile, WorldMap worldMap, Func<Tile, bool> criteria, List<Tile> excludes)
         {
-            var loc = GetRandomCoordinate(random, worldMap, criteria);
+            var loc = GetRandomCoordinate(random, worldMap, criteria, excludes);
 
             loc.SetTile(tile);
             return loc;

@@ -11,6 +11,11 @@ namespace U4DosRandomizer
 
 	public class Search
     {
+		public static List<Tile> GetPath(int sizeX, int sizeY, Tile startNode, IsNodeValid matchesGoal, IsNodeValid validNode, NodeHuersticValue heuristic = null)
+        {
+			return GetPath(sizeX, sizeY, new List<Tile> { startNode }, matchesGoal, validNode, heuristic);
+        }
+
 		public static List<Tile> GetPath(int sizeX, int sizeY, List<Tile> startNodes, IsNodeValid matchesGoal, IsNodeValid validNode, NodeHuersticValue heuristic = null)
 		{
 			if (heuristic == null)

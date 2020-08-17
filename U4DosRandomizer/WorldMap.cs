@@ -108,7 +108,7 @@ namespace U4DosRandomizer
                 for(int y = 0; y < SIZE; y++)
                 {
                     var tile = GetCoordinate(x, y);
-                    if(criteria(GetCoordinate(x, y)))
+                    if(criteria(tile))
                     {
                         tiles.Add(tile);
                     }
@@ -282,7 +282,7 @@ namespace U4DosRandomizer
 
         public List<Tile> GetRiverPath(Tile startTile, IsNodeValid matchesGoal)
         {
-            return Search.GetPath(WorldMap.SIZE, WorldMap.SIZE, new List<Tile> { startTile }, matchesGoal, delegate { return true; }, GoDownhillHueristic);
+            return Search.GetPath(WorldMap.SIZE, WorldMap.SIZE, startTile, matchesGoal, delegate { return true; }, GoDownhillHueristic);
         }
 
         public List<Tile> FindAllByPattern(int[,] pattern)
@@ -350,15 +350,15 @@ namespace U4DosRandomizer
             return results;
         }
 
-        public List<Tile> GetPathableTilesNear(Tile tile, int distance, Func<Tile, bool> isWalkableGround)
+        public List<Tile> GetPathableTilesNear(Tile goal, int distance, Func<Tile, bool> isWalkableGround)
         {
-            var possibleTiles = GetTilesNear(tile, distance);
+            var possibleTiles = GetTilesNear(goal, distance);
             var results = new List<Tile>();
 
             foreach(var possibleTile in possibleTiles)
             {
-                if(Search.GetPath(SIZE, SIZE, new List<Tile> { possibleTile }, 
-                    m => m.Equals(tile),
+                if(Search.GetPath(SIZE, SIZE, possibleTile, 
+                    m => m.Equals(goal),
                     c => { return isWalkableGround(c); } ).Count > 0)
                 {
                     results.Add(possibleTile);
