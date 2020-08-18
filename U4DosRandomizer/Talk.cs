@@ -1,4 +1,3 @@
-using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -12,16 +11,15 @@ namespace U4DosRandomizer
     {
         private Dictionary<string, List<Person>> towns = new Dictionary<string, List<Person>>();
 
-        public void Load()
+        public void Load(string path, Dictionary<string, string> hashes)
         {
-            var hashes = ReadHashes();
-            var files = Directory.GetFiles("ULT", "*.TLK");
+            var files = Directory.GetFiles(path, "*.TLK");
 
             var personBytes = new byte[0x120];
             foreach(var file in files)
             {
                 var hash = HashHelper.GetHashSha256(file);
-                if(hashes[Path.GetFileName(file)] == HashHelper.BytesToString(hash))
+                if (hashes[Path.GetFileName(file)] == HashHelper.BytesToString(hash))
                 {
                     File.Copy(file, $"{file}.orig", true);
                 }
@@ -216,7 +214,7 @@ namespace U4DosRandomizer
             return person;
         }
 
-        public void Save()
+        public void Save(string path)
         {
             foreach(var townName in towns.Keys)
             {
@@ -266,35 +264,10 @@ namespace U4DosRandomizer
                     townBytes.AddRange(personBytes);
                 }
 
-                File.WriteAllBytes($"ULT\\{townName.ToUpper()}.TLK", townBytes.ToArray());
+                var file = Path.Combine(path, $"{townName.ToUpper()}.TLK");
+                File.WriteAllBytes(file, townBytes.ToArray());
             }
         }
 
-        public Dictionary<string, string> ReadHashes()
-        {
-            var hashJson = System.IO.File.ReadAllText("hashes\\talk_hash.json");
-
-            var hashes = JsonConvert.DeserializeObject<Dictionary<string, string>>(hashJson);
-
-            return hashes;
-        }
-
-        public void WriteHashes()
-        {
-            var files = Directory.GetFiles("ULT", "*.TLK");
-
-            var townTalkHash = new Dictionary<string, string>();
-
-            foreach (var file in files)
-            {
-                var hash = HashHelper.GetHashSha256(file);
-                Console.WriteLine($"{file}: {HashHelper.BytesToString(hash)}");
-                townTalkHash.Add(Path.GetFileName(file), HashHelper.BytesToString(hash));
-            }
-
-            string json = JsonConvert.SerializeObject(townTalkHash); // the dictionary is inside client object
-                                                                    //write string to file
-            System.IO.File.WriteAllText(@"talk_hash.json", json);
-        }
     }
 }

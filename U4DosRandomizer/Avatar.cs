@@ -1,23 +1,17 @@
-using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Security.Cryptography;
 using System.Text;
 
 namespace U4DosRandomizer
 {
     public class Avatar
     {
-        private SHA256 Sha256 = SHA256.Create();
         private byte[] avatarBytes;
 
-        public void Load(UltimaData data)
+        public void Load(string path, Dictionary<string, string> hashes, UltimaData data)
         {
-            //WriteHashes();
-            var hashes = ReadHashes();
-
-            var file = "ULT\\AVATAR.EXE";
+            var file = Path.Combine(path, "AVATAR.EXE");
 
             var hash = HashHelper.GetHashSha256(file);
             if (hashes["AVATAR.EXE"] == HashHelper.BytesToString(hash))
@@ -104,30 +98,6 @@ namespace U4DosRandomizer
             data.PirateCoveSpawnTrigger = new Coordinate(avatarBytes[PIRATE_COVE_SPAWN_TRIGGER_X_OFFSET1], avatarBytes[PIRATE_COVE_SPAWN_TRIGGER_Y_OFFSET1]);
 
             data.WhirlpoolExit = new Coordinate(avatarBytes[WHIRLPOOL_EXIT_X_OFFSET], avatarBytes[WHIRLPOOL_EXIT_Y_OFFSET]);
-        }
-
-        public Dictionary<string, string> ReadHashes()
-        {
-            var hashJson = System.IO.File.ReadAllText("hashes\\avatar_hash.json");
-
-            var hashes = JsonConvert.DeserializeObject<Dictionary<string, string>>(hashJson);
-
-            return hashes;
-        }
-
-        public void WriteHashes()
-        {
-            var file = "ULT\\AVATAR.EXE";
-
-            var townTalkHash = new Dictionary<string, string>();
-
-            var hash = HashHelper.GetHashSha256(file);
-            Console.WriteLine($"{file}: {HashHelper.BytesToString(hash)}");
-            townTalkHash.Add(Path.GetFileName(file), HashHelper.BytesToString(hash));
-
-            string json = JsonConvert.SerializeObject(townTalkHash); // the dictionary is inside client object
-                                                                     //write string to file
-            System.IO.File.WriteAllText(@"avatar_hash.json", json);
         }
 
         public void Update(UltimaData data)
@@ -249,17 +219,19 @@ namespace U4DosRandomizer
 
         }
 
-        public void Save()
+        public void Save(string path)
         {
-            var avatarOut = new System.IO.BinaryWriter(new System.IO.FileStream("ULT\\AVATAR.EXE", System.IO.FileMode.Truncate));
+            var exePath = Path.Combine(path, "AVATAR.EXE");
+            var avatarOut = new System.IO.BinaryWriter(new System.IO.FileStream(exePath, System.IO.FileMode.Truncate));
 
-            var avatarOut2 = new System.IO.BinaryWriter(new System.IO.FileStream("ULT\\AVATAR.bin", System.IO.FileMode.Truncate));
+            //var binPath = Path.Combine(path, "AVATAR.bin");
+            //var avatarOut2 = new System.IO.BinaryWriter(new System.IO.FileStream(binPath, System.IO.FileMode.Truncate));
 
             avatarOut.Write(avatarBytes);
-            avatarOut2.Write(avatarBytes);
+            //avatarOut2.Write(avatarBytes);
 
             avatarOut.Close();
-            avatarOut2.Close();
+            //avatarOut2.Close();
         }
 
         // https://wiki.ultimacodex.com/wiki/Ultima_IV_Internal_Formats#AVATAR.EXE

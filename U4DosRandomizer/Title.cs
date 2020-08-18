@@ -2,23 +2,17 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Security.Cryptography;
-using System.Text;
 
 namespace U4DosRandomizer
 {
     public class Title
     {
-        private SHA256 Sha256 = SHA256.Create();
         private byte[] titleBytes;
         private const string filename = "TITLE.EXE";
 
-        public void Load(UltimaData data)
+        public void Load(string path, Dictionary<string, string> hashes, UltimaData data)
         {
-            //WriteHashes();
-            var hashes = ReadHashes();
-
-            var file = $"ULT\\{filename}";
+            var file = Path.Combine(path, filename);
 
             var hash = HashHelper.GetHashSha256(file);
             if (hashes[filename] == HashHelper.BytesToString(hash))
@@ -45,16 +39,17 @@ namespace U4DosRandomizer
 
         public Dictionary<string, string> ReadHashes()
         {
-            var hashJson = System.IO.File.ReadAllText("hashes\\title_hash.json");
+            var file = Path.Combine("hashes", "title_hash.json");
+            var hashJson = System.IO.File.ReadAllText(file);
 
             var hashes = JsonConvert.DeserializeObject<Dictionary<string, string>>(hashJson);
 
             return hashes;
         }
 
-        public void WriteHashes()
+        public void WriteHashes(string path)
         {
-            var file = $"ULT\\{filename}";
+            var file = Path.Combine(path, filename);
 
             var townTalkHash = new Dictionary<string, string>();
 
@@ -76,9 +71,10 @@ namespace U4DosRandomizer
             }
         }
 
-        public void Save()
+        public void Save(string path)
         {
-            var titleOut = new System.IO.BinaryWriter(new System.IO.FileStream($"ULT\\{filename}", System.IO.FileMode.Truncate));
+            var file = Path.Combine(path, filename);
+            var titleOut = new System.IO.BinaryWriter(new System.IO.FileStream(file, System.IO.FileMode.Truncate));
 
             titleOut.Write(titleBytes);
 
