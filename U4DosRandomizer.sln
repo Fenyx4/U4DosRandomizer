@@ -5,7 +5,14 @@ VisualStudioVersion = 16.0.30309.148
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "U4DosRandomizer", "U4DosRandomizer\U4DosRandomizer.csproj", "{800FCB8A-0CA9-4E9A-B2C7-02C670F4AAEA}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "U4DosRandomizer.UnitTests", "U4DosRandomizer.UnitTests\U4DosRandomizer.UnitTests.csproj", "{1E9EC3BC-4626-4DF0-AA29-7BF1B42A8BF5}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "U4DosRandomizer.UnitTests", "U4DosRandomizer.UnitTests\U4DosRandomizer.UnitTests.csproj", "{1E9EC3BC-4626-4DF0-AA29-7BF1B42A8BF5}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".github", ".github", "{2840E02F-D84C-4495-B268-BA6CFB37583C}"
+	ProjectSection(SolutionItems) = preProject
+		.gitignore = .gitignore
+		LICENSE = LICENSE
+		README.md = README.md
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
