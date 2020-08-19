@@ -134,10 +134,8 @@ namespace U4DosRandomizer
             return distanceSquared;
         }
 
-        public void Load(string path, double[,] worldMapGenerated)
+        public void Load(string path, Dictionary<string, string> hashes, double[,] worldMapGenerated)
         {
-            //WriteHashes(path);
-            var hashes = ReadHashes();
             var file = Path.Combine(path, filename);
 
             var hash = HashHelper.GetHashSha256(file);
@@ -178,16 +176,6 @@ namespace U4DosRandomizer
             var worldFile = new System.IO.BinaryWriter(new System.IO.FileStream(file, System.IO.FileMode.OpenOrCreate));
             WriteMapToOriginalFormat(worldFile);
             worldFile.Close();
-        }
-
-        public Dictionary<string, string> ReadHashes()
-        {
-            var file = Path.Combine("hashes", "world_hash.json");
-            var hashJson = System.IO.File.ReadAllText(file);
-
-            var hashes = JsonConvert.DeserializeObject<Dictionary<string, string>>(hashJson);
-
-            return hashes;
         }
 
         public void WriteHashes(string path)

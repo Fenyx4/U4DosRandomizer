@@ -2,9 +2,6 @@ using Microsoft.Extensions.CommandLineUtils;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
-using System.Drawing;
-using System.Drawing.Drawing2D;
-using System.Drawing.Imaging;
 using System.IO;
 using System.Linq;
 
@@ -69,12 +66,12 @@ namespace U4DosRandomizer
 
             var ultimaData = new UltimaData();
 
+            var hashes = JsonConvert.DeserializeObject<Dictionary<string, string>>(fileHashes);
+
             var worldMapDS = new DiamondSquare(WorldMap.SIZE, 184643518.256878, 82759876).getData(random);
             var worldMap = new WorldMap();
-            worldMap.Load(path, worldMapDS);
+            worldMap.Load(path, hashes, worldMapDS);
             worldMap.CleanupAndAddFeatures(random);
-
-            var hashes = JsonConvert.DeserializeObject<Dictionary<string, string>>(fileHashes);
 
             var avatar = new Avatar();
             avatar.Load(path, hashes, ultimaData);
@@ -124,13 +121,13 @@ namespace U4DosRandomizer
             loc = possibleLocations[random.Next(0, possibleLocations.Count)];
             ultimaData.Items[Avatar.ITEM_SKULL].X = loc.X;
             ultimaData.Items[Avatar.ITEM_SKULL].Y = loc.Y;
-            ApplyShape(worldMap, loc, "shapes\\skull");
+            ApplyShape(worldMap, loc, "skull");
 
             possibleLocations = worldMap.GetAllMatchingTiles(c => AreaIsAll(worldMap, 0, 7, c) && !exclude.Contains(c));
             loc = possibleLocations[random.Next(0, possibleLocations.Count)];
             ultimaData.Items[Avatar.ITEM_BELL].X = loc.X;
             ultimaData.Items[Avatar.ITEM_BELL].Y = loc.Y;
-            ApplyShape(worldMap, loc, "shapes\\bell");
+            ApplyShape(worldMap, loc, "bell");
 
             loc = GetRandomCoordinate(random, worldMap, IsWalkableGround, exclude);
             ultimaData.Items[Avatar.ITEM_HORN].X = loc.X;
@@ -150,14 +147,18 @@ namespace U4DosRandomizer
             loc = possibleLocations[random.Next(0, possibleLocations.Count)];
             ultimaData.Items[Avatar.ITEM_WHITE_STONE].X = Convert.ToByte(loc.X-1);
             ultimaData.Items[Avatar.ITEM_WHITE_STONE].Y = loc.Y;
-            ApplyShape(worldMap, loc, "shapes\\white");
+            ApplyShape(worldMap, loc, "white");
         }
 
         private static void ApplyShape(WorldMap worldMap, ICoordinate loc, string file)
         {
-            var shape = new System.IO.FileStream($"{file}", System.IO.FileMode.Open);
-            var length = shape.ReadByte();
-            var shapeBytes = shape.ReadAllBytes();
+            //var shape = new System.IO.FileStream($"{file}", System.IO.FileMode.Open);
+            object obj = U4DosRandomizer.Resources.Shapes.ResourceManager.GetObject(file, U4DosRandomizer.Resources.Shapes.Culture);
+            var shape = ((byte[])(obj));
+
+            var length = shape[0];
+            byte[] shapeBytes = new byte[shape.Count() - 1];
+            Array.Copy(shape, 1, shapeBytes, 0, shape.Count() - 1);
 
             int radius = length / 2;
             for (int y = 0; y < length; y++)
@@ -229,7 +230,7 @@ namespace U4DosRandomizer
             //var entrancePathToWater = worldMap.GetRiverPath(entranceToStygian, c => { return c.GetTile() == 0; } );
 
             var shapeLoc = new Coordinate(stygian.X - 2, stygian.Y - 7);
-            ApplyShape(worldMap, shapeLoc, "shapes\\abyss");
+            ApplyShape(worldMap, shapeLoc, "abyss");
 
             var entrancePathToWater = Search.GetPath(WorldMap.SIZE, WorldMap.SIZE, entranceToStygian,
                 c => { return c.GetTile() == 0; }, // Find deep water to help make sure a boat can reach here. TODO: Make sure it reaches the ocean.
