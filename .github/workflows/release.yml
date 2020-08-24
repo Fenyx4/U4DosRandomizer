@@ -33,7 +33,7 @@ jobs:
           dotnet publish ./U4DosRandomizer/U4DosRandomizer.csproj -c Release -f netcoreapp3.1 -r osx-x64 -p:PublishTrimmed=true --self-contained true -p:PublishSingleFile=true -o output-osx-x64
           zip --junk-paths U4DosRandomizer-osx-x64 output-osx-x64/U4DosRandomizer
           dotnet publish ./U4DosRandomizer/U4DosRandomizer.csproj -c Release -f netcoreapp3.1 -r linux-x64 -p:PublishTrimmed=true --self-contained true -p:PublishSingleFile=true -o output-linux-x64
-          tar --junk-paths U4DosRandomizer-linux-x64 output-linux-x64/U4DosRandomizer
+          tar -czf U4DosRandomizer-linux-x64.tar.gz output-linux-x64/U4DosRandomizer
       
       - name: Create Release
         id: create_release
