@@ -26,8 +26,8 @@ jobs:
         run: dotnet test --no-restore --verbosity normal
       - name: Publish win-x86
         run: |
-          dotnet publish .\U4DosRandomizer\U4DosRandomizer.csproj -c Release -f netcoreapp3.1 -r win-x86 -p:PublishTrimmed=true --self-contained true -p:PublishSingleFile=true -o output
-          zip --junk-paths U4DosRandomizer-win-x86 output\U4DosRandomizer.exe
+          dotnet publish ./U4DosRandomizer/U4DosRandomizer.csproj -c Release -f netcoreapp3.1 -r win-x86 -p:PublishTrimmed=true --self-contained true -p:PublishSingleFile=true -o output
+          zip --junk-paths U4DosRandomizer-win-x86 output/U4DosRandomizer.exe
       
       - name: Create Release
         id: create_release
