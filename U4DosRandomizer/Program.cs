@@ -50,6 +50,16 @@ namespace U4DosRandomizer
                         path = pathArg.Value();
                     }
                 }
+                if(!File.Exists(Path.Combine(path, "WORLD.MAP")))
+                {
+                    Console.Write("Could not find WORLD.MAP please provide path:  ");
+                    path = Console.ReadLine();
+
+                    if (!Directory.Exists(path))
+                    {
+                        throw new ArgumentException("Path provided does not exist");
+                    }
+                }
 
                 Randomize(seed, path);
 
