@@ -24,10 +24,16 @@ jobs:
         run: dotnet build --configuration Release --no-restore
       - name: Test
         run: dotnet test --no-restore --verbosity normal
-      - name: Publish win-x86
+      - name: Publish
         run: |
           dotnet publish ./U4DosRandomizer/U4DosRandomizer.csproj -c Release -f netcoreapp3.1 -r win-x86 -p:PublishTrimmed=true --self-contained true -p:PublishSingleFile=true -o output
           zip --junk-paths U4DosRandomizer-win-x86 output/U4DosRandomizer.exe
+          dotnet publish ./U4DosRandomizer/U4DosRandomizer.csproj -c Release -f netcoreapp3.1 -r win-x64 -p:PublishTrimmed=true --self-contained true -p:PublishSingleFile=true -o output-win-x64
+          zip --junk-paths U4DosRandomizer-win-x64 output-win-x64/U4DosRandomizer.exe
+          dotnet publish ./U4DosRandomizer/U4DosRandomizer.csproj -c Release -f netcoreapp3.1 -r osx-x64 -p:PublishTrimmed=true --self-contained true -p:PublishSingleFile=true -o output-osx-x64
+          zip --junk-paths U4DosRandomizer-osx-x64 output-osx-x64/U4DosRandomizer
+          dotnet publish ./U4DosRandomizer/U4DosRandomizer.csproj -c Release -f netcoreapp3.1 -r linux-x64 -p:PublishTrimmed=true --self-contained true -p:PublishSingleFile=true -o output-linux-x64
+          tar --junk-paths U4DosRandomizer-linux-x64 output-linux-x64/U4DosRandomizer
       
       - name: Create Release
         id: create_release
@@ -45,7 +51,7 @@ jobs:
           prerelease: false
           
       - name: Upload Release Asset
-        id: upload-release-asset 
+        id: upload-release-asset-win-x86 
         uses: actions/upload-release-asset@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -54,3 +60,39 @@ jobs:
           asset_path: ./U4DosRandomizer-win-x86.zip
           asset_name: U4DosRandomizer-win-x86.zip
           asset_content_type: application/zip
+
+
+      - name: Upload Release Asset
+        id: upload-release-asset-win-x64 
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }} # This pulls from the CREATE RELEASE step above, referencing it's ID to get its outputs object, which include a `upload_url`. See this blog post for more info: https://jasonet.co/posts/new-features-of-github-actions/#passing-data-to-future-steps 
+          asset_path: ./U4DosRandomizer-win-x64.zip
+          asset_name: U4DosRandomizer-win-x64.zip
+          asset_content_type: application/zip
+
+
+      - name: Upload Release Asset
+        id: upload-release-asset-osx-x64 
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }} # This pulls from the CREATE RELEASE step above, referencing it's ID to get its outputs object, which include a `upload_url`. See this blog post for more info: https://jasonet.co/posts/new-features-of-github-actions/#passing-data-to-future-steps 
+          asset_path: ./U4DosRandomizer-osx-x64.zip
+          asset_name: U4DosRandomizer-osx-x64.zip
+          asset_content_type: application/zip
+
+
+      - name: Upload Release Asset
+        id: upload-release-asset-linux-x64 
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }} # This pulls from the CREATE RELEASE step above, referencing it's ID to get its outputs object, which include a `upload_url`. See this blog post for more info: https://jasonet.co/posts/new-features-of-github-actions/#passing-data-to-future-steps 
+          asset_path: ./U4DosRandomizer-linux-x64.tar.gz
+          asset_name: U4DosRandomizer-linux-x64.tar.gz
+          asset_content_type: application/tar.gz
