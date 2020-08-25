@@ -1,7 +1,5 @@
-﻿using Newtonsoft.Json;
-using System;
-using System.Collections.Generic;
-using System.IO;
+﻿using System.IO;
+using U4DosRandomizer.Helpers;
 
 namespace U4DosRandomizer
 {
@@ -10,23 +8,11 @@ namespace U4DosRandomizer
         private byte[] titleBytes;
         private const string filename = "TITLE.EXE";
 
-        public void Load(string path, Dictionary<string, string> hashes, UltimaData data)
+        public void Load(string path, UltimaData data)
         {
             var file = Path.Combine(path, filename);
 
-            var hash = HashHelper.GetHashSha256(file);
-            if (hashes[filename] == HashHelper.BytesToString(hash))
-            {
-                File.Copy(file, $"{file}.orig", true);
-            }
-            else
-            {
-                hash = HashHelper.GetHashSha256($"{file}.orig");
-                if (hashes[filename] != HashHelper.BytesToString(hash))
-                {
-                    throw new FileNotFoundException($"Original version of {file} not found.");
-                }
-            }
+            FileHelper.TryBackupOriginalFile(file);
 
             var titleStream = new System.IO.FileStream($"{file}.orig", System.IO.FileMode.Open);
             titleBytes = titleStream.ReadAllBytes();
@@ -37,30 +23,30 @@ namespace U4DosRandomizer
             }
         }
 
-        public Dictionary<string, string> ReadHashes()
-        {
-            var file = Path.Combine("hashes", "title_hash.json");
-            var hashJson = System.IO.File.ReadAllText(file);
+        //public Dictionary<string, string> ReadHashes()
+        //{
+        //    var file = Path.Combine("hashes", "title_hash.json");
+        //    var hashJson = System.IO.File.ReadAllText(file);
 
-            var hashes = JsonConvert.DeserializeObject<Dictionary<string, string>>(hashJson);
+        //    var hashes = JsonConvert.DeserializeObject<Dictionary<string, string>>(hashJson);
 
-            return hashes;
-        }
+        //    return hashes;
+        //}
 
-        public void WriteHashes(string path)
-        {
-            var file = Path.Combine(path, filename);
+        //public void WriteHashes(string path)
+        //{
+        //    var file = Path.Combine(path, filename);
 
-            var townTalkHash = new Dictionary<string, string>();
+        //    var townTalkHash = new Dictionary<string, string>();
 
-            var hash = HashHelper.GetHashSha256(file);
-            Console.WriteLine($"{file}: {HashHelper.BytesToString(hash)}");
-            townTalkHash.Add(Path.GetFileName(file), HashHelper.BytesToString(hash));
+        //    var hash = HashHelper.GetHashSha256(file);
+        //    Console.WriteLine($"{file}: {HashHelper.BytesToString(hash)}");
+        //    townTalkHash.Add(Path.GetFileName(file), HashHelper.BytesToString(hash));
 
-            string json = JsonConvert.SerializeObject(townTalkHash); // the dictionary is inside client object
-                                                                     //write string to file
-            System.IO.File.WriteAllText(@"title_hash.json", json);
-        }
+        //    string json = JsonConvert.SerializeObject(townTalkHash); // the dictionary is inside client object
+        //                                                             //write string to file
+        //    System.IO.File.WriteAllText(@"title_hash.json", json);
+        //}
 
         public void Update(UltimaData data)
         {

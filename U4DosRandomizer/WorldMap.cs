@@ -1,9 +1,9 @@
-﻿using Newtonsoft.Json;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
 using System.Linq;
+using U4DosRandomizer.Helpers;
 
 namespace U4DosRandomizer
 {
@@ -134,24 +134,11 @@ namespace U4DosRandomizer
             return distanceSquared;
         }
 
-        public void Load(string path, Dictionary<string, string> hashes, double[,] worldMapGenerated)
+        public void Load(string path, double[,] worldMapGenerated)
         {
             var file = Path.Combine(path, filename);
 
-            var hash = HashHelper.GetHashSha256(file);
-            if (hashes[filename] == HashHelper.BytesToString(hash))
-            {
-                File.Copy(file, $"{file}.orig", true);
-            }
-            else
-            {
-                hash = HashHelper.GetHashSha256($"{file}.orig");
-                if (hashes[filename] != HashHelper.BytesToString(hash))
-                {
-                    throw new FileNotFoundException($"Original version of {file} not found.");
-                }
-            }
-
+            FileHelper.TryBackupOriginalFile(file);
 
             _worldMapGenerated = worldMapGenerated;
             _worldMapTiles = MapGeneratedMapToUltimaTiles();
@@ -178,20 +165,20 @@ namespace U4DosRandomizer
             worldFile.Close();
         }
 
-        public void WriteHashes(string path)
-        {
-            var file = Path.Combine(path, filename);
+        //public void WriteHashes(string path)
+        //{
+        //    var file = Path.Combine(path, filename);
 
-            var worldHash = new Dictionary<string, string>();
+        //    var worldHash = new Dictionary<string, string>();
 
-            var hash = HashHelper.GetHashSha256(file);
-            Console.WriteLine($"{file}: {HashHelper.BytesToString(hash)}");
-            worldHash.Add(Path.GetFileName(file), HashHelper.BytesToString(hash));
+        //    var hash = HashHelper.GetHashSha256(file);
+        //    Console.WriteLine($"{file}: {HashHelper.BytesToString(hash)}");
+        //    worldHash.Add(Path.GetFileName(file), HashHelper.BytesToString(hash));
 
-            string json = JsonConvert.SerializeObject(worldHash); // the dictionary is inside client object
-                                                                     //write string to file
-            System.IO.File.WriteAllText(@"world_hash.json", json);
-        }
+        //    string json = JsonConvert.SerializeObject(worldHash); // the dictionary is inside client object
+        //                                                             //write string to file
+        //    System.IO.File.WriteAllText(@"world_hash.json", json);
+        //}
 
         private void RemoveSingleTiles()
         {

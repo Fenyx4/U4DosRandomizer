@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
+using U4DosRandomizer.Helpers;
 
 namespace U4DosRandomizer
 {
@@ -9,23 +10,11 @@ namespace U4DosRandomizer
     {
         private byte[] avatarBytes;
 
-        public void Load(string path, Dictionary<string, string> hashes, UltimaData data)
+        public void Load(string path, UltimaData data)
         {
             var file = Path.Combine(path, "AVATAR.EXE");
 
-            var hash = HashHelper.GetHashSha256(file);
-            if (hashes["AVATAR.EXE"] == HashHelper.BytesToString(hash))
-            {
-                File.Copy(file, $"{file}.orig", true);
-            }
-            else
-            {
-                hash = HashHelper.GetHashSha256($"{file}.orig");
-                if (hashes["AVATAR.EXE"] != HashHelper.BytesToString(hash))
-                {
-                    throw new FileNotFoundException($"Original version of {file} not found.");
-                }
-            }
+            FileHelper.TryBackupOriginalFile(file);
 
             var avatarStream = new System.IO.FileStream($"{file}.orig", System.IO.FileMode.Open);
             avatarBytes = avatarStream.ReadAllBytes();

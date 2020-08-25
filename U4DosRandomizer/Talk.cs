@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
+using U4DosRandomizer.Helpers;
 
 namespace U4DosRandomizer
 {
@@ -11,26 +12,14 @@ namespace U4DosRandomizer
     {
         private Dictionary<string, List<Person>> towns = new Dictionary<string, List<Person>>();
 
-        public void Load(string path, Dictionary<string, string> hashes)
+        public void Load(string path)
         {
             var files = Directory.GetFiles(path, "*.TLK");
 
             var personBytes = new byte[0x120];
             foreach(var file in files)
             {
-                var hash = HashHelper.GetHashSha256(file);
-                if (hashes[Path.GetFileName(file)] == HashHelper.BytesToString(hash))
-                {
-                    File.Copy(file, $"{file}.orig", true);
-                }
-                else
-                {
-                    hash = HashHelper.GetHashSha256($"{file}.orig");
-                    if(hashes[Path.GetFileName(file)] != HashHelper.BytesToString(hash))
-                    {
-                        throw new FileNotFoundException($"Original version of {file} not found.");
-                    }
-                }
+                FileHelper.TryBackupOriginalFile(file);
 
                 var talk = new System.IO.FileStream($"{file}.orig", System.IO.FileMode.Open);
 
