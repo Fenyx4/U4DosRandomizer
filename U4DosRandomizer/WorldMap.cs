@@ -115,8 +115,8 @@ namespace U4DosRandomizer
         {
             // Original game only had single tiles in very special circumstances
             RemoveSingleTiles();
-            AddRivers(random);
-            AddBridges();
+            var rivers = AddRivers(random);
+            AddBridges(random, rivers);
             AddLava();
             AddSwamp();
         }
@@ -219,13 +219,113 @@ namespace U4DosRandomizer
             return;
         }
 
-        private void AddBridges()
+        private void AddBridges(Random random, List<River> rivers)
         {
-            // TODO
+            int totalNumOBridgedRivers = 9 + random.Next(1, 3) + random.Next(1, 3);
+
+            Dictionary<Tile, List<River>> collectionOfRiversWithSameMouth = new Dictionary<Tile, List<River>>();
+
+            foreach(var river in rivers)
+            {
+                var mouth = river.Path[river.Path.Count() - 1];
+                if (collectionOfRiversWithSameMouth.ContainsKey(mouth))
+                {
+                    collectionOfRiversWithSameMouth[mouth].Add(river);
+                }
+                else
+                {
+                    collectionOfRiversWithSameMouth.Add(mouth, new List<River>());
+                    collectionOfRiversWithSameMouth[mouth].Add(river);
+                }
+            }
+
+            var riverCollections = collectionOfRiversWithSameMouth.Values.ToList();
+            var bridgeCount = 0;            
+            foreach(var riverCollection in riverCollections.ToList())
+            {
+                var headInMountains = false;
+                foreach (var river in riverCollection)
+                {
+                    foreach (var neighbor in river.Path[river.Head].NeighborAndAdjacentCoordinates())
+                    {
+                        if (neighbor.GetTile() == 0x08)
+                        {
+                            headInMountains = true;
+                        }
+                    }
+                }
+                if(headInMountains)
+                {
+                    AddBridge(random, riverCollection, true);
+                    riverCollections.Remove(riverCollection);
+                    bridgeCount++;
+                }
+            }
+
+            while (bridgeCount < totalNumOBridgedRivers)
+            {
+                var index = random.Next(0, riverCollections.Count());
+                AddBridge(random, riverCollections[index], false);
+                riverCollections.RemoveAt(index);
+                bridgeCount++;
+            }
+
             return;
         }
 
-        private void AddRivers(Random random)
+        private void AddBridge(Random random, List<River> riverCollection, bool tryHarder)
+        {
+            int minBridgeDepth = random.Next(1, 6);
+
+            foreach (var river in riverCollection)
+            {
+                // Bridge can't be further out than the river
+
+                var correctedMinBridgeDepth = (minBridgeDepth > river.Path.Count() ? 1 : minBridgeDepth);
+                var maxBridgeDepth = Math.Max(river.Path.Count() - 9, 0);
+
+
+                var bridgeAdded = false;
+                for (int i = river.Path.Count() - correctedMinBridgeDepth; i > maxBridgeDepth; i--)
+                {
+                    var possibleBridge = river.Path[i];
+
+                    if (_worldMapTiles[possibleBridge.X, possibleBridge.Y] != 0x02)
+                    {
+                        break;
+                    }
+
+                    if (IsWalkableGround(GetCoordinate(possibleBridge.X - 1, possibleBridge.Y)) && IsWalkableGround(GetCoordinate(possibleBridge.X + 1, possibleBridge.Y)))
+                    {
+                        _worldMapTiles[possibleBridge.X, possibleBridge.Y] = 0x17;
+                        bridgeAdded = true;
+                        break;
+                    }
+                }
+
+                if(!bridgeAdded && tryHarder)
+                {
+                    for (int i = river.Path.Count() - 1; i > correctedMinBridgeDepth; i--)
+                    {
+                        var possibleBridge = river.Path[i];
+
+                        if (_worldMapTiles[possibleBridge.X, possibleBridge.Y] != 0x02)
+                        {
+                            break;
+                        }
+
+                        if (IsWalkableGround(GetCoordinate(possibleBridge.X - 1, possibleBridge.Y)) && IsWalkableGround(GetCoordinate(possibleBridge.X + 1, possibleBridge.Y)))
+                        {
+                            _worldMapTiles[possibleBridge.X, possibleBridge.Y] = 0x17;
+                            bridgeAdded = true;
+                            break;
+                        }
+                    }
+                }
+            }
+        }
+
+        private List<River> AddRivers(Random random)
         {
             // There are ~32 in the original Ultima map
             int totalNumOfRivers = 28 + random.Next(1, 3) + random.Next(1, 3);
@@ -275,36 +375,39 @@ namespace U4DosRandomizer
                 highPoints.Add(prevPoint);
             }
 
-            var paths = new List<List<Tile>>();
+            var rivers = new List<River>();
             foreach (var highPoint in highPoints)
             {
                 // find shortest path
                 List<Tile> path = GetRiverPath(highPoint, IsCoordinateWater);
-                paths.Add(path);
+                var river = new River();
+                river.Path = path;
+                rivers.Add(river);
             }
 
-            foreach (var path in paths)
+            foreach (var river in rivers)
             {
                 //Choose random spot along the path for the headwater
                 //var start = random.Next(0, path.Count);
                 // That is weighted towards the start of the path
-                var max = path.Count - 10;
+                var max = river.Path.Count - 10;
                 var min = 10;
                 var start = Convert.ToInt32(Math.Floor(Math.Abs(random.NextDouble() - random.NextDouble()) * (1 + max - min) + min));
                 //for( int i = 1; i < start; i++)
                 //{
                 //    _worldMapTiles[path[i].X, path[i].Y] = 0x70;
                 //}
-                for (int i = start; i < path.Count; i++)
+                river.Head = start;
+                for (int i = start; i < river.Path.Count; i++)
                 {
-                    _worldMapTiles[path[i].X, path[i].Y] = 0x02;
+                    _worldMapTiles[river.Path[i].X, river.Path[i].Y] = 0x02;
                 }
             }
 
             // TODO: Make rivers fork
             // TODO: Surround all rivers with scrub and/or swamps?
 
-            return;
+            return rivers;
         }
 
         public static bool Between(byte x, int v1, int v2)
@@ -366,6 +469,11 @@ namespace U4DosRandomizer
             var value = _worldMapGenerated[coord.X, coord.Y] - _generatedMin;
 
             return Convert.ToSingle(value / range);
+        }
+
+        public static bool IsWalkableGround(ITile coord)
+        {
+            return coord.GetTile() >= 3 && coord.GetTile() <= 7;
         }
 
         private static bool IsCoordinateWater(ITile coordinate)

@@ -135,7 +135,7 @@ namespace U4DosRandomizer
 
         private static void RandomizeItems(UltimaData ultimaData, WorldMap worldMap, Random random, List<Tile> exclude)
         {
-            var loc = RandomizeLocation(random, 3, worldMap, IsWalkableGround, exclude);
+            var loc = RandomizeLocation(random, 3, worldMap, WorldMap.IsWalkableGround, exclude);
             ultimaData.Items[Avatar.ITEM_MANDRAKE].X = loc.X;
             ultimaData.Items[Avatar.ITEM_MANDRAKE].Y = loc.Y;
 
@@ -155,7 +155,7 @@ namespace U4DosRandomizer
             ultimaData.Items[Avatar.ITEM_BELL].Y = loc.Y;
             ApplyShape(worldMap, loc, "bell");
 
-            loc = GetRandomCoordinate(random, worldMap, IsWalkableGround, exclude);
+            loc = GetRandomCoordinate(random, worldMap, WorldMap.IsWalkableGround, exclude);
             ultimaData.Items[Avatar.ITEM_HORN].X = loc.X;
             ultimaData.Items[Avatar.ITEM_HORN].Y = loc.Y;
 
@@ -294,7 +294,7 @@ namespace U4DosRandomizer
                 var lcb = GetRandomCoordinate(random, worldMap);
                 var lcbEntrance = worldMap.GetCoordinate(lcb.X, lcb.Y + 1);
 
-                if (IsWalkableGround(lcb) && IsWalkableGround(lcbEntrance) && !excludeLocations.Contains(lcb))
+                if (WorldMap.IsWalkableGround(lcb) && WorldMap.IsWalkableGround(lcbEntrance) && !excludeLocations.Contains(lcb))
                 {
                     lcb.SetTile(14);
                     ultimaData.LCB.Add(lcb);
@@ -310,7 +310,7 @@ namespace U4DosRandomizer
             }
 
             // Buildings
-            possibleLocations = worldMap.GetAllMatchingTiles(IsWalkableGround);
+            possibleLocations = worldMap.GetAllMatchingTiles(WorldMap.IsWalkableGround);
             possibleLocations.RemoveAll(c => excludeLocations.Contains(c));
             // Castles
             Tile loc = null;
@@ -382,7 +382,7 @@ namespace U4DosRandomizer
 
             // Dungeons
             // TODO: Change this to be grab all mountains, then check if you can path to something landable by balloon or ship
-            possibleLocations = worldMap.GetAllMatchingTiles(c => c.GetTile() == 8 && IsWalkableGround(worldMap.GetCoordinate(c.X, c.Y+1)) && Search.GetPath(WorldMap.SIZE, WorldMap.SIZE, c,
+            possibleLocations = worldMap.GetAllMatchingTiles(c => c.GetTile() == 8 && WorldMap.IsWalkableGround(worldMap.GetCoordinate(c.X, c.Y+1)) && Search.GetPath(WorldMap.SIZE, WorldMap.SIZE, c,
                 coord => { return IsGrass(coord) || coord.GetTile() == 0; },
                 IsWalkableOrSailable).Count > 0);
             possibleLocations.RemoveAll(c => excludeLocations.Contains(c));
@@ -457,11 +457,6 @@ namespace U4DosRandomizer
             possibleLocations.RemoveAt(randomIdx);
 
             return loc;
-        }
-
-        private static bool IsWalkableGround(Tile coord)
-        {
-            return coord.GetTile() >= 3 && coord.GetTile() <= 7;
         }
 
         private static bool IsWalkable(Tile coord)
