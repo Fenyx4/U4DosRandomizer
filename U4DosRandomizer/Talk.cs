@@ -19,7 +19,7 @@ namespace U4DosRandomizer
             var personBytes = new byte[0x120];
             foreach(var file in files)
             {
-                FileHelper.TryBackupOriginalFile(file);
+                FileHelper.TryBackupOriginalFile(file, false);
 
                 var talk = new System.IO.FileStream($"{file}.orig", System.IO.FileMode.Open);
 
@@ -59,13 +59,13 @@ namespace U4DosRandomizer
             person.KeywordResponse2 = ReplaceSextantText(person.KeywordResponse2, GetSextantText(ultimaData.Items[Avatar.ITEM_BELL]));
 
             person = FindPerson("Jude");
-            person.KeywordResponse2 = ReplaceSextantText(person.KeywordResponse2, GetSextantText(ultimaData.Items[Avatar.ITEM_SKULL]));
+            person.Yes = ReplaceSextantText(person.Yes, GetSextantText(ultimaData.Items[Avatar.ITEM_SKULL]));
 
             person = FindPerson("Virgil");
             person.KeywordResponse2 = ReplaceSextantText(person.KeywordResponse2, GetSextantText(ultimaData.Items[Avatar.ITEM_NIGHTSHADE]));
 
-            person = FindPerson("Virgil");
-            person.KeywordResponse2 = ReplaceSextantText(person.KeywordResponse2, GetSextantText(ultimaData.Towns[Avatar.LOC_MAGINCIA - Avatar.LOC_TOWNS]));
+            person = FindPerson("Shawn");
+            person.No = ReplaceSextantText(person.No, GetSextantText(ultimaData.Towns[Avatar.LOC_MAGINCIA - Avatar.LOC_TOWNS]));
 
             // Mandrake
             // TODO make response descriptive
@@ -106,12 +106,12 @@ namespace U4DosRandomizer
             // Compassion
             // TODO make response descriptive
             person = FindPerson("Shapero");
-            person.KeywordResponse2 = $"Find the shrine\nof compassion\nat\n{GetSextantText(ultimaData.Shrines[Avatar.LOC_COMPASSION - Avatar.LOC_SHRINES])}!";
+            person.Yes = $"Find the shrine\nof compassion\nat\n{GetSextantText(ultimaData.Shrines[Avatar.LOC_COMPASSION - Avatar.LOC_SHRINES])}!";
 
             // Sacrifice
             // TODO make response descriptive
             person = FindPerson("Merida");
-            person.KeywordResponse2 = $"The shrine is at\n{GetSextantText(ultimaData.Shrines[Avatar.LOC_SACRIFICE - Avatar.LOC_SHRINES])}!";
+            person.No = $"The shrine is at\n{GetSextantText(ultimaData.Shrines[Avatar.LOC_SACRIFICE - Avatar.LOC_SHRINES])}!";
 
             // Justice
             // TODO make response descriptive
@@ -208,7 +208,12 @@ namespace U4DosRandomizer
 
         private Person FindPerson(string name)
         {
-            var person = towns.Values.SelectMany(l => l).Where(p => p.Name.ToLower() == name.ToLower()).Single();
+            var person = towns.Values.SelectMany(l => l).Where(p => p.Name.ToLower() == name.ToLower()).SingleOrDefault();
+
+            if(person == null)
+            {
+                throw new Exception("Unable to find {name}. Have your files been modified?");
+            }
 
             return person;
         }
