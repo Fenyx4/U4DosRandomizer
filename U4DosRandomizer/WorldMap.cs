@@ -82,6 +82,11 @@ namespace U4DosRandomizer
             return worldMapUlt;
         }
 
+        internal static void Restore(string path)
+        {
+            var file = Path.Combine(path, filename);
+            FileHelper.Restore(file);
+        }
 
         public Tile GetCoordinate(int x, int y)
         {

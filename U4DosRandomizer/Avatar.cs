@@ -8,11 +8,12 @@ namespace U4DosRandomizer
 {
     public class Avatar
     {
+        private const string filename = "AVATAR.EXE";
         private byte[] avatarBytes;
 
         public void Load(string path, UltimaData data)
         {
-            var file = Path.Combine(path, "AVATAR.EXE");
+            var file = Path.Combine(path, filename);
 
             FileHelper.TryBackupOriginalFile(file);
 
@@ -87,6 +88,12 @@ namespace U4DosRandomizer
             data.PirateCoveSpawnTrigger = new Coordinate(avatarBytes[PIRATE_COVE_SPAWN_TRIGGER_X_OFFSET1], avatarBytes[PIRATE_COVE_SPAWN_TRIGGER_Y_OFFSET1]);
 
             data.WhirlpoolExit = new Coordinate(avatarBytes[WHIRLPOOL_EXIT_X_OFFSET], avatarBytes[WHIRLPOOL_EXIT_Y_OFFSET]);
+        }
+
+        internal static void Restore(string path)
+        {
+            var file = Path.Combine(path, filename);
+            FileHelper.Restore(file);
         }
 
         public void Update(UltimaData data)
@@ -210,7 +217,7 @@ namespace U4DosRandomizer
 
         public void Save(string path)
         {
-            var exePath = Path.Combine(path, "AVATAR.EXE");
+            var exePath = Path.Combine(path, filename);
             var avatarOut = new System.IO.BinaryWriter(new System.IO.FileStream(exePath, System.IO.FileMode.Truncate));
 
             //var binPath = Path.Combine(path, "AVATAR.bin");

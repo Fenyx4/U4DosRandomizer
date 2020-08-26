@@ -69,5 +69,11 @@ namespace U4DosRandomizer
 
         public static int START_X_OFFSET = 0x70dc;
         public static int START_Y_OFFSET = 0x70e4;
+
+        internal static void Restore(string path)
+        {
+            var file = Path.Combine(path, filename);
+            FileHelper.Restore(file);
+        }
     }
 }

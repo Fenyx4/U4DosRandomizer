@@ -1,4 +1,5 @@
 ﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.IO;
 
@@ -31,6 +32,14 @@ namespace U4DosRandomizer.Helpers
             else
             {
                 throw new FileNotFoundException($"Original version of {file} not found. Has this file been modified since U4 was installed?");
+            }
+        }
+
+        public static void Restore(string filename)
+        {
+            if (File.Exists($"{filename}.orig"))
+            {
+                File.Copy($"{filename}.orig", filename, true);
             }
         }
     }

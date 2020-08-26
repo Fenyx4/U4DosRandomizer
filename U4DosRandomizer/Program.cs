@@ -24,6 +24,10 @@ namespace U4DosRandomizer
                 "Path to Ultima 4 installation. "
                 + " Leaving blank will assume it is the working directory.",
                 CommandOptionType.SingleValue);
+            CommandOption restoreArg = commandLineApplication.Option(
+                "-r |--r",
+                "Restore original Ultima 4 files. ",
+                CommandOptionType.NoValue);
             commandLineApplication.HelpOption("-? | -h | --help");
 
             commandLineApplication.OnExecute(() =>
@@ -60,11 +64,26 @@ namespace U4DosRandomizer
                     }
                 }
 
-                Randomize(seed, path);
+                if (restoreArg.HasValue())
+                {
+                    Restore(path);
+                }
+                else
+                {
+                    Randomize(seed, path);
+                }
 
                 return 0;
             });
             commandLineApplication.Execute(args);           
+        }
+
+        private static void Restore(string path)
+        {
+            WorldMap.Restore(path);
+            Avatar.Restore(path);
+            Title.Restore(path);
+            Talk.Restore(path);
         }
 
         private static void Randomize(int seed, string path)

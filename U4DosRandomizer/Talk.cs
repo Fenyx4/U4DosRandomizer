@@ -161,6 +161,16 @@ namespace U4DosRandomizer
 
         }
 
+        internal static void Restore(string path)
+        {
+            var files = Directory.GetFiles(path, "*.TLK");
+
+            foreach (var file in files)
+            {
+                FileHelper.Restore(file);
+            }
+        }
+
         // https://github.com/ergonomy-joe/u4-decompiled/blob/c2c2108fa3bb346bcd1d8c207c526f33a4c8f5ef/SRC/U4_LOCAT.C#L20
         public static string GetSextantText(ICoordinate item)
         {
