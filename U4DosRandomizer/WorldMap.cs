@@ -1,4 +1,5 @@
-﻿using System;
+﻿using SixLabors.ImageSharp.PixelFormats;
+using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
@@ -605,20 +606,21 @@ namespace U4DosRandomizer
             }
         }
 
-        public SixLabors.ImageSharp.Image ToBitmap()
+        public SixLabors.ImageSharp.Image ToImage()
         {
-            var image = new SixLabors.ImageSharp.Image<SixLabors.ImageSharp.PixelFormats.Rgba32>(WorldMap.SIZE, WorldMap.SIZE);
-            for (int x = 0; x < WorldMap.SIZE; x++)
+            var image = new SixLabors.ImageSharp.Image<Rgba32>(WorldMap.SIZE, WorldMap.SIZE);
+            for (int y = 0; y < WorldMap.SIZE; y++)
             {
-                for (int y = 0; y < WorldMap.SIZE; y++)
+                Span<Rgba32> pixelRowSpan = image.GetPixelRowSpan(y);
+                for (int x = 0; x < WorldMap.SIZE; x++)
                 {
                     if (colorMap.ContainsKey(_worldMapTiles[x, y]))
                     {
-                        image[x, y] = colorMap[_worldMapTiles[x, y]];
+                        pixelRowSpan[x] = colorMap[_worldMapTiles[x, y]];
                     }
                     else
                     {
-                        image[x, y] = SixLabors.ImageSharp.Color.White;
+                        pixelRowSpan[x] = SixLabors.ImageSharp.Color.White;
                     }
 
                 }

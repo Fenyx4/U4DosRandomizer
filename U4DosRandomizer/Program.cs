@@ -128,8 +128,8 @@ namespace U4DosRandomizer
             avatar.Save(path);
             worldMap.Save(path);
 
-            var image = worldMap.ToBitmap();
-            image.SaveAsBmp("worldMap.bmp");
+            var image = worldMap.ToImage();
+            image.SaveAsPng("worldMap.png");
 
             //PrintWorldMapInfo();
         }
