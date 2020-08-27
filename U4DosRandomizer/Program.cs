@@ -1,5 +1,6 @@
 using Microsoft.Extensions.CommandLineUtils;
 using Newtonsoft.Json;
+using SixLabors.ImageSharp;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -128,7 +129,7 @@ namespace U4DosRandomizer
             worldMap.Save(path);
 
             var image = worldMap.ToBitmap();
-            image.Save("worldMap.bmp");
+            image.SaveAsBmp("worldMap.bmp");
 
             //PrintWorldMapInfo();
         }

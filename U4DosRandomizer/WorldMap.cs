@@ -262,7 +262,7 @@ namespace U4DosRandomizer
                 }
             }
 
-            while (bridgeCount < totalNumOBridgedRivers)
+            while (bridgeCount < totalNumOBridgedRivers && riverCollections.Count > 0)
             {
                 var index = random.Next(0, riverCollections.Count());
                 AddBridge(random, riverCollections[index], false);
@@ -605,20 +605,20 @@ namespace U4DosRandomizer
             }
         }
 
-        public Bitmap ToBitmap()
+        public SixLabors.ImageSharp.Image ToBitmap()
         {
-            var image = new Bitmap(WorldMap.SIZE, WorldMap.SIZE);
+            var image = new SixLabors.ImageSharp.Image<SixLabors.ImageSharp.PixelFormats.Rgba32>(WorldMap.SIZE, WorldMap.SIZE);
             for (int x = 0; x < WorldMap.SIZE; x++)
             {
                 for (int y = 0; y < WorldMap.SIZE; y++)
                 {
                     if (colorMap.ContainsKey(_worldMapTiles[x, y]))
                     {
-                        image.SetPixel(x, y, colorMap[_worldMapTiles[x, y]]);
+                        image[x, y] = colorMap[_worldMapTiles[x, y]];
                     }
                     else
                     {
-                        image.SetPixel(x, y, Color.White);
+                        image[x, y] = SixLabors.ImageSharp.Color.White;
                     }
 
                 }
@@ -627,20 +627,20 @@ namespace U4DosRandomizer
             return image;
         }
 
-        static private Dictionary<byte, Color> colorMap = new Dictionary<byte, Color>()
+        static private Dictionary<byte, SixLabors.ImageSharp.Color> colorMap = new Dictionary<byte, SixLabors.ImageSharp.Color>()
         {
-            {0, Color.FromArgb(0,0,112) },
-            {1, Color.FromArgb(20,20,112) },
-            {2, Color.FromArgb(60,60,112) },
-            {3, Color.FromArgb(112, 0, 112) },
-            {4, Color.FromArgb(18, 112+18, 18) },
-            {5, Color.FromArgb(68, 112+68, 68) },
-            {6, Color.FromArgb(108,112+108,108) },
-            {7, Color.FromArgb(112+45,112+45,112+45) },
-            {8, Color.FromArgb(112+15,112+15,112+15) },
-            {70, Color.Orange },
-            {76, Color.Red },
-            {0xA1, Color.Purple },
+            {0, SixLabors.ImageSharp.Color.FromRgb(0, 0, 112) },
+            {1, SixLabors.ImageSharp.Color.FromRgb(20,20,112) },
+            {2, SixLabors.ImageSharp.Color.FromRgb(60,60,112) },
+            {3, SixLabors.ImageSharp.Color.FromRgb(112, 0, 112) },
+            {4, SixLabors.ImageSharp.Color.FromRgb(18, 112+18, 18) },
+            {5, SixLabors.ImageSharp.Color.FromRgb(68, 112+68, 68) },
+            {6, SixLabors.ImageSharp.Color.FromRgb(108,112+108,108) },
+            {7, SixLabors.ImageSharp.Color.FromRgb(112+45,112+45,112+45) },
+            {8, SixLabors.ImageSharp.Color.FromRgb(112+15,112+15,112+15) },
+            {70, SixLabors.ImageSharp.Color.Orange },
+            {76, SixLabors.ImageSharp.Color.Red },
+            {0xA1, SixLabors.ImageSharp.Color.Purple },
         };
     }
 }
