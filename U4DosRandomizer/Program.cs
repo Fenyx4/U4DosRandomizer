@@ -379,20 +379,56 @@ namespace U4DosRandomizer
 
 
             // Moongates
-            // TODO: Put Near towns
-            possibleLocations = worldMap.GetAllMatchingTiles(IsGrass);
-            possibleLocations.RemoveAll(c => excludeLocations.Contains(c));
+            List<Tile> path = new List<Tile>();
+            List<byte> validTiles = new List<byte>() { TileInfo.Grasslands, TileInfo.Scrubland, TileInfo.Swamp, TileInfo.Forest, TileInfo.Hills };
             for (int i = 0; i < 8; i++)
-            { 
-                loc = RandomSelectFromListChangeAndRemove(random, possibleLocations, TileInfo.Grasslands);
-                ultimaData.Moongates.Add(loc);
+            {
+                path = new List<Tile>();
+                var distance = random.Next(5, 10);
+                while (path.Count == 0 && distance > 0)
+                {
+                    path = Search.GetPath(WorldMap.SIZE, WorldMap.SIZE, ultimaData.Towns[i],
+                        // Move at least 9 spaces away from from the entrance
+                        c => { return distance * distance <= WorldMap.DistanceSquared(c, ultimaData.Towns[i]) && IsWalkable(c); },
+                        // Only valid if all neighbors all also mountains
+                        c => { return IsMatchingTile(c,validTiles); },
+                        (c, b) => { return (float)random.NextDouble(); });
+                    if (path.Count == 0)
+                    {
+                        Console.WriteLine($"Failed Moongate placement of {i} placement. Retrying.");
+                        distance--;
+                    }
+                    else
+                    {
+                        loc = path[path.Count - 1];
+                        loc.SetTile(TileInfo.Grasslands);
+                        foreach(var n in loc.NeighborCoordinates())
+                        {
+                            if(validTiles.Contains(n.GetTile()))
+                            {
+                                n.SetTile(TileInfo.Grasslands);
+                            }
+                        }
+                        possibleLocations.Remove(loc);
+                        ultimaData.Moongates.Add(loc);
+                    }
+                }
+                if(distance == 0)
+                {
+                    Console.WriteLine($"Utterly failed at Moongate placement of {i} placement. Trying random.");
+                    possibleLocations = worldMap.GetAllMatchingTiles(IsGrass);
+                    possibleLocations.RemoveAll(c => excludeLocations.Contains(c));
+
+                    loc = RandomSelectFromListChangeAndRemove(random, possibleLocations, TileInfo.Grasslands);
+                    ultimaData.Moongates.Add(loc);
+                }
             }
 
             // Dungeons
             // TODO: Change this to be grab all mountains, then check if you can path to something landable by balloon or ship
             possibleLocations = worldMap.GetAllMatchingTiles(c => c.GetTile() == TileInfo.Mountains && WorldMap.IsWalkableGround(worldMap.GetCoordinate(c.X, c.Y+1)) && Search.GetPath(WorldMap.SIZE, WorldMap.SIZE, c,
-                coord => { return IsGrass(coord) || coord.GetTile() == TileInfo.Deep_Water; },
-                IsWalkableOrSailable).Count > 0);
+            coord => { return IsGrass(coord) || coord.GetTile() == TileInfo.Deep_Water; },
+            IsWalkableOrSailable).Count > 0);
             possibleLocations.RemoveAll(c => excludeLocations.Contains(c));
             for (int i = 0; i < 6; i++)
             {
@@ -404,7 +440,7 @@ namespace U4DosRandomizer
             // TODO: Hythloth prettier
             possibleLocations = worldMap.GetAllMatchingTiles(c => AreaIsAll(worldMap, TileInfo.Mountains, 4, c));
 
-            List<Tile> path = new List<Tile>();
+            path = new List<Tile>();
             while (path.Count == 0)
             {
                 loc = possibleLocations[random.Next(0, possibleLocations.Count)];
@@ -465,6 +501,11 @@ namespace U4DosRandomizer
             possibleLocations.RemoveAt(randomIdx);
 
             return loc;
+        }
+
+        private static bool IsMatchingTile(Tile coord, List<byte> validTiles)
+        {
+            return validTiles.Contains(coord.GetTile());
         }
 
         private static bool IsWalkable(Tile coord)

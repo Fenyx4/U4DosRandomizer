@@ -102,12 +102,12 @@ namespace U4DosRandomizer
             return new Tile(Convert.ToByte(Wrap(x)), Convert.ToByte(Wrap(y)), _worldMapTiles);
         }
 
-        public List<Tile> GetAllMatchingTiles(Func<Tile, bool> criteria)
+        public List<Tile> GetAllMatchingTiles(Func<Tile, bool> criteria, int minX = 0, int maxX = SIZE, int minY = 0, int maxY = SIZE)
         {
             var tiles = new List<Tile>();
-            for (int x = 0; x < SIZE; x++)
+            for (int x = minX; x < maxX; x++)
             {
-                for(int y = 0; y < SIZE; y++)
+                for(int y = minX; y < maxX; y++)
                 {
                     var tile = GetCoordinate(x, y);
                     if(criteria(tile))
