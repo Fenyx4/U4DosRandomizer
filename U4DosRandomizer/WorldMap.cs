@@ -117,7 +117,24 @@ namespace U4DosRandomizer
             // Original game only had single tiles in very special circumstances
             RemoveSingleTiles();
             var rivers = AddRivers(random);
-            AddBridges(random, rivers);
+            Dictionary<Tile, List<River>> collectionOfRiversWithSameMouth = new Dictionary<Tile, List<River>>();
+
+            foreach (var river in rivers)
+            {
+                var mouth = river.Path[river.Path.Count() - 1];
+                if (collectionOfRiversWithSameMouth.ContainsKey(mouth))
+                {
+                    collectionOfRiversWithSameMouth[mouth].Add(river);
+                }
+                else
+                {
+                    collectionOfRiversWithSameMouth.Add(mouth, new List<River>());
+                    collectionOfRiversWithSameMouth[mouth].Add(river);
+                }
+            }
+            var riverCollections = collectionOfRiversWithSameMouth.Values.ToList();
+            AddBridges(random, riverCollections);
+            AddScrub(riverCollections);
             AddLava();
             AddSwamp();
         }
@@ -188,9 +205,9 @@ namespace U4DosRandomizer
 
         private void RemoveSingleTiles()
         {
-            for (int x = 0; x < 256; x++)
+            for (int x = 0; x < SIZE; x++)
             {
-                for (int y = 0; y < 256; y++)
+                for (int y = 0; y < SIZE; y++)
                 {   
                     var adjacentTiles = new byte[] { _worldMapTiles[Wrap(x + 1), y], _worldMapTiles[Wrap(x - 1), y], _worldMapTiles[x, Wrap(y + 1)], _worldMapTiles[x, Wrap(y - 1)] };
                     if (!adjacentTiles.Contains(_worldMapTiles[x, y]))
@@ -220,27 +237,67 @@ namespace U4DosRandomizer
             return;
         }
 
-        private void AddBridges(Random random, List<River> rivers)
+        private void AddScrub(List<List<River>> rivers)
+        {
+            foreach(var riverCollection in rivers)
+            {
+                var openSet = new HashSet<Tile>();
+                var queue = new Queue<Tuple<Tile, int>>();
+                foreach (var river in riverCollection)
+                {
+                    //foreach(var tile in river.Path)
+                    for (int i = river.Head; i < river.Path.Count; i++)
+                    {
+                        if (!openSet.Contains(river.Path[i]))
+                        {
+                            openSet.Add(river.Path[i]);
+                            queue.Enqueue(new Tuple<Tile,int>(river.Path[i], 0));
+                        }
+                    }
+                }
+
+                var finalSet = new HashSet<Tile>();
+                var closedSet = new HashSet<Tile>();
+
+                while(openSet.Count > 0)
+                {
+                    var current = queue.Dequeue();
+                    openSet.Remove(current.Item1);
+                    closedSet.Add(current.Item1);
+
+                    if (current.Item2 < 4)
+                    {
+                        foreach (var neighbor in current.Item1.NeighborCoordinates())
+                        {
+                            if (!closedSet.Contains(neighbor))
+                            {
+                                if (!openSet.Contains(neighbor))
+                                {
+                                    if (neighbor.GetTile() == TileInfo.Grasslands)
+                                    {
+                                        finalSet.Add(neighbor);
+                                        openSet.Add(neighbor);
+                                        queue.Enqueue(new Tuple<Tile, int>(neighbor, current.Item2 + 1));
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+
+                foreach(var tile in finalSet)
+                {
+                    tile.SetTile(TileInfo.Scrubland);
+                }
+            }
+        }
+
+        private void AddBridges(Random random, List<List<River>> rivers)
         {
             int totalNumOBridgedRivers = 9 + random.Next(1, 3) + random.Next(1, 3);
 
-            Dictionary<Tile, List<River>> collectionOfRiversWithSameMouth = new Dictionary<Tile, List<River>>();
+            var riverCollections = rivers.ToList();
 
-            foreach(var river in rivers)
-            {
-                var mouth = river.Path[river.Path.Count() - 1];
-                if (collectionOfRiversWithSameMouth.ContainsKey(mouth))
-                {
-                    collectionOfRiversWithSameMouth[mouth].Add(river);
-                }
-                else
-                {
-                    collectionOfRiversWithSameMouth.Add(mouth, new List<River>());
-                    collectionOfRiversWithSameMouth[mouth].Add(river);
-                }
-            }
-
-            var riverCollections = collectionOfRiversWithSameMouth.Values.ToList();
             var bridgeCount = 0;            
             foreach(var riverCollection in riverCollections.ToList())
             {
@@ -550,8 +607,8 @@ namespace U4DosRandomizer
             {TileInfo.Medium_Water,0.15771484375},
             //{2,0.0294952392578125}, Kill shallow water for now... May want to special place that
             //{3,0.010162353515625}, Kill swamps want to special place those
-            {TileInfo.Grasslands,0.1092376708984375+0.010162353515625+0.0294952392578125}, // Adding on the swamps cuz I think I'll add those in later
-            {TileInfo.Scrubland,0.07513427734375},
+            {TileInfo.Grasslands,0.1092376708984375+0.010162353515625+0.0294952392578125+0.07513427734375}, // Adding on the swamps cuz I think I'll add those in later
+            //{TileInfo.Scrubland,0.07513427734375},
             {TileInfo.Forest,0.03515625},
             {TileInfo.Hills,0.0355224609375},
             {TileInfo.Mountains,0.0266265869140625},
