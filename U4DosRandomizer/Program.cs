@@ -71,6 +71,14 @@ namespace U4DosRandomizer
                 else
                 {
                     Randomize(seed, path);
+                    //Console.WriteLine("Seed: " + seed);
+                    //var random = new Random(seed);
+                    //var worldMap = new WorldMap();
+                    //worldMap.ScrubTest(random);
+                    //worldMap.Save(path);
+
+                    //var image = worldMap.ToImage();
+                    //image.SaveAsPng("worldMap.png");
                 }
 
                 return 0;
@@ -114,7 +122,7 @@ namespace U4DosRandomizer
             //Completely random location placements of buildings still. Just trying to make sure I'm editing the files correctly right now. Not looking for a cohesive map that makes sense.
             var exclude = RandomizeLocations(ultimaData, worldMap, random);
 
-            Console.WriteLine(Talk.GetSextantText(ultimaData.LCB[0]));
+            //Console.WriteLine(Talk.GetSextantText(ultimaData.LCB[0]));
 
             RandomizeItems(ultimaData, worldMap, random, exclude);
 

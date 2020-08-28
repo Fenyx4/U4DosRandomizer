@@ -1,4 +1,5 @@
 ﻿using SixLabors.ImageSharp.PixelFormats;
+using SimplexNoise;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -25,13 +26,20 @@ namespace U4DosRandomizer
 
         private byte[,] MapGeneratedMapToUltimaTiles()
         {
-            var worldMapFlattened = new double[WorldMap.SIZE * WorldMap.SIZE];
+            var mapGenerated = _worldMapGenerated;
+            var percentInMap = _percentInMap;
+            return ClampToValuesInSetRatios(mapGenerated, percentInMap, SIZE);
+        }
 
-            for (int x = 0; x < WorldMap.SIZE; x++)
+        private static byte[,] ClampToValuesInSetRatios(double[,] mapGenerated, Dictionary<byte, double> percentInMap, int size)
+        {
+            var worldMapFlattened = new double[size * size];
+
+            for (int x = 0; x < size; x++)
             {
-                for (int y = 0; y < WorldMap.SIZE; y++)
+                for (int y = 0; y < size; y++)
                 {
-                    worldMapFlattened[x + y * WorldMap.SIZE] = _worldMapGenerated[x, y];
+                    worldMapFlattened[x + y * size] = mapGenerated[x, y];
                 }
             }
 
@@ -47,7 +55,7 @@ namespace U4DosRandomizer
             foreach (var key in percentInMap)
             {
                 percentSum += key.Value;
-                var index = Convert.ToInt32(Math.Floor(worldMapFlattenedList.Count * percentSum));
+                var index = Convert.ToInt32(Math.Floor((worldMapFlattenedList.Count-1) * percentSum));
                 upperBound = worldMapFlattenedList[index];
                 rangeList.Add(new Tuple<byte, double, double>(key.Key, lowerBound, upperBound));
                 lowerBound = upperBound;
@@ -55,18 +63,18 @@ namespace U4DosRandomizer
             var last = rangeList.Last();
             rangeList[rangeList.Count - 1] = new Tuple<byte, double, double>(last.Item1, last.Item2, worldMapFlattened.Max());
 
-            var worldMapUlt = new byte[WorldMap.SIZE, WorldMap.SIZE];
-            for (int x = 0; x < WorldMap.SIZE; x++)
+            var worldMapUlt = new byte[size, size];
+            for (int x = 0; x < size; x++)
             {
-                for (int y = 0; y < WorldMap.SIZE; y++)
+                for (int y = 0; y < size; y++)
                 {
                     // Smush it down to the number of tile types we want
                     //int res = Convert.ToInt32(Linear(worldMapDS[x, y], min, max, 0, percentInMap.Count));
                     byte res = 99;
                     foreach (var range in rangeList)
                     {
-                        var value = _worldMapGenerated[x, y];
-                        if (_worldMapGenerated[x, y] > range.Item2 && _worldMapGenerated[x, y] <= range.Item3)
+                        var value = mapGenerated[x, y];
+                        if (mapGenerated[x, y] > range.Item2 && mapGenerated[x, y] <= range.Item3)
                         {
                             res = range.Item1;
                             break;
@@ -134,9 +142,61 @@ namespace U4DosRandomizer
             }
             var riverCollections = collectionOfRiversWithSameMouth.Values.ToList();
             AddBridges(random, riverCollections);
-            AddScrub(riverCollections);
+            AddScrubAndForest(random, riverCollections);
             AddLava();
             AddSwamp();
+        }
+
+        private byte[,] ScrubMap(Random random)
+        {
+            //var scrubNoise = new DiamondSquare(WorldMap.SIZE, 184643518.256878*128, 82759876).getData(random);
+            SimplexNoise.Noise.Seed = random.Next();
+            var scrubNoiseFloatLayerOne = SimplexNoise.Noise.Calc2D(SIZE, SIZE, 0.05f);
+            var scrubNoiseFloatLayerTwo = SimplexNoise.Noise.Calc2D(SIZE, SIZE, 0.01f);
+
+
+            var scrubNoiseLayerOne = Float2dToDouble2d(scrubNoiseFloatLayerOne, SIZE);
+            var scrubNoiseLayerTwo = Float2dToDouble2d(scrubNoiseFloatLayerTwo, SIZE);
+
+            var scrubNoise = new double[SIZE, SIZE];
+            for (int x = 0; x < SIZE; x++)
+            {
+                for (int y = 0; y < SIZE; y++)
+                {
+                    scrubNoise[x, y] = scrubNoiseLayerOne[x, y] + (scrubNoiseLayerTwo[x,y] * 0.5);
+                }
+            }
+
+            // As we will be overlaying it on the grass so bump up the percentage so the ratio stays correct
+            var scrubPercent = 0.07513427734375 / _percentInMap[TileInfo.Grasslands];
+            var forestPercent = 0.03515625 / _percentInMap[TileInfo.Grasslands];
+            var percentInMap = new Dictionary<byte, double>()
+            {
+                {TileInfo.Grasslands,(1.0-scrubPercent)-forestPercent},
+                {TileInfo.Scrubland,scrubPercent},
+                {TileInfo.Forest,forestPercent }
+            };
+
+            return ClampToValuesInSetRatios(scrubNoise, percentInMap, SIZE);
+        }
+
+        private static double[,] Float2dToDouble2d(float[,] floatArray, int size)
+        {
+            var result = new double[size, size];
+            for (int x = 0; x < size; x++)
+            {
+                for (int y = 0; y < size; y++)
+                {
+                    result[x, y] = floatArray[x, y];
+                }
+            }
+
+            return result;
+        }
+
+        public void ScrubTest(Random random)
+        {
+            _worldMapTiles = ScrubMap(random);
         }
 
         //https://stackoverflow.com/questions/3041366/shortest-distance-between-points-on-a-toroidally-wrapped-x-and-y-wrapping-ma
@@ -237,8 +297,9 @@ namespace U4DosRandomizer
             return;
         }
 
-        private void AddScrub(List<List<River>> rivers)
+        private void AddScrubAndForest(Random random, List<List<River>> rivers)
         {
+            // Add to Rivers
             foreach(var riverCollection in rivers)
             {
                 var openSet = new HashSet<Tile>();
@@ -288,6 +349,20 @@ namespace U4DosRandomizer
                 foreach(var tile in finalSet)
                 {
                     tile.SetTile(TileInfo.Scrubland);
+                }
+            }
+
+            // Add other blobs
+            var scrub = ScrubMap(random);
+
+            for (int x = 0; x < SIZE; x++)
+            {
+                for (int y = 0; y < SIZE; y++)
+                {
+                    if (_worldMapTiles[x, y] == TileInfo.Grasslands)
+                    {
+                        _worldMapTiles[x, y] = scrub[x, y];
+                    }
                 }
             }
         }
@@ -405,7 +480,7 @@ namespace U4DosRandomizer
             var highPoints = new HashSet<Tile>();
             for (int riverNum = 0; riverNum < totalNumOfRivers; riverNum++)
             {
-                var randomPoint = FindRandomPointHigherThan(4, random);
+                var randomPoint = FindRandomPointHigherThan(TileInfo.Grasslands, random);
 
                 // Track previous point so I can step back one when I find the highest point
                 var prevPoint = randomPoint;
@@ -601,15 +676,15 @@ namespace U4DosRandomizer
             return Convert.ToByte((input % divisor + divisor) % divisor);
         }
 
-        static private Dictionary<byte, double> percentInMap = new Dictionary<byte, double>()
+        static private Dictionary<byte, double> _percentInMap = new Dictionary<byte, double>()
         {
             {TileInfo.Deep_Water,0.519012451171875},
             {TileInfo.Medium_Water,0.15771484375},
             //{2,0.0294952392578125}, Kill shallow water for now... May want to special place that
             //{3,0.010162353515625}, Kill swamps want to special place those
-            {TileInfo.Grasslands,0.1092376708984375+0.010162353515625+0.0294952392578125+0.07513427734375}, // Adding on the swamps cuz I think I'll add those in later
+            {TileInfo.Grasslands,0.1092376708984375+0.010162353515625+0.0294952392578125+0.07513427734375+0.03515625}, // Adding on the swamps cuz I think I'll add those in later
             //{TileInfo.Scrubland,0.07513427734375},
-            {TileInfo.Forest,0.03515625},
+            //{TileInfo.Forest,0.03515625},
             {TileInfo.Hills,0.0355224609375},
             {TileInfo.Mountains,0.0266265869140625},
             //{9,0.0001068115234375},
