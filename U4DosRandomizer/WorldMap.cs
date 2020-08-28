@@ -249,7 +249,7 @@ namespace U4DosRandomizer
                 {
                     foreach (var neighbor in river.Path[river.Head].NeighborAndAdjacentCoordinates())
                     {
-                        if (neighbor.GetTile() == 0x08)
+                        if (neighbor.GetTile() == TileInfo.Mountains)
                         {
                             headInMountains = true;
                         }
@@ -291,14 +291,14 @@ namespace U4DosRandomizer
                 {
                     var possibleBridge = river.Path[i];
 
-                    if (_worldMapTiles[possibleBridge.X, possibleBridge.Y] != 0x02)
+                    if (_worldMapTiles[possibleBridge.X, possibleBridge.Y] != TileInfo.Shallow_Water)
                     {
                         break;
                     }
 
                     if (IsWalkableGround(GetCoordinate(possibleBridge.X - 1, possibleBridge.Y)) && IsWalkableGround(GetCoordinate(possibleBridge.X + 1, possibleBridge.Y)))
                     {
-                        _worldMapTiles[possibleBridge.X, possibleBridge.Y] = 0x17;
+                        _worldMapTiles[possibleBridge.X, possibleBridge.Y] = TileInfo.Bridge;
                         bridgeAdded = true;
                         break;
                     }
@@ -310,14 +310,14 @@ namespace U4DosRandomizer
                     {
                         var possibleBridge = river.Path[i];
 
-                        if (_worldMapTiles[possibleBridge.X, possibleBridge.Y] != 0x02)
+                        if (_worldMapTiles[possibleBridge.X, possibleBridge.Y] != TileInfo.Shallow_Water)
                         {
                             break;
                         }
 
                         if (IsWalkableGround(GetCoordinate(possibleBridge.X - 1, possibleBridge.Y)) && IsWalkableGround(GetCoordinate(possibleBridge.X + 1, possibleBridge.Y)))
                         {
-                            _worldMapTiles[possibleBridge.X, possibleBridge.Y] = 0x17;
+                            _worldMapTiles[possibleBridge.X, possibleBridge.Y] = TileInfo.Bridge;
                             bridgeAdded = true;
                             break;
                         }
@@ -401,7 +401,7 @@ namespace U4DosRandomizer
                 river.Head = start;
                 for (int i = start; i < river.Path.Count; i++)
                 {
-                    _worldMapTiles[river.Path[i].X, river.Path[i].Y] = 0x02;
+                    _worldMapTiles[river.Path[i].X, river.Path[i].Y] = TileInfo.Shallow_Water;
                 }
             }
 
@@ -474,12 +474,12 @@ namespace U4DosRandomizer
 
         public static bool IsWalkableGround(ITile coord)
         {
-            return coord.GetTile() >= 3 && coord.GetTile() <= 7;
+            return coord.GetTile() >= TileInfo.Swamp && coord.GetTile() <= TileInfo.Hills;
         }
 
         private static bool IsCoordinateWater(ITile coordinate)
         {
-            return coordinate.GetTile() < 2;
+            return coordinate.GetTile() < TileInfo.Shallow_Water;
         }
 
         public List<Tile> GetTilesNear(Tile tile, int distance)
@@ -546,15 +546,15 @@ namespace U4DosRandomizer
 
         static private Dictionary<byte, double> percentInMap = new Dictionary<byte, double>()
         {
-            {0,0.519012451171875},
-            {1,0.15771484375},
+            {TileInfo.Deep_Water,0.519012451171875},
+            {TileInfo.Medium_Water,0.15771484375},
             //{2,0.0294952392578125}, Kill shallow water for now... May want to special place that
             //{3,0.010162353515625}, Kill swamps want to special place those
-            {4,0.1092376708984375+0.010162353515625+0.0294952392578125}, // Adding on the swamps cuz I think I'll add those in later
-            {5,0.07513427734375},
-            {6,0.03515625},
-            {7,0.0355224609375},
-            {8,0.0266265869140625},
+            {TileInfo.Grasslands,0.1092376708984375+0.010162353515625+0.0294952392578125}, // Adding on the swamps cuz I think I'll add those in later
+            {TileInfo.Scrubland,0.07513427734375},
+            {TileInfo.Forest,0.03515625},
+            {TileInfo.Hills,0.0355224609375},
+            {TileInfo.Mountains,0.0266265869140625},
             //{9,0.0001068115234375},
             //{10,0.0001068115234375},
             //{11,4.57763671875E-05},
@@ -631,18 +631,18 @@ namespace U4DosRandomizer
 
         static private Dictionary<byte, SixLabors.ImageSharp.Color> colorMap = new Dictionary<byte, SixLabors.ImageSharp.Color>()
         {
-            {0, SixLabors.ImageSharp.Color.FromRgb(0, 0, 112) },
-            {1, SixLabors.ImageSharp.Color.FromRgb(20,20,112) },
-            {2, SixLabors.ImageSharp.Color.FromRgb(60,60,112) },
-            {3, SixLabors.ImageSharp.Color.FromRgb(112, 0, 112) },
-            {4, SixLabors.ImageSharp.Color.FromRgb(18, 112+18, 18) },
-            {5, SixLabors.ImageSharp.Color.FromRgb(68, 112+68, 68) },
-            {6, SixLabors.ImageSharp.Color.FromRgb(108,112+108,108) },
-            {7, SixLabors.ImageSharp.Color.FromRgb(112+45,112+45,112+45) },
-            {8, SixLabors.ImageSharp.Color.FromRgb(112+15,112+15,112+15) },
-            {70, SixLabors.ImageSharp.Color.Orange },
-            {76, SixLabors.ImageSharp.Color.Red },
-            {0xA1, SixLabors.ImageSharp.Color.Purple },
+            {TileInfo.Deep_Water, SixLabors.ImageSharp.Color.FromRgb(0, 0, 112) },
+            {TileInfo.Medium_Water, SixLabors.ImageSharp.Color.FromRgb(20,20,112) },
+            {TileInfo.Shallow_Water, SixLabors.ImageSharp.Color.FromRgb(60,60,112) },
+            {TileInfo.Swamp, SixLabors.ImageSharp.Color.FromRgb(112, 0, 112) },
+            {TileInfo.Grasslands, SixLabors.ImageSharp.Color.FromRgb(18, 112+18, 18) },
+            {TileInfo.Scrubland, SixLabors.ImageSharp.Color.FromRgb(68, 112+68, 68) },
+            {TileInfo.Forest, SixLabors.ImageSharp.Color.FromRgb(108,112+108,108) },
+            {TileInfo.Hills, SixLabors.ImageSharp.Color.FromRgb(112+45,112+45,112+45) },
+            {TileInfo.Mountains, SixLabors.ImageSharp.Color.FromRgb(112+15,112+15,112+15) },
+            {TileInfo.Fire_Field, SixLabors.ImageSharp.Color.Orange },
+            {TileInfo.Lava_Flow, SixLabors.ImageSharp.Color.Red },
+            //{TileInfo.Slime_2, SixLabors.ImageSharp.Color.Purple },
         };
     }
 }
