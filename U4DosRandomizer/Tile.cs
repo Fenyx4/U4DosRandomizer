@@ -1,11 +1,10 @@
-﻿using Priority_Queue;
-using System;
+﻿using System;
 using System.Collections.Generic;
 
 namespace U4DosRandomizer
 {
-    public class Tile : FastPriorityQueueNode, ITile
-	{
+    public class Tile : ITile
+    {
         public byte X { get; internal set; }
         public byte Y { get; internal set; }
         private byte[,] Tiles { get; set; }

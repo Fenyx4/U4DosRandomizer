@@ -458,7 +458,7 @@ namespace U4DosRandomizer
             }
         }
 
-        public List<River> AddRivers(Random random)
+        private List<River> AddRivers(Random random)
         {
             // There are ~32 in the original Ultima map
             int totalNumOfRivers = 28 + random.Next(1, 3) + random.Next(1, 3);

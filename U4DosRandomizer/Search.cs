@@ -1,5 +1,8 @@
-﻿using System.Collections.Generic;
-using Priority_Queue;
+﻿using System;
+using System.Collections.Generic;
+using System.Drawing;
+using System.Text;
+using U4DosRandomizer.BlueRajaPriorityQueue;
 
 namespace U4DosRandomizer
 {
@@ -36,17 +39,17 @@ namespace U4DosRandomizer
 				g_score.Add(node, 0);
 			}
 
-			FastPriorityQueue<Tile> f_score = new FastPriorityQueue<Tile>(sizeX * sizeY);
+			HeapPriorityQueue<PriorityQueueCoordinate<Tile>> f_score = new HeapPriorityQueue<PriorityQueueCoordinate<Tile>>(sizeX * sizeY);
 			foreach (Tile node in g_score.Keys)
 			{
-				f_score.Enqueue(node, g_score[node] + heuristic(node, matchesGoal));
+				f_score.Enqueue(new PriorityQueueCoordinate<Tile>(node), g_score[node] + heuristic(node, matchesGoal));
 			}
 
 
 			while (openset.Count > 0)
 			{
 				// Find queued index with lowest score
-				Tile current = f_score.Dequeue();
+				Tile current = f_score.Dequeue().GetCoord();
 
 				if (matchesGoal(current))
 				{
@@ -88,7 +91,7 @@ namespace U4DosRandomizer
 					{
 						came_from[neighbor] = current;
 						g_score[neighbor] = tentative_g_score;
-						f_score.Enqueue(neighbor, g_score[neighbor] + heuristic(neighbor, matchesGoal));
+						f_score.Enqueue(new PriorityQueueCoordinate<Tile>(neighbor), g_score[neighbor] + heuristic(neighbor, matchesGoal));
 						if (!openset.Contains(neighbor))
 						{
 							openset.Add(neighbor);
