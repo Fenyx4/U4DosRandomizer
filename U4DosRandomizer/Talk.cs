@@ -212,7 +212,7 @@ namespace U4DosRandomizer
 
             if(person == null)
             {
-                throw new Exception("Unable to find {name}. Have your files been modified?");
+                throw new Exception($"Unable to find {name}. Have your files been modified?");
             }
 
             return person;
