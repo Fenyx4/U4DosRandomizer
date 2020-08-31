@@ -294,28 +294,6 @@ namespace U4DosRandomizer
             ultimaData.PirateCoveSpawnTrigger = new Coordinate(ultimaData.PirateCoveSpawnTrigger.X - originalX + stygian.X, ultimaData.PirateCoveSpawnTrigger.Y - originalY + stygian.Y);
             //worldMap.GetCoordinate(ultimaData.PirateCoveSpawnTrigger.X, ultimaData.PirateCoveSpawnTrigger.Y).SetTile(TileInfo.A);
 
-            // LCB
-            var placed = false;
-            while (!placed)
-            {
-                var lcb = GetRandomCoordinate(random, worldMap);
-                var lcbEntrance = worldMap.GetCoordinate(lcb.X, lcb.Y + 1);
-
-                if (WorldMap.IsWalkableGround(lcb) && WorldMap.IsWalkableGround(lcbEntrance) && !excludeLocations.Contains(lcb))
-                {
-                    lcb.SetTile(TileInfo.Lord_British_s_Castle_Entrance);
-                    ultimaData.LCB.Add(lcb);
-                    Tile lcbSide = worldMap.GetCoordinate(lcb.X - 1, lcb.Y);
-                    lcbSide.SetTile(TileInfo.Lord_British_s_Caste_West);
-                    ultimaData.LCB.Add(lcbSide);
-                    lcbSide = worldMap.GetCoordinate(lcb.X + 1, lcb.Y);
-                    lcbSide.SetTile(TileInfo.Lord_British_s_Castle_East);
-                    ultimaData.LCB.Add(lcbSide);
-
-                    placed = true;
-                }
-            }
-
             // Buildings
             possibleLocations = worldMap.GetAllMatchingTiles(WorldMap.IsWalkableGround);
             possibleLocations.RemoveAll(c => excludeLocations.Contains(c));
@@ -375,8 +353,6 @@ namespace U4DosRandomizer
             ultimaData.DaemonSpawnY1 = WorldMap.Wrap(loc.Y - 4);
             ultimaData.DaemonSpawnY2 = WorldMap.Wrap(loc.Y + 1);
 
-
-
             // Moongates
             List<Tile> path = new List<Tile>();
             List<byte> validTiles = new List<byte>() { TileInfo.Grasslands, TileInfo.Scrubland, TileInfo.Swamp, TileInfo.Forest, TileInfo.Hills };
@@ -420,6 +396,38 @@ namespace U4DosRandomizer
 
                     loc = RandomSelectFromListChangeAndRemove(random, possibleLocations, TileInfo.Grasslands);
                     ultimaData.Moongates.Add(loc);
+                }
+            }
+
+            // LCB
+            var placed = false;
+            while (!placed)
+            {
+                var lcb = GetRandomCoordinate(random, worldMap);
+                var lcbEntrance = worldMap.GetCoordinate(lcb.X, lcb.Y + 1);
+                Tile lcbWestSide = worldMap.GetCoordinate(lcb.X - 1, lcb.Y);
+                Tile lcbEastSide = worldMap.GetCoordinate(lcb.X + 1, lcb.Y);
+
+                path = new List<Tile>();
+                if (WorldMap.IsWalkableGround(lcb) && WorldMap.IsWalkableGround(lcbEntrance) && !excludeLocations.Contains(lcb))
+                {
+                    path = Search.GetPath(WorldMap.SIZE, WorldMap.SIZE, lcbEntrance,
+                        // Gotta be able to walk to a Moongate from LCB
+                        c => { return ultimaData.Moongates.Contains(c); },
+                        // Only valid if all neighbors all also mountains
+                        c => { return IsWalkable(c) && c != lcbEastSide && c != lcbWestSide && c != lcbEastSide; },
+                        (c, b) => { return (float)random.NextDouble(); });
+                    if (path.Count > 0)
+                    {
+                        lcb.SetTile(TileInfo.Lord_British_s_Castle_Entrance);
+                        ultimaData.LCB.Add(lcb);
+                        lcbWestSide.SetTile(TileInfo.Lord_British_s_Caste_West);
+                        ultimaData.LCB.Add(lcbWestSide);
+                        lcbEastSide.SetTile(TileInfo.Lord_British_s_Castle_East);
+                        ultimaData.LCB.Add(lcbEastSide);
+
+                        placed = true;
+                    }
                 }
             }
 
