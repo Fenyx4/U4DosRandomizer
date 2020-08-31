@@ -780,9 +780,9 @@ namespace U4DosRandomizer
             return coordinate.GetTile() < TileInfo.Shallow_Water;
         }
 
-        public List<Tile> GetTilesNear(Tile tile, int distance)
+        public HashSet<Tile> GetTilesNear(Tile tile, int distance)
         {
-            var results = new List<Tile>();
+            var results = new HashSet<Tile>();
             for(int x = -distance; x <= distance; x++)
             {
                 for (int y = -distance; y <= distance; y++)
@@ -799,20 +799,13 @@ namespace U4DosRandomizer
         public List<Tile> GetPathableTilesNear(Tile goal, int distance, Func<Tile, bool> isWalkableGround)
         {
             var possibleTiles = GetTilesNear(goal, distance);
-            var results = new List<Tile>();
+            var results = new HashSet<Tile>();
+            var pathableSet = new HashSet<Tile>();
 
-            foreach(var possibleTile in possibleTiles)
-            {
-                if(Search.GetPath(SIZE, SIZE, possibleTile, 
-                    m => m.Equals(goal),
-                    c => { return isWalkableGround(c); } ).Count > 0)
-                {
-                    results.Add(possibleTile);
-                }
-            }
+            results = Search.GetSuccessfulPaths(SIZE, SIZE, goal, possibleTiles, c => { return isWalkableGround(c); });
 
 
-            return results;
+            return results.ToList();
         }
 
         private Tile FindRandomPointHigherThan(int tile, Random random)

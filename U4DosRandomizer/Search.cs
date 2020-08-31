@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Drawing;
-using System.Text;
+﻿using System.Collections.Generic;
 using U4DosRandomizer.BlueRajaPriorityQueue;
 
 namespace U4DosRandomizer
@@ -104,6 +101,76 @@ namespace U4DosRandomizer
 			return new List<Tile>();
 		}
 
-        
+        public static HashSet<Tile> GetSuccessfulPaths(int sizeX, int sizeY, Tile startNode, HashSet<Tile> goals, IsNodeValid validNode)
+        {
+			var results = new HashSet<Tile>();
+			HashSet<Tile> closedset = new HashSet<Tile>(); // The set of nodes already evaluated
+			HashSet<Tile> openset = new HashSet<Tile>(); // The set of tentative nodes to be evaluated, initially containing the start node
+
+			openset.Add(startNode);
+
+			Dictionary<Tile, Tile> came_from = new Dictionary<Tile, Tile>(); // The map of navigated nodes.
+
+			Dictionary<Tile, int> g_score = new Dictionary<Tile, int>();
+
+			g_score.Add(startNode, 0);
+
+			HeapPriorityQueue<PriorityQueueCoordinate<Tile>> f_score = new HeapPriorityQueue<PriorityQueueCoordinate<Tile>>(sizeX * sizeY);
+			foreach (Tile node in g_score.Keys)
+			{
+				f_score.Enqueue(new PriorityQueueCoordinate<Tile>(node), g_score[node]);
+			}
+
+
+			while (openset.Count > 0)
+			{
+				// Find queued index with lowest score
+				Tile current = f_score.Dequeue().GetCoord();
+
+				if (goals.Contains(current))
+				{
+					results.Add(current);
+					if(results.Equals(goals))
+                    {
+						return results;
+                    }
+				}
+
+				openset.Remove(current);
+				closedset.Add(current);
+				foreach (Tile neighbor in current.NeighborCoordinates())
+				{
+					if (closedset.Contains(neighbor))
+					{
+						continue;
+					}
+
+					if (validNode != null)
+					{
+						if (!validNode(neighbor))
+						{
+							continue;
+						}
+					}
+
+					int bestTileScore = (g_score.ContainsKey(neighbor) ? g_score[neighbor] : 0);
+					int tentative_g_score = bestTileScore + 1;
+
+					if (!openset.Contains(neighbor) || tentative_g_score < g_score[neighbor])
+					{
+						came_from[neighbor] = current;
+						g_score[neighbor] = tentative_g_score;
+						f_score.Enqueue(new PriorityQueueCoordinate<Tile>(neighbor), g_score[neighbor]);
+						if (!openset.Contains(neighbor))
+						{
+							openset.Add(neighbor);
+						}
+					}
+				}
+			}
+
+			//No path found
+			return results;
+		}
     }
 }
