@@ -24,11 +24,38 @@ namespace U4DosRandomizer
         { 
         }
 
-        private byte[,] MapGeneratedMapToUltimaTiles()
+        private List<Tile> _potentialSwamps = new List<Tile>();
+        private void MapGeneratedMapToUltimaTiles()
         {
             var mapGenerated = _worldMapGenerated;
-            var percentInMap = _percentInMap;
-            return ClampToValuesInSetRatios(mapGenerated, percentInMap, SIZE);
+            var percentInMap = new Dictionary<byte, double>(_percentInMap);
+
+            // Kill shallow water for now... May want to special place that later
+            percentInMap[TileInfo.Grasslands] += percentInMap[TileInfo.Shallow_Water];
+            percentInMap.Remove(TileInfo.Shallow_Water);
+            // Kill Scrubs and forest we are special placing that later
+            percentInMap[TileInfo.Grasslands] += percentInMap[TileInfo.Scrubland];
+            percentInMap.Remove(TileInfo.Scrubland);
+            percentInMap[TileInfo.Grasslands] += percentInMap[TileInfo.Forest];
+            percentInMap.Remove(TileInfo.Forest);
+
+            _worldMapTiles = ClampToValuesInSetRatios(mapGenerated, percentInMap, SIZE);
+
+            // Kill swamps after generation so we can use their placements for later
+            for(int x = 0; x < SIZE; x++)
+            {
+                for(int y = 0; y < SIZE; y++)
+                {
+                    if (_worldMapTiles[x, y] == TileInfo.Swamp)
+                    {
+                        var tile = GetCoordinate(x, y);
+                        _potentialSwamps.Add(tile);
+                        tile.SetTile(TileInfo.Grasslands);
+                    }
+                }
+            }
+
+            return;
         }
 
         private static byte[,] ClampToValuesInSetRatios(double[,] mapGenerated, Dictionary<byte, double> percentInMap, int size)
@@ -120,33 +147,6 @@ namespace U4DosRandomizer
             return tiles;
         }
 
-        public void CleanupAndAddFeatures(Random random)
-        {
-            // Original game only had single tiles in very special circumstances
-            RemoveSingleTiles();
-            var rivers = AddRivers(random);
-            Dictionary<Tile, List<River>> collectionOfRiversWithSameMouth = new Dictionary<Tile, List<River>>();
-
-            foreach (var river in rivers)
-            {
-                var mouth = river.Path[river.Path.Count() - 1];
-                if (collectionOfRiversWithSameMouth.ContainsKey(mouth))
-                {
-                    collectionOfRiversWithSameMouth[mouth].Add(river);
-                }
-                else
-                {
-                    collectionOfRiversWithSameMouth.Add(mouth, new List<River>());
-                    collectionOfRiversWithSameMouth[mouth].Add(river);
-                }
-            }
-            var riverCollections = collectionOfRiversWithSameMouth.Values.ToList();
-            AddBridges(random, riverCollections);
-            AddScrubAndForest(random, riverCollections);
-            AddLava();
-            AddSwamp();
-        }
-
         private byte[,] ScrubMap(Random random)
         {
             //var scrubNoise = new DiamondSquare(WorldMap.SIZE, 184643518.256878*128, 82759876).getData(random);
@@ -167,9 +167,10 @@ namespace U4DosRandomizer
                 }
             }
 
+            var totalGrass = _percentInMap[TileInfo.Scrubland] + _percentInMap[TileInfo.Forest] + _percentInMap[TileInfo.Swamp] + _percentInMap[TileInfo.Shallow_Water] + _percentInMap[TileInfo.Grasslands];
             // As we will be overlaying it on the grass so bump up the percentage so the ratio stays correct
-            var scrubPercent = 0.07513427734375 / _percentInMap[TileInfo.Grasslands];
-            var forestPercent = 0.03515625 / _percentInMap[TileInfo.Grasslands];
+            var scrubPercent = _percentInMap[TileInfo.Scrubland] / totalGrass;
+            var forestPercent = _percentInMap[TileInfo.Forest] / totalGrass;
             var percentInMap = new Dictionary<byte, double>()
             {
                 {TileInfo.Grasslands,(1.0-scrubPercent)-forestPercent},
@@ -196,7 +197,42 @@ namespace U4DosRandomizer
 
         public void ScrubTest(Random random)
         {
-            _worldMapTiles = ScrubMap(random);
+            //_worldMapTiles = ScrubMap(random);
+        }
+
+        public void SwampTest(Random random)
+        {
+            _worldMapTiles = new byte[SIZE, SIZE];
+            for (int x = 0; x < SIZE; x++)
+            {
+                for (int y = 0; y < SIZE; y++)
+                {
+                    _worldMapTiles[x, y] = TileInfo.Grasslands;
+                }
+            }
+
+            for (int i = 0; i < 23; i++)
+            {
+                _potentialSwamps.Add(GetCoordinate(random.Next(0, SIZE), random.Next(0, SIZE)));
+            }
+
+            AddSwamp(random);
+
+            //var swampSize = 16;
+            //var chosenSwampTile = GetCoordinate(SIZE/2, SIZE/2);
+            //var swamp = SwampMap(random, swampSize);
+
+            //for (int x = 0; x < swampSize; x++)
+            //{
+            //    for (int y = 0; y < swampSize; y++)
+            //    {
+            //        var tile = GetCoordinate(chosenSwampTile.X - swampSize / 2 + x, chosenSwampTile.Y - swampSize / 2 + y);
+            //        if (tile.GetTile() == TileInfo.Grasslands)
+            //        {
+            //            tile.SetTile(swamp[x, y]);
+            //        }
+            //    }
+            //}
         }
 
         //https://stackoverflow.com/questions/3041366/shortest-distance-between-points-on-a-toroidally-wrapped-x-and-y-wrapping-ma
@@ -217,14 +253,14 @@ namespace U4DosRandomizer
             return distanceSquared;
         }
 
-        public void Load(string path, double[,] worldMapGenerated)
+        public void Load(string path, double[,] worldMapGenerated, Random random)
         {
             var file = Path.Combine(path, filename);
 
             FileHelper.TryBackupOriginalFile(file);
 
             _worldMapGenerated = worldMapGenerated;
-            _worldMapTiles = MapGeneratedMapToUltimaTiles();
+            MapGeneratedMapToUltimaTiles();
 
             var worldMapFlattened = new double[WorldMap.SIZE * WorldMap.SIZE];
 
@@ -238,6 +274,36 @@ namespace U4DosRandomizer
 
             _generatedMin = worldMapFlattened.Min();
             _generatedMax = worldMapFlattened.Max();
+
+            CleanupAndAddFeatures(random);
+        }
+
+
+        public void CleanupAndAddFeatures(Random random)
+        {
+            // Original game only had single tiles in very special circumstances
+            RemoveSingleTiles();
+            var rivers = AddRivers(random);
+            Dictionary<Tile, List<River>> collectionOfRiversWithSameMouth = new Dictionary<Tile, List<River>>();
+
+            foreach (var river in rivers)
+            {
+                var mouth = river.Path[river.Path.Count() - 1];
+                if (collectionOfRiversWithSameMouth.ContainsKey(mouth))
+                {
+                    collectionOfRiversWithSameMouth[mouth].Add(river);
+                }
+                else
+                {
+                    collectionOfRiversWithSameMouth.Add(mouth, new List<River>());
+                    collectionOfRiversWithSameMouth[mouth].Add(river);
+                }
+            }
+            var riverCollections = collectionOfRiversWithSameMouth.Values.ToList();
+            AddBridges(random, riverCollections);
+            AddScrubAndForest(random, riverCollections);
+            AddLava();
+            AddSwamp(random);
         }
 
         public void Save(string path)
@@ -291,9 +357,109 @@ namespace U4DosRandomizer
             return;
         }
 
-        private void AddSwamp()
+        private void AddSwamp(Random random)
         {
-            // TODO
+            // 23
+            int totalNumOfSwamps = 19 + random.Next(1, 3) + random.Next(1, 3);
+
+            for(int i = 0; i < totalNumOfSwamps; i++)
+            {
+                var swampSize = 16;
+                var chosenSwampTile = _potentialSwamps[random.Next(0, _potentialSwamps.Count() - 1)];
+                var swamp = SwampMap(random, swampSize);
+
+                for (int x = 0; x < swampSize; x++)
+                {
+                    for (int y = 0; y < swampSize; y++)
+                    {
+                        var tile = GetCoordinate(chosenSwampTile.X - swampSize / 2 + x, chosenSwampTile.Y - swampSize / 2 + y);
+                        if (tile.GetTile() == TileInfo.Grasslands || tile.GetTile() == TileInfo.Scrubland)
+                        {
+                            if (swamp[x, y] == TileInfo.Swamp)
+                            {
+                                tile.SetTile(swamp[x, y]);
+                            }
+                        }
+                    }
+                }
+            }
+
+            return;
+        }
+
+        private static byte[,] SwampMap(Random random, int swampSize)
+        {
+            SimplexNoise.Noise.Seed = random.Next();
+            var swampNoiseFloat = SimplexNoise.Noise.Calc2D(swampSize, swampSize, 0.1f);
+            var swampNoise = Float2dToDouble2d(swampNoiseFloat, swampSize);
+
+            var percentInMap = new Dictionary<byte, double>()
+                {
+                    {TileInfo.Grasslands,0.7},
+                    {TileInfo.Swamp,0.3}
+                };
+
+            double halfSwampSize = Convert.ToDouble(swampSize)/2;
+            for (int x = 0; x < swampSize; x++)
+            {
+                for (int y = 0; y < swampSize; y++)
+                {
+                    swampNoise[x, y] = swampNoise[x, y]
+                        * (-Math.Pow(((x - halfSwampSize) / halfSwampSize), 2) + 1)
+                        * (-Math.Pow(((y - halfSwampSize) / halfSwampSize), 2) + 1);
+                }
+            }
+
+            var swamp = ClampToValuesInSetRatios(swampNoise, percentInMap, swampSize);
+
+            return swamp;
+        }
+
+        private void FindOcean()
+        {
+            // Find Ocean
+            var bodiesOfWater = new List<List<Tile>>();
+            var closedSet = new HashSet<Tile>();
+            for (int x = 0; x < SIZE; x++)
+            {
+                for (int y = 0; y < SIZE; y++)
+                {
+                    var tile = GetCoordinate(x, y);
+                    if (!closedSet.Contains(tile) && (tile.GetTile() == TileInfo.Deep_Water || tile.GetTile() == TileInfo.Medium_Water) )
+                    {
+                        var bodyOfWater = new List<Tile>();
+                        var queue = new Queue<Tile>();
+                        queue.Enqueue(tile);
+                        while (queue.Count() > 0)
+                        {
+                            tile = queue.Dequeue();
+                            if (!closedSet.Contains(tile) && (tile.GetTile() == TileInfo.Deep_Water || tile.GetTile() == TileInfo.Medium_Water))
+                            {
+                                bodyOfWater.Add(tile);
+
+                                foreach(var n in tile.NeighborAndAdjacentCoordinates())
+                                {
+                                    queue.Enqueue(n);
+                                }
+                            }
+
+                            closedSet.Add(tile);
+                        }
+                        bodiesOfWater.Add(bodyOfWater);
+                    }
+                }
+            }
+
+            //for (int i = 0; i < bodiesOfWater.Count(); i++)
+            //{
+            //    foreach (var tile in bodiesOfWater[i])
+            //    {
+            //        tile.SetTile(Convert.ToByte(TileInfo.A + (i % 26)));
+            //    }
+            //}
+
+            var ocean = bodiesOfWater.OrderByDescending(b => b.Count()).FirstOrDefault();
+
             return;
         }
 
@@ -680,11 +846,11 @@ namespace U4DosRandomizer
         {
             {TileInfo.Deep_Water,0.519012451171875},
             {TileInfo.Medium_Water,0.15771484375},
-            //{2,0.0294952392578125}, Kill shallow water for now... May want to special place that
-            //{3,0.010162353515625}, Kill swamps want to special place those
-            {TileInfo.Grasslands,0.1092376708984375+0.010162353515625+0.0294952392578125+0.07513427734375+0.03515625}, // Adding on the swamps cuz I think I'll add those in later
-            //{TileInfo.Scrubland,0.07513427734375},
-            //{TileInfo.Forest,0.03515625},
+            {TileInfo.Shallow_Water,0.0294952392578125},
+            {TileInfo.Swamp,0.010162353515625},
+            {TileInfo.Grasslands,0.1092376708984375},
+            {TileInfo.Scrubland,0.07513427734375},
+            {TileInfo.Forest,0.03515625},
             {TileInfo.Hills,0.0355224609375},
             {TileInfo.Mountains,0.0266265869140625},
             //{9,0.0001068115234375},

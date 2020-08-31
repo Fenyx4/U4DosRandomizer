@@ -74,7 +74,7 @@ namespace U4DosRandomizer
                     //Console.WriteLine("Seed: " + seed);
                     //var random = new Random(seed);
                     //var worldMap = new WorldMap();
-                    //worldMap.ScrubTest(random);
+                    //worldMap.SwampTest(random);
                     //worldMap.Save(path);
 
                     //var image = worldMap.ToImage();
@@ -104,8 +104,7 @@ namespace U4DosRandomizer
 
             var worldMapDS = new DiamondSquare(WorldMap.SIZE, 184643518.256878, 82759876).getData(random);
             var worldMap = new WorldMap();
-            worldMap.Load(path, worldMapDS);
-            worldMap.CleanupAndAddFeatures(random);
+            worldMap.Load(path, worldMapDS, random);
 
             var avatar = new Avatar();
             avatar.Load(path, ultimaData);
