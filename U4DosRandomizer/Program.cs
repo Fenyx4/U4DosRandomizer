@@ -217,7 +217,7 @@ namespace U4DosRandomizer
             {
                 for(int y = 0; y < length; y++)
                 {
-                    result = result && worldMap.GetCoordinate(coordinate.X - radius + x, coordinate.Y - radius + y).GetTile() == tile;
+                    result = result && worldMap.IsTile(coordinate.X - radius + x, coordinate.Y - radius + y, tile);
                 }
             }
 
@@ -231,7 +231,7 @@ namespace U4DosRandomizer
             {
                 for (int x = -1; x <= 1; x++)
                 {
-                    result = result && worldMap.GetCoordinate(coordinate.X + x, coordinate.Y + y).GetTile() == TileInfo.Mountains;
+                    result = result && worldMap.IsTile(coordinate.X + x, coordinate.Y + y, TileInfo.Mountains);
                 }
             }
 

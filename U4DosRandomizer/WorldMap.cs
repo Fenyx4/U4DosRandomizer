@@ -235,6 +235,11 @@ namespace U4DosRandomizer
             //}
         }
 
+        internal bool IsTile(int x, int y, int tile)
+        {
+            return _worldMapTiles[Wrap(x), Wrap(y)] == tile;
+        }
+
         //https://stackoverflow.com/questions/3041366/shortest-distance-between-points-on-a-toroidally-wrapped-x-and-y-wrapping-ma
         public static int DistanceSquared(ICoordinate destination, ICoordinate origin)
         {
