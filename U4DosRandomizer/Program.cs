@@ -281,7 +281,7 @@ namespace U4DosRandomizer
 
             var entrancePathToWater = Search.GetPath(WorldMap.SIZE, WorldMap.SIZE, entranceToStygian,
                 c => { return c.GetTile() == TileInfo.Deep_Water; }, // Find deep water to help make sure a boat can reach here. TODO: Make sure it reaches the ocean.
-                c => { return !(WorldMap.Between(c.X, shapeLoc.X - 12, shapeLoc.X + 12) && WorldMap.Between(c.Y, shapeLoc.Y - 12, shapeLoc.Y + 12)); },
+                c => { return !(WorldMap.Between(c.X, WorldMap.Wrap(shapeLoc.X - 12), WorldMap.Wrap(shapeLoc.X + 12)) && WorldMap.Between(c.Y, WorldMap.Wrap(shapeLoc.Y - 12), WorldMap.Wrap(shapeLoc.Y + 12))); },
                 worldMap.GoDownhillHueristic);
 
             for (int i = 0; i < entrancePathToWater.Count; i++)

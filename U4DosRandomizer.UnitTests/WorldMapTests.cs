@@ -52,5 +52,35 @@ namespace U4DosRandomizer.UnitTests
             // Assert
             Assert.IsFalse(result, "5 is outside 7 to 2");
         }
+
+        [TestMethod]
+        public void ActualExample()
+        {
+            // Arrange
+            // stygian 148, 11
+            // shapeLoc 146, 4
+            var shapeLoc = new Coordinate(146, 4);
+
+            // Act
+            var result = WorldMap.Between(146, WorldMap.Wrap(shapeLoc.X - 12), WorldMap.Wrap(shapeLoc.X + 12)) && WorldMap.Between(255, WorldMap.Wrap(shapeLoc.Y - 12), WorldMap.Wrap(shapeLoc.Y + 12));
+
+            // Assert
+            Assert.IsTrue(result, "146, 255 is inside 146-12, ");
+        }
+
+        [TestMethod]
+        public void ActualExampleOutside()
+        {
+            // Arrange
+            // stygian 148, 11
+            // shapeLoc 146, 4
+            var shapeLoc = new Coordinate(146, 4);
+
+            // Act
+            var result = WorldMap.Between(146, WorldMap.Wrap(shapeLoc.X - 12), WorldMap.Wrap(shapeLoc.X + 12)) && WorldMap.Between(200, WorldMap.Wrap(shapeLoc.Y - 12), WorldMap.Wrap(shapeLoc.Y + 12));
+
+            // Assert
+            Assert.IsFalse(result, "146, 255 is outside 146-12, ");
+        }
     }
 }
