@@ -684,6 +684,7 @@ namespace U4DosRandomizer
             {
                 // find shortest path
                 List<Tile> path = GetRiverPath(highPoint, IsCoordinateWater);
+                path.RemoveAt(path.Count() - 1);
                 var river = new River();
                 river.Path = path;
                 rivers.Add(river);
