@@ -104,11 +104,18 @@ namespace U4DosRandomizer
             Console.WriteLine("Seed: " + seed);
             var random = new Random(seed);
 
+            var randomValues = new List<int>();
+            for(int i = 0; i < 50; i++)
+            {
+                randomValues.Add(random.Next());
+            }
+
+
             var ultimaData = new UltimaData();
 
-            var worldMapDS = new DiamondSquare(WorldMap.SIZE, 184643518.256878, 82759876).getData(random);
+            var worldMapDS = new DiamondSquare(WorldMap.SIZE, 184643518.256878, randomValues[0]).getData(new Random(randomValues[1]));
             var worldMap = new WorldMap();
-            worldMap.Load(path, worldMapDS, random);
+            worldMap.Load(path, worldMapDS, new Random(randomValues[2]));
 
             var avatar = new Avatar();
             avatar.Load(path, ultimaData);
@@ -123,11 +130,11 @@ namespace U4DosRandomizer
 
 
             //Completely random location placements of buildings still. Just trying to make sure I'm editing the files correctly right now. Not looking for a cohesive map that makes sense.
-            var exclude = RandomizeLocations(ultimaData, worldMap, random);
+            var exclude = RandomizeLocations(ultimaData, worldMap, new Random(randomValues[3]));
 
             //Console.WriteLine(Talk.GetSextantText(ultimaData.LCB[0]));
 
-            RandomizeItems(ultimaData, worldMap, random, exclude);
+            RandomizeItems(ultimaData, worldMap, new Random(randomValues[4]), exclude);
 
             title.Update(ultimaData);
             talk.Update(ultimaData);
