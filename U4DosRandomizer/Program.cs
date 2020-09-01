@@ -28,6 +28,10 @@ namespace U4DosRandomizer
                 "-r |--r",
                 "Restore original Ultima 4 files. ",
                 CommandOptionType.NoValue);
+            CommandOption minimapArg = commandLineApplication.Option(
+                "-m |--m",
+                "Output a minimap of the overworld. ",
+                CommandOptionType.NoValue);
             commandLineApplication.HelpOption("-? | -h | --help");
 
             commandLineApplication.OnExecute(() =>
@@ -70,7 +74,7 @@ namespace U4DosRandomizer
                 }
                 else
                 {
-                    Randomize(seed, path);
+                    Randomize(seed, path, minimapArg.HasValue());
                     //Console.WriteLine("Seed: " + seed);
                     //var random = new Random(seed);
                     //var worldMap = new WorldMap();
@@ -94,7 +98,7 @@ namespace U4DosRandomizer
             Talk.Restore(path);
         }
 
-        private static void Randomize(int seed, string path)
+        private static void Randomize(int seed, string path, bool minimap)
         {
             System.IO.File.AppendAllText(@"seed.txt", seed.ToString() + Environment.NewLine);
             Console.WriteLine("Seed: " + seed);
@@ -134,8 +138,11 @@ namespace U4DosRandomizer
             avatar.Save(path);
             worldMap.Save(path);
 
-            var image = worldMap.ToImage();
-            image.SaveAsPng("worldMap.png");
+            if (minimap)
+            {
+                var image = worldMap.ToImage();
+                image.SaveAsPng($"worldMap-{seed}.png");
+            }
 
             //PrintWorldMapInfo();
         }
@@ -432,7 +439,6 @@ namespace U4DosRandomizer
             }
 
             // Dungeons
-            // TODO: Change this to be grab all mountains, then check if you can path to something landable by balloon or ship
             possibleLocations = worldMap.GetAllMatchingTiles(c => c.GetTile() == TileInfo.Mountains && WorldMap.IsWalkableGround(worldMap.GetCoordinate(c.X, c.Y+1)) && Search.GetPath(WorldMap.SIZE, WorldMap.SIZE, c,
             coord => { return IsGrass(coord) || coord.GetTile() == TileInfo.Deep_Water; },
             IsWalkableOrSailable).Count > 0);
