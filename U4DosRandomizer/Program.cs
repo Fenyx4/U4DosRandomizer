@@ -156,37 +156,60 @@ namespace U4DosRandomizer
 
         private static void RandomizeItems(UltimaData ultimaData, WorldMap worldMap, Random random, List<Tile> exclude)
         {
-            var loc = RandomizeLocation(random, TileInfo.Swamp, worldMap, WorldMap.IsWalkableGround, exclude);
+            Tile loc = null;// RandomizeLocation(random, TileInfo.Swamp, worldMap, WorldMap.IsWalkableGround, exclude);
+            var possibleLocations = worldMap.GetAllMatchingTiles(WorldMap.IsWalkableGround);
+            possibleLocations.RemoveAll(c => exclude.Contains(c));
+            loc = RandomSelectFromListCheckPathChangeAndRemove(random, possibleLocations, TileInfo.Swamp, ultimaData);
             ultimaData.Items[Avatar.ITEM_MANDRAKE].X = loc.X;
             ultimaData.Items[Avatar.ITEM_MANDRAKE].Y = loc.Y;
+            exclude.Add(loc);
 
-            loc = RandomizeLocation(random, TileInfo.Swamp, worldMap, (x) => x.GetTile() == TileInfo.Forest, exclude);
+            loc = RandomSelectFromListCheckPathChangeAndRemove(random, possibleLocations, null, ultimaData);
+            ultimaData.Items[Avatar.ITEM_HORN].X = loc.X;
+            ultimaData.Items[Avatar.ITEM_HORN].Y = loc.Y;
+            exclude.Add(loc);
+
+            possibleLocations = worldMap.GetAllMatchingTiles( c => c.GetTile() == TileInfo.Swamp);
+            possibleLocations.RemoveAll(c => exclude.Contains(c));
+            loc = RandomSelectFromListCheckPathChangeAndRemove(random, possibleLocations, TileInfo.Swamp, ultimaData);
+            ultimaData.Items[Avatar.ITEM_MANDRAKE2].X = loc.X;
+            ultimaData.Items[Avatar.ITEM_MANDRAKE2].Y = loc.Y;
+            exclude.Add(loc);
+
+            possibleLocations = worldMap.GetAllMatchingTiles( c => c.GetTile() == TileInfo.Forest);
+            possibleLocations.RemoveAll(c => exclude.Contains(c));
+            loc = RandomSelectFromListCheckPathChangeAndRemove(random, possibleLocations, TileInfo.Forest, ultimaData);
             ultimaData.Items[Avatar.ITEM_NIGHTSHADE].X = loc.X;
             ultimaData.Items[Avatar.ITEM_NIGHTSHADE].Y = loc.Y;
+            exclude.Add(loc);
 
-            var possibleLocations = worldMap.GetAllMatchingTiles(c => AreaIsAll(worldMap, TileInfo.Deep_Water, 14, c) && !exclude.Contains(c));
+            loc = RandomSelectFromListCheckPathChangeAndRemove(random, possibleLocations, TileInfo.Forest, ultimaData);
+            ultimaData.Items[Avatar.ITEM_NIGHTSHADE2].X = loc.X;
+            ultimaData.Items[Avatar.ITEM_NIGHTSHADE2].Y = loc.Y;
+            exclude.Add(loc);
+
+            possibleLocations = worldMap.GetAllMatchingTiles(c => AreaIsAll(worldMap, TileInfo.Deep_Water, 14, c) && !exclude.Contains(c));
             loc = possibleLocations[random.Next(0, possibleLocations.Count)];
             ultimaData.Items[Avatar.ITEM_SKULL].X = loc.X;
             ultimaData.Items[Avatar.ITEM_SKULL].Y = loc.Y;
             ApplyShape(worldMap, loc, "skull");
+            exclude.Add(loc);
 
             possibleLocations = worldMap.GetAllMatchingTiles(c => AreaIsAll(worldMap, TileInfo.Deep_Water, 7, c) && !exclude.Contains(c));
             loc = possibleLocations[random.Next(0, possibleLocations.Count)];
             ultimaData.Items[Avatar.ITEM_BELL].X = loc.X;
             ultimaData.Items[Avatar.ITEM_BELL].Y = loc.Y;
             ApplyShape(worldMap, loc, "bell");
+            exclude.Add(loc);
 
-            loc = GetRandomCoordinate(random, worldMap, WorldMap.IsWalkableGround, exclude);
-            ultimaData.Items[Avatar.ITEM_HORN].X = loc.X;
-            ultimaData.Items[Avatar.ITEM_HORN].Y = loc.Y;
-
+            // TODO Put in ocean
             possibleLocations = worldMap.GetAllMatchingTiles(c => c.GetTile() == TileInfo.Deep_Water && !exclude.Contains(c));
             loc = possibleLocations[random.Next(0, possibleLocations.Count)];
             ultimaData.Items[Avatar.ITEM_WHEEL].X = loc.X;
             ultimaData.Items[Avatar.ITEM_WHEEL].Y = loc.Y;
 
             // TODO: Do I move the black stone?
-            ultimaData.Items[Avatar.ITEM_WHEEL].X = ultimaData.Moongates[0].X;
+            ultimaData.Items[Avatar.ITEM_BLACK_STONE].X = ultimaData.Moongates[0].X;
             ultimaData.Items[Avatar.ITEM_BLACK_STONE].Y = ultimaData.Moongates[0].Y;
 
             // White stone
@@ -311,28 +334,29 @@ namespace U4DosRandomizer
             // Buildings
             possibleLocations = worldMap.GetAllMatchingTiles(WorldMap.IsWalkableGround);
             possibleLocations.RemoveAll(c => excludeLocations.Contains(c));
-            // Castles
-            Tile loc = null;
-            for (int i = 0; i < 3; i++)
-            {
-                loc = RandomSelectFromListChangeAndRemove(random, possibleLocations, TileInfo.Castle);
-                ultimaData.Castles.Add(loc);
-            }
 
             // Towns
-            for(int i = 0; i < 7; i++)
+            Tile loc = null;
+            for (int i = 0; i < 7; i++)
             {
-                loc = RandomSelectFromListChangeAndRemove(random, possibleLocations, TileInfo.Town);
+                loc = RandomSelectFromListCheckPathChangeAndRemove(random, possibleLocations, TileInfo.Town, ultimaData, false);
                 ultimaData.Towns.Add(loc);
 
             }
-            loc = RandomSelectFromListChangeAndRemove(random, possibleLocations, TileInfo.Ruins); // Magincia
+            loc = RandomSelectFromListCheckPathChangeAndRemove(random, possibleLocations, TileInfo.Ruins, ultimaData, false); // Magincia
             ultimaData.Towns.Add(loc);
+
+            // Castles
+            for (int i = 0; i < 3; i++)
+            {
+                loc = RandomSelectFromListCheckPathChangeAndRemove(random, possibleLocations, TileInfo.Castle, ultimaData);
+                ultimaData.Castles.Add(loc);
+            }
 
             // Villages
             for (int i = 0; i < 4; i++)
             {
-                loc = RandomSelectFromListChangeAndRemove(random, possibleLocations, TileInfo.Village);
+                loc = RandomSelectFromListCheckPathChangeAndRemove(random, possibleLocations, TileInfo.Village, ultimaData);
                 ultimaData.Towns.Add(loc);
             }
 
@@ -346,7 +370,7 @@ namespace U4DosRandomizer
                 }
                 else
                 {
-                    loc = RandomSelectFromListChangeAndRemove(random, possibleLocations, TileInfo.Shrine);
+                    loc = RandomSelectFromListCheckPathChangeAndRemove(random, possibleLocations, TileInfo.Shrine, ultimaData);
                     ultimaData.Shrines.Add(loc);
                 }
             }
@@ -408,7 +432,7 @@ namespace U4DosRandomizer
                     possibleLocations = worldMap.GetAllMatchingTiles(IsGrass);
                     possibleLocations.RemoveAll(c => excludeLocations.Contains(c));
 
-                    loc = RandomSelectFromListChangeAndRemove(random, possibleLocations, TileInfo.Grasslands);
+                    loc = RandomSelectFromListCheckPathChangeAndRemove(random, possibleLocations, TileInfo.Grasslands, ultimaData, false);
                     ultimaData.Moongates.Add(loc);
                 }
             }
@@ -452,7 +476,7 @@ namespace U4DosRandomizer
             possibleLocations.RemoveAll(c => excludeLocations.Contains(c));
             for (int i = 0; i < 6; i++)
             {
-                loc = RandomSelectFromListChangeAndRemove(random, possibleLocations, 9);
+                loc = RandomSelectFromListCheckPathChangeAndRemove(random, possibleLocations, TileInfo.Dungeon_Entrance, ultimaData);
                 ultimaData.Dungeons.Add(loc);
             }
 
@@ -513,12 +537,40 @@ namespace U4DosRandomizer
             return excludeLocations;
         }
 
-        private static Tile RandomSelectFromListChangeAndRemove(Random random, List<Tile> possibleLocations, byte tile)
+        private static Tile RandomSelectFromListCheckPathChangeAndRemove(Random random, List<Tile> possibleLocations, byte? tile, UltimaData ultimaData, bool requirePath = true)
         {
-            var randomIdx = random.Next(0, possibleLocations.Count);
-            var loc = possibleLocations[randomIdx];
-            loc.SetTile(tile);
-            possibleLocations.RemoveAt(randomIdx);
+            Tile loc = null;
+            while (loc == null && possibleLocations.Count > 0)
+            {
+                var randomIdx = random.Next(0, possibleLocations.Count);
+                var selection = loc = possibleLocations[randomIdx];
+
+                var path = Search.GetPath(WorldMap.SIZE, WorldMap.SIZE, selection,
+                IsWalkableOrSailable, // Find deep water to help make sure a boat can reach here. TODO: Make sure it reaches the ocean.
+                c => { return ultimaData.Towns.Contains(c); });
+
+                if (path.Count > 0)
+                {
+                    loc = selection;
+                    if (tile != null)
+                    {
+                        loc.SetTile(tile.Value);
+                    }
+                }
+                possibleLocations.RemoveAt(randomIdx);
+            }
+
+            if(loc == null)
+            {
+                if (tile != null)
+                {
+                    throw new Exception($"Failed to find location for {shapeLabels[tile.Value]}.");
+                }
+                else
+                {
+                    throw new Exception($"Failed to find location with path to town.");
+                }
+            }
 
             return loc;
         }
