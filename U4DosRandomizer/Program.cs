@@ -100,6 +100,7 @@ namespace U4DosRandomizer
             Avatar.Restore(path);
             Title.Restore(path);
             Talk.Restore(path);
+            Dungeons.Restore(path);
         }
 
         private static void Randomize(int seed, string path, bool minimap, string spellRemoveArg)
@@ -128,7 +129,10 @@ namespace U4DosRandomizer
             title.Load(path, ultimaData);
 
             var talk = new Talk();
-            talk.Load(path);       
+            talk.Load(path);
+
+            var dungeons = new Dungeons();
+            dungeons.Load(path, ultimaData);
 
             if (!String.IsNullOrWhiteSpace(spellRemoveArg))
             {
@@ -154,7 +158,9 @@ namespace U4DosRandomizer
             title.Update(ultimaData);
             talk.Update(ultimaData);
             avatar.Update(ultimaData);
+            dungeons.Update(ultimaData);
 
+            dungeons.Save(path);
             title.Save(path);
             talk.Save(path);
             avatar.Save(path);

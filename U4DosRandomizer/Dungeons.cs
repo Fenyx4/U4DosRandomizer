@@ -1,0 +1,60 @@
+﻿using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Text;
+using U4DosRandomizer.Helpers;
+
+namespace U4DosRandomizer
+{
+    public class Dungeons
+    {
+        private Dictionary<string, Dungeon> dungeons = new Dictionary<string, Dungeon>();
+        public void Load(string path, UltimaData data)
+        {
+            var files = Directory.GetFiles(path, "*.DNG");
+            foreach (var file in files)
+            {
+                if (!file.Contains("CAMP.DNG"))
+                {
+                    FileHelper.TryBackupOriginalFile(file, false);
+
+                    var dngStream = new System.IO.FileStream($"{file}.orig", System.IO.FileMode.Open);
+
+                    Dungeon dungeon = new Dungeon(dngStream);
+
+                    dungeons.Add(Path.GetFileNameWithoutExtension(file), dungeon);
+                }
+            }
+        }
+
+        public void Save(string path)
+        {
+            foreach (var dungeonName in dungeons.Keys)
+            {
+                var dungeonBytes = new List<byte>();
+                dungeonBytes.AddRange(dungeons[dungeonName].Save());
+
+                var file = Path.Combine(path, $"{dungeonName.ToUpper()}.DNG");
+                File.WriteAllBytes(file, dungeonBytes.ToArray());
+            }
+        }
+
+        public void Update(UltimaData ultimaData)
+        {
+            //TODO - Do something here
+        }
+
+        public static void Restore(string path)
+        {
+            var files = Directory.GetFiles(path, "*.DNG");
+            foreach (var file in files)
+            {
+                if (!file.Contains("CAMP.DNG"))
+                {
+                    FileHelper.Restore(file);
+                }
+            }
+        }
+    }
+}
