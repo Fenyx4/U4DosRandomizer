@@ -307,7 +307,6 @@ namespace U4DosRandomizer
             var riverCollections = collectionOfRiversWithSameMouth.Values.ToList();
             AddBridges(random, riverCollections);
             AddScrubAndForest(random, riverCollections);
-            AddLava();
             AddSwamp(random);
         }
 
@@ -352,13 +351,6 @@ namespace U4DosRandomizer
                 }
             }
 
-            return;
-        }
-
-
-        private void AddLava()
-        {
-            // TODO
             return;
         }
 
@@ -710,7 +702,6 @@ namespace U4DosRandomizer
             }
 
             // TODO: Make rivers fork
-            // TODO: Surround all rivers with scrub and/or swamps?
 
             return rivers;
         }

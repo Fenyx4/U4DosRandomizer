@@ -128,9 +128,7 @@ namespace U4DosRandomizer
             title.Load(path, ultimaData);
 
             var talk = new Talk();
-            talk.Load(path);
-
-            //TODO Randomize mantras o_0           
+            talk.Load(path);       
 
             if (!String.IsNullOrWhiteSpace(spellRemoveArg))
             {
@@ -563,7 +561,7 @@ namespace U4DosRandomizer
                 var selection = loc = possibleLocations[randomIdx];
 
                 var path = Search.GetPath(WorldMap.SIZE, WorldMap.SIZE, selection,
-                IsWalkableOrSailable, // Find deep water to help make sure a boat can reach here. TODO: Make sure it reaches the ocean.
+                IsWalkableOrSailable, 
                 c => { return ultimaData.Towns.Contains(c); });
 
                 if (path.Count > 0)
