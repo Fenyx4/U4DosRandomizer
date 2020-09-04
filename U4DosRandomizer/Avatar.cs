@@ -88,6 +88,12 @@ namespace U4DosRandomizer
             data.PirateCoveSpawnTrigger = new Coordinate(avatarBytes[PIRATE_COVE_SPAWN_TRIGGER_X_OFFSET1], avatarBytes[PIRATE_COVE_SPAWN_TRIGGER_Y_OFFSET1]);
 
             data.WhirlpoolExit = new Coordinate(avatarBytes[WHIRLPOOL_EXIT_X_OFFSET], avatarBytes[WHIRLPOOL_EXIT_Y_OFFSET]);
+
+            data.SpellsRecipes = new List<byte>();
+            for (int i = 0; i < 26; i++)
+            {
+                data.SpellsRecipes.Add(avatarBytes[SPELL_RECIPE_OFFSET+i]);
+            }
         }
 
         internal static void Restore(string path)
@@ -213,6 +219,10 @@ namespace U4DosRandomizer
             avatarBytes[WHIRLPOOL_EXIT_X_OFFSET] = data.WhirlpoolExit.X;
             avatarBytes[WHIRLPOOL_EXIT_Y_OFFSET] = data.WhirlpoolExit.Y;
 
+            for (int i = 0; i < data.SpellsRecipes.Count; i++)
+            {
+                avatarBytes[SPELL_RECIPE_OFFSET+i] = data.SpellsRecipes[i];
+            }
         }
 
         public void Save(string path)
@@ -426,6 +436,16 @@ namespace U4DosRandomizer
 
         private static int UNKNOWN_EXIT_LOCATIONS_X = 0xFEAD; // Length 13 - Not sure what these are for yet. Appear to be exit coords for when you fail tests in the Abyss https://github.com/ergonomy-joe/u4-decompiled/blob/c2c2108fa3bb346bcd1d8c207c526f33a4c8f5ef/SRC/U4_END.C#L37
         private static int UNKNOWN_EXIT_LOCATIONS_Y = 0xFEBA;
+
+        private static int SPELL_RECIPE_OFFSET = 0x11A29;
+        public const byte Reagent_ash = (0x80 >> 0);
+        public const byte Reagent_ginseng = (0x80 >> 1);
+        public const byte Reagent_garlic     = (0x80 >> 2);
+        public const byte Reagent_spiderSilk = (0x80 >> 3);
+        public const byte Reagent_bloodMoss  = (0x80 >> 4);
+        public const byte Reagent_blackPearl = (0x80 >> 5);
+        public const byte Reagent_nightshade = (0x80 >> 6);
+        public const byte Reagent_mandrake = (0x80 >> 7);
 
         private List<string> OriginalShrineText { get; set; }
         private List<int> OriginalShrineTextStartOffset { get; set; }

@@ -32,6 +32,10 @@ namespace U4DosRandomizer
                 "-m |--m",
                 "Output a minimap of the overworld. ",
                 CommandOptionType.NoValue);
+            CommandOption spellRemoveArg = commandLineApplication.Option(
+                "--spellRemove",
+                "Put in the letters of the spells you want removed. e.g. \"--spellRemove zed\" would remove zdown, energy field and dispel. ",
+                CommandOptionType.SingleValue);
             commandLineApplication.HelpOption("-? | -h | --help");
 
             commandLineApplication.OnExecute(() =>
@@ -74,7 +78,7 @@ namespace U4DosRandomizer
                 }
                 else
                 {
-                    Randomize(seed, path, minimapArg.HasValue());
+                    Randomize(seed, path, minimapArg.HasValue(), spellRemoveArg.Value());
                     //Console.WriteLine("Seed: " + seed);
                     //var random = new Random(seed);
                     //var worldMap = new WorldMap();
@@ -98,7 +102,7 @@ namespace U4DosRandomizer
             Talk.Restore(path);
         }
 
-        private static void Randomize(int seed, string path, bool minimap)
+        private static void Randomize(int seed, string path, bool minimap, string spellRemoveArg)
         {
             System.IO.File.AppendAllText(@"seed.txt", seed.ToString() + Environment.NewLine);
             Console.WriteLine("Seed: " + seed);
@@ -127,6 +131,19 @@ namespace U4DosRandomizer
             talk.Load(path);
 
             //TODO Randomize mantras o_0           
+
+            if (!String.IsNullOrWhiteSpace(spellRemoveArg))
+            {
+                var arr = spellRemoveArg.ToLower().ToArray();
+                for (int i = 0; i < arr.Length; i++)
+                {
+                    if(arr[i] > 'z' || arr[i] < 'a')
+                    {
+                        throw new ArgumentException("spellRemove can only contain letters.");
+                    }
+                    ultimaData.SpellsRecipes[arr[i]-'a'] = 0;
+                }
+            }
 
 
             //Completely random location placements of buildings still. Just trying to make sure I'm editing the files correctly right now. Not looking for a cohesive map that makes sense.

@@ -23,6 +23,7 @@ namespace U4DosRandomizer
         public List<Coordinate> PirateCove { get; internal set; }
         public Coordinate PirateCoveSpawnTrigger { get; internal set; }
         public Coordinate WhirlpoolExit { get; internal set; }
+        public List<byte> SpellsRecipes { get; internal set; }
 
         public UltimaData()
         {
