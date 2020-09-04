@@ -1,5 +1,6 @@
 # U4DosRandomizer
 Randomizer for Ultima IV
+Currently this randomizer randomizes the over world map and deals with all the repercussions of the overworld map being randomized.
 
 Requires Ultima IV which is available for free at https://www.gog.com/game/ultima_4.
 
@@ -7,6 +8,15 @@ Requires Ultima IV which is available for free at https://www.gog.com/game/ultim
 1. Unzip and drop the executable in the Ultima IV directory (same folder as the WORLD.MAP file)
 1. Run the executable
 
-All the files the randomizer changes get backed up with the extension ".orig" added. There is no way to quickly revert to those original files (yet). To revert you'll have to rename them or reinstall the game.
+```
+Options:
+  -s |--s <seed>    The seed for the randomizer. Same seed will produce the same map.
+  -p |--p <path>    Path to Ultima 4 installation. Leaving blank will assume it is the working directory. If that fails it will prompt you for the path.
+  -r |--r           Restore original Ultima 4 files.
+  -m |--m           Output a minimap of the overworld.
+  -? | -h | --help  Show help information
+```
+  
+All the files the randomizer changes get backed up with the extension ".orig" added. 
 
-Example: https://imgur.com/UaVcLH8
+Example: https://imgur.com/qNRxpSy
