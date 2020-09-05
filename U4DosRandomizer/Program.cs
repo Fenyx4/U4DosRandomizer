@@ -564,10 +564,10 @@ namespace U4DosRandomizer
             while (loc == null && possibleLocations.Count > 0)
             {
                 var randomIdx = random.Next(0, possibleLocations.Count);
-                var selection = loc = possibleLocations[randomIdx];
+                var selection = possibleLocations[randomIdx];
 
                 var path = Search.GetPath(WorldMap.SIZE, WorldMap.SIZE, selection,
-                IsWalkableOrSailable, 
+                c => { return IsWalkableOrSailable(c) || selection.Equals(c); }, 
                 c => { return ultimaData.Towns.Contains(c); });
 
                 if (path.Count > 0)
