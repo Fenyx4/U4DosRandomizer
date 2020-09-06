@@ -4,13 +4,13 @@ using System.IO;
 
 namespace U4DosRandomizer
 {
-    internal class Dungeon
+    public class Dungeon
     {
 
         private byte[,,] map = new byte[8, 8, 8];
         private List<byte[]> rooms = new List<byte[]>();
 
-        public Dungeon(FileStream dngStream)
+        public Dungeon(FileStream dngStream, UltimaData data)
         {
             BinaryReader readBinary = new BinaryReader(dngStream);
 
@@ -60,6 +60,36 @@ namespace U4DosRandomizer
             }
 
             return dungeonBytes;
+        }
+
+        public List<DungeonTile> GetTiles(byte tile)
+        {
+            var results = new List<DungeonTile>();
+            for(int l = 0; l < 8; l++)
+            {
+                for(int x = 0; x < 8; x++)
+                {
+                    for(int y = 0; y < 8; y++)
+                    {
+                        if(map[l, x, y] == tile)
+                        {
+                            results.Add(new DungeonTile(l, x, y, map));
+                        }
+                    }
+                }
+            }
+
+            return results;
+        }
+
+        public DungeonTile GetTile(int level, int x, int y)
+        {
+            return new DungeonTile(level, x, y, map);
+        }
+
+        public void SetTile(int l, int x, int y, byte tile)
+        {
+            map[l, x, y] = tile;
         }
     }
 }

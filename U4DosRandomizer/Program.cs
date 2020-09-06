@@ -36,6 +36,10 @@ namespace U4DosRandomizer
                 "--spellRemove",
                 "Put in the letters of the spells you want removed. e.g. \"--spellRemove zed\" would remove zdown, energy field and dispel. ",
                 CommandOptionType.SingleValue);
+            CommandOption dngStoneArg = commandLineApplication.Option(
+                "--dngStone",
+                "Randomize the location of stones in the dungeons ",
+                CommandOptionType.NoValue);
             commandLineApplication.HelpOption("-? | -h | --help");
 
             commandLineApplication.OnExecute(() =>
@@ -78,7 +82,11 @@ namespace U4DosRandomizer
                 }
                 else
                 {
-                    Randomize(seed, path, minimapArg.HasValue(), spellRemoveArg.Value());
+                    Flags flags = new Flags();
+                    flags.MiniMap = minimapArg.HasValue();
+                    flags.SpellRemove = spellRemoveArg.Value();
+                    flags.DngStone = dngStoneArg.HasValue();
+                    Randomize(seed, path, flags);
                     //Console.WriteLine("Seed: " + seed);
                     //var random = new Random(seed);
                     //var worldMap = new WorldMap();
@@ -103,7 +111,7 @@ namespace U4DosRandomizer
             Dungeons.Restore(path);
         }
 
-        private static void Randomize(int seed, string path, bool minimap, string spellRemoveArg)
+        private static void Randomize(int seed, string path, Flags flags)
         {
             System.IO.File.AppendAllText(@"seed.txt", seed.ToString() + Environment.NewLine);
             Console.WriteLine("Seed: " + seed);
@@ -134,9 +142,9 @@ namespace U4DosRandomizer
             var dungeons = new Dungeons();
             dungeons.Load(path, ultimaData);
 
-            if (!String.IsNullOrWhiteSpace(spellRemoveArg))
+            if (!String.IsNullOrWhiteSpace(flags.SpellRemove))
             {
-                var arr = spellRemoveArg.ToLower().ToArray();
+                var arr = flags.SpellRemove.ToLower().ToArray();
                 for (int i = 0; i < arr.Length; i++)
                 {
                     if(arr[i] > 'z' || arr[i] < 'a')
@@ -153,7 +161,7 @@ namespace U4DosRandomizer
 
             //Console.WriteLine(Talk.GetSextantText(ultimaData.LCB[0]));
 
-            RandomizeItems(ultimaData, worldMap, new Random(randomValues[4]), exclude);
+            RandomizeItems(ultimaData, worldMap, dungeons, flags, new Random(randomValues[4]), exclude);
 
             title.Update(ultimaData);
             talk.Update(ultimaData);
@@ -166,7 +174,7 @@ namespace U4DosRandomizer
             avatar.Save(path);
             worldMap.Save(path);
 
-            if (minimap)
+            if (flags.MiniMap)
             {
                 var image = worldMap.ToImage();
                 image.SaveAsPng($"worldMap-{seed}.png");
@@ -175,7 +183,7 @@ namespace U4DosRandomizer
             //PrintWorldMapInfo();
         }
 
-        private static void RandomizeItems(UltimaData ultimaData, WorldMap worldMap, Random random, List<Tile> exclude)
+        private static void RandomizeItems(UltimaData ultimaData, WorldMap worldMap, Dungeons dungeons, Flags flags, Random random, List<Tile> exclude)
         {
             Tile loc = null;// RandomizeLocation(random, TileInfo.Swamp, worldMap, WorldMap.IsWalkableGround, exclude);
             var possibleLocations = worldMap.GetAllMatchingTiles(WorldMap.IsWalkableGround);
@@ -239,6 +247,28 @@ namespace U4DosRandomizer
             ultimaData.Items[Avatar.ITEM_WHITE_STONE].X = Convert.ToByte(loc.X-1);
             ultimaData.Items[Avatar.ITEM_WHITE_STONE].Y = loc.Y;
             ApplyShape(worldMap, loc, "white");
+
+            // Other stones
+            if (flags.DngStone)
+            {
+                foreach (var dungeonName in dungeons.dungeons.Keys)
+                {
+                    if (dungeonName.ToLower() != "abyss" && dungeonName.ToLower() != "hythloth")
+                    {
+                        var dungeon = dungeons.dungeons[dungeonName];
+                        var stones = dungeon.GetTiles(DungeonTileInfo.AltarOrStone);
+                        foreach (var stone in stones)
+                        {
+                            stone.SetTile(DungeonTileInfo.Nothing);
+                        }
+                        var possibleDungeonLocations = dungeon.GetTiles(DungeonTileInfo.Nothing);
+                        var dungeonLoc = possibleDungeonLocations[random.Next(0, possibleDungeonLocations.Count - 1)];
+                        dungeonLoc.SetTile(DungeonTileInfo.AltarOrStone);
+                    }
+                }
+            }
+
+
         }
 
         private static void ApplyShape(WorldMap worldMap, ICoordinate loc, string file)

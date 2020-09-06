@@ -9,7 +9,19 @@ namespace U4DosRandomizer
 {
     public class Dungeons
     {
-        private Dictionary<string, Dungeon> dungeons = new Dictionary<string, Dungeon>();
+        public Dictionary<string, Dungeon> dungeons = new Dictionary<string, Dungeon>();
+        //private static Dictionary<string, int> dungeonIdx = new Dictionary<string, int>()
+        //{
+        //    { "deceit", 0 },
+        //    { "despise", 1 },
+        //    { "destard", 2 },
+        //    { "wrong", 3 },
+        //    { "covetous", 4 },
+        //    { "shame", 5 },
+        //    { "hythloth", 6 },
+        //    { "abyss", 7 }
+        //};
+
         public void Load(string path, UltimaData data)
         {
             var files = Directory.GetFiles(path, "*.DNG");
@@ -21,7 +33,7 @@ namespace U4DosRandomizer
 
                     var dngStream = new System.IO.FileStream($"{file}.orig", System.IO.FileMode.Open);
 
-                    Dungeon dungeon = new Dungeon(dngStream);
+                    Dungeon dungeon = new Dungeon(dngStream, data);
 
                     dungeons.Add(Path.GetFileNameWithoutExtension(file), dungeon);
                 }

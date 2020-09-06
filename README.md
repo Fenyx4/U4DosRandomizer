@@ -10,13 +10,17 @@ Requires Ultima IV which is available for free at https://www.gog.com/game/ultim
 
 ```
 Options:
-  -s |--s <seed>    The seed for the randomizer. Same seed will produce the same map.
-  -p |--p <path>    Path to Ultima 4 installation. Leaving blank will assume it is the working directory. If that fails it will prompt you for the path.
+  -s |--s <seed>    The seed for the randomizer.  Same seed will produce the same map.
+  -p |--p <path>    Path to Ultima 4 installation.  Leaving blank will assume it is the working directory.
   -r |--r           Restore original Ultima 4 files.
   -m |--m           Output a minimap of the overworld.
+  --spellRemove     Put in the letters of the spells you want removed. e.g. "--spellRemove zed" would remove zdown, energy field and dispel.
+  --dngStone        Randomize the location of stones in the dungeons
   -? | -h | --help  Show help information
 ```
   
 All the files the randomizer changes get backed up with the extension ".orig" added. 
 
 Example: https://imgur.com/qNRxpSy
+
+"The generation of random numbers is too important to be left to chance." - Robert R. Coveyou
