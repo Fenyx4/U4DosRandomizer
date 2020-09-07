@@ -351,3 +351,11 @@ MigrationBackup/
 
 ULT/
 U4DosRandomizer/Properties/launchSettings.json
+
+# u4 source code
+u4_decompile/SRC/TOOLS/
+u4_decompile/SRC/*.EXE
+u4_decompile/SRC/ORIGINAL/
+u4_decompile/SRC/U4_MAIN.MAP
+u4_decompile/SRC/DIFF.TXT
+u4_decompile/SRC/LOG.TXT
