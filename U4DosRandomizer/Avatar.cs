@@ -40,7 +40,7 @@ namespace U4DosRandomizer
             var avatarStream = new System.IO.FileStream(file, System.IO.FileMode.Open);
             avatarBytes = avatarStream.ReadAllBytes();
 
-            AvatarOffset = new AvatarOffsetsNew();
+            AvatarOffset = new AvatarOffsetsNew(avatarBytes, $"{file}.orig");
 
             for (int offset = 0; offset < 24; offset++)
             {

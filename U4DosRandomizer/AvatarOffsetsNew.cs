@@ -1,11 +1,34 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
+using System.Reflection;
 using System.Text;
 
 namespace U4DosRandomizer
 {
     public class AvatarOffsetsNew : IAvatarOffset
     {
+        public AvatarOffsetsNew(byte[] avatarBytes, string originalFile)
+        {
+            // Check offsets
+            var avatarStream = new System.IO.FileStream(originalFile, System.IO.FileMode.Open);
+            var originalAvatarBytes = avatarStream.ReadAllBytes();
+
+            var originalOffsets = new AvatarOffsetsOriginal();
+
+            PropertyInfo[] properties = this.GetType().GetInterface("IAvatarOffset").GetProperties();
+            foreach (PropertyInfo pi in properties)
+            {
+                if(pi.Name.ToLower().Contains("offset"))
+                {
+                    if(avatarBytes[(int)pi.GetValue(this, null)] != originalAvatarBytes[(int)pi.GetValue(originalOffsets, null)])
+                    {
+                        throw new Exception($"Offset {pi.Name} appears to be wrong.");
+                    }
+                }
+            }
+        }
+
         public int MOONGATE_X_OFFSET { get; } = 0x0f914;
         public int MOONGATE_Y_OFFSET { get; } = 0x0f91c;
         public int AREA_X_OFFSET { get; } = 0x0f944; // towns, cities, castles, dungeons, shrines
@@ -173,7 +196,7 @@ namespace U4DosRandomizer
         public int BLACK_STONE_LOCATION_TEXT { get; } = 0x17387 ;
 
         public int DEMON_SPAWN_TRIGGER_X1_OFFSET { get; } = 0x2D55;
-        public int DEMON_SPAWN_TRIGGER_X2_OFFSET { get; } = 0x2DFC; //0x2D5C;
+        public int DEMON_SPAWN_TRIGGER_X2_OFFSET { get; } = 0x2D5C;
         public int DEMON_SPAWN_TRIGGER_Y1_OFFSET { get; } = 0x2D63;
         public int DEMON_SPAWN_TRIGGER_Y2_OFFSET { get; } = 0x2D6A;
         public int DEMON_SPAWN_LOCATION_X_OFFSET { get; } = 0x2828;
