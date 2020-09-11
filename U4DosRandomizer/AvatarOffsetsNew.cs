@@ -21,7 +21,9 @@ namespace U4DosRandomizer
             {
                 if(pi.Name.ToLower().Contains("offset"))
                 {
-                    if(avatarBytes[(int)pi.GetValue(this, null)] != originalAvatarBytes[(int)pi.GetValue(originalOffsets, null)])
+                    var newValue = avatarBytes[(int)pi.GetValue(this, null)];
+                    var oldValue = originalAvatarBytes[(int)pi.GetValue(originalOffsets, null)];
+                    if (newValue != oldValue)
                     {
                         throw new Exception($"Offset {pi.Name} appears to be wrong.");
                     }
@@ -29,10 +31,10 @@ namespace U4DosRandomizer
             }
         }
 
-        public int MOONGATE_X_OFFSET { get; } = 0x0f914;
-        public int MOONGATE_Y_OFFSET { get; } = 0x0f91c;
-        public int AREA_X_OFFSET { get; } = 0x0f944; // towns, cities, castles, dungeons, shrines
-        public int AREA_Y_OFFSET { get; } = 0x0f964;
+        public int MOONGATE_X_OFFSET { get; } = 0x0f924;
+        public int MOONGATE_Y_OFFSET { get; } = 0x0f92c;
+        public int AREA_X_OFFSET { get; } = 0x0f954; // towns, cities, castles, dungeons, shrines
+        public int AREA_Y_OFFSET { get; } = 0x0f974;
         public int LOC_BUILDINGS { get; } = 0x01;
 
         public int LOC_CASTLES { get; } = 0x01;
@@ -109,25 +111,25 @@ namespace U4DosRandomizer
          * 30 - Spirituality
          * 31 - Humility
          */
-        public int PIRATE_COVE_X_OFFSET { get; } = 0x0f9ec; // length 8
-        public int PIRATE_COVE_Y_OFFSET { get; } = 0x0f9f4; // length 8
-        public int PIRATE_COVE_SHIP_TILES { get; } = 0x0f9fc; // length 8 (Direction pirates are facing)
+        public int PIRATE_COVE_X_OFFSET { get; } = 0x0f9fc; // length 8
+        public int PIRATE_COVE_Y_OFFSET { get; } = 0x0fa04; // length 8
+        public int PIRATE_COVE_SHIP_TILES { get; } = 0x0fa0c; // length 8 (Direction pirates are facing)
         public int PIRATE_COVE_SPAWN_TRIGGER_Y_OFFSET1 { get; } = 0x02ec2;
         public int PIRATE_COVE_SPAWN_TRIGGER_X_OFFSET1 { get; } = 0x02ec9;
         public int PIRATE_COVE_SPAWN_TRIGGER_Y_OFFSET2 { get; } = 0x02f61;
         public int PIRATE_COVE_SPAWN_TRIGGER_X_OFFSET2 { get; } = 0x02f68;
-        public int MONSTER_HP_OFFSET { get; } = 0x114d2; // length 52
-        public int MONSTER_LEADER_TYPES_OFFSET { get; } = 0x11506; // length 36
-        public int MONSTER_ENCOUNTER_SIZE_OFFSET { get; } = 0x1152a; // length 36
-        public int ALTAR_EXIT_DESTINATION { get; } = 0x1171a; // length 12 : altar room exit destinations 
+        public int MONSTER_HP_OFFSET { get; } = 0x114e2; // length 52
+        public int MONSTER_LEADER_TYPES_OFFSET { get; } = 0x11516; // length 36
+        public int MONSTER_ENCOUNTER_SIZE_OFFSET { get; } = 0x1153a; // length 36
+        public int ALTAR_EXIT_DESTINATION { get; } = 0x1172a; // length 12 : altar room exit destinations 
         /*
          *     0-3 { get; } = truth (north, east, south, west)
          *     4-7 { get; } = love
          *     8-11 { get; } = courage
          */
-        public int AMBUSH_MONSTER_TYPES { get; } = 0x117B8; //length 8 : ambush monster types
-        public int CITY_RUNE_MASK_PAIRS_OFFSET { get; } = 0x11a04; // length 16 : city/runemask pairs (city id, corresponding rune bitmask)
-        public int ITEM_LOCATIONS_OFFSET { get; } = 0x11a20; // length 120 : 24 five-byte item location records (see below)
+        public int AMBUSH_MONSTER_TYPES { get; } = 0x117C8; //length 8 : ambush monster types
+        public int CITY_RUNE_MASK_PAIRS_OFFSET { get; } = 0x11a14; // length 16 : city/runemask pairs (city id, corresponding rune bitmask)
+        public int ITEM_LOCATIONS_OFFSET { get; } = 0x11a30; // length 120 : 24 five-byte item location records (see below)
         /*
          * Each item location record has the following structure:
 
@@ -189,11 +191,11 @@ namespace U4DosRandomizer
          * All runes on the surface are bugged to be Great Stygian Abyss. I'll figure out which are which later although it doesn't really matter. They just have to be located in the right town.
          */
 
-        public int LB_TEXT_OFFSET { get; } = 0x15557;
-        public int SHRINE_TEXT_OFFSET { get; } = 0x16c80;
+        public int LB_TEXT_OFFSET { get; } = 0x15567;
+        public int SHRINE_TEXT_OFFSET { get; } = 0x16c90;
 
-        public int WHITE_STONE_LOCATION_TEXT { get; } = 0x172C2;
-        public int BLACK_STONE_LOCATION_TEXT { get; } = 0x17387 ;
+        public int WHITE_STONE_LOCATION_TEXT { get; } = 0x172D2;
+        public int BLACK_STONE_LOCATION_TEXT { get; } = 0x17397 ;
 
         public int DEMON_SPAWN_TRIGGER_X1_OFFSET { get; } = 0x2D55;
         public int DEMON_SPAWN_TRIGGER_X2_OFFSET { get; } = 0x2D5C;
@@ -201,8 +203,8 @@ namespace U4DosRandomizer
         public int DEMON_SPAWN_TRIGGER_Y2_OFFSET { get; } = 0x2D6A;
         public int DEMON_SPAWN_LOCATION_X_OFFSET { get; } = 0x2828;
 
-        public int BALLOON_SPAWN_TRIGGER_X_OFFSET { get; } = 0x27EC;
-        public int BALLOON_SPAWN_TRIGGER_Y_OFFSET { get; } = 0x29AD;
+        public int BALLOON_SPAWN_TRIGGER_X_OFFSET { get; } = 0x27E6;
+        public int BALLOON_SPAWN_TRIGGER_Y_OFFSET { get; } = 0x27ED;
 
         public int BALLOON_SPAWN_LOCATION_X_OFFSET { get; } = 0x27FC;
         public int BALLOON_SPAWN_LOCATION_Y_OFFSET { get; } = 0x2801;
@@ -219,13 +221,13 @@ namespace U4DosRandomizer
         public int ITEM_USE_TRIGGER_SKULL_X_OFFSET { get; } = 0x0621;
         public int ITEM_USE_TRIGGER_SKULL_Y_OFFSET { get; } = 0x0628;
 
-        public int WHIRLPOOL_EXIT_X_OFFSET { get; } = 0x78D0;
-        public int WHIRLPOOL_EXIT_Y_OFFSET { get; } = 0x78D5;
+        public int WHIRLPOOL_EXIT_X_OFFSET { get; } = 0x78DA;
+        public int WHIRLPOOL_EXIT_Y_OFFSET { get; } = 0x78DF;
 
-        public int UNKNOWN_EXIT_LOCATIONS_X { get; } = 0xFCF0; // Length 13 - Not sure what these are for yet. Appear to be exit coords for when you fail tests in the Abyss https://github.com/ergonomy-joe/u4-decompiled/blob/c2c2108fa3bb346bcd1d8c207c526f33a4c8f5ef/SRC/U4_END.C#L37
-        public int UNKNOWN_EXIT_LOCATIONS_Y { get; } = 0xFCFD;
+        public int UNKNOWN_EXIT_LOCATIONS_X { get; } = 0xFD00; // Length 13 - Not sure what these are for yet. Appear to be exit coords for when you fail tests in the Abyss https://github.com/ergonomy-joe/u4-decompiled/blob/c2c2108fa3bb346bcd1d8c207c526f33a4c8f5ef/SRC/U4_END.C#L37
+        public int UNKNOWN_EXIT_LOCATIONS_Y { get; } = 0xFD0D;
 
-        public int SPELL_RECIPE_OFFSET { get; } = 0x1187E;
+        public int SPELL_RECIPE_OFFSET { get; } = 0x1188E;
         public const byte Reagent_ash = (0x80 >> 0);
         public const byte Reagent_ginseng = (0x80 >> 1);
         public const byte Reagent_garlic = (0x80 >> 2);
