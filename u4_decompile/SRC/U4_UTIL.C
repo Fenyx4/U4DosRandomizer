@@ -732,3 +732,21 @@ int bp04;
 	Gra_CR();
 	return bp_14[0]?atol(bp_14):-1L;
 }
+
+/* Checking if a point is between two others but takes into account that the world wraps*/
+IsBetween(point, lowerbound, upperbound)
+unsigned char point;
+unsigned char lowerbound;
+unsigned char upperbound;
+{
+	if (lowerbound <= upperbound)
+		if(point >= lowerbound && point <= upperbound)
+			return 1;
+		else
+			return 0;
+	else
+		if(point >= lowerbound || point <= upperbound)
+			return 1;
+		else
+			return 0;
+}

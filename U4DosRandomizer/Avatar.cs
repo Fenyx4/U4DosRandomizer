@@ -116,6 +116,11 @@ namespace U4DosRandomizer
             {
                 data.SpellsRecipes.Add(avatarBytes[AvatarOffset.SPELL_RECIPE_OFFSET + i]);
             }
+
+            data.BlinkExclusionX1 = avatarBytes[AvatarOffset.BLINK_EXCLUSION_X1_OFFSET];
+            data.BlinkExclusionX2 = avatarBytes[AvatarOffset.BLINK_EXCLUSION_X2_OFFSET];
+            data.BlinkExclusionY1 = avatarBytes[AvatarOffset.BLINK_EXCLUSION_Y1_OFFSET];
+            data.BlinkExclusionY2 = avatarBytes[AvatarOffset.BLINK_EXCLUSION_Y2_OFFSET];
         }
 
         internal static void Restore(string path)
@@ -245,6 +250,11 @@ namespace U4DosRandomizer
             {
                 avatarBytes[AvatarOffset.SPELL_RECIPE_OFFSET + i] = data.SpellsRecipes[i];
             }
+
+            avatarBytes[AvatarOffset.BLINK_EXCLUSION_X1_OFFSET] = data.BlinkExclusionX1;
+            avatarBytes[AvatarOffset.BLINK_EXCLUSION_X2_OFFSET] = data.BlinkExclusionX2;
+            avatarBytes[AvatarOffset.BLINK_EXCLUSION_Y1_OFFSET] = data.BlinkExclusionY1;
+            avatarBytes[AvatarOffset.BLINK_EXCLUSION_Y2_OFFSET] = data.BlinkExclusionY2;
         }
 
         public void Save(string path)

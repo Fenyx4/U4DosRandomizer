@@ -716,6 +716,8 @@ namespace U4DosRandomizer
             {
                 return x >= v1 || x <= v2;
             }
+
+            //return ((v1 <= v2) && (x >= v1 && x <= v2)) || ((v1 > v2) && (x >= v1 || x <= v2));
         }
 
         public List<Tile> GetRiverPath(Tile startTile, IsNodeValid matchesGoal)

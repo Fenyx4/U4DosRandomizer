@@ -382,6 +382,24 @@ namespace U4DosRandomizer
             ultimaData.PirateCoveSpawnTrigger = new Coordinate(ultimaData.PirateCoveSpawnTrigger.X - originalX + stygian.X, ultimaData.PirateCoveSpawnTrigger.Y - originalY + stygian.Y);
             //worldMap.GetCoordinate(ultimaData.PirateCoveSpawnTrigger.X, ultimaData.PirateCoveSpawnTrigger.Y).SetTile(TileInfo.A);
 
+            // Blink Exclusion
+            ultimaData.BlinkExclusionX1 = Convert.ToByte(WorldMap.Wrap(ultimaData.BlinkExclusionX1 - originalX + stygian.X));
+            ultimaData.BlinkExclusionY1 = Convert.ToByte(WorldMap.Wrap(ultimaData.BlinkExclusionY1 - originalY + stygian.Y));
+            ultimaData.BlinkExclusionX2 = Convert.ToByte(WorldMap.Wrap(ultimaData.BlinkExclusionX2 - originalX + stygian.X));
+            ultimaData.BlinkExclusionY2 = Convert.ToByte(WorldMap.Wrap(ultimaData.BlinkExclusionY2 - originalY + stygian.Y));
+
+            //for(int x = 0; x < WorldMap.SIZE; x++)
+            //{
+            //    for (int y = 0; y < WorldMap.SIZE; y++)
+            //    {
+            //        if (WorldMap.Between(Convert.ToByte(x), ultimaData.BlinkExclusionX1, ultimaData.BlinkExclusionX2)
+            //            && WorldMap.Between(Convert.ToByte(y), ultimaData.BlinkExclusionY1, ultimaData.BlinkExclusionY2))
+            //        {
+            //            worldMap.GetCoordinate(x, y).SetTile(TileInfo.Lava_Flow);
+            //        }
+            //    }
+            //}
+
             // Buildings
             possibleLocations = worldMap.GetAllMatchingTiles(WorldMap.IsWalkableGround);
             possibleLocations.RemoveAll(c => excludeLocations.Contains(c));

@@ -19,7 +19,7 @@ namespace U4DosRandomizer
             PropertyInfo[] properties = this.GetType().GetInterface("IAvatarOffset").GetProperties();
             foreach (PropertyInfo pi in properties)
             {
-                if(pi.Name.ToLower().Contains("offset"))
+                if(pi.Name.ToLower().Contains("offset") && !pi.Name.ToLower().Contains("blink"))
                 {
                     var newValue = avatarBytes[(int)pi.GetValue(this, null)];
                     var oldValue = originalAvatarBytes[(int)pi.GetValue(originalOffsets, null)];
@@ -28,13 +28,21 @@ namespace U4DosRandomizer
                         throw new Exception($"Offset {pi.Name} appears to be wrong.");
                     }
                 }
+                else if (pi.Name.ToLower().Contains("blink"))
+                {
+                    var newValue = avatarBytes[(int)pi.GetValue(this, null)];
+                    if(!(newValue == 0xc0 || newValue == 0xff))
+                    {
+                        throw new Exception($"Offset {pi.Name} appears to be wrong.");
+                    }
+                }
             }
         }
 
-        public int MOONGATE_X_OFFSET { get; } = 0x0f924;
-        public int MOONGATE_Y_OFFSET { get; } = 0x0f92c;
-        public int AREA_X_OFFSET { get; } = 0x0f954; // towns, cities, castles, dungeons, shrines
-        public int AREA_Y_OFFSET { get; } = 0x0f974;
+        public int MOONGATE_X_OFFSET { get; } = 0x0f974; //0fad1
+        public int MOONGATE_Y_OFFSET { get; } = 0x0f97c; //fad9
+        public int AREA_X_OFFSET { get; } = 0x0f9a4; //fb01 // towns, cities, castles, dungeons, shrines
+        public int AREA_Y_OFFSET { get; } = 0x0f9c4; //fb21
         public int LOC_BUILDINGS { get; } = 0x01;
 
         public int LOC_CASTLES { get; } = 0x01;
@@ -111,25 +119,25 @@ namespace U4DosRandomizer
          * 30 - Spirituality
          * 31 - Humility
          */
-        public int PIRATE_COVE_X_OFFSET { get; } = 0x0f9fc; // length 8
-        public int PIRATE_COVE_Y_OFFSET { get; } = 0x0fa04; // length 8
-        public int PIRATE_COVE_SHIP_TILES { get; } = 0x0fa0c; // length 8 (Direction pirates are facing)
-        public int PIRATE_COVE_SPAWN_TRIGGER_Y_OFFSET1 { get; } = 0x02ec2;
-        public int PIRATE_COVE_SPAWN_TRIGGER_X_OFFSET1 { get; } = 0x02ec9;
-        public int PIRATE_COVE_SPAWN_TRIGGER_Y_OFFSET2 { get; } = 0x02f61;
-        public int PIRATE_COVE_SPAWN_TRIGGER_X_OFFSET2 { get; } = 0x02f68;
-        public int MONSTER_HP_OFFSET { get; } = 0x114e2; // length 52
-        public int MONSTER_LEADER_TYPES_OFFSET { get; } = 0x11516; // length 36
-        public int MONSTER_ENCOUNTER_SIZE_OFFSET { get; } = 0x1153a; // length 36
-        public int ALTAR_EXIT_DESTINATION { get; } = 0x1172a; // length 12 : altar room exit destinations 
+        public int PIRATE_COVE_X_OFFSET { get; } = 0x0fa4c; //fba9 // length 8
+        public int PIRATE_COVE_Y_OFFSET { get; } = 0x0fa54; //fbb1 // length 8
+        public int PIRATE_COVE_SHIP_TILES { get; } = 0x0fa5c; //fbb9 // length 8 (Direction pirates are facing)
+        public int PIRATE_COVE_SPAWN_TRIGGER_Y_OFFSET1 { get; } = 0x02f04; //3084
+        public int PIRATE_COVE_SPAWN_TRIGGER_X_OFFSET1 { get; } = 0x02f0b; //308B
+        public int PIRATE_COVE_SPAWN_TRIGGER_Y_OFFSET2 { get; } = 0x02fa3; //3123
+        public int PIRATE_COVE_SPAWN_TRIGGER_X_OFFSET2 { get; } = 0x02faa; //312A
+        public int MONSTER_HP_OFFSET { get; } = 0x11532; //11685 // length 52
+        public int MONSTER_LEADER_TYPES_OFFSET { get; } = 0x11566; //116b9 // length 36
+        public int MONSTER_ENCOUNTER_SIZE_OFFSET { get; } = 0x1158a; //116dd // length 36
+        public int ALTAR_EXIT_DESTINATION { get; } = 0x1177a; //118c5 // length 12 : altar room exit destinations 
         /*
          *     0-3 { get; } = truth (north, east, south, west)
          *     4-7 { get; } = love
          *     8-11 { get; } = courage
          */
-        public int AMBUSH_MONSTER_TYPES { get; } = 0x117C8; //length 8 : ambush monster types
-        public int CITY_RUNE_MASK_PAIRS_OFFSET { get; } = 0x11a14; // length 16 : city/runemask pairs (city id, corresponding rune bitmask)
-        public int ITEM_LOCATIONS_OFFSET { get; } = 0x11a30; // length 120 : 24 five-byte item location records (see below)
+        public int AMBUSH_MONSTER_TYPES { get; } = 0x11818; //11963 //length 8 : ambush monster types
+        public int CITY_RUNE_MASK_PAIRS_OFFSET { get; } = 0x11a64; //11baf // length 16 : city/runemask pairs (city id, corresponding rune bitmask)
+        public int ITEM_LOCATIONS_OFFSET { get; } = 0x11a80; //11bcb // length 120 : 24 five-byte item location records (see below)
         /*
          * Each item location record has the following structure:
 
@@ -191,43 +199,52 @@ namespace U4DosRandomizer
          * All runes on the surface are bugged to be Great Stygian Abyss. I'll figure out which are which later although it doesn't really matter. They just have to be located in the right town.
          */
 
-        public int LB_TEXT_OFFSET { get; } = 0x15567;
-        public int SHRINE_TEXT_OFFSET { get; } = 0x16c90;
+        public int LB_TEXT_OFFSET { get; } = 0x155B7; //156ca
+        public int SHRINE_TEXT_OFFSET { get; } = 0x16cE0; //16df2
 
-        public int WHITE_STONE_LOCATION_TEXT { get; } = 0x172D2;
-        public int BLACK_STONE_LOCATION_TEXT { get; } = 0x17397 ;
+        public int WHITE_STONE_LOCATION_TEXT { get; } = 0x17322; //17434
+        public int BLACK_STONE_LOCATION_TEXT { get; } = 0x173E7; //174F9
 
-        public int DEMON_SPAWN_TRIGGER_X1_OFFSET { get; } = 0x2D55;
-        public int DEMON_SPAWN_TRIGGER_X2_OFFSET { get; } = 0x2D5C;
-        public int DEMON_SPAWN_TRIGGER_Y1_OFFSET { get; } = 0x2D63;
-        public int DEMON_SPAWN_TRIGGER_Y2_OFFSET { get; } = 0x2D6A;
-        public int DEMON_SPAWN_LOCATION_X_OFFSET { get; } = 0x2828;
+        public int DEMON_SPAWN_TRIGGER_X1_OFFSET { get; } = 0x2D8C; //2F17 !!! e5
+        public int DEMON_SPAWN_TRIGGER_X2_OFFSET { get; } = 0x2D90; //2F1E !!! ea
+        public int DEMON_SPAWN_TRIGGER_Y1_OFFSET { get; } = 0x2DA1; //2F25 !!! d4
+        public int DEMON_SPAWN_TRIGGER_Y2_OFFSET { get; } = 0x2DA5; //2F2C !!! d9
+        public int DEMON_SPAWN_LOCATION_X_OFFSET { get; } = 0x285C; //29EA
 
-        public int BALLOON_SPAWN_TRIGGER_X_OFFSET { get; } = 0x27E6;
-        public int BALLOON_SPAWN_TRIGGER_Y_OFFSET { get; } = 0x27ED;
+        public int BALLOON_SPAWN_TRIGGER_X_OFFSET { get; } = 0x281A; //29A8
+        public int BALLOON_SPAWN_TRIGGER_Y_OFFSET { get; } = 0x2821; //29AF
 
-        public int BALLOON_SPAWN_LOCATION_X_OFFSET { get; } = 0x27FC;
-        public int BALLOON_SPAWN_LOCATION_Y_OFFSET { get; } = 0x2801;
+        public int BALLOON_SPAWN_LOCATION_X_OFFSET { get; } = 0x2830; //29BE
+        public int BALLOON_SPAWN_LOCATION_Y_OFFSET { get; } = 0x2835; //29C3
 
-        public int LBC_DUNGEON_EXIT_X_OFFSET { get; } = 0x45A4;
-        public int LBC_DUNGEON_EXIT_Y_OFFSET { get; } = 0x45A9;
+        public int LBC_DUNGEON_EXIT_X_OFFSET { get; } = 0x45E6; //4766
+        public int LBC_DUNGEON_EXIT_Y_OFFSET { get; } = 0x45EB; //476B
 
-        public int ITEM_USE_TRIGGER_BELL_X_OFFSET { get; } = 0x04D1;
-        public int ITEM_USE_TRIGGER_BELL_Y_OFFSET { get; } = 0x04D8;
-        public int ITEM_USE_TRIGGER_BOOK_X_OFFSET { get; } = 0x050A;
-        public int ITEM_USE_TRIGGER_BOOK_Y_OFFSET { get; } = 0x0511;
-        public int ITEM_USE_TRIGGER_CANDLE_X_OFFSET { get; } = 0x054F;
-        public int ITEM_USE_TRIGGER_CANDLE_Y_OFFSET { get; } = 0x0556;
-        public int ITEM_USE_TRIGGER_SKULL_X_OFFSET { get; } = 0x0621;
-        public int ITEM_USE_TRIGGER_SKULL_Y_OFFSET { get; } = 0x0628;
+        public int ITEM_USE_TRIGGER_BELL_X_OFFSET { get; } = 0x04D1; //693
+        public int ITEM_USE_TRIGGER_BELL_Y_OFFSET { get; } = 0x04D8; //69A
+        public int ITEM_USE_TRIGGER_BOOK_X_OFFSET { get; } = 0x050A; //6CC
+        public int ITEM_USE_TRIGGER_BOOK_Y_OFFSET { get; } = 0x0511; //6D3
+        public int ITEM_USE_TRIGGER_CANDLE_X_OFFSET { get; } = 0x054F; //711
+        public int ITEM_USE_TRIGGER_CANDLE_Y_OFFSET { get; } = 0x0556; //718
+        public int ITEM_USE_TRIGGER_SKULL_X_OFFSET { get; } = 0x0621; //7E3
+        public int ITEM_USE_TRIGGER_SKULL_Y_OFFSET { get; } = 0x0628; //7EA
 
-        public int WHIRLPOOL_EXIT_X_OFFSET { get; } = 0x78DA;
-        public int WHIRLPOOL_EXIT_Y_OFFSET { get; } = 0x78DF;
+        public int WHIRLPOOL_EXIT_X_OFFSET { get; } = 0x792A; //7A92
+        public int WHIRLPOOL_EXIT_Y_OFFSET { get; } = 0x792F; //7A97
 
-        public int UNKNOWN_EXIT_LOCATIONS_X { get; } = 0xFD00; // Length 13 - Not sure what these are for yet. Appear to be exit coords for when you fail tests in the Abyss https://github.com/ergonomy-joe/u4-decompiled/blob/c2c2108fa3bb346bcd1d8c207c526f33a4c8f5ef/SRC/U4_END.C#L37
-        public int UNKNOWN_EXIT_LOCATIONS_Y { get; } = 0xFD0D;
+        public int UNKNOWN_EXIT_LOCATIONS_X { get; } = 0xFD50; //FEAD  // Length 13 - Not sure what these are for yet. Appear to be exit coords for when you fail tests in the Abyss https://github.com/ergonomy-joe/u4-decompiled/blob/c2c2108fa3bb346bcd1d8c207c526f33a4c8f5ef/SRC/U4_END.C#L37
+        public int UNKNOWN_EXIT_LOCATIONS_Y { get; } = 0xFD5D; //FEBA
 
-        public int SPELL_RECIPE_OFFSET { get; } = 0x1188E;
+        public int SPELL_RECIPE_OFFSET { get; } = 0x118DE; //11A29
+
+        public int BLINK_EXCLUSION_X1_OFFSET { get; } = 0x666C;
+
+        public int BLINK_EXCLUSION_X2_OFFSET { get; } = 0x6670;
+
+        public int BLINK_EXCLUSION_Y1_OFFSET { get; } = 0x6681;
+
+        public int BLINK_EXCLUSION_Y2_OFFSET { get; } = 0x6685;
+
         public const byte Reagent_ash = (0x80 >> 0);
         public const byte Reagent_ginseng = (0x80 >> 1);
         public const byte Reagent_garlic = (0x80 >> 2);

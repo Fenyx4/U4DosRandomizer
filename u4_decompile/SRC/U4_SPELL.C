@@ -176,8 +176,8 @@ int bp04;
 			return;
 		if(!C_63B4())
 			return;
-		if(!(Party._x >= 0xc0 && Party._x < 0xff &&
-			Party._y >= 0xc0 && Party._y < 0xff)) {
+		if(!(IsBetween(Party._x, 0xc0, 0xff) &&
+			IsBetween(Party._y, 0xc0, 0xff))) {
 			loc_C = D_959C.x;
 			loc_D = D_959C.y;
 			while(loc_C < 32 && loc_D < 32) {

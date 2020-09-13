@@ -108,5 +108,9 @@
         int UNKNOWN_EXIT_LOCATIONS_X { get; }
         int UNKNOWN_EXIT_LOCATIONS_Y { get; }
         int SPELL_RECIPE_OFFSET { get; }
+        int BLINK_EXCLUSION_X1_OFFSET { get; }
+        int BLINK_EXCLUSION_X2_OFFSET { get; }
+        int BLINK_EXCLUSION_Y1_OFFSET { get; }
+        int BLINK_EXCLUSION_Y2_OFFSET { get; }
     }
 }
