@@ -188,7 +188,7 @@ int bp04;
 				loc_C -= loc_A;
 				loc_D -= loc_B;
 			} while((loc_C != D_959C.x || loc_D != D_959C.y) && !C_2999(D_8742._map.x32x32[loc_D][loc_C]) &&
-						!(IsBetween(Party._x, 0x00, 0x00) && IsBetween(Party._y, 0x00, 0x00)));
+						!(IsBetween(Party._x, 0x01, 0x02) && IsBetween(Party._y, 0x01, 0x02)));
 			if(D_959C.x != loc_C || D_959C.y != loc_D) {
 				Party._x += loc_C - D_959C.x;
 				Party._y += loc_D - D_959C.y;

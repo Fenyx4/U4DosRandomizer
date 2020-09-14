@@ -39,10 +39,10 @@ namespace U4DosRandomizer
             }
         }
 
-        public int MOONGATE_X_OFFSET { get; } = 0x0f974; //0fad1
-        public int MOONGATE_Y_OFFSET { get; } = 0x0f97c; //fad9
-        public int AREA_X_OFFSET { get; } = 0x0f9a4; //fb01 // towns, cities, castles, dungeons, shrines
-        public int AREA_Y_OFFSET { get; } = 0x0f9c4; //fb21
+        public int MOONGATE_X_OFFSET { get; } = 0x0f9e4; //0fad1
+        public int MOONGATE_Y_OFFSET { get; } = 0x0f9ec; //fad9
+        public int AREA_X_OFFSET { get; } = 0x0fa14; //fb01 // towns, cities, castles, dungeons, shrines
+        public int AREA_Y_OFFSET { get; } = 0x0fa34; //fb21
         public int LOC_BUILDINGS { get; } = 0x01;
 
         public int LOC_CASTLES { get; } = 0x01;
@@ -119,25 +119,25 @@ namespace U4DosRandomizer
          * 30 - Spirituality
          * 31 - Humility
          */
-        public int PIRATE_COVE_X_OFFSET { get; } = 0x0fa4c; //fba9 // length 8
-        public int PIRATE_COVE_Y_OFFSET { get; } = 0x0fa54; //fbb1 // length 8
-        public int PIRATE_COVE_SHIP_TILES { get; } = 0x0fa5c; //fbb9 // length 8 (Direction pirates are facing)
+        public int PIRATE_COVE_X_OFFSET { get; } = 0x0fabc; //fba9 // length 8
+        public int PIRATE_COVE_Y_OFFSET { get; } = 0x0fac4; //fbb1 // length 8
+        public int PIRATE_COVE_SHIP_TILES { get; } = 0x0facc; //fbb9 // length 8 (Direction pirates are facing)
         public int PIRATE_COVE_SPAWN_TRIGGER_Y_OFFSET1 { get; } = 0x02f04; //3084
         public int PIRATE_COVE_SPAWN_TRIGGER_X_OFFSET1 { get; } = 0x02f0b; //308B
         public int PIRATE_COVE_SPAWN_TRIGGER_Y_OFFSET2 { get; } = 0x02fa3; //3123
         public int PIRATE_COVE_SPAWN_TRIGGER_X_OFFSET2 { get; } = 0x02faa; //312A
-        public int MONSTER_HP_OFFSET { get; } = 0x11532; //11685 // length 52
-        public int MONSTER_LEADER_TYPES_OFFSET { get; } = 0x11566; //116b9 // length 36
-        public int MONSTER_ENCOUNTER_SIZE_OFFSET { get; } = 0x1158a; //116dd // length 36
-        public int ALTAR_EXIT_DESTINATION { get; } = 0x1177a; //118c5 // length 12 : altar room exit destinations 
+        public int MONSTER_HP_OFFSET { get; } = 0x115A2; //11685 // length 52
+        public int MONSTER_LEADER_TYPES_OFFSET { get; } = 0x115D6; //116b9 // length 36
+        public int MONSTER_ENCOUNTER_SIZE_OFFSET { get; } = 0x115fa; //116dd // length 36
+        public int ALTAR_EXIT_DESTINATION { get; } = 0x117fa; //118c5 // length 12 : altar room exit destinations 
         /*
          *     0-3 { get; } = truth (north, east, south, west)
          *     4-7 { get; } = love
          *     8-11 { get; } = courage
          */
-        public int AMBUSH_MONSTER_TYPES { get; } = 0x11818; //11963 //length 8 : ambush monster types
-        public int CITY_RUNE_MASK_PAIRS_OFFSET { get; } = 0x11a64; //11baf // length 16 : city/runemask pairs (city id, corresponding rune bitmask)
-        public int ITEM_LOCATIONS_OFFSET { get; } = 0x11a80; //11bcb // length 120 : 24 five-byte item location records (see below)
+        public int AMBUSH_MONSTER_TYPES { get; } = 0x11888; //11963 //length 8 : ambush monster types
+        public int CITY_RUNE_MASK_PAIRS_OFFSET { get; } = 0x11ae2; //11baf // length 16 : city/runemask pairs (city id, corresponding rune bitmask)
+        public int ITEM_LOCATIONS_OFFSET { get; } = 0x11afe; //11bcb // length 120 : 24 five-byte item location records (see below)
         /*
          * Each item location record has the following structure:
 
@@ -199,11 +199,11 @@ namespace U4DosRandomizer
          * All runes on the surface are bugged to be Great Stygian Abyss. I'll figure out which are which later although it doesn't really matter. They just have to be located in the right town.
          */
 
-        public int LB_TEXT_OFFSET { get; } = 0x155B7; //156ca
-        public int SHRINE_TEXT_OFFSET { get; } = 0x16cE0; //16df2
+        public int LB_TEXT_OFFSET { get; } = 0x15635; //156ca
+        public int SHRINE_TEXT_OFFSET { get; } = 0x16d5e; //16df2
 
-        public int WHITE_STONE_LOCATION_TEXT { get; } = 0x17322; //17434
-        public int BLACK_STONE_LOCATION_TEXT { get; } = 0x173E7; //174F9
+        public int WHITE_STONE_LOCATION_TEXT { get; } = 0x173A0; //17434
+        public int BLACK_STONE_LOCATION_TEXT { get; } = 0x17465; //174F9
 
         public int DEMON_SPAWN_TRIGGER_X1_OFFSET { get; } = 0x2D8C; //2F17 !!! e5
         public int DEMON_SPAWN_TRIGGER_X2_OFFSET { get; } = 0x2D90; //2F1E !!! ea
@@ -229,13 +229,13 @@ namespace U4DosRandomizer
         public int ITEM_USE_TRIGGER_SKULL_X_OFFSET { get; } = 0x0621; //7E3
         public int ITEM_USE_TRIGGER_SKULL_Y_OFFSET { get; } = 0x0628; //7EA
 
-        public int WHIRLPOOL_EXIT_X_OFFSET { get; } = 0x792A; //7A92
-        public int WHIRLPOOL_EXIT_Y_OFFSET { get; } = 0x792F; //7A97
+        public int WHIRLPOOL_EXIT_X_OFFSET { get; } = 0x7954; //7A92
+        public int WHIRLPOOL_EXIT_Y_OFFSET { get; } = 0x7959; //7A97
 
-        public int UNKNOWN_EXIT_LOCATIONS_X { get; } = 0xFD50; //FEAD  // Length 13 - Not sure what these are for yet. Appear to be exit coords for when you fail tests in the Abyss https://github.com/ergonomy-joe/u4-decompiled/blob/c2c2108fa3bb346bcd1d8c207c526f33a4c8f5ef/SRC/U4_END.C#L37
-        public int UNKNOWN_EXIT_LOCATIONS_Y { get; } = 0xFD5D; //FEBA
+        public int UNKNOWN_EXIT_LOCATIONS_X { get; } = 0xFDC0; //FEAD  // Length 13 - Not sure what these are for yet. Appear to be exit coords for when you fail tests in the Abyss https://github.com/ergonomy-joe/u4-decompiled/blob/c2c2108fa3bb346bcd1d8c207c526f33a4c8f5ef/SRC/U4_END.C#L37
+        public int UNKNOWN_EXIT_LOCATIONS_Y { get; } = 0xFDCD; //FEBA
 
-        public int SPELL_RECIPE_OFFSET { get; } = 0x118DE; //11A29
+        public int SPELL_RECIPE_OFFSET { get; } = 0x1195C; //11A29
 
         public int BLINK_EXCLUSION_X1_OFFSET { get; } = 0x666C;
 
@@ -244,6 +244,17 @@ namespace U4DosRandomizer
         public int BLINK_EXCLUSION_Y1_OFFSET { get; } = 0x6681;
 
         public int BLINK_EXCLUSION_Y2_OFFSET { get; } = 0x6685;
+
+
+        public int BLINK_DESTINATION_EXCLUSION_X1_OFFSET { get; } = 0x66F9;
+
+        public int BLINK_DESTINATION_EXCLUSION_X2_OFFSET { get; } = 0x66FD;
+
+        public int BLINK_DESTINATION_EXCLUSION_Y1_OFFSET { get; } = 0x670E;
+
+        public int BLINK_DESTINATION_EXCLUSION_Y2_OFFSET { get; } = 0x66FA;
+
+        public int ENABLE_MIX_QUANITYT_OFFSET { get; } = 0x8D17;
 
         public const byte Reagent_ash = (0x80 >> 0);
         public const byte Reagent_ginseng = (0x80 >> 1);
