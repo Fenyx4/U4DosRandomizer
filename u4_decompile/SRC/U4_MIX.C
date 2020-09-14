@@ -48,7 +48,7 @@ unsigned char D_277E[] = {
 {
 	register int si;
 	unsigned char loc_A[8];
-	int  loc_B, loc_C, loc_D;
+	int  loc_B, loc_C, loc_D, quantity;
 	char loc_E;
 
 	loc_D = 0;
@@ -64,45 +64,58 @@ unsigned char D_277E[] = {
 		loc_C -= 'A';
 		u4_puts(D_1E98[101 + loc_C]);
 		Gra_CR();
+		/*This should always evaluate to false. Leaving it functioning like regular. Randomizer will have option to turn it on by changing the 8 to a 0.*/
+		if(U4_RND1(7) > 8) {
+			u4_puts("How much?\x12\x12\x12\b\b");
+			quantity = AskInt(2);
+		} else {
+			quantity = 1;
+		}
 		Gra_13();
 		C_4649();
 		for(si = 7; si >= 0; si --)
 			loc_A[si] = Party._reagents[si];
 		loc_E = 0;
-		while(1) {
-			C_4BC7();
-			txt_Y = 23;
-			txt_X = 24;
-			if((loc_B = AskLetter(/*D_2728*/"Reagent:\x12\x12\b", 'A', 'H')) == -2) {
-				for(si = 7; si >= 0; si --)
-					Party._reagents[si] = loc_A[si];
-				loc_D = 1;
-				break;
-			}
-			if(loc_B == -1) {
-				if(loc_E == 0) {
-					u4_puts(/*D_2734*/"\nNothing mixed!\n");
-				} else {
-					u4_puts(/*D_2745*/"\nYou mix the Reagents, and...\n");
-					loc_B = 0;
-					if(D_277E[loc_C] == loc_E) {
-						u4_puts(/*D_2764*/"Success!\n\n");
-						Party._mixtures[loc_C] ++;
-						if(Party._mixtures[loc_C] > 99)
-							Party._mixtures[loc_C] = 99;
-					} else {
-						u4_puts(/*D_276F*/"It Fizzles!\n\n");
-					}
+		if(quantity > 0) {
+			
+			while(1) {
+				C_4BC7();
+				txt_Y = 23;
+				txt_X = 24;
+				if((loc_B = AskLetter(/*D_2728*/"Reagent:\x12\x12\b", 'A', 'H')) == -2) {
+					for(si = 7; si >= 0; si --)
+						Party._reagents[si] = loc_A[si];
+					loc_D = 1;
+					break;
 				}
-				break;
+				if(loc_B == -1) {
+					if(loc_E == 0) {
+						u4_puts(/*D_2734*/"\nNothing mixed!\n");
+					} else {
+						u4_puts(/*D_2745*/"\nYou mix the Reagents, and...\n");
+						loc_B = 0;
+						if(D_277E[loc_C] == loc_E) {
+							u4_puts(/*D_2764*/"Success!\n\n");
+							Party._mixtures[loc_C] = Party._mixtures[loc_C] + quantity;
+							if(Party._mixtures[loc_C] > 99)
+								Party._mixtures[loc_C] = 99;
+						} else {
+							u4_puts(/*D_276F*/"It Fizzles!\n\n");
+						}
+					}
+					break;
+				}
+				loc_B -= 'A';
+				if(Party._reagents[loc_B] - quantity < 0) {
+					w_NoneLeft();
+					for(si = 7; si >= 0; si --)
+						Party._reagents[si] = loc_A[si];
+					loc_D = 1;
+					break;
+				}
+				loc_E |= 0x80 >> loc_B;
+				Party._reagents[loc_B] = Party._reagents[loc_B] - quantity;
 			}
-			loc_B -= 'A';
-			if(Party._reagents[loc_B] == 0) {
-				w_NoneLeft();
-				break;
-			}
-			loc_E |= 0x80 >> loc_B;
-			Party._reagents[loc_B] --;
 		}
 	} while(loc_D == 0);
 	Gra_13();
