@@ -201,8 +201,8 @@ namespace U4DosRandomizer
         public int WHIRLPOOL_EXIT_X_OFFSET { get; } = 0x7A92;
         public int WHIRLPOOL_EXIT_Y_OFFSET { get; } = 0x7A97;
 
-        public int UNKNOWN_EXIT_LOCATIONS_X { get; } = 0xFEAD; // Length 13 - Not sure what these are for yet. Appear to be exit coords for when you fail tests in the Abyss https://github.com/ergonomy-joe/u4-decompiled/blob/c2c2108fa3bb346bcd1d8c207c526f33a4c8f5ef/SRC/U4_END.C#L37
-        public int UNKNOWN_EXIT_LOCATIONS_Y { get; } = 0xFEBA;
+        public int ABYSS_EJECTION_LOCATIONS_X { get; } = 0xFEAD; // Length 13 - Not sure what these are for yet. Appear to be exit coords for when you fail tests in the Abyss https://github.com/ergonomy-joe/u4-decompiled/blob/c2c2108fa3bb346bcd1d8c207c526f33a4c8f5ef/SRC/U4_END.C#L37
+        public int ABYSS_EJECTION_LOCATIONS_Y { get; } = 0xFEBB;
 
         public int SPELL_RECIPE_OFFSET { get; } = 0x11A29;
 

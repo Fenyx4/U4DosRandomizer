@@ -32,6 +32,7 @@ namespace U4DosRandomizer
         public byte BlinkExclusion2X2 { get; internal set; }
         public byte BlinkExclusion2Y1 { get; internal set; }
         public byte BlinkExclusion2Y2 { get; internal set; }
+        public List<Coordinate> AbyssEjectionLocations { get; internal set; }
 
         public UltimaData()
         {
@@ -46,6 +47,7 @@ namespace U4DosRandomizer
             StartingPositions = new List<Coordinate>();
             LBText = new List<string>();
             PirateCove = new List<Coordinate>();
+            AbyssEjectionLocations = new List<Coordinate>();
         }
     }
 }

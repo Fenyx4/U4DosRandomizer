@@ -105,8 +105,8 @@
         int ITEM_USE_TRIGGER_SKULL_Y_OFFSET { get; }
         int WHIRLPOOL_EXIT_X_OFFSET { get; }
         int WHIRLPOOL_EXIT_Y_OFFSET { get; }
-        int UNKNOWN_EXIT_LOCATIONS_X { get; }
-        int UNKNOWN_EXIT_LOCATIONS_Y { get; }
+        int ABYSS_EJECTION_LOCATIONS_X { get; }
+        int ABYSS_EJECTION_LOCATIONS_Y { get; }
         int SPELL_RECIPE_OFFSET { get; }
         int BLINK_CAST_EXCLUSION_X1_OFFSET { get; }
         int BLINK_CAST_EXCLUSION_X2_OFFSET { get; }

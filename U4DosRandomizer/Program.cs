@@ -128,7 +128,6 @@ namespace U4DosRandomizer
                 randomValues.Add(random.Next());
             }
 
-
             var ultimaData = new UltimaData();
 
             var worldMapDS = new DiamondSquare(WorldMap.SIZE, 184643518.256878, randomValues[0]).getData(new Random(randomValues[1]));
@@ -162,6 +161,7 @@ namespace U4DosRandomizer
 
             //Completely random location placements of buildings still. Just trying to make sure I'm editing the files correctly right now. Not looking for a cohesive map that makes sense.
             var exclude = RandomizeLocations(ultimaData, worldMap, new Random(randomValues[3]));
+            //worldMap.TestAbyssEjection();
 
             //Console.WriteLine(Talk.GetSextantText(ultimaData.LCB[0]));
 
@@ -596,14 +596,33 @@ namespace U4DosRandomizer
             // Stygian Abyss
             ultimaData.Dungeons.Add(stygian);
 
-            // Move starting positions to Towns
+            // Move starting positions and abyss ejection locations to Towns
             for (int i = 0; i < 8; i++)
             {
                 var validPositions = worldMap.GetPathableTilesNear(ultimaData.Towns[i], 3, IsWalkable);
                 loc = validPositions[random.Next(0, validPositions.Count)];
                 ultimaData.StartingPositions[i].X = loc.X;
                 ultimaData.StartingPositions[i].Y = loc.Y;
+                ultimaData.AbyssEjectionLocations[i].X = loc.X;
+                ultimaData.AbyssEjectionLocations[i].Y = loc.Y;
             }
+
+            // More ejection locations for Castles
+            for (int i = 0; i < 3; i++)
+            {
+                var validPositions = worldMap.GetPathableTilesNear(ultimaData.Castles[i], 3, IsWalkable);
+                loc = validPositions[random.Next(0, validPositions.Count)];
+                ultimaData.AbyssEjectionLocations[i + 8].X = loc.X;
+                ultimaData.AbyssEjectionLocations[i + 8].Y = loc.Y;
+            }
+
+            // Ejection for LCB
+            ultimaData.AbyssEjectionLocations[11].X = ultimaData.LCB[0].X;
+            ultimaData.AbyssEjectionLocations[11].Y = (byte)(ultimaData.LCB[0].Y+1);
+
+            // Ejection for Abyss
+            ultimaData.AbyssEjectionLocations[12].X = stygian.X;
+            ultimaData.AbyssEjectionLocations[12].Y = stygian.Y;
 
             // Whirlpool normally exits in Lock Lake
             // TODO: Put it somewhere more thematic

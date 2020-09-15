@@ -181,6 +181,17 @@ namespace U4DosRandomizer
             return ClampToValuesInSetRatios(scrubNoise, percentInMap, SIZE);
         }
 
+        public void TestAbyssEjection()
+        {
+            byte[] D_0BF0 = { 0xE7, 0x53, 0x23, 0x3B, 0x9E, 0x69, 0x17, 0xBA, 0xD8, 0x1D, 0x91, 0x59, 0xE9 };
+            byte[] D_0BFE = { 0x88, 0x69, 0xDD, 0x2C, 0x15, 0xB7, 0x81, 0xAC, 0x6A, 0x30, 0xF3, 0x6A, 0xE9 };
+
+            for(int i = 0; i < 13; i++)
+            {
+                _worldMapTiles[D_0BF0[i], D_0BFE[i]] = (byte)(TileInfo.A + i);
+            }
+        }
+
         private static double[,] Float2dToDouble2d(float[,] floatArray, int size)
         {
             var result = new double[size, size];

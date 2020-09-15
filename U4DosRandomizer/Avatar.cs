@@ -126,6 +126,11 @@ namespace U4DosRandomizer
             data.BlinkExclusion2X2 = avatarBytes[AvatarOffset.BLINK_DESTINATION2_EXCLUSION_X2_OFFSET];
             data.BlinkExclusion2Y1 = avatarBytes[AvatarOffset.BLINK_DESTINATION2_EXCLUSION_Y1_OFFSET];
             data.BlinkExclusion2Y2 = avatarBytes[AvatarOffset.BLINK_DESTINATION2_EXCLUSION_Y2_OFFSET];
+
+            for (int i = 0; i < 13; i++)
+            {
+                data.AbyssEjectionLocations.Add(new Coordinate(avatarBytes[i + AvatarOffset.ABYSS_EJECTION_LOCATIONS_X], avatarBytes[i + AvatarOffset.ABYSS_EJECTION_LOCATIONS_Y]));
+            }
         }
 
         internal static void Restore(string path)
@@ -273,6 +278,13 @@ namespace U4DosRandomizer
             avatarBytes[AvatarOffset.BLINK_DESTINATION2_EXCLUSION_Y2_OFFSET] = data.BlinkExclusion2Y2;
 
             avatarBytes[AvatarOffset.ENABLE_MIX_QUANTITY_OFFSET] = flags.MixQuantity ? (byte)0x0 : (byte)0x9;
+
+            for (int i = 0; i < data.AbyssEjectionLocations.Count; i++)
+            {
+                Console.WriteLine(Talk.GetSextantText(data.AbyssEjectionLocations[i]));
+                avatarBytes[AvatarOffset.ABYSS_EJECTION_LOCATIONS_X + i] = data.AbyssEjectionLocations[i].X;
+                avatarBytes[AvatarOffset.ABYSS_EJECTION_LOCATIONS_Y + i] = data.AbyssEjectionLocations[i].Y;
+            }
         }
 
         public void Save(string path)
