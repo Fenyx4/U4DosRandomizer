@@ -36,6 +36,10 @@ namespace U4DosRandomizer
                 "--spellRemove",
                 "Put in the letters of the spells you want removed. e.g. \"--spellRemove zed\" would remove zdown, energy field and dispel. ",
                 CommandOptionType.SingleValue);
+            CommandOption minQuantityArg = commandLineApplication.Option(
+                "--mixQuantity",
+                "Lets you input how much of a spell you want to mix. ",
+                CommandOptionType.NoValue);
             CommandOption dngStoneArg = commandLineApplication.Option(
                 "--dngStone",
                 "Randomize the location of stones in the dungeons ",
@@ -86,6 +90,7 @@ namespace U4DosRandomizer
                     flags.MiniMap = minimapArg.HasValue();
                     flags.SpellRemove = spellRemoveArg.Value();
                     flags.DngStone = dngStoneArg.HasValue();
+                    flags.MixQuantity = minQuantityArg.HasValue();
                     Randomize(seed, path, flags);
                     //Console.WriteLine("Seed: " + seed);
                     //var random = new Random(seed);
@@ -155,7 +160,6 @@ namespace U4DosRandomizer
                 }
             }
 
-
             //Completely random location placements of buildings still. Just trying to make sure I'm editing the files correctly right now. Not looking for a cohesive map that makes sense.
             var exclude = RandomizeLocations(ultimaData, worldMap, new Random(randomValues[3]));
 
@@ -165,7 +169,7 @@ namespace U4DosRandomizer
 
             title.Update(ultimaData);
             talk.Update(ultimaData, avatar);
-            avatar.Update(ultimaData);
+            avatar.Update(ultimaData, flags);
             dungeons.Update(ultimaData);
 
             dungeons.Save(path);

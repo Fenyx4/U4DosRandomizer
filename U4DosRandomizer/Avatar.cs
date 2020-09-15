@@ -134,7 +134,7 @@ namespace U4DosRandomizer
             FileHelper.Restore(file);
         }
 
-        public void Update(UltimaData data)
+        public void Update(UltimaData data, Flags flags)
         {
             for (var offset = 0; offset < 24; offset++)
             {
@@ -271,6 +271,8 @@ namespace U4DosRandomizer
             avatarBytes[AvatarOffset.BLINK_DESTINATION2_EXCLUSION_X2_OFFSET] = data.BlinkExclusion2X2;
             avatarBytes[AvatarOffset.BLINK_DESTINATION2_EXCLUSION_Y1_OFFSET] = data.BlinkExclusion2Y1;
             avatarBytes[AvatarOffset.BLINK_DESTINATION2_EXCLUSION_Y2_OFFSET] = data.BlinkExclusion2Y2;
+
+            avatarBytes[AvatarOffset.ENABLE_MIX_QUANTITY_OFFSET] = flags.MixQuantity ? (byte)0x0 : (byte)0x9;
         }
 
         public void Save(string path)
