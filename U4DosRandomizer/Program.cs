@@ -383,12 +383,12 @@ namespace U4DosRandomizer
             //worldMap.GetCoordinate(ultimaData.PirateCoveSpawnTrigger.X, ultimaData.PirateCoveSpawnTrigger.Y).SetTile(TileInfo.A);
 
             // Blink Exclusion
-            ultimaData.BlinkExclusionX1 = Convert.ToByte(WorldMap.Wrap(ultimaData.BlinkExclusionX1 - originalX + stygian.X));
-            ultimaData.BlinkExclusionY1 = Convert.ToByte(WorldMap.Wrap(ultimaData.BlinkExclusionY1 - originalY + stygian.Y));
-            ultimaData.BlinkExclusionX2 = Convert.ToByte(WorldMap.Wrap(ultimaData.BlinkExclusionX2 - originalX + stygian.X));
-            ultimaData.BlinkExclusionY2 = Convert.ToByte(WorldMap.Wrap(ultimaData.BlinkExclusionY2 - originalY + stygian.Y));
+            ultimaData.BlinkExclusionX1 = Convert.ToByte(WorldMap.Wrap(stygian.X-5));
+            ultimaData.BlinkExclusionY1 = Convert.ToByte(WorldMap.Wrap(stygian.Y-18));
+            ultimaData.BlinkExclusionX2 = Convert.ToByte(WorldMap.Wrap(stygian.X+9));
+            ultimaData.BlinkExclusionY2 = Convert.ToByte(WorldMap.Wrap(stygian.Y+5));
 
-            //for(int x = 0; x < WorldMap.SIZE; x++)
+            //for (int x = 0; x < WorldMap.SIZE; x++)
             //{
             //    for (int y = 0; y < WorldMap.SIZE; y++)
             //    {
@@ -459,6 +459,10 @@ namespace U4DosRandomizer
             ultimaData.DaemonSpawnX2 = WorldMap.Wrap(loc.X + 1);
             ultimaData.DaemonSpawnY1 = WorldMap.Wrap(loc.Y - 4);
             ultimaData.DaemonSpawnY2 = WorldMap.Wrap(loc.Y + 1);
+            ultimaData.BlinkExclusion2X1 = ultimaData.DaemonSpawnX1;
+            ultimaData.BlinkExclusion2X2 = ultimaData.DaemonSpawnX2;
+            ultimaData.BlinkExclusion2Y1 = ultimaData.DaemonSpawnY1;
+            ultimaData.BlinkExclusion2Y2 = ultimaData.DaemonSpawnY2;
 
             // Moongates
             List<Tile> path = new List<Tile>();

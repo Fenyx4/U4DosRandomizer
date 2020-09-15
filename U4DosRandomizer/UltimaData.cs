@@ -28,6 +28,10 @@ namespace U4DosRandomizer
         public byte BlinkExclusionX2 { get; internal set; }
         public byte BlinkExclusionY1 { get; internal set; }
         public byte BlinkExclusionY2 { get; internal set; }
+        public byte BlinkExclusion2X1 { get; internal set; }
+        public byte BlinkExclusion2X2 { get; internal set; }
+        public byte BlinkExclusion2Y1 { get; internal set; }
+        public byte BlinkExclusion2Y2 { get; internal set; }
 
         public UltimaData()
         {

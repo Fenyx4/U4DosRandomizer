@@ -108,9 +108,18 @@
         int UNKNOWN_EXIT_LOCATIONS_X { get; }
         int UNKNOWN_EXIT_LOCATIONS_Y { get; }
         int SPELL_RECIPE_OFFSET { get; }
-        int BLINK_EXCLUSION_X1_OFFSET { get; }
-        int BLINK_EXCLUSION_X2_OFFSET { get; }
-        int BLINK_EXCLUSION_Y1_OFFSET { get; }
-        int BLINK_EXCLUSION_Y2_OFFSET { get; }
+        int BLINK_CAST_EXCLUSION_X1_OFFSET { get; }
+        int BLINK_CAST_EXCLUSION_X2_OFFSET { get; }
+        int BLINK_CAST_EXCLUSION_Y1_OFFSET { get; }
+        int BLINK_CAST_EXCLUSION_Y2_OFFSET { get; }
+        int BLINK_DESTINATION_EXCLUSION_X1_OFFSET { get; }
+        int BLINK_DESTINATION_EXCLUSION_X2_OFFSET { get; }
+        int BLINK_DESTINATION_EXCLUSION_Y1_OFFSET { get; }
+        int BLINK_DESTINATION_EXCLUSION_Y2_OFFSET { get; }
+        int ENABLE_MIX_QUANTITY_OFFSET { get; }
+        int BLINK_DESTINATION2_EXCLUSION_X1_OFFSET { get; }
+        int BLINK_DESTINATION2_EXCLUSION_X2_OFFSET { get; }
+        int BLINK_DESTINATION2_EXCLUSION_Y1_OFFSET { get; }
+        int BLINK_DESTINATION2_EXCLUSION_Y2_OFFSET { get; }
     }
 }

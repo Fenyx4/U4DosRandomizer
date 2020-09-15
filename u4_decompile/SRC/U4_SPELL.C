@@ -6,7 +6,7 @@
 
 #include "u4.h"
 
-/*spells m.p. cost*/
+ /*spells m.p. cost*/
 char D_208C[] = {
 	 5,/*Awaken*/
 	15,/*Blink*/
@@ -103,7 +103,7 @@ C_6447()
 	}
 	return 1;
 }
- 
+
 
 /*magic projectile ?*/
 C_6466(bp04)
@@ -137,7 +137,7 @@ int bp04;
 		case TIL_4D: loc_D = U4_RND3(64) | 16; break;
 		case TIL_4E: loc_D = U4_RND3(224) | 32; break;
 		case TIL_4F: loc_D = U4_RND3(128) | 24; break;
-		default: loc_D = 224 | 8;
+	default: loc_D = 224 | 8;
 	}
 	hit_tile = 0;
 	COM_DoDamage(loc_C, activeChara, loc_D);
@@ -168,28 +168,29 @@ int bp04;
 	int loc_A, loc_B;
 	unsigned char loc_C, loc_D;
 
-	if(Party._tile >= TIL_14 && Party._tile != TIL_18) {
-		if(!C_6409())
+	if (Party._tile >= TIL_14 && Party._tile != TIL_18) {
+		if (!C_6409())
 			return;
 		AskDir(/*D_20EA*/"Dir: ", &loc_A, &loc_B);
-		if(!(loc_A|loc_B))
+		if (!(loc_A | loc_B))
 			return;
-		if(!C_63B4())
+		if (!C_63B4())
 			return;
-		if(!(IsBetween(Party._x, 0xc0, 0xff) &&
+		if (!(IsBetween(Party._x, 0xc0, 0xff) &&
 			IsBetween(Party._y, 0xc0, 0xff))) {
 			loc_C = D_959C.x;
 			loc_D = D_959C.y;
-			while(loc_C < 32 && loc_D < 32) {
+			while (loc_C < 32 && loc_D < 32) {
 				loc_C += loc_A;
 				loc_D += loc_B;
 			}
 			do {
 				loc_C -= loc_A;
 				loc_D -= loc_B;
-			} while((loc_C != D_959C.x || loc_D != D_959C.y) && !C_2999(D_8742._map.x32x32[loc_D][loc_C]) &&
-						!(IsBetween(Party._x, 0x01, 0x02) && IsBetween(Party._y, 0x01, 0x02)));
-			if(D_959C.x != loc_C || D_959C.y != loc_D) {
+			} while ((loc_C != D_959C.x || loc_D != D_959C.y) && (!C_2999(D_8742._map.x32x32[loc_D][loc_C]) ||
+				(IsBetween(Party._x + loc_C - D_959C.x, 0x01, 0x02) && IsBetween(Party._y + loc_D - D_959C.y, 0x01, 0x02)) ||
+				(IsBetween(Party._x + loc_C - D_959C.x, 0x01, 0x02) && IsBetween(Party._y + loc_D - D_959C.y, 0x01, 0x02))));
+			if (D_959C.x != loc_C || D_959C.y != loc_D) {
 				Party._x += loc_C - D_959C.x;
 				Party._y += loc_D - D_959C.y;
 				C_26B6();
