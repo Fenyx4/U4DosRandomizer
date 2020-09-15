@@ -52,35 +52,35 @@ namespace U4DosRandomizer
             }
         }
 
-        public void Update(UltimaData ultimaData)
+        public void Update(UltimaData ultimaData, Avatar avatar)
         {
             // --- Items ---
             var person = FindPerson("Garam");
-            person.KeywordResponse2 = ReplaceSextantText(person.KeywordResponse2, GetSextantText(ultimaData.Items[Avatar.ITEM_BELL]));
+            person.KeywordResponse2 = ReplaceSextantText(person.KeywordResponse2, GetSextantText(ultimaData.Items[avatar.AvatarOffset.ITEM_BELL]));
 
             person = FindPerson("Jude");
-            person.Yes = ReplaceSextantText(person.Yes, GetSextantText(ultimaData.Items[Avatar.ITEM_SKULL]));
+            person.Yes = ReplaceSextantText(person.Yes, GetSextantText(ultimaData.Items[avatar.AvatarOffset.ITEM_SKULL]));
 
             person = FindPerson("Virgil");
-            person.KeywordResponse2 = ReplaceSextantText(person.KeywordResponse2, GetSextantText(ultimaData.Items[Avatar.ITEM_NIGHTSHADE]));
+            person.KeywordResponse2 = ReplaceSextantText(person.KeywordResponse2, GetSextantText(ultimaData.Items[avatar.AvatarOffset.ITEM_NIGHTSHADE]));
 
             person = FindPerson("Shawn");
-            person.No = ReplaceSextantText(person.No, GetSextantText(ultimaData.Towns[Avatar.LOC_MAGINCIA - Avatar.LOC_TOWNS]));
+            person.No = ReplaceSextantText(person.No, GetSextantText(ultimaData.Towns[avatar.AvatarOffset.LOC_MAGINCIA - avatar.AvatarOffset.LOC_TOWNS]));
 
             // Mandrake
             // TODO make response descriptive
             person = FindPerson("Calumny");
-            person.KeywordResponse2 = $"Mandrake is found near {GetSextantText(ultimaData.Items[Avatar.ITEM_MANDRAKE])}\nand\n{GetSextantText(ultimaData.Items[Avatar.ITEM_MANDRAKE2])} ";
+            person.KeywordResponse2 = $"Mandrake is found near {GetSextantText(ultimaData.Items[avatar.AvatarOffset.ITEM_MANDRAKE])}\nand\n{GetSextantText(ultimaData.Items[avatar.AvatarOffset.ITEM_MANDRAKE2])} ";
 
             // Horn
             // TODO make response descriptive
             person = FindPerson("Malchor");
-            person.KeywordResponse2 = $"Some say that\nthe silver horn\nis buried at\n{GetSextantText(ultimaData.Items[Avatar.ITEM_HORN])}";
+            person.KeywordResponse2 = $"Some say that\nthe silver horn\nis buried at\n{GetSextantText(ultimaData.Items[avatar.AvatarOffset.ITEM_HORN])}";
 
             // Wheel
             // TODO make response descriptive
             person = FindPerson("Lassorn");
-            person.KeywordResponse2 = $"She went down in\nthe deep waters\nat\n{GetSextantText(ultimaData.Items[Avatar.ITEM_WHEEL])}!";
+            person.KeywordResponse2 = $"She went down in\nthe deep waters\nat\n{GetSextantText(ultimaData.Items[avatar.AvatarOffset.ITEM_WHEEL])}!";
 
             // TODO Black stone currently at the moongate will need to change this text if we ever do randomize it
             person = FindPerson("Merlin");
@@ -88,8 +88,8 @@ namespace U4DosRandomizer
             // White stone
             // TODO make response descriptive
             person = FindPerson("Isaac");
-            person.KeywordResponse2 = $"The white stone\nsits atop the\nmountains at\n{GetSextantText(ultimaData.Items[Avatar.ITEM_WHITE_STONE])}.\nIt can only be\nreached by one\nwho floats\nwithin the\nclouds.";
-            ultimaData.ShrineText[6*3+2] = $"If thou dost seek the White Stone search not under the ground but at {GetSextantText(ultimaData.Items[Avatar.ITEM_WHITE_STONE]).Replace('\n', ' ')}";
+            person.KeywordResponse2 = $"The white stone\nsits atop the\nmountains at\n{GetSextantText(ultimaData.Items[avatar.AvatarOffset.ITEM_WHITE_STONE])}.\nIt can only be\nreached by one\nwho floats\nwithin the\nclouds.";
+            ultimaData.ShrineText[6*3+2] = $"If thou dost seek the White Stone search not under the ground but at {GetSextantText(ultimaData.Items[avatar.AvatarOffset.ITEM_WHITE_STONE]).Replace('\n', ' ')}";
 
             // TODO Book, candle, runes, mystic armor and mystic weapons I'm leaving along for now. Not randomizing stuff in towns yet.
 
@@ -99,34 +99,34 @@ namespace U4DosRandomizer
             // Humility
             // TODO make response descriptive
             person = FindPerson("Simple");
-            person.KeywordResponse2 = $"The shrine lies\nnear\n{GetSextantText(ultimaData.Shrines[Avatar.LOC_HUMILITY - Avatar.LOC_SHRINES])} and\nis guarded by\nendless hoards\nof daemons!";
+            person.KeywordResponse2 = $"The shrine lies\nnear\n{GetSextantText(ultimaData.Shrines[avatar.AvatarOffset.LOC_HUMILITY - avatar.AvatarOffset.LOC_SHRINES])} and\nis guarded by\nendless hoards\nof daemons!";
             person = FindPerson("Wierdrum");
-            person.KeywordResponse2 = $"Yes, I have been\nto the shrine,\nit lies near\n{GetSextantText(ultimaData.Shrines[Avatar.LOC_HUMILITY - Avatar.LOC_SHRINES])}!";
+            person.KeywordResponse2 = $"Yes, I have been\nto the shrine,\nit lies near\n{GetSextantText(ultimaData.Shrines[avatar.AvatarOffset.LOC_HUMILITY - avatar.AvatarOffset.LOC_SHRINES])}!";
 
             // Compassion
             // TODO make response descriptive
             person = FindPerson("Shapero");
-            person.Yes = $"Find the shrine\nof compassion\nat\n{GetSextantText(ultimaData.Shrines[Avatar.LOC_COMPASSION - Avatar.LOC_SHRINES])}!";
+            person.Yes = $"Find the shrine\nof compassion\nat\n{GetSextantText(ultimaData.Shrines[avatar.AvatarOffset.LOC_COMPASSION - avatar.AvatarOffset.LOC_SHRINES])}!";
 
             // Sacrifice
             // TODO make response descriptive
             person = FindPerson("Merida");
-            person.No = $"The shrine is at\n{GetSextantText(ultimaData.Shrines[Avatar.LOC_SACRIFICE - Avatar.LOC_SHRINES])}!";
+            person.No = $"The shrine is at\n{GetSextantText(ultimaData.Shrines[avatar.AvatarOffset.LOC_SACRIFICE - avatar.AvatarOffset.LOC_SHRINES])}!";
 
             // Justice
             // TODO make response descriptive
             person = FindPerson("Druid");
-            person.KeywordResponse2 = $"The shrine is at\n{GetSextantText(ultimaData.Shrines[Avatar.LOC_JUSTICE - Avatar.LOC_SHRINES])}!";
+            person.KeywordResponse2 = $"The shrine is at\n{GetSextantText(ultimaData.Shrines[avatar.AvatarOffset.LOC_JUSTICE - avatar.AvatarOffset.LOC_SHRINES])}!";
 
             // Honesty
             // TODO make response descriptive
             person = FindPerson("Calabrini");
-            person.No = $"Perhaps, the\nshrine which\nlies at\n{GetSextantText(ultimaData.Shrines[Avatar.LOC_HONESTY - Avatar.LOC_SHRINES])}!";
+            person.No = $"Perhaps, the\nshrine which\nlies at\n{GetSextantText(ultimaData.Shrines[avatar.AvatarOffset.LOC_HONESTY - avatar.AvatarOffset.LOC_SHRINES])}!";
 
             // Honor
             // TODO make response descriptive
             person = FindPerson("Dergin");
-            person.No = $"The shrine lies at\n{GetSextantText(ultimaData.Shrines[Avatar.LOC_JUSTICE - Avatar.LOC_SHRINES])}!";
+            person.No = $"The shrine lies at\n{GetSextantText(ultimaData.Shrines[avatar.AvatarOffset.LOC_JUSTICE - avatar.AvatarOffset.LOC_SHRINES])}!";
 
             // TODO Spirituality - Do I move this one?
             person = FindPerson("the Ankh of\nSpirituality");
@@ -135,7 +135,7 @@ namespace U4DosRandomizer
             // No on gives the directions to Valor so I grabbed his reponse that talked about the shrine and usurped it
             // TODO make response descriptive
             person = FindPerson("Sir Hrothgar");
-            person.No = $"Thou should seek\nthe shrine of\nvalor at\n{GetSextantText(ultimaData.Shrines[Avatar.LOC_VALOR - Avatar.LOC_SHRINES])}!";
+            person.No = $"Thou should seek\nthe shrine of\nvalor at\n{GetSextantText(ultimaData.Shrines[avatar.AvatarOffset.LOC_VALOR - avatar.AvatarOffset.LOC_SHRINES])}!";
 
             // --- End Shrines ---
 
@@ -144,14 +144,14 @@ namespace U4DosRandomizer
             ultimaData.LBText[3] = $"He says:\nMany truths can\nbe learned at\nthe Lycaeum.  It\nlies to the\n{CoordinateToCardinal(ultimaData.LCB[0], ultimaData.Castles[0])}!\n";
             ultimaData.LBText[4] = $"He says:\nLook for the\nmeaning of Love\nat Empath Abbey.\nThe Abbey sits\n{CoordinateToCardinal(ultimaData.LCB[0], ultimaData.Castles[1])}!\n";
             ultimaData.LBText[5] = $"\n\nHe says:\nSerpent's Castle\nto the {CoordinateToCardinal(ultimaData.LCB[0], ultimaData.Castles[2])}\nis where\nCourage should\nbe sought!\n";
-            ultimaData.LBText[6] = $"\nHe says:\nThe towne\nof Moonglow to\nthe {CoordinateToCardinal(ultimaData.LCB[0], ultimaData.Towns[Avatar.LOC_MOONGLOW-Avatar.LOC_TOWNS])} is\nwhere the virtue\nof Honesty\nthrives!\n";
-            ultimaData.LBText[7] = $"\n\nHe says:\nThe bards in\nBritain to the\n{CoordinateToCardinal(ultimaData.LCB[0], ultimaData.Towns[Avatar.LOC_BRITAIN - Avatar.LOC_TOWNS])}\nare well versed\nin\nCompassion!\n";
-            ultimaData.LBText[8] = $"\n\nHe says:\nMany valiant\nfighters come\nfrom Jhelom\nto the \n{CoordinateToCardinal(ultimaData.LCB[0], ultimaData.Towns[Avatar.LOC_JHELOM - Avatar.LOC_TOWNS])}!\n";
-            ultimaData.LBText[9] = $"\n\n\nHe says:\nIn the city of\nYew, to the\n{CoordinateToCardinal(ultimaData.LCB[0], ultimaData.Towns[Avatar.LOC_YEW - Avatar.LOC_TOWNS])}, \nJustice is\nserved!\n";
-            ultimaData.LBText[10] = $"\nHe says:\nMinoc, towne of\nself-sacrifice,\nlies {CoordinateToCardinal(ultimaData.LCB[0], ultimaData.Towns[Avatar.LOC_MINOC - Avatar.LOC_TOWNS])}!\n";
-            ultimaData.LBText[11] = $"\nHe says:\nThe Paladins who\nstrive for Honor\nare oft seen in\nTrinsic, to the {CoordinateToCardinal(ultimaData.LCB[0], ultimaData.Towns[Avatar.LOC_TRINSIC - Avatar.LOC_TOWNS])}!\n";
-            ultimaData.LBText[12] = $"\nHe says:\nIn Skara Brae\nthe Spiritual\npath is taught.\nFind it to the\n{CoordinateToCardinal(ultimaData.LCB[0], ultimaData.Towns[Avatar.LOC_SKARA - Avatar.LOC_TOWNS])}!\n";
-            ultimaData.LBText[13] = $"\n\n\nHe says:\nHumility is the\nfoundation of\nVirtue!  The\nruins of proud\nMagincia are a\ntestimony unto\nthe Virtue of\nHumility!\n\nFind the Ruins\nof Magincia to\nthe {CoordinateToCardinal(ultimaData.LCB[0], ultimaData.Towns[Avatar.LOC_MAGINCIA - Avatar.LOC_TOWNS])}!\n";
+            ultimaData.LBText[6] = $"\nHe says:\nThe towne\nof Moonglow to\nthe {CoordinateToCardinal(ultimaData.LCB[0], ultimaData.Towns[avatar.AvatarOffset.LOC_MOONGLOW-avatar.AvatarOffset.LOC_TOWNS])} is\nwhere the virtue\nof Honesty\nthrives!\n";
+            ultimaData.LBText[7] = $"\n\nHe says:\nThe bards in\nBritain to the\n{CoordinateToCardinal(ultimaData.LCB[0], ultimaData.Towns[avatar.AvatarOffset.LOC_BRITAIN - avatar.AvatarOffset.LOC_TOWNS])}\nare well versed\nin\nCompassion!\n";
+            ultimaData.LBText[8] = $"\n\nHe says:\nMany valiant\nfighters come\nfrom Jhelom\nto the \n{CoordinateToCardinal(ultimaData.LCB[0], ultimaData.Towns[avatar.AvatarOffset.LOC_JHELOM - avatar.AvatarOffset.LOC_TOWNS])}!\n";
+            ultimaData.LBText[9] = $"\n\n\nHe says:\nIn the city of\nYew, to the\n{CoordinateToCardinal(ultimaData.LCB[0], ultimaData.Towns[avatar.AvatarOffset.LOC_YEW - avatar.AvatarOffset.LOC_TOWNS])}, \nJustice is\nserved!\n";
+            ultimaData.LBText[10] = $"\nHe says:\nMinoc, towne of\nself-sacrifice,\nlies {CoordinateToCardinal(ultimaData.LCB[0], ultimaData.Towns[avatar.AvatarOffset.LOC_MINOC - avatar.AvatarOffset.LOC_TOWNS])}!\n";
+            ultimaData.LBText[11] = $"\nHe says:\nThe Paladins who\nstrive for Honor\nare oft seen in\nTrinsic, to the {CoordinateToCardinal(ultimaData.LCB[0], ultimaData.Towns[avatar.AvatarOffset.LOC_TRINSIC - avatar.AvatarOffset.LOC_TOWNS])}!\n";
+            ultimaData.LBText[12] = $"\nHe says:\nIn Skara Brae\nthe Spiritual\npath is taught.\nFind it to the\n{CoordinateToCardinal(ultimaData.LCB[0], ultimaData.Towns[avatar.AvatarOffset.LOC_SKARA - avatar.AvatarOffset.LOC_TOWNS])}!\n";
+            ultimaData.LBText[13] = $"\n\n\nHe says:\nHumility is the\nfoundation of\nVirtue!  The\nruins of proud\nMagincia are a\ntestimony unto\nthe Virtue of\nHumility!\n\nFind the Ruins\nof Magincia to\nthe {CoordinateToCardinal(ultimaData.LCB[0], ultimaData.Towns[avatar.AvatarOffset.LOC_MAGINCIA - avatar.AvatarOffset.LOC_TOWNS])}!\n";
 
             // --- End Towns and Castles ---
 

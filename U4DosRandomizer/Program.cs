@@ -36,6 +36,10 @@ namespace U4DosRandomizer
                 "--spellRemove",
                 "Put in the letters of the spells you want removed. e.g. \"--spellRemove zed\" would remove zdown, energy field and dispel. ",
                 CommandOptionType.SingleValue);
+            CommandOption minQuantityArg = commandLineApplication.Option(
+                "--mixQuantity",
+                "Lets you input how much of a spell you want to mix. ",
+                CommandOptionType.NoValue);
             CommandOption dngStoneArg = commandLineApplication.Option(
                 "--dngStone",
                 "Randomize the location of stones in the dungeons ",
@@ -86,6 +90,7 @@ namespace U4DosRandomizer
                     flags.MiniMap = minimapArg.HasValue();
                     flags.SpellRemove = spellRemoveArg.Value();
                     flags.DngStone = dngStoneArg.HasValue();
+                    flags.MixQuantity = minQuantityArg.HasValue();
                     Randomize(seed, path, flags);
                     //Console.WriteLine("Seed: " + seed);
                     //var random = new Random(seed);
@@ -155,17 +160,16 @@ namespace U4DosRandomizer
                 }
             }
 
-
             //Completely random location placements of buildings still. Just trying to make sure I'm editing the files correctly right now. Not looking for a cohesive map that makes sense.
             var exclude = RandomizeLocations(ultimaData, worldMap, new Random(randomValues[3]));
 
             //Console.WriteLine(Talk.GetSextantText(ultimaData.LCB[0]));
 
-            RandomizeItems(ultimaData, worldMap, dungeons, flags, new Random(randomValues[4]), exclude);
+            RandomizeItems(ultimaData, worldMap, dungeons, avatar, flags, new Random(randomValues[4]), exclude);
 
             title.Update(ultimaData);
-            talk.Update(ultimaData);
-            avatar.Update(ultimaData);
+            talk.Update(ultimaData, avatar);
+            avatar.Update(ultimaData, flags);
             dungeons.Update(ultimaData);
 
             dungeons.Save(path);
@@ -183,69 +187,69 @@ namespace U4DosRandomizer
             //PrintWorldMapInfo();
         }
 
-        private static void RandomizeItems(UltimaData ultimaData, WorldMap worldMap, Dungeons dungeons, Flags flags, Random random, List<Tile> exclude)
+        private static void RandomizeItems(UltimaData ultimaData, WorldMap worldMap, Dungeons dungeons, Avatar avatar, Flags flags, Random random, List<Tile> exclude)
         {
             Tile loc = null;// RandomizeLocation(random, TileInfo.Swamp, worldMap, WorldMap.IsWalkableGround, exclude);
             var possibleLocations = worldMap.GetAllMatchingTiles(WorldMap.IsWalkableGround);
             possibleLocations.RemoveAll(c => exclude.Contains(c));
             loc = RandomSelectFromListCheckPathChangeAndRemove(random, possibleLocations, TileInfo.Swamp, ultimaData);
-            ultimaData.Items[Avatar.ITEM_MANDRAKE].X = loc.X;
-            ultimaData.Items[Avatar.ITEM_MANDRAKE].Y = loc.Y;
+            ultimaData.Items[avatar.AvatarOffset.ITEM_MANDRAKE].X = loc.X;
+            ultimaData.Items[avatar.AvatarOffset.ITEM_MANDRAKE].Y = loc.Y;
             exclude.Add(loc);
 
             loc = RandomSelectFromListCheckPathChangeAndRemove(random, possibleLocations, null, ultimaData);
-            ultimaData.Items[Avatar.ITEM_HORN].X = loc.X;
-            ultimaData.Items[Avatar.ITEM_HORN].Y = loc.Y;
+            ultimaData.Items[avatar.AvatarOffset.ITEM_HORN].X = loc.X;
+            ultimaData.Items[avatar.AvatarOffset.ITEM_HORN].Y = loc.Y;
             exclude.Add(loc);
 
             possibleLocations = worldMap.GetAllMatchingTiles( c => c.GetTile() == TileInfo.Swamp);
             possibleLocations.RemoveAll(c => exclude.Contains(c));
             loc = RandomSelectFromListCheckPathChangeAndRemove(random, possibleLocations, TileInfo.Swamp, ultimaData);
-            ultimaData.Items[Avatar.ITEM_MANDRAKE2].X = loc.X;
-            ultimaData.Items[Avatar.ITEM_MANDRAKE2].Y = loc.Y;
+            ultimaData.Items[avatar.AvatarOffset.ITEM_MANDRAKE2].X = loc.X;
+            ultimaData.Items[avatar.AvatarOffset.ITEM_MANDRAKE2].Y = loc.Y;
             exclude.Add(loc);
 
             possibleLocations = worldMap.GetAllMatchingTiles( c => c.GetTile() == TileInfo.Forest);
             possibleLocations.RemoveAll(c => exclude.Contains(c));
             loc = RandomSelectFromListCheckPathChangeAndRemove(random, possibleLocations, TileInfo.Forest, ultimaData);
-            ultimaData.Items[Avatar.ITEM_NIGHTSHADE].X = loc.X;
-            ultimaData.Items[Avatar.ITEM_NIGHTSHADE].Y = loc.Y;
+            ultimaData.Items[avatar.AvatarOffset.ITEM_NIGHTSHADE].X = loc.X;
+            ultimaData.Items[avatar.AvatarOffset.ITEM_NIGHTSHADE].Y = loc.Y;
             exclude.Add(loc);
 
             loc = RandomSelectFromListCheckPathChangeAndRemove(random, possibleLocations, TileInfo.Forest, ultimaData);
-            ultimaData.Items[Avatar.ITEM_NIGHTSHADE2].X = loc.X;
-            ultimaData.Items[Avatar.ITEM_NIGHTSHADE2].Y = loc.Y;
+            ultimaData.Items[avatar.AvatarOffset.ITEM_NIGHTSHADE2].X = loc.X;
+            ultimaData.Items[avatar.AvatarOffset.ITEM_NIGHTSHADE2].Y = loc.Y;
             exclude.Add(loc);
 
             possibleLocations = worldMap.GetAllMatchingTiles(c => AreaIsAll(worldMap, TileInfo.Deep_Water, 14, c) && !exclude.Contains(c));
             loc = possibleLocations[random.Next(0, possibleLocations.Count)];
-            ultimaData.Items[Avatar.ITEM_SKULL].X = loc.X;
-            ultimaData.Items[Avatar.ITEM_SKULL].Y = loc.Y;
+            ultimaData.Items[avatar.AvatarOffset.ITEM_SKULL].X = loc.X;
+            ultimaData.Items[avatar.AvatarOffset.ITEM_SKULL].Y = loc.Y;
             ApplyShape(worldMap, loc, "skull");
             exclude.Add(loc);
 
             possibleLocations = worldMap.GetAllMatchingTiles(c => AreaIsAll(worldMap, TileInfo.Deep_Water, 7, c) && !exclude.Contains(c));
             loc = possibleLocations[random.Next(0, possibleLocations.Count)];
-            ultimaData.Items[Avatar.ITEM_BELL].X = loc.X;
-            ultimaData.Items[Avatar.ITEM_BELL].Y = loc.Y;
+            ultimaData.Items[avatar.AvatarOffset.ITEM_BELL].X = loc.X;
+            ultimaData.Items[avatar.AvatarOffset.ITEM_BELL].Y = loc.Y;
             ApplyShape(worldMap, loc, "bell");
             exclude.Add(loc);
 
             // TODO Put in ocean
             possibleLocations = worldMap.GetAllMatchingTiles(c => c.GetTile() == TileInfo.Deep_Water && !exclude.Contains(c));
             loc = possibleLocations[random.Next(0, possibleLocations.Count)];
-            ultimaData.Items[Avatar.ITEM_WHEEL].X = loc.X;
-            ultimaData.Items[Avatar.ITEM_WHEEL].Y = loc.Y;
+            ultimaData.Items[avatar.AvatarOffset.ITEM_WHEEL].X = loc.X;
+            ultimaData.Items[avatar.AvatarOffset.ITEM_WHEEL].Y = loc.Y;
 
             // TODO: Do I move the black stone?
-            ultimaData.Items[Avatar.ITEM_BLACK_STONE].X = ultimaData.Moongates[0].X;
-            ultimaData.Items[Avatar.ITEM_BLACK_STONE].Y = ultimaData.Moongates[0].Y;
+            ultimaData.Items[avatar.AvatarOffset.ITEM_BLACK_STONE].X = ultimaData.Moongates[0].X;
+            ultimaData.Items[avatar.AvatarOffset.ITEM_BLACK_STONE].Y = ultimaData.Moongates[0].Y;
 
             // White stone
             possibleLocations = worldMap.GetAllMatchingTiles(c => AreaIsAll(worldMap, TileInfo.Mountains, 4, c) && !exclude.Contains(c));
             loc = possibleLocations[random.Next(0, possibleLocations.Count)];
-            ultimaData.Items[Avatar.ITEM_WHITE_STONE].X = Convert.ToByte(loc.X-1);
-            ultimaData.Items[Avatar.ITEM_WHITE_STONE].Y = loc.Y;
+            ultimaData.Items[avatar.AvatarOffset.ITEM_WHITE_STONE].X = Convert.ToByte(loc.X-1);
+            ultimaData.Items[avatar.AvatarOffset.ITEM_WHITE_STONE].Y = loc.Y;
             ApplyShape(worldMap, loc, "white");
 
             // Other stones
@@ -382,6 +386,24 @@ namespace U4DosRandomizer
             ultimaData.PirateCoveSpawnTrigger = new Coordinate(ultimaData.PirateCoveSpawnTrigger.X - originalX + stygian.X, ultimaData.PirateCoveSpawnTrigger.Y - originalY + stygian.Y);
             //worldMap.GetCoordinate(ultimaData.PirateCoveSpawnTrigger.X, ultimaData.PirateCoveSpawnTrigger.Y).SetTile(TileInfo.A);
 
+            // Blink Exclusion
+            ultimaData.BlinkExclusionX1 = Convert.ToByte(WorldMap.Wrap(stygian.X-5));
+            ultimaData.BlinkExclusionY1 = Convert.ToByte(WorldMap.Wrap(stygian.Y-18));
+            ultimaData.BlinkExclusionX2 = Convert.ToByte(WorldMap.Wrap(stygian.X+9));
+            ultimaData.BlinkExclusionY2 = Convert.ToByte(WorldMap.Wrap(stygian.Y+5));
+
+            //for (int x = 0; x < WorldMap.SIZE; x++)
+            //{
+            //    for (int y = 0; y < WorldMap.SIZE; y++)
+            //    {
+            //        if (WorldMap.Between(Convert.ToByte(x), ultimaData.BlinkExclusionX1, ultimaData.BlinkExclusionX2)
+            //            && WorldMap.Between(Convert.ToByte(y), ultimaData.BlinkExclusionY1, ultimaData.BlinkExclusionY2))
+            //        {
+            //            worldMap.GetCoordinate(x, y).SetTile(TileInfo.Lava_Flow);
+            //        }
+            //    }
+            //}
+
             // Buildings
             possibleLocations = worldMap.GetAllMatchingTiles(WorldMap.IsWalkableGround);
             possibleLocations.RemoveAll(c => excludeLocations.Contains(c));
@@ -441,6 +463,10 @@ namespace U4DosRandomizer
             ultimaData.DaemonSpawnX2 = WorldMap.Wrap(loc.X + 1);
             ultimaData.DaemonSpawnY1 = WorldMap.Wrap(loc.Y - 4);
             ultimaData.DaemonSpawnY2 = WorldMap.Wrap(loc.Y + 1);
+            ultimaData.BlinkExclusion2X1 = ultimaData.DaemonSpawnX1;
+            ultimaData.BlinkExclusion2X2 = ultimaData.DaemonSpawnX2;
+            ultimaData.BlinkExclusion2Y1 = ultimaData.DaemonSpawnY1;
+            ultimaData.BlinkExclusion2Y2 = ultimaData.DaemonSpawnY2;
 
             // Moongates
             List<Tile> path = new List<Tile>();

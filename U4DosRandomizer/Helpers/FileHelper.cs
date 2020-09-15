@@ -19,6 +19,7 @@ namespace U4DosRandomizer.Helpers
                     hashes = JsonConvert.DeserializeObject<Dictionary<string, string>>(fileHashes);
                 }
                 var hash = HashHelper.GetHashSha256(file);
+                var blah = HashHelper.BytesToString(hash);
                 if (hashes[Path.GetFileName(file)] == HashHelper.BytesToString(hash))
                 {
                     File.Copy(file, $"{file}.orig", true);
