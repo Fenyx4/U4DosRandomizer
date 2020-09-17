@@ -269,31 +269,425 @@ namespace U4DosRandomizer
             return distanceSquared;
         }
 
-        public void Load(string path, double[,] worldMapGenerated, Random random)
+        public void Load(string path, int overworld, int mapSeed, Random mapGeneratorSeed, Random randomMap)
         {
             var file = Path.Combine(path, filename);
 
             FileHelper.TryBackupOriginalFile(file);
 
-            _worldMapGenerated = worldMapGenerated;
-            MapGeneratedMapToUltimaTiles();
-
-            var worldMapFlattened = new double[WorldMap.SIZE * WorldMap.SIZE];
-
-            for (int x = 0; x < WorldMap.SIZE; x++)
+            if (overworld == 5)
             {
-                for (int y = 0; y < WorldMap.SIZE; y++)
+                _worldMapGenerated = new DiamondSquare(SIZE, 184643518.256878, mapSeed).getData(mapGeneratorSeed);
+                MapGeneratedMapToUltimaTiles();
+
+                var worldMapFlattened = new double[SIZE * SIZE];
+
+                for (int x = 0; x < SIZE; x++)
                 {
-                    worldMapFlattened[x + y * WorldMap.SIZE] = _worldMapGenerated[x, y];
+                    for (int y = 0; y < SIZE; y++)
+                    {
+                        worldMapFlattened[x + y * SIZE] = _worldMapGenerated[x, y];
+                    }
+                }
+
+                _generatedMin = worldMapFlattened.Min();
+                _generatedMax = worldMapFlattened.Max();
+
+                CleanupAndAddFeatures(randomMap);
+            }
+            else if(overworld == 0)
+            {
+                LoadOriginalMap(path);
+            }
+        }
+
+        public void Randomize(UltimaData ultimaData, Random randomLocations, Random randomItems)
+        {
+            //Completely random location placements of buildings still. Just trying to make sure I'm editing the files correctly right now. Not looking for a cohesive map that makes sense.
+            var exclude = RandomizeLocations(ultimaData, randomLocations);
+
+            RandomizeItems(ultimaData, randomItems, exclude);
+        }
+
+        private List<Tile> RandomizeLocations(UltimaData ultimaData, Random random)
+        {
+            var excludeLocations = new List<Tile>();
+            // Lay down Stygian Abyss first so it doesn't stomp on other things
+            // TODO: Make the entrance to the Abyss more random instead of laying down what is in the base game
+            // Find a reasonable mountainous area
+            var possibleLocations = GetAllMatchingTiles(c => AreaIsAll(TileInfo.Mountains, 3, c));
+            var stygian = possibleLocations[random.Next(0, possibleLocations.Count)];
+            // Get a path from the entrance to water
+            var entranceToStygian = GetCoordinate(stygian.X - 14, stygian.Y - 9);
+            //var entrancePathToWater = worldMap.GetRiverPath(entranceToStygian, c => { return c.GetTile() == TileInfo.Deep_Water; } );
+
+            var shapeLoc = new Coordinate(stygian.X - 2, stygian.Y - 7);
+            ApplyShape(shapeLoc, "abyss");
+
+            var entrancePathToWater = Search.GetPath(SIZE, SIZE, entranceToStygian,
+                c => { return c.GetTile() == TileInfo.Deep_Water; }, // Find deep water to help make sure a boat can reach here. TODO: Make sure it reaches the ocean.
+                c => { return !(Between(c.X, Wrap(shapeLoc.X - 12), Wrap(shapeLoc.X + 12)) && Between(c.Y, Wrap(shapeLoc.Y - 12), Wrap(shapeLoc.Y + 12))); },
+                GoDownhillHueristic);
+
+            for (int i = 0; i < entrancePathToWater.Count; i++)
+            {
+                GetCoordinate(entrancePathToWater[i].X, entrancePathToWater[i].Y).SetTile(TileInfo.Medium_Water);
+            }
+
+            for (int x = -12; x <= 12; x++)
+            {
+                for (int y = -12; y <= 12; y++)
+                {
+                    excludeLocations.Add(GetCoordinate(shapeLoc.X + x, shapeLoc.Y + y));
                 }
             }
 
-            _generatedMin = worldMapFlattened.Min();
-            _generatedMax = worldMapFlattened.Max();
+            //Pirate Cove - Set locations based off Stygian location
+            var originalX = 0xe9; // Original Stygian location
+            var originalY = 0xe9;
+            for (var i = 0; i < ultimaData.PirateCove.Count; i++)
+            {
+                ultimaData.PirateCove[i].X = Convert.ToByte(Wrap(ultimaData.PirateCove[i].X - originalX + stygian.X));
+                ultimaData.PirateCove[i].Y = Convert.ToByte(Wrap(ultimaData.PirateCove[i].Y - originalY + stygian.Y));
+            }
+            ultimaData.PirateCoveSpawnTrigger = new Coordinate(ultimaData.PirateCoveSpawnTrigger.X - originalX + stygian.X, ultimaData.PirateCoveSpawnTrigger.Y - originalY + stygian.Y);
+            //worldMap.GetCoordinate(ultimaData.PirateCoveSpawnTrigger.X, ultimaData.PirateCoveSpawnTrigger.Y).SetTile(TileInfo.A);
 
-            CleanupAndAddFeatures(random);
+            // Blink Exclusion
+            ultimaData.BlinkExclusionX1 = Convert.ToByte(Wrap(stygian.X - 5));
+            ultimaData.BlinkExclusionY1 = Convert.ToByte(Wrap(stygian.Y - 18));
+            ultimaData.BlinkExclusionX2 = Convert.ToByte(Wrap(stygian.X + 9));
+            ultimaData.BlinkExclusionY2 = Convert.ToByte(Wrap(stygian.Y + 5));
+
+            //for (int x = 0; x < WorldMap.SIZE; x++)
+            //{
+            //    for (int y = 0; y < WorldMap.SIZE; y++)
+            //    {
+            //        if (WorldMap.Between(Convert.ToByte(x), ultimaData.BlinkExclusionX1, ultimaData.BlinkExclusionX2)
+            //            && WorldMap.Between(Convert.ToByte(y), ultimaData.BlinkExclusionY1, ultimaData.BlinkExclusionY2))
+            //        {
+            //            worldMap.GetCoordinate(x, y).SetTile(TileInfo.Lava_Flow);
+            //        }
+            //    }
+            //}
+
+            // Buildings
+            possibleLocations = GetAllMatchingTiles(WorldMap.IsWalkableGround);
+            possibleLocations.RemoveAll(c => excludeLocations.Contains(c));
+
+            // Towns
+            Tile loc = null;
+            for (int i = 0; i < 7; i++)
+            {
+                loc = RandomSelectFromListCheckPathChangeAndRemove(random, possibleLocations, TileInfo.Town, ultimaData, false);
+                ultimaData.Towns.Add(loc);
+
+            }
+            loc = RandomSelectFromListCheckPathChangeAndRemove(random, possibleLocations, TileInfo.Ruins, ultimaData, false); // Magincia
+            ultimaData.Towns.Add(loc);
+
+            // Castles
+            for (int i = 0; i < 3; i++)
+            {
+                loc = RandomSelectFromListCheckPathChangeAndRemove(random, possibleLocations, TileInfo.Castle, ultimaData);
+                ultimaData.Castles.Add(loc);
+            }
+
+            // Villages
+            for (int i = 0; i < 4; i++)
+            {
+                loc = RandomSelectFromListCheckPathChangeAndRemove(random, possibleLocations, TileInfo.Village, ultimaData);
+                ultimaData.Towns.Add(loc);
+            }
+
+            // Shrines
+            for (int i = 0; i < 7; i++)
+            {
+                if (i == 5)
+                {
+                    // Empty spot for spirit
+                    ultimaData.Shrines.Add(null);
+                }
+                else
+                {
+                    loc = RandomSelectFromListCheckPathChangeAndRemove(random, possibleLocations, TileInfo.Shrine, ultimaData);
+                    ultimaData.Shrines.Add(loc);
+                }
+            }
+            // Humility
+            // TODO: Shrine prettier
+            possibleLocations = GetAllMatchingTiles(c => GoodForHumility(c));
+            possibleLocations.RemoveAll(c => excludeLocations.Contains(c));
+            loc = possibleLocations[random.Next(0, possibleLocations.Count)];
+            loc.SetTile(TileInfo.Shrine);
+            ultimaData.Shrines.Add(loc);
+            for (int y = -4; y < 0; y++)
+            {
+                GetCoordinate(loc.X, loc.Y + y).SetTile(TileInfo.Hills);
+            }
+            ultimaData.DaemonSpawnLocationX = loc.X;
+            ultimaData.DaemonSpawnX1 = Wrap(loc.X - 1);
+            ultimaData.DaemonSpawnX2 = Wrap(loc.X + 1);
+            ultimaData.DaemonSpawnY1 = Wrap(loc.Y - 4);
+            ultimaData.DaemonSpawnY2 = Wrap(loc.Y + 1);
+            ultimaData.BlinkExclusion2X1 = ultimaData.DaemonSpawnX1;
+            ultimaData.BlinkExclusion2X2 = ultimaData.DaemonSpawnX2;
+            ultimaData.BlinkExclusion2Y1 = ultimaData.DaemonSpawnY1;
+            ultimaData.BlinkExclusion2Y2 = ultimaData.DaemonSpawnY2;
+
+            // Moongates
+            List<Tile> path = new List<Tile>();
+            List<byte> validTiles = new List<byte>() { TileInfo.Grasslands, TileInfo.Scrubland, TileInfo.Swamp, TileInfo.Forest, TileInfo.Hills };
+            for (int i = 0; i < 8; i++)
+            {
+                path = new List<Tile>();
+                var distance = random.Next(5, 10);
+                while (path.Count == 0 && distance > 0)
+                {
+                    path = Search.GetPath(SIZE, SIZE, ultimaData.Towns[i],
+                        // Move at least 9 spaces away from from the entrance
+                        c => { return distance * distance <= DistanceSquared(c, ultimaData.Towns[i]) && IsWalkable(c); },
+                        // Only valid if all neighbors all also mountains
+                        c => { return IsMatchingTile(c, validTiles); },
+                        (c, b) => { return (float)random.NextDouble(); });
+                    if (path.Count == 0)
+                    {
+                        Console.WriteLine($"Failed Moongate placement of {i} placement. Retrying.");
+                        distance--;
+                    }
+                    else
+                    {
+                        loc = path[path.Count - 1];
+                        loc.SetTile(TileInfo.Grasslands);
+                        foreach (var n in loc.NeighborCoordinates())
+                        {
+                            if (validTiles.Contains(n.GetTile()))
+                            {
+                                n.SetTile(TileInfo.Grasslands);
+                            }
+                        }
+                        possibleLocations.Remove(loc);
+                        ultimaData.Moongates.Add(loc);
+                    }
+                }
+                if (distance == 0)
+                {
+                    Console.WriteLine($"Utterly failed at Moongate placement of {i} placement. Trying random.");
+                    possibleLocations = GetAllMatchingTiles(IsGrass);
+                    possibleLocations.RemoveAll(c => excludeLocations.Contains(c));
+
+                    loc = RandomSelectFromListCheckPathChangeAndRemove(random, possibleLocations, TileInfo.Grasslands, ultimaData, false);
+                    ultimaData.Moongates.Add(loc);
+                }
+            }
+
+            // LCB
+            var placed = false;
+            while (!placed)
+            {
+                var lcb = GetRandomCoordinate(random);
+                var lcbEntrance = GetCoordinate(lcb.X, lcb.Y + 1);
+                Tile lcbWestSide = GetCoordinate(lcb.X - 1, lcb.Y);
+                Tile lcbEastSide = GetCoordinate(lcb.X + 1, lcb.Y);
+
+                path = new List<Tile>();
+                if (IsWalkableGround(lcb) && IsWalkableGround(lcbEntrance) && !excludeLocations.Contains(lcb))
+                {
+                    path = Search.GetPath(SIZE, SIZE, lcbEntrance,
+                        // Gotta be able to walk to a Moongate from LCB
+                        c => { return ultimaData.Moongates.Contains(c); },
+                        // Only valid if all neighbors all also mountains
+                        c => { return IsWalkable(c) && c != lcbEastSide && c != lcbWestSide && c != lcbEastSide; },
+                        (c, b) => { return (float)random.NextDouble(); });
+                    if (path.Count > 0)
+                    {
+                        lcb.SetTile(TileInfo.Lord_British_s_Castle_Entrance);
+                        ultimaData.LCB.Add(lcb);
+                        lcbWestSide.SetTile(TileInfo.Lord_British_s_Caste_West);
+                        ultimaData.LCB.Add(lcbWestSide);
+                        lcbEastSide.SetTile(TileInfo.Lord_British_s_Castle_East);
+                        ultimaData.LCB.Add(lcbEastSide);
+
+                        placed = true;
+                    }
+                }
+            }
+
+            // Dungeons
+            possibleLocations = GetAllMatchingTiles(c => c.GetTile() == TileInfo.Mountains && IsWalkableGround(GetCoordinate(c.X, c.Y + 1)) && Search.GetPath(SIZE, SIZE, c,
+            coord => { return IsGrass(coord) || coord.GetTile() == TileInfo.Deep_Water; },
+            IsWalkableOrSailable).Count > 0);
+            possibleLocations.RemoveAll(c => excludeLocations.Contains(c));
+            for (int i = 0; i < 6; i++)
+            {
+                loc = RandomSelectFromListCheckPathChangeAndRemove(random, possibleLocations, TileInfo.Dungeon_Entrance, ultimaData);
+                ultimaData.Dungeons.Add(loc);
+            }
+
+            // special for Hythloth
+            // TODO: Hythloth prettier
+            possibleLocations = GetAllMatchingTiles(c => AreaIsAll(TileInfo.Mountains, 4, c));
+
+            path = new List<Tile>();
+            while (path.Count == 0)
+            {
+                loc = possibleLocations[random.Next(0, possibleLocations.Count)];
+                possibleLocations.Remove(loc);
+                path = Search.GetPath(SIZE, SIZE, loc,
+                    // Move at least 9 spaces away from from the entrance
+                    c => { return 9 * 9 <= DistanceSquared(c, loc); },
+                    // Only valid if all neighbors all also mountains
+                    c => { return c.GetTile() == TileInfo.Mountains && c.NeighborAndAdjacentCoordinates().All(n => n.GetTile() == TileInfo.Mountains); },
+                    GoDownhillHueristic);
+                if (path.Count == 0)
+                {
+                    Console.WriteLine("Failed Hythloth placement. Retrying.");
+                }
+            }
+            for (int i = 0; i < 3; i++)
+            {
+                path[i].SetTile(TileInfo.Grasslands);
+            }
+            for (int i = 3; i < path.Count; i++)
+            {
+                path[i].SetTile(TileInfo.Hills);
+            }
+            loc.SetTile(TileInfo.Dungeon_Entrance);
+            //for(int i = 0; i < path.Count; i++)
+            //{
+            //    path[i].SetTile(WorldMap.Wrap( TileInfo.A + i));
+            //}
+            ultimaData.Dungeons.Add(loc);
+            ultimaData.BalloonSpawn = path.Last();
+
+            // Stygian Abyss
+            ultimaData.Dungeons.Add(stygian);
+
+            // Move starting positions and abyss ejection locations to Towns
+            for (int i = 0; i < 8; i++)
+            {
+                var validPositions = GetPathableTilesNear(ultimaData.Towns[i], 3, IsWalkable);
+                loc = validPositions[random.Next(0, validPositions.Count)];
+                ultimaData.StartingPositions[i].X = loc.X;
+                ultimaData.StartingPositions[i].Y = loc.Y;
+                ultimaData.AbyssEjectionLocations[i].X = loc.X;
+                ultimaData.AbyssEjectionLocations[i].Y = loc.Y;
+            }
+
+            // More ejection locations for Castles
+            for (int i = 0; i < 3; i++)
+            {
+                var validPositions = GetPathableTilesNear(ultimaData.Castles[i], 3, IsWalkable);
+                loc = validPositions[random.Next(0, validPositions.Count)];
+                ultimaData.AbyssEjectionLocations[i + 8].X = loc.X;
+                ultimaData.AbyssEjectionLocations[i + 8].Y = loc.Y;
+            }
+
+            // Ejection for LCB
+            ultimaData.AbyssEjectionLocations[11].X = ultimaData.LCB[0].X;
+            ultimaData.AbyssEjectionLocations[11].Y = (byte)(ultimaData.LCB[0].Y + 1);
+
+            // Ejection for Abyss
+            ultimaData.AbyssEjectionLocations[12].X = stygian.X;
+            ultimaData.AbyssEjectionLocations[12].Y = stygian.Y;
+
+            // Whirlpool normally exits in Lock Lake
+            // TODO: Put it somewhere more thematic
+            // For now stick it in the middle of some deep water somewhere
+            loc = GetRandomCoordinate(random, c => c.GetTile() == TileInfo.Deep_Water, excludeLocations);
+            ultimaData.WhirlpoolExit = new Coordinate(loc.X, loc.Y);
+
+            return excludeLocations;
         }
 
+        private void RandomizeItems(UltimaData ultimaData, Random random, List<Tile> exclude)
+        {
+            Tile loc = null;// RandomizeLocation(random, TileInfo.Swamp, worldMap, WorldMap.IsWalkableGround, exclude);
+            var possibleLocations = GetAllMatchingTiles(IsWalkableGround);
+            possibleLocations.RemoveAll(c => exclude.Contains(c));
+            loc = RandomSelectFromListCheckPathChangeAndRemove(random, possibleLocations, TileInfo.Swamp, ultimaData);
+            ultimaData.Items[ultimaData.ITEM_MANDRAKE].X = loc.X;
+            ultimaData.Items[ultimaData.ITEM_MANDRAKE].Y = loc.Y;
+            exclude.Add(loc);
+
+            loc = RandomSelectFromListCheckPathChangeAndRemove(random, possibleLocations, null, ultimaData);
+            ultimaData.Items[ultimaData.ITEM_HORN].X = loc.X;
+            ultimaData.Items[ultimaData.ITEM_HORN].Y = loc.Y;
+            exclude.Add(loc);
+
+            possibleLocations = GetAllMatchingTiles(c => c.GetTile() == TileInfo.Swamp);
+            possibleLocations.RemoveAll(c => exclude.Contains(c));
+            loc = RandomSelectFromListCheckPathChangeAndRemove(random, possibleLocations, TileInfo.Swamp, ultimaData);
+            ultimaData.Items[ultimaData.ITEM_MANDRAKE2].X = loc.X;
+            ultimaData.Items[ultimaData.ITEM_MANDRAKE2].Y = loc.Y;
+            exclude.Add(loc);
+
+            possibleLocations = GetAllMatchingTiles(c => c.GetTile() == TileInfo.Forest);
+            possibleLocations.RemoveAll(c => exclude.Contains(c));
+            loc = RandomSelectFromListCheckPathChangeAndRemove(random, possibleLocations, TileInfo.Forest, ultimaData);
+            ultimaData.Items[ultimaData.ITEM_NIGHTSHADE].X = loc.X;
+            ultimaData.Items[ultimaData.ITEM_NIGHTSHADE].Y = loc.Y;
+            exclude.Add(loc);
+
+            loc = RandomSelectFromListCheckPathChangeAndRemove(random, possibleLocations, TileInfo.Forest, ultimaData);
+            ultimaData.Items[ultimaData.ITEM_NIGHTSHADE2].X = loc.X;
+            ultimaData.Items[ultimaData.ITEM_NIGHTSHADE2].Y = loc.Y;
+            exclude.Add(loc);
+
+            possibleLocations = GetAllMatchingTiles(c => AreaIsAll(TileInfo.Deep_Water, 14, c) && !exclude.Contains(c));
+            loc = possibleLocations[random.Next(0, possibleLocations.Count)];
+            ultimaData.Items[ultimaData.ITEM_SKULL].X = loc.X;
+            ultimaData.Items[ultimaData.ITEM_SKULL].Y = loc.Y;
+            ApplyShape(loc, "skull");
+            exclude.Add(loc);
+
+            possibleLocations = GetAllMatchingTiles(c => AreaIsAll(TileInfo.Deep_Water, 7, c) && !exclude.Contains(c));
+            loc = possibleLocations[random.Next(0, possibleLocations.Count)];
+            ultimaData.Items[ultimaData.ITEM_BELL].X = loc.X;
+            ultimaData.Items[ultimaData.ITEM_BELL].Y = loc.Y;
+            ApplyShape(loc, "bell");
+            exclude.Add(loc);
+
+            // TODO Put in ocean
+            possibleLocations = GetAllMatchingTiles(c => c.GetTile() == TileInfo.Deep_Water && !exclude.Contains(c));
+            loc = possibleLocations[random.Next(0, possibleLocations.Count)];
+            ultimaData.Items[ultimaData.ITEM_WHEEL].X = loc.X;
+            ultimaData.Items[ultimaData.ITEM_WHEEL].Y = loc.Y;
+
+            // TODO: Do I move the black stone?
+            ultimaData.Items[ultimaData.ITEM_BLACK_STONE].X = ultimaData.Moongates[0].X;
+            ultimaData.Items[ultimaData.ITEM_BLACK_STONE].Y = ultimaData.Moongates[0].Y;
+
+            // White stone
+            possibleLocations = GetAllMatchingTiles(c => AreaIsAll(TileInfo.Mountains, 4, c) && !exclude.Contains(c));
+            loc = possibleLocations[random.Next(0, possibleLocations.Count)];
+            ultimaData.Items[ultimaData.ITEM_WHITE_STONE].X = Convert.ToByte(loc.X - 1);
+            ultimaData.Items[ultimaData.ITEM_WHITE_STONE].Y = loc.Y;
+            ApplyShape(loc, "white");
+        }
+
+        private void LoadOriginalMap(string path)
+        {
+            var file = Path.Combine(path, $"{filename}.orig");
+
+            _worldMapTiles = new byte[SIZE, SIZE];
+
+            int chunkwidth = 32;
+            int chunkSize = chunkwidth * chunkwidth;
+            byte[] chunk; // = new byte[chunkSize];
+            System.IO.BinaryReader worldMap = new System.IO.BinaryReader(new System.IO.FileStream(file, System.IO.FileMode.Open));
+
+            for (int chunkCount = 0; chunkCount < 64; chunkCount++)
+            {
+                chunk = worldMap.ReadBytes(chunkSize);
+
+                // Copy the chunk over
+                for (int i = 0; i < chunkSize; i++)
+                {
+                    _worldMapTiles[i % chunkwidth + chunkCount % 8 * chunkwidth,i / chunkwidth + chunkCount / 8 * chunkwidth] = chunk[i];
+                }
+            }
+        }
 
         public void CleanupAndAddFeatures(Random random)
         {
@@ -835,9 +1229,159 @@ namespace U4DosRandomizer
             return result;
         }
 
+
+        private bool AreaIsAll(int tile, int length, ICoordinate coordinate)
+        {
+            int radius = length / 2;
+
+            var result = true;
+            for (int x = 0; x < length; x++)
+            {
+                for (int y = 0; y < length; y++)
+                {
+                    result = result && IsTile(coordinate.X - radius + x, coordinate.Y - radius + y, tile);
+                }
+            }
+
+            return result;
+        }
+
+
+        private void ApplyShape(ICoordinate loc, string file)
+        {
+            //var shape = new System.IO.FileStream($"{file}", System.IO.FileMode.Open);
+            object obj = U4DosRandomizer.Resources.Shapes.ResourceManager.GetObject(file, U4DosRandomizer.Resources.Shapes.Culture);
+            var shape = ((byte[])(obj));
+
+            var length = shape[0];
+            byte[] shapeBytes = new byte[shape.Count() - 1];
+            Array.Copy(shape, 1, shapeBytes, 0, shape.Count() - 1);
+
+            int radius = length / 2;
+            for (int y = 0; y < length; y++)
+            {
+                for (int x = 0; x < length; x++)
+                {
+                    var idx = x + y * length;
+                    var tile = shapeBytes[idx];
+                    if (tile != 0xFF)
+                    {
+                        GetCoordinate(loc.X - radius + x, loc.Y - radius + y).SetTile(tile);
+                    }
+                }
+            }
+        }
+
+        private static Tile RandomSelectFromListCheckPathChangeAndRemove(Random random, List<Tile> possibleLocations, byte? tile, UltimaData ultimaData, bool requirePath = true)
+        {
+            Tile loc = null;
+            while (loc == null && possibleLocations.Count > 0)
+            {
+                var randomIdx = random.Next(0, possibleLocations.Count);
+                var selection = possibleLocations[randomIdx];
+
+                var path = Search.GetPath(WorldMap.SIZE, WorldMap.SIZE, selection,
+                c => { return IsWalkableOrSailable(c) || selection.Equals(c); },
+                c => { return ultimaData.Towns.Contains(c); });
+
+                if (path.Count > 0)
+                {
+                    loc = selection;
+                    if (tile != null)
+                    {
+                        loc.SetTile(tile.Value);
+                    }
+                }
+                possibleLocations.RemoveAt(randomIdx);
+            }
+
+            if (loc == null)
+            {
+                if (tile != null)
+                {
+                    throw new Exception($"Failed to find location for {TileInfo.GetLabel(tile.Value)}.");
+                }
+                else
+                {
+                    throw new Exception($"Failed to find location with path to town.");
+                }
+            }
+
+            return loc;
+        }
+
+        private Tile GetRandomCoordinate(Random random)
+        {
+            var loc = GetCoordinate(random.Next(0, WorldMap.SIZE), random.Next(0, WorldMap.SIZE));
+            return loc;
+        }
+
+        private Tile GetRandomCoordinate(Random random, Func<Tile, bool> criteria, List<Tile> excludes)
+        {
+            while (true)
+            {
+                var loc = GetRandomCoordinate(random);
+                if (criteria(loc) && !excludes.Contains(loc))
+                {
+                    return loc;
+                }
+            }
+        }
+
+        private bool GoodForHumility(ICoordinate coordinate)
+        {
+            var result = true;
+            for (int y = -4; y <= 1; y++)
+            {
+                for (int x = -1; x <= 1; x++)
+                {
+                    result = result && IsTile(coordinate.X + x, coordinate.Y + y, TileInfo.Mountains);
+                }
+            }
+
+            var entrance = GetCoordinate(coordinate.X, coordinate.Y - 5);
+
+            result = result && IsWalkable(entrance);
+
+            if (result)
+            {
+                // Make sure we can reach it by boat or balloon
+                var path = Search.GetPath(256, 256, entrance, IsGrassOrSailable, IsWalkableOrSailable, null);
+
+                result = result && path.Count > 0;
+            }
+
+            return result;
+        }
+
+        private static bool IsMatchingTile(Tile coord, List<byte> validTiles)
+        {
+            return validTiles.Contains(coord.GetTile());
+        }
+
+        private static bool IsWalkable(Tile coord)
+        {
+            return (coord.GetTile() >= TileInfo.Swamp && coord.GetTile() <= TileInfo.Hills) || (coord.GetTile() >= TileInfo.Dungeon_Entrance && coord.GetTile() <= TileInfo.Village);
+        }
+
+        private static bool IsWalkableOrSailable(Tile coord)
+        {
+            return (coord.GetTile() >= TileInfo.Swamp && coord.GetTile() <= TileInfo.Hills) || (coord.GetTile() >= TileInfo.Dungeon_Entrance && coord.GetTile() <= TileInfo.Village) || coord.GetTile() == TileInfo.Deep_Water || coord.GetTile() == TileInfo.Medium_Water;
+        }
+
+        private static bool IsGrassOrSailable(Tile coord)
+        {
+            return coord.GetTile() == TileInfo.Grasslands || coord.GetTile() == TileInfo.Deep_Water || coord.GetTile() == TileInfo.Medium_Water;
+        }
+
+        private static bool IsGrass(Tile coord)
+        {
+            return coord.GetTile() == TileInfo.Grasslands;
+        }
+
         public static byte Wrap(int input)
         {
-            return Wrap(input, WorldMap.SIZE);
+            return Wrap(input, SIZE);
         }
 
         public static byte Wrap(int input, int divisor)
@@ -870,24 +1414,6 @@ namespace U4DosRandomizer
             //{70,0.0001068115234375},
             //Lava{76,0.001068115234375}
         };
-
-        public static void MoveBuildings(byte[,] worldMapUlt, UltimaData data)
-        {
-            foreach (var loc in data.LCB)
-            {
-                worldMapUlt[loc.X, loc.Y] = loc.GetTile();
-            }
-
-            foreach (var loc in data.Castles)
-            {
-                worldMapUlt[loc.X, loc.Y] = loc.GetTile();
-            }
-
-            foreach (var loc in data.Towns)
-            {
-                worldMapUlt[loc.X, loc.Y] = loc.GetTile();
-            }
-        }
 
         public void WriteMapToOriginalFormat(System.IO.BinaryWriter worldFile)
         {

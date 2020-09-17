@@ -281,7 +281,7 @@ namespace U4DosRandomizer
 
             for (int i = 0; i < data.AbyssEjectionLocations.Count; i++)
             {
-                Console.WriteLine(Talk.GetSextantText(data.AbyssEjectionLocations[i]));
+                //Console.WriteLine(Talk.GetSextantText(data.AbyssEjectionLocations[i]));
                 avatarBytes[AvatarOffset.ABYSS_EJECTION_LOCATIONS_X + i] = data.AbyssEjectionLocations[i].X;
                 avatarBytes[AvatarOffset.ABYSS_EJECTION_LOCATIONS_Y + i] = data.AbyssEjectionLocations[i].Y;
             }

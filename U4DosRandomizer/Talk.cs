@@ -56,13 +56,13 @@ namespace U4DosRandomizer
         {
             // --- Items ---
             var person = FindPerson("Garam");
-            person.KeywordResponse2 = ReplaceSextantText(person.KeywordResponse2, GetSextantText(ultimaData.Items[avatar.AvatarOffset.ITEM_BELL]));
+            person.KeywordResponse2 = ReplaceSextantText(person.KeywordResponse2, GetSextantText(ultimaData.Items[ultimaData.ITEM_BELL]));
 
             person = FindPerson("Jude");
-            person.Yes = ReplaceSextantText(person.Yes, GetSextantText(ultimaData.Items[avatar.AvatarOffset.ITEM_SKULL]));
+            person.Yes = ReplaceSextantText(person.Yes, GetSextantText(ultimaData.Items[ultimaData.ITEM_SKULL]));
 
             person = FindPerson("Virgil");
-            person.KeywordResponse2 = ReplaceSextantText(person.KeywordResponse2, GetSextantText(ultimaData.Items[avatar.AvatarOffset.ITEM_NIGHTSHADE]));
+            person.KeywordResponse2 = ReplaceSextantText(person.KeywordResponse2, GetSextantText(ultimaData.Items[ultimaData.ITEM_NIGHTSHADE]));
 
             person = FindPerson("Shawn");
             person.No = ReplaceSextantText(person.No, GetSextantText(ultimaData.Towns[avatar.AvatarOffset.LOC_MAGINCIA - avatar.AvatarOffset.LOC_TOWNS]));
@@ -70,17 +70,17 @@ namespace U4DosRandomizer
             // Mandrake
             // TODO make response descriptive
             person = FindPerson("Calumny");
-            person.KeywordResponse2 = $"Mandrake is found near {GetSextantText(ultimaData.Items[avatar.AvatarOffset.ITEM_MANDRAKE])}\nand\n{GetSextantText(ultimaData.Items[avatar.AvatarOffset.ITEM_MANDRAKE2])} ";
+            person.KeywordResponse2 = $"Mandrake is found near {GetSextantText(ultimaData.Items[ultimaData.ITEM_MANDRAKE])}\nand\n{GetSextantText(ultimaData.Items[ultimaData.ITEM_MANDRAKE2])} ";
 
             // Horn
             // TODO make response descriptive
             person = FindPerson("Malchor");
-            person.KeywordResponse2 = $"Some say that\nthe silver horn\nis buried at\n{GetSextantText(ultimaData.Items[avatar.AvatarOffset.ITEM_HORN])}";
+            person.KeywordResponse2 = $"Some say that\nthe silver horn\nis buried at\n{GetSextantText(ultimaData.Items[ultimaData.ITEM_HORN])}";
 
             // Wheel
             // TODO make response descriptive
             person = FindPerson("Lassorn");
-            person.KeywordResponse2 = $"She went down in\nthe deep waters\nat\n{GetSextantText(ultimaData.Items[avatar.AvatarOffset.ITEM_WHEEL])}!";
+            person.KeywordResponse2 = $"She went down in\nthe deep waters\nat\n{GetSextantText(ultimaData.Items[ultimaData.ITEM_WHEEL])}!";
 
             // TODO Black stone currently at the moongate will need to change this text if we ever do randomize it
             person = FindPerson("Merlin");
@@ -88,8 +88,8 @@ namespace U4DosRandomizer
             // White stone
             // TODO make response descriptive
             person = FindPerson("Isaac");
-            person.KeywordResponse2 = $"The white stone\nsits atop the\nmountains at\n{GetSextantText(ultimaData.Items[avatar.AvatarOffset.ITEM_WHITE_STONE])}.\nIt can only be\nreached by one\nwho floats\nwithin the\nclouds.";
-            ultimaData.ShrineText[6*3+2] = $"If thou dost seek the White Stone search not under the ground but at {GetSextantText(ultimaData.Items[avatar.AvatarOffset.ITEM_WHITE_STONE]).Replace('\n', ' ')}";
+            person.KeywordResponse2 = $"The white stone\nsits atop the\nmountains at\n{GetSextantText(ultimaData.Items[ultimaData.ITEM_WHITE_STONE])}.\nIt can only be\nreached by one\nwho floats\nwithin the\nclouds.";
+            ultimaData.ShrineText[6*3+2] = $"If thou dost seek the White Stone search not under the ground but at {GetSextantText(ultimaData.Items[ultimaData.ITEM_WHITE_STONE]).Replace('\n', ' ')}";
 
             // TODO Book, candle, runes, mystic armor and mystic weapons I'm leaving along for now. Not randomizing stuff in towns yet.
 

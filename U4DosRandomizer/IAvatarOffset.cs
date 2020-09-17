@@ -1,4 +1,4 @@
-﻿namespace U4DosRandomizer
+namespace U4DosRandomizer
 {
     public interface IAvatarOffset
     {
@@ -57,29 +57,6 @@
         int AMBUSH_MONSTER_TYPES { get; }
         int CITY_RUNE_MASK_PAIRS_OFFSET { get; }
         int ITEM_LOCATIONS_OFFSET { get; }
-        int ITEM_MANDRAKE { get; }
-        int ITEM_MANDRAKE2 { get; }
-        int ITEM_NIGHTSHADE { get; }
-        int ITEM_NIGHTSHADE2 { get; }
-        int ITEM_BELL { get; }
-        int ITEM_HORN { get; }
-        int ITEM_WHEEL { get; }
-        int ITEM_SKULL { get; }
-        int ITEM_BLACK_STONE { get; }
-        int ITEM_WHITE_STONE { get; }
-        int ITEM_BOOK { get; }
-        int ITEM_CANDLE { get; }
-        int ITEM_TELESCOPE { get; }
-        int ITEM_ARMOR { get; }
-        int ITEM_WEAPON { get; }
-        int ITEM_RUNE_HONESTY { get; }
-        int ITEM_RUNE_COMPASSION { get; }
-        int ITEM_RUNE_VALOR { get; }
-        int ITEM_RUNE_JUSTICE { get; }
-        int ITEM_RUNE_SACRIFICE { get; }
-        int ITEM_RUNE_HONOR { get; }
-        int ITEM_RUNE_SPIRITUALITY { get; }
-        int ITEM_RUNE_HUMILITY { get; }
         int LB_TEXT_OFFSET { get; }
         int SHRINE_TEXT_OFFSET { get; }
         int WHITE_STONE_LOCATION_TEXT { get; }
