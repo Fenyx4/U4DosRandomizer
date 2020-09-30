@@ -3,27 +3,27 @@ using U4DosRandomizer.BlueRajaPriorityQueue;
 
 namespace U4DosRandomizer
 {
-	public delegate bool IsNodeValid(Tile coord);
-	public delegate float NodeHuersticValue(Tile coord, IsNodeValid matchesGoal);
+	public delegate bool IsNodeValid(ITile coord);
+	public delegate float NodeHuersticValue(ITile coord, IsNodeValid matchesGoal);
 
 	public class Search
     {
-		public static List<Tile> GetPath(int sizeX, int sizeY, Tile startNode, IsNodeValid matchesGoal, IsNodeValid validNode, NodeHuersticValue heuristic = null)
+		public static List<Tile> GetPath(int sizeX, int sizeY, ITile startNode, IsNodeValid matchesGoal, IsNodeValid validNode, NodeHuersticValue heuristic = null)
         {
-			return GetPath(sizeX, sizeY, new List<Tile> { startNode }, matchesGoal, validNode, heuristic);
+			return GetPath(sizeX, sizeY, new List<ITile> { startNode }, matchesGoal, validNode, heuristic);
         }
 
-		public static List<Tile> GetPath(int sizeX, int sizeY, List<Tile> startNodes, IsNodeValid matchesGoal, IsNodeValid validNode, NodeHuersticValue heuristic = null)
+		public static List<Tile> GetPath(int sizeX, int sizeY, List<ITile> startNodes, IsNodeValid matchesGoal, IsNodeValid validNode, NodeHuersticValue heuristic = null)
 		{
 			if (heuristic == null)
 			{
-				heuristic = delegate (Tile n, IsNodeValid m) {
+				heuristic = delegate (ITile n, IsNodeValid m) {
 					return 0;
 				};
 			}
 
-			HashSet<Tile> closedset = new HashSet<Tile>(); // The set of nodes already evaluated
-			HashSet<Tile> openset = new HashSet<Tile>(); // The set of tentative nodes to be evaluated, initially containing the start node
+			HashSet<ITile> closedset = new HashSet<ITile>(); // The set of nodes already evaluated
+			HashSet<ITile> openset = new HashSet<ITile>(); // The set of tentative nodes to be evaluated, initially containing the start node
 			foreach (var node in startNodes)
 			{
 				openset.Add(node);
@@ -101,17 +101,17 @@ namespace U4DosRandomizer
 			return new List<Tile>();
 		}
 
-        public static HashSet<Tile> GetSuccessfulPaths(int sizeX, int sizeY, Tile startNode, HashSet<Tile> goals, IsNodeValid validNode)
+        public static HashSet<Tile> GetSuccessfulPaths(int sizeX, int sizeY, ITile startNode, HashSet<Tile> goals, IsNodeValid validNode)
         {
 			var results = new HashSet<Tile>();
-			HashSet<Tile> closedset = new HashSet<Tile>(); // The set of nodes already evaluated
-			HashSet<Tile> openset = new HashSet<Tile>(); // The set of tentative nodes to be evaluated, initially containing the start node
+			HashSet<ITile> closedset = new HashSet<ITile>(); // The set of nodes already evaluated
+			HashSet<ITile> openset = new HashSet<ITile>(); // The set of tentative nodes to be evaluated, initially containing the start node
 
 			openset.Add(startNode);
 
 			Dictionary<Tile, Tile> came_from = new Dictionary<Tile, Tile>(); // The map of navigated nodes.
 
-			Dictionary<Tile, int> g_score = new Dictionary<Tile, int>();
+			Dictionary<ITile, int> g_score = new Dictionary<ITile, int>();
 
 			g_score.Add(startNode, 0);
 

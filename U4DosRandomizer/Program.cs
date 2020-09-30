@@ -123,7 +123,7 @@ namespace U4DosRandomizer
 
         private static void Restore(string path)
         {
-            WorldMap.Restore(path);
+            WorldMapGenerateMap.Restore(path);
             Avatar.Restore(path);
             Title.Restore(path);
             Talk.Restore(path);
@@ -144,11 +144,20 @@ namespace U4DosRandomizer
 
             var ultimaData = new UltimaData();
 
-            var worldMap = new WorldMap();
-            worldMap.Load(path, flags.Overworld, randomValues[0], new Random(randomValues[1]), new Random(randomValues[2]));
+            IWorldMap worldMap = null;
+
+            if (flags.Overworld == 5)
+            {
+                worldMap = new WorldMapGenerateMap();
+            }
+            else if (flags.Overworld == 1)
+            {
+                worldMap = new WorldMapUnchanged();
+            }
+            worldMap.Load(path, randomValues[0], new Random(randomValues[1]), new Random(randomValues[2]));
 
             var avatar = new Avatar();
-            avatar.Load(path, ultimaData);
+            avatar.Load(path, ultimaData, worldMap);
 
             var title = new Title();
             title.Load(path, ultimaData);
@@ -190,7 +199,7 @@ namespace U4DosRandomizer
                     {
                         throw new ArgumentException("spellRemove can only contain letters.");
                     }
-                    ultimaData.SpellsRecipes[arr[i]-'a'] = 0;
+                    ultimaData.SpellsRecipes[arr[i]-'a'].Byte = 0;
                 }
             }
 
@@ -220,9 +229,11 @@ namespace U4DosRandomizer
         
         private static void PrintWorldMapInfo()
         {
-            FileStream stream = new FileStream("ULT\\WORLD.MAP", FileMode.Open);
             var world = new byte[256 * 256];
-            stream.Read(world, 0, 256 * 256);
+            using (FileStream stream = new FileStream("ULT\\WORLD.MAP", FileMode.Open))
+            { 
+                stream.Read(world, 0, 256 * 256);
+            }
             var worldList = world.ToList();
 
             worldList.Sort();

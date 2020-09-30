@@ -14,8 +14,10 @@ namespace U4DosRandomizer
 
             FileHelper.TryBackupOriginalFile(file);
 
-            var titleStream = new System.IO.FileStream($"{file}.orig", System.IO.FileMode.Open);
-            titleBytes = titleStream.ReadAllBytes();
+            using (var titleStream = new System.IO.FileStream($"{file}.orig", System.IO.FileMode.Open))
+            {
+                titleBytes = titleStream.ReadAllBytes();
+            }
 
             for (int offset = 0; offset < 8; offset++)
             {
@@ -60,11 +62,10 @@ namespace U4DosRandomizer
         public void Save(string path)
         {
             var file = Path.Combine(path, filename);
-            var titleOut = new System.IO.BinaryWriter(new System.IO.FileStream(file, System.IO.FileMode.Truncate));
-
-            titleOut.Write(titleBytes);
-
-            titleOut.Close();
+            using (var titleOut = new System.IO.BinaryWriter(new System.IO.FileStream(file, System.IO.FileMode.Truncate)))
+            {
+                titleOut.Write(titleBytes);
+            }
         }
 
         public static int START_X_OFFSET = 0x70dc;

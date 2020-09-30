@@ -31,11 +31,13 @@ namespace U4DosRandomizer
                 {
                     FileHelper.TryBackupOriginalFile(file, false);
 
-                    var dngStream = new System.IO.FileStream($"{file}.orig", System.IO.FileMode.Open);
+                    using (var dngStream = new System.IO.FileStream($"{file}.orig", System.IO.FileMode.Open))
+                    {
 
-                    Dungeon dungeon = new Dungeon(dngStream, data);
+                        Dungeon dungeon = new Dungeon(dngStream, data);
 
-                    dungeons.Add(Path.GetFileNameWithoutExtension(file), dungeon);
+                        dungeons.Add(Path.GetFileNameWithoutExtension(file), dungeon);
+                    }
                 }
             }
         }

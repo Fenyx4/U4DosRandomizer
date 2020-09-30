@@ -1,16 +1,104 @@
 ﻿using System.Collections.Generic;
+using System.Collections.ObjectModel;
 
 namespace U4DosRandomizer
 {
     public class UltimaData
     {
-        public List<Tile> LCB { get; set; }
-        public List<Tile> Castles { get; set; }
-        public List<Tile> Towns { get; set; }
-        public List<Tile> Shrines { get; set; }
-        public List<Tile> Moongates { get; set; }
-        public List<Tile> Dungeons { get; set; }
-        public List<Item> Items { get; set; }
+        public ReadOnlyCollection<Tile> LCB { get; private set; }
+        bool lcbSet = false;
+        public void SetLCB(List<Tile> value)
+        {
+            if (lcbSet)
+            {
+                throw new System.Exception("Can only set LCB once.");
+            }
+            else
+            {
+                LCB = value.AsReadOnly();
+            }
+        }
+        public ReadOnlyCollection<TileDirtyWrapper> Castles { get; private set; }
+        bool castlesSet = false;
+        public void SetCastles(List<TileDirtyWrapper> value)
+        {
+            if (castlesSet)
+            {
+                throw new System.Exception("Can only set castles once.");
+            }
+            else
+            {
+                Castles = value.AsReadOnly();
+            }
+        }
+        public ReadOnlyCollection<TileDirtyWrapper> Towns { get; private set; }
+        bool townsSet = false;
+        public void SetTowns(List<TileDirtyWrapper> value)
+        {
+            if (townsSet)
+            {
+                throw new System.Exception("Can only set towns once.");
+            }
+            else
+            {
+                Towns = value.AsReadOnly();
+            }
+        }
+        public ReadOnlyCollection<TileDirtyWrapper> Shrines { get; private set; }
+        bool shrinesSet = false;
+        public void SetShrines(List<TileDirtyWrapper> value)
+        {
+            if (shrinesSet)
+            {
+                throw new System.Exception("Can only set shrines once.");
+            }
+            else
+            {
+                Shrines = value.AsReadOnly();
+            }
+        }
+        public ReadOnlyCollection<Tile> Moongates { get; private set; }
+        bool moongatesSet = false;
+        public void SetMoongates(List<Tile> value)
+        {
+            if (moongatesSet)
+            {
+                throw new System.Exception("Can only set moongates once.");
+            }
+            else
+            {
+                Moongates = value.AsReadOnly();
+            }
+        }
+        public ReadOnlyCollection<Tile> Dungeons { get; private set; }
+        bool dungeonsSet = false;
+        public void SetDungeons(List<Tile> value)
+        {
+            if (dungeonsSet)
+            {
+                throw new System.Exception("Can only set dungeons once.");
+            }
+            else
+            {
+                Dungeons = value.AsReadOnly();
+            }
+        }
+
+        public ReadOnlyCollection<Item> Items { get; private set; }
+
+        bool itemsSet = false;
+        public void SetItems(List<Item> value)
+        {
+            if (itemsSet)
+            {
+                throw new System.Exception("Can only set items once.");
+            }
+            else
+            {
+                Items = value.AsReadOnly();
+            }
+        }
+
         public List<string> ShrineText { get; set; }
         public List<Coordinate> StartingPositions { get; set; }
         public List<string> LBText { get; internal set; }
@@ -23,7 +111,19 @@ namespace U4DosRandomizer
         public List<Coordinate> PirateCove { get; internal set; }
         public Coordinate PirateCoveSpawnTrigger { get; internal set; }
         public Coordinate WhirlpoolExit { get; internal set; }
-        public List<byte> SpellsRecipes { get; internal set; }
+        public List<ByteDirtyWrapper> SpellsRecipes { get; internal set; }
+        bool spellRecipesSet = false;
+        public void SetSpellsRecipes(List<Item> value)
+        {
+            if (spellRecipesSet)
+            {
+                throw new System.Exception("Can only set spell recipes once.");
+            }
+            else
+            {
+                Items = value.AsReadOnly();
+            }
+        }
         public byte BlinkExclusionX1 { get; internal set; }
         public byte BlinkExclusionX2 { get; internal set; }
         public byte BlinkExclusionY1 { get; internal set; }
@@ -36,13 +136,6 @@ namespace U4DosRandomizer
 
         public UltimaData()
         {
-            LCB = new List<Tile>();
-            Castles = new List<Tile>();
-            Towns = new List<Tile>();
-            Shrines = new List<Tile>();
-            Moongates = new List<Tile>();
-            Dungeons = new List<Tile>();
-            Items = new List<Item>();
             ShrineText = new List<string>();
             StartingPositions = new List<Coordinate>();
             LBText = new List<string>();

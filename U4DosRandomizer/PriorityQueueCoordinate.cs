@@ -31,6 +31,11 @@ namespace U4DosRandomizer
 
 		}
 
-		#endregion
-	}
+        public IEnumerable<Tile> NeighborAndAdjacentCoordinates()
+        {
+			return _coord.NeighborAndAdjacentCoordinates();
+        }
+
+        #endregion
+    }
 }

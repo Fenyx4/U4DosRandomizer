@@ -14,7 +14,7 @@ namespace U4DosRandomizer
         private const string filename = "AVATAR.EXE";
         private byte[] avatarBytes;
 
-        public void Load(string path, UltimaData data)
+        public void Load(string path, UltimaData data, IWorldMap worldMap)
         {
             var file = Path.Combine(path, filename);
 
@@ -37,19 +37,74 @@ namespace U4DosRandomizer
                 }
             }
 
-            var avatarStream = new System.IO.FileStream(file, System.IO.FileMode.Open);
-            avatarBytes = avatarStream.ReadAllBytes();
+            using (var avatarStream = new System.IO.FileStream(file, System.IO.FileMode.Open))
+            {
+                avatarBytes = avatarStream.ReadAllBytes();
+            }
 
             AvatarOffset = new AvatarOffsetsNew(avatarBytes, $"{file}.orig");
 
+
+            // Items
+            var items = new List<Item>();
             for (int offset = 0; offset < 24; offset++)
             {
-                var item = new Item();
-                item.Location = avatarBytes[AvatarOffset.ITEM_LOCATIONS_OFFSET + offset * 5];
-                item.X = avatarBytes[AvatarOffset.ITEM_LOCATIONS_OFFSET + offset * 5 + 1];
-                item.Y = avatarBytes[AvatarOffset.ITEM_LOCATIONS_OFFSET + offset * 5 + 2];
-                data.Items.Add(item);
+                items.Add(new Item(avatarBytes[AvatarOffset.ITEM_LOCATIONS_OFFSET + offset * 5],
+                                    avatarBytes[AvatarOffset.ITEM_LOCATIONS_OFFSET + offset * 5 + 1],
+                                    avatarBytes[AvatarOffset.ITEM_LOCATIONS_OFFSET + offset * 5 + 2]));
             }
+            data.SetItems(items);
+
+            // Moongates
+            var moongates = new List<Tile>();
+            for (byte offset = 0; offset < 8; offset++)
+            {
+                moongates.Add(worldMap.GetCoordinate(avatarBytes[AvatarOffset.MOONGATE_X_OFFSET + offset], avatarBytes[AvatarOffset.MOONGATE_Y_OFFSET + offset]));
+            }
+            data.SetMoongates(moongates);
+
+            // LCB
+            var lcb = new List<Tile>();
+            var lcbLoc = worldMap.GetCoordinate(avatarBytes[AvatarOffset.AREA_X_OFFSET + AvatarOffset.LOC_LCB - 1], avatarBytes[AvatarOffset.AREA_Y_OFFSET + AvatarOffset.LOC_LCB - 1]);
+            lcb.Add(lcbLoc);
+            lcb.Add(worldMap.GetCoordinate(lcbLoc.X - 1, lcbLoc.Y));
+            lcb.Add(worldMap.GetCoordinate(lcbLoc.X + 1, lcbLoc.Y));
+            data.SetLCB(lcb);
+
+            // Castles
+            var castles = new List<TileDirtyWrapper>();
+            for (byte offset = 0; offset < 3; offset++)
+            {
+                castles.Add(new TileDirtyWrapper(worldMap.GetCoordinate(avatarBytes[AvatarOffset.AREA_X_OFFSET + AvatarOffset.LOC_CASTLES + offset], avatarBytes[AvatarOffset.AREA_Y_OFFSET + AvatarOffset.LOC_CASTLES + offset]), worldMap));
+            }
+            data.SetCastles(castles);
+
+            // Towns
+            var towns = new List<TileDirtyWrapper>();
+            for (byte offset = 0; offset < 8+4; offset++)
+            {
+                towns.Add(new TileDirtyWrapper(worldMap.GetCoordinate(avatarBytes[AvatarOffset.AREA_X_OFFSET + AvatarOffset.LOC_TOWNS + offset - 1], avatarBytes[AvatarOffset.AREA_Y_OFFSET + AvatarOffset.LOC_TOWNS + offset - 1]), worldMap));
+            }
+            data.SetTowns(towns);
+
+            // Shrines
+            var shrines = new List<TileDirtyWrapper>();
+            for (byte offset = 0; offset < 8; offset++)
+            {
+                shrines.Add(new TileDirtyWrapper(worldMap.GetCoordinate(avatarBytes[AvatarOffset.AREA_X_OFFSET + AvatarOffset.LOC_SHRINES + offset - 1], avatarBytes[AvatarOffset.AREA_Y_OFFSET + AvatarOffset.LOC_SHRINES + offset - 1]), worldMap));
+            }
+            data.SetShrines(shrines);
+
+            // Dungeons
+            var dungeons = new List<Tile>();
+            for (byte offset = 0; offset < 8; offset++)
+            {
+                dungeons.Add(worldMap.GetCoordinate(avatarBytes[AvatarOffset.AREA_X_OFFSET + AvatarOffset.LOC_DUNGEONS + offset - 1], avatarBytes[AvatarOffset.AREA_Y_OFFSET + AvatarOffset.LOC_DUNGEONS + offset - 1]));
+            }
+            data.SetDungeons(dungeons);
+
+            // Balloon Spawn
+            data.BalloonSpawn = worldMap.GetCoordinate(avatarBytes[AvatarOffset.BALLOON_SPAWN_LOCATION_X_OFFSET], avatarBytes[AvatarOffset.BALLOON_SPAWN_LOCATION_Y_OFFSET]);
 
             OriginalShrineText = new List<string>();
             OriginalShrineTextStartOffset = new List<int>();
@@ -111,10 +166,10 @@ namespace U4DosRandomizer
 
             data.WhirlpoolExit = new Coordinate(avatarBytes[AvatarOffset.WHIRLPOOL_EXIT_X_OFFSET], avatarBytes[AvatarOffset.WHIRLPOOL_EXIT_Y_OFFSET]);
 
-            data.SpellsRecipes = new List<byte>();
+            data.SpellsRecipes = new List<ByteDirtyWrapper>();
             for (int i = 0; i < 26; i++)
             {
-                data.SpellsRecipes.Add(avatarBytes[AvatarOffset.SPELL_RECIPE_OFFSET + i]);
+                data.SpellsRecipes.Add(new ByteDirtyWrapper(avatarBytes[AvatarOffset.SPELL_RECIPE_OFFSET + i]));
             }
 
             data.BlinkExclusionX1 = avatarBytes[AvatarOffset.BLINK_DESTINATION_EXCLUSION_X1_OFFSET];
@@ -141,6 +196,7 @@ namespace U4DosRandomizer
 
         public void Update(UltimaData data, Flags flags)
         {
+            // Items
             for (var offset = 0; offset < 24; offset++)
             {
                 avatarBytes[AvatarOffset.ITEM_LOCATIONS_OFFSET + offset * 5] = data.Items[offset].Location;
@@ -163,6 +219,7 @@ namespace U4DosRandomizer
             //{
             //    worldMapUlt[200, 200 + offset] = 76;
             //}
+            // Moongates
             for (byte offset = 0; offset < data.Moongates.Count; offset++)
             {
                 avatarBytes[AvatarOffset.MOONGATE_X_OFFSET + offset] = data.Moongates[offset].X;
@@ -258,7 +315,7 @@ namespace U4DosRandomizer
 
             for (int i = 0; i < data.SpellsRecipes.Count; i++)
             {
-                avatarBytes[AvatarOffset.SPELL_RECIPE_OFFSET + i] = data.SpellsRecipes[i];
+                avatarBytes[AvatarOffset.SPELL_RECIPE_OFFSET + i] = data.SpellsRecipes[i].Byte;
             }
 
             // Cast exclusion isn't precise enough so allow them to cast anywhere and exclude the destination
@@ -290,16 +347,10 @@ namespace U4DosRandomizer
         public void Save(string path)
         {
             var exePath = Path.Combine(path, filename);
-            var avatarOut = new System.IO.BinaryWriter(new System.IO.FileStream(exePath, System.IO.FileMode.Truncate));
-
-            //var binPath = Path.Combine(path, "AVATAR.bin");
-            //var avatarOut2 = new System.IO.BinaryWriter(new System.IO.FileStream(binPath, System.IO.FileMode.Truncate));
-
-            avatarOut.Write(avatarBytes);
-            //avatarOut2.Write(avatarBytes);
-
-            avatarOut.Close();
-            //avatarOut2.Close();
+            using (var avatarOut = new System.IO.BinaryWriter(new System.IO.FileStream(exePath, System.IO.FileMode.Truncate)))
+            {
+                avatarOut.Write(avatarBytes);
+            }
         }
 
         private List<string> OriginalShrineText { get; set; }

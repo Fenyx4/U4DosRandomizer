@@ -18,8 +18,8 @@ namespace U4DosRandomizer
 
 		public Coordinate(int x, int y)
 		{
-			this.X = WorldMap.Wrap(x);
-			this.Y = WorldMap.Wrap(y);
+			this.X = WorldMapGenerateMap.Wrap(x);
+			this.Y = WorldMapGenerateMap.Wrap(y);
 		}
 	}
 }

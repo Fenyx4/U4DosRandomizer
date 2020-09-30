@@ -9,18 +9,14 @@ using U4DosRandomizer.Helpers;
 
 namespace U4DosRandomizer
 {
-    public class WorldMap
+    public class WorldMapGenerateMap : WorldMapAbstract, IWorldMap
     {
-        private const string filename = "WORLD.MAP";
         private double[,] _worldMapGenerated;
-        private byte[,] _worldMapTiles;
 
         private double _generatedMin;
         private double _generatedMax;
 
-        public const int SIZE = 256; 
-
-        public WorldMap()
+        public WorldMapGenerateMap()
         { 
         }
 
@@ -122,11 +118,6 @@ namespace U4DosRandomizer
         {
             var file = Path.Combine(path, filename);
             FileHelper.Restore(file);
-        }
-
-        public Tile GetCoordinate(int x, int y)
-        {
-            return new Tile(Convert.ToByte(Wrap(x)), Convert.ToByte(Wrap(y)), _worldMapTiles);
         }
 
         public List<Tile> GetAllMatchingTiles(Func<Tile, bool> criteria, int minX = 0, int maxX = SIZE, int minY = 0, int maxY = SIZE)
@@ -269,39 +260,32 @@ namespace U4DosRandomizer
             return distanceSquared;
         }
 
-        public void Load(string path, int overworld, int mapSeed, Random mapGeneratorSeed, Random randomMap)
+        public override void Load(string path, int mapSeed, Random mapGeneratorSeed, Random randomMap)
         {
             var file = Path.Combine(path, filename);
 
             FileHelper.TryBackupOriginalFile(file);
 
-            if (overworld == 5)
+            _worldMapGenerated = new DiamondSquare(SIZE, 184643518.256878, mapSeed).getData(mapGeneratorSeed);
+            MapGeneratedMapToUltimaTiles();
+
+            var worldMapFlattened = new double[SIZE * SIZE];
+
+            for (int x = 0; x < SIZE; x++)
             {
-                _worldMapGenerated = new DiamondSquare(SIZE, 184643518.256878, mapSeed).getData(mapGeneratorSeed);
-                MapGeneratedMapToUltimaTiles();
-
-                var worldMapFlattened = new double[SIZE * SIZE];
-
-                for (int x = 0; x < SIZE; x++)
+                for (int y = 0; y < SIZE; y++)
                 {
-                    for (int y = 0; y < SIZE; y++)
-                    {
-                        worldMapFlattened[x + y * SIZE] = _worldMapGenerated[x, y];
-                    }
+                    worldMapFlattened[x + y * SIZE] = _worldMapGenerated[x, y];
                 }
-
-                _generatedMin = worldMapFlattened.Min();
-                _generatedMax = worldMapFlattened.Max();
-
-                CleanupAndAddFeatures(randomMap);
             }
-            else if(overworld == 0)
-            {
-                LoadOriginalMap(path);
-            }
+
+            _generatedMin = worldMapFlattened.Min();
+            _generatedMax = worldMapFlattened.Max();
+
+            CleanupAndAddFeatures(randomMap);
         }
 
-        public void Randomize(UltimaData ultimaData, Random randomLocations, Random randomItems)
+        public override void Randomize(UltimaData ultimaData, Random randomLocations, Random randomItems)
         {
             //Completely random location placements of buildings still. Just trying to make sure I'm editing the files correctly right now. Not looking for a cohesive map that makes sense.
             var exclude = RandomizeLocations(ultimaData, randomLocations);
@@ -372,7 +356,7 @@ namespace U4DosRandomizer
             //}
 
             // Buildings
-            possibleLocations = GetAllMatchingTiles(WorldMap.IsWalkableGround);
+            possibleLocations = GetAllMatchingTiles(WorldMapGenerateMap.IsWalkableGround);
             possibleLocations.RemoveAll(c => excludeLocations.Contains(c));
 
             // Towns
@@ -380,24 +364,28 @@ namespace U4DosRandomizer
             for (int i = 0; i < 7; i++)
             {
                 loc = RandomSelectFromListCheckPathChangeAndRemove(random, possibleLocations, TileInfo.Town, ultimaData, false);
-                ultimaData.Towns.Add(loc);
+                ultimaData.Towns[i].X = loc.X;
+                ultimaData.Towns[i].Y = loc.Y;
 
             }
             loc = RandomSelectFromListCheckPathChangeAndRemove(random, possibleLocations, TileInfo.Ruins, ultimaData, false); // Magincia
-            ultimaData.Towns.Add(loc);
+            ultimaData.Towns[7].X = loc.X;
+            ultimaData.Towns[7].Y = loc.Y;
 
             // Castles
             for (int i = 0; i < 3; i++)
             {
                 loc = RandomSelectFromListCheckPathChangeAndRemove(random, possibleLocations, TileInfo.Castle, ultimaData);
-                ultimaData.Castles.Add(loc);
+                ultimaData.Castles[i].X = loc.X;
+                ultimaData.Castles[i].Y = loc.Y;
             }
 
             // Villages
             for (int i = 0; i < 4; i++)
             {
                 loc = RandomSelectFromListCheckPathChangeAndRemove(random, possibleLocations, TileInfo.Village, ultimaData);
-                ultimaData.Towns.Add(loc);
+                ultimaData.Towns[i+8].X = loc.X;
+                ultimaData.Towns[i+8].Y = loc.Y;
             }
 
             // Shrines
@@ -405,13 +393,13 @@ namespace U4DosRandomizer
             {
                 if (i == 5)
                 {
-                    // Empty spot for spirit
-                    ultimaData.Shrines.Add(null);
+                    // Unchanged spot for spirit
                 }
                 else
                 {
                     loc = RandomSelectFromListCheckPathChangeAndRemove(random, possibleLocations, TileInfo.Shrine, ultimaData);
-                    ultimaData.Shrines.Add(loc);
+                    ultimaData.Shrines[i].X = loc.X;
+                    ultimaData.Shrines[i].Y = loc.Y;
                 }
             }
             // Humility
@@ -420,7 +408,8 @@ namespace U4DosRandomizer
             possibleLocations.RemoveAll(c => excludeLocations.Contains(c));
             loc = possibleLocations[random.Next(0, possibleLocations.Count)];
             loc.SetTile(TileInfo.Shrine);
-            ultimaData.Shrines.Add(loc);
+            ultimaData.Shrines[7].X = loc.X;
+            ultimaData.Shrines[7].Y = loc.Y;
             for (int y = -4; y < 0; y++)
             {
                 GetCoordinate(loc.X, loc.Y + y).SetTile(TileInfo.Hills);
@@ -467,7 +456,8 @@ namespace U4DosRandomizer
                             }
                         }
                         possibleLocations.Remove(loc);
-                        ultimaData.Moongates.Add(loc);
+                        ultimaData.Moongates[i].X = loc.X;
+                        ultimaData.Moongates[i].Y = loc.Y;
                     }
                 }
                 if (distance == 0)
@@ -477,7 +467,8 @@ namespace U4DosRandomizer
                     possibleLocations.RemoveAll(c => excludeLocations.Contains(c));
 
                     loc = RandomSelectFromListCheckPathChangeAndRemove(random, possibleLocations, TileInfo.Grasslands, ultimaData, false);
-                    ultimaData.Moongates.Add(loc);
+                    ultimaData.Moongates[i].X = loc.X;
+                    ultimaData.Moongates[i].Y = loc.Y;
                 }
             }
 
@@ -502,11 +493,14 @@ namespace U4DosRandomizer
                     if (path.Count > 0)
                     {
                         lcb.SetTile(TileInfo.Lord_British_s_Castle_Entrance);
-                        ultimaData.LCB.Add(lcb);
+                        ultimaData.LCB[0].X = lcb.X;
+                        ultimaData.LCB[0].Y = lcb.Y;
                         lcbWestSide.SetTile(TileInfo.Lord_British_s_Caste_West);
-                        ultimaData.LCB.Add(lcbWestSide);
+                        ultimaData.LCB[1].X = lcbWestSide.X;
+                        ultimaData.LCB[1].Y = lcbWestSide.Y;
                         lcbEastSide.SetTile(TileInfo.Lord_British_s_Castle_East);
-                        ultimaData.LCB.Add(lcbEastSide);
+                        ultimaData.LCB[1].X = lcbEastSide.X;
+                        ultimaData.LCB[1].Y = lcbEastSide.Y;
 
                         placed = true;
                     }
@@ -521,7 +515,8 @@ namespace U4DosRandomizer
             for (int i = 0; i < 6; i++)
             {
                 loc = RandomSelectFromListCheckPathChangeAndRemove(random, possibleLocations, TileInfo.Dungeon_Entrance, ultimaData);
-                ultimaData.Dungeons.Add(loc);
+                ultimaData.Dungeons[i].X = loc.X;
+                ultimaData.Dungeons[i].Y = loc.Y;
             }
 
             // special for Hythloth
@@ -557,11 +552,13 @@ namespace U4DosRandomizer
             //{
             //    path[i].SetTile(WorldMap.Wrap( TileInfo.A + i));
             //}
-            ultimaData.Dungeons.Add(loc);
+            ultimaData.Dungeons[6].X = loc.X;
+            ultimaData.Dungeons[6].Y = loc.Y;
             ultimaData.BalloonSpawn = path.Last();
 
             // Stygian Abyss
-            ultimaData.Dungeons.Add(stygian);
+            ultimaData.Dungeons[7].X = stygian.X;
+            ultimaData.Dungeons[7].Y = stygian.Y;
 
             // Move starting positions and abyss ejection locations to Towns
             for (int i = 0; i < 8; i++)
@@ -666,29 +663,6 @@ namespace U4DosRandomizer
             ApplyShape(loc, "white");
         }
 
-        private void LoadOriginalMap(string path)
-        {
-            var file = Path.Combine(path, $"{filename}.orig");
-
-            _worldMapTiles = new byte[SIZE, SIZE];
-
-            int chunkwidth = 32;
-            int chunkSize = chunkwidth * chunkwidth;
-            byte[] chunk; // = new byte[chunkSize];
-            System.IO.BinaryReader worldMap = new System.IO.BinaryReader(new System.IO.FileStream(file, System.IO.FileMode.Open));
-
-            for (int chunkCount = 0; chunkCount < 64; chunkCount++)
-            {
-                chunk = worldMap.ReadBytes(chunkSize);
-
-                // Copy the chunk over
-                for (int i = 0; i < chunkSize; i++)
-                {
-                    _worldMapTiles[i % chunkwidth + chunkCount % 8 * chunkwidth,i / chunkwidth + chunkCount / 8 * chunkwidth] = chunk[i];
-                }
-            }
-        }
-
         public void CleanupAndAddFeatures(Random random)
         {
             // Original game only had single tiles in very special circumstances
@@ -713,14 +687,6 @@ namespace U4DosRandomizer
             AddBridges(random, riverCollections);
             AddScrubAndForest(random, riverCollections);
             AddSwamp(random);
-        }
-
-        public void Save(string path)
-        {
-            var file = Path.Combine(path, filename);
-            var worldFile = new System.IO.BinaryWriter(new System.IO.FileStream(file, System.IO.FileMode.OpenOrCreate));
-            WriteMapToOriginalFormat(worldFile);
-            worldFile.Close();
         }
 
         //public void WriteHashes(string path)
@@ -1064,7 +1030,7 @@ namespace U4DosRandomizer
                         prevPoint = currPoint;
                         //int distance = Convert.ToInt32(Math.Sqrt(highestDirection.Item1 * highestDirection.Item1 + highestDirection.Item2 * highestDirection.Item2));
                         int distance = Math.Abs(highestDirection.X != 0 ? highestDirection.X : highestDirection.Y);
-                        currPoint = new Tile(Wrap(currPoint.X + highestDirection.X / distance), Wrap(currPoint.Y + highestDirection.Y / distance), _worldMapTiles);
+                        currPoint = new Tile(Wrap(currPoint.X + highestDirection.X / distance), Wrap(currPoint.Y + highestDirection.Y / distance), _worldMapTiles, v => Wrap(v));
                     }
                     else
                     {
@@ -1111,23 +1077,9 @@ namespace U4DosRandomizer
             return rivers;
         }
 
-        public static bool Between(byte x, int v1, int v2)
-        {
-            if (v1 <= v2)
-            {
-                return x >= v1 && x <= v2;
-            }
-            else
-            {
-                return x >= v1 || x <= v2;
-            }
-
-            //return ((v1 <= v2) && (x >= v1 && x <= v2)) || ((v1 > v2) && (x >= v1 || x <= v2));
-        }
-
         public List<Tile> GetRiverPath(Tile startTile, IsNodeValid matchesGoal)
         {
-            return Search.GetPath(WorldMap.SIZE, WorldMap.SIZE, startTile, matchesGoal, delegate { return true; }, GoDownhillHueristic);
+            return Search.GetPath(WorldMapGenerateMap.SIZE, WorldMapGenerateMap.SIZE, startTile, matchesGoal, delegate { return true; }, GoDownhillHueristic);
         }
 
         public List<Tile> FindAllByPattern(int[,] pattern)
@@ -1152,7 +1104,7 @@ namespace U4DosRandomizer
 
                     if(matchesAll)
                     {
-                        validCoordinates.Add(new Tile(map_x, map_y, _worldMapTiles));
+                        validCoordinates.Add(new Tile(map_x, map_y, _worldMapTiles, v => Wrap(v)));
                     }
                 }
             }
@@ -1161,7 +1113,7 @@ namespace U4DosRandomizer
         }
 
         //public delegate float NodeHuersticValue(Coordinate coord, IsNodeValid matchesGoal);
-        public float GoDownhillHueristic(Tile coord, IsNodeValid matchesGoal)
+        public float GoDownhillHueristic(ITile coord, IsNodeValid matchesGoal)
         {
             if( matchesGoal(coord))
             { 
@@ -1184,7 +1136,7 @@ namespace U4DosRandomizer
             return coordinate.GetTile() < TileInfo.Shallow_Water;
         }
 
-        public HashSet<Tile> GetTilesNear(Tile tile, int distance)
+        public HashSet<Tile> GetTilesNear(ITile tile, int distance)
         {
             var results = new HashSet<Tile>();
             for(int x = -distance; x <= distance; x++)
@@ -1193,14 +1145,14 @@ namespace U4DosRandomizer
                 {
                     int x_res = tile.X + x;
                     int y_res = tile.Y + y;
-                    results.Add(new Tile(x_res, y_res, _worldMapTiles));
+                    results.Add(new Tile(x_res, y_res, _worldMapTiles, v => Wrap(v)));
                 }
             }
 
             return results;
         }
 
-        public List<Tile> GetPathableTilesNear(Tile goal, int distance, Func<Tile, bool> isWalkableGround)
+        public List<Tile> GetPathableTilesNear(ITile goal, int distance, Func<ITile, bool> isWalkableGround)
         {
             var possibleTiles = GetTilesNear(goal, distance);
             var results = new HashSet<Tile>();
@@ -1222,7 +1174,7 @@ namespace U4DosRandomizer
 
                 if (_worldMapTiles[x, y] > tile)
                 {
-                    result = new Tile(x, y, _worldMapTiles);
+                    result = new Tile(x, y, _worldMapTiles, v => Wrap(v));
                 }
             }
 
@@ -1280,7 +1232,7 @@ namespace U4DosRandomizer
                 var randomIdx = random.Next(0, possibleLocations.Count);
                 var selection = possibleLocations[randomIdx];
 
-                var path = Search.GetPath(WorldMap.SIZE, WorldMap.SIZE, selection,
+                var path = Search.GetPath(WorldMapGenerateMap.SIZE, WorldMapGenerateMap.SIZE, selection,
                 c => { return IsWalkableOrSailable(c) || selection.Equals(c); },
                 c => { return ultimaData.Towns.Contains(c); });
 
@@ -1312,7 +1264,7 @@ namespace U4DosRandomizer
 
         private Tile GetRandomCoordinate(Random random)
         {
-            var loc = GetCoordinate(random.Next(0, WorldMap.SIZE), random.Next(0, WorldMap.SIZE));
+            var loc = GetCoordinate(random.Next(0, WorldMapGenerateMap.SIZE), random.Next(0, WorldMapGenerateMap.SIZE));
             return loc;
         }
 
@@ -1354,41 +1306,6 @@ namespace U4DosRandomizer
             return result;
         }
 
-        private static bool IsMatchingTile(Tile coord, List<byte> validTiles)
-        {
-            return validTiles.Contains(coord.GetTile());
-        }
-
-        private static bool IsWalkable(Tile coord)
-        {
-            return (coord.GetTile() >= TileInfo.Swamp && coord.GetTile() <= TileInfo.Hills) || (coord.GetTile() >= TileInfo.Dungeon_Entrance && coord.GetTile() <= TileInfo.Village);
-        }
-
-        private static bool IsWalkableOrSailable(Tile coord)
-        {
-            return (coord.GetTile() >= TileInfo.Swamp && coord.GetTile() <= TileInfo.Hills) || (coord.GetTile() >= TileInfo.Dungeon_Entrance && coord.GetTile() <= TileInfo.Village) || coord.GetTile() == TileInfo.Deep_Water || coord.GetTile() == TileInfo.Medium_Water;
-        }
-
-        private static bool IsGrassOrSailable(Tile coord)
-        {
-            return coord.GetTile() == TileInfo.Grasslands || coord.GetTile() == TileInfo.Deep_Water || coord.GetTile() == TileInfo.Medium_Water;
-        }
-
-        private static bool IsGrass(Tile coord)
-        {
-            return coord.GetTile() == TileInfo.Grasslands;
-        }
-
-        public static byte Wrap(int input)
-        {
-            return Wrap(input, SIZE);
-        }
-
-        public static byte Wrap(int input, int divisor)
-        {
-            return Convert.ToByte((input % divisor + divisor) % divisor);
-        }
-
         static private Dictionary<byte, double> _percentInMap = new Dictionary<byte, double>()
         {
             {TileInfo.Deep_Water,0.519012451171875},
@@ -1415,61 +1332,5 @@ namespace U4DosRandomizer
             //Lava{76,0.001068115234375}
         };
 
-        public void WriteMapToOriginalFormat(System.IO.BinaryWriter worldFile)
-        {
-            int chunkwidth = 32;
-            int chunkSize = chunkwidth * chunkwidth;
-            byte[] chunk = new byte[chunkSize];
-
-            for (int chunkCount = 0; chunkCount < 64; chunkCount++)
-            {
-                // Copy the chunk over
-                for (int i = 0; i < chunkSize; i++)
-                {
-                    chunk[i] = _worldMapTiles[i % chunkwidth + chunkCount % 8 * chunkwidth, i / chunkwidth + chunkCount / 8 * chunkwidth];
-                }
-
-                worldFile.Write(chunk);
-            }
-        }
-
-        public SixLabors.ImageSharp.Image ToImage()
-        {
-            var image = new SixLabors.ImageSharp.Image<Rgba32>(WorldMap.SIZE, WorldMap.SIZE);
-            for (int y = 0; y < WorldMap.SIZE; y++)
-            {
-                Span<Rgba32> pixelRowSpan = image.GetPixelRowSpan(y);
-                for (int x = 0; x < WorldMap.SIZE; x++)
-                {
-                    if (colorMap.ContainsKey(_worldMapTiles[x, y]))
-                    {
-                        pixelRowSpan[x] = colorMap[_worldMapTiles[x, y]];
-                    }
-                    else
-                    {
-                        pixelRowSpan[x] = SixLabors.ImageSharp.Color.White;
-                    }
-
-                }
-            }
-
-            return image;
-        }
-
-        static private Dictionary<byte, SixLabors.ImageSharp.Color> colorMap = new Dictionary<byte, SixLabors.ImageSharp.Color>()
-        {
-            {TileInfo.Deep_Water, SixLabors.ImageSharp.Color.FromRgb(0, 0, 112) },
-            {TileInfo.Medium_Water, SixLabors.ImageSharp.Color.FromRgb(20,20,112) },
-            {TileInfo.Shallow_Water, SixLabors.ImageSharp.Color.FromRgb(60,60,112) },
-            {TileInfo.Swamp, SixLabors.ImageSharp.Color.FromRgb(112, 0, 112) },
-            {TileInfo.Grasslands, SixLabors.ImageSharp.Color.FromRgb(18, 112+18, 18) },
-            {TileInfo.Scrubland, SixLabors.ImageSharp.Color.FromRgb(68, 112+68, 68) },
-            {TileInfo.Forest, SixLabors.ImageSharp.Color.FromRgb(108,112+108,108) },
-            {TileInfo.Hills, SixLabors.ImageSharp.Color.FromRgb(112+45,112+45,112+45) },
-            {TileInfo.Mountains, SixLabors.ImageSharp.Color.FromRgb(112+15,112+15,112+15) },
-            {TileInfo.Fire_Field, SixLabors.ImageSharp.Color.Orange },
-            {TileInfo.Lava_Flow, SixLabors.ImageSharp.Color.Red },
-            //{TileInfo.Slime_2, SixLabors.ImageSharp.Color.Purple },
-        };
     }
 }

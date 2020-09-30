@@ -11,8 +11,11 @@ namespace U4DosRandomizer
         public AvatarOffsetsNew(byte[] avatarBytes, string originalFile)
         {
             // Check offsets
-            var avatarStream = new System.IO.FileStream(originalFile, System.IO.FileMode.Open);
-            var originalAvatarBytes = avatarStream.ReadAllBytes();
+            byte[] originalAvatarBytes = null;
+            using (var avatarStream = new System.IO.FileStream(originalFile, System.IO.FileMode.Open))
+            {
+                originalAvatarBytes = avatarStream.ReadAllBytes();
+            }
 
             var originalOffsets = new AvatarOffsetsOriginal();
 
