@@ -19,11 +19,12 @@ jobs:
         with:
           dotnet-version: 3.1.301
       - name: Install dependencies
-        run: dotnet restore
+        run: dotnet restore ./U4DosRandomizer/U4DosRandomizer.csproj
+        run: dotnet restore ./U4DosRandomizer.UnitTests/U4DosRandomizer.UnitTests.csproj
       - name: Build
-        run: dotnet build --configuration Release --no-restore
+        run: dotnet build ./U4DosRandomizer/U4DosRandomizer.csproj --configuration Release --no-restore
       - name: Test
-        run: dotnet test --no-restore --verbosity normal
+        run: dotnet test ./U4DosRandomizer.UnitTests/U4DosRandomizer.UnitTests.csproj --no-restore --verbosity normal
       - name: Publish
         run: |
           dotnet publish ./U4DosRandomizer/U4DosRandomizer.csproj -c Release -f netcoreapp3.1 -r win-x86 -p:PublishTrimmed=true --self-contained true -p:PublishSingleFile=true -o output
