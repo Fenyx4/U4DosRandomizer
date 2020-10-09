@@ -18,7 +18,7 @@ jobs:
       with:
         dotnet-version: 3.1.301
     - name: Install dependencies
-      run: dotnet restore
+      run: dotnet restore U4DosRandomizer/U4DosRandomizer.csproj
     - name: Build
       run: dotnet build U4DosRandomizer/U4DosRandomizer.csproj --configuration Release --no-restore
     - name: Test
