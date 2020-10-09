@@ -7,6 +7,8 @@ namespace U4DosRandomizer
     public interface ITile : ICoordinate
     {
         byte GetTile();
-        IEnumerable<Tile> NeighborAndAdjacentCoordinates();
+        void SetTile(byte tile);
+        IEnumerable<ITile> NeighborAndAdjacentCoordinates();
+        IEnumerable<ITile> NeighborCoordinates();
     }
 }

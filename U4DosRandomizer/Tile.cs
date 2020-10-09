@@ -50,7 +50,7 @@ namespace U4DosRandomizer
 				return X == ((Tile)obj).X && Y == ((Tile)obj).Y && Tiles == ((Tile)obj).Tiles;
 		}
 
-		public IEnumerable<Tile> NeighborCoordinates()
+		public IEnumerable<ITile> NeighborCoordinates()
 		{
 			Tile[] neighbors = new Tile[4];
 			neighbors[0] = new Tile(X - 1, Y, Tiles, _wrapper);
@@ -61,7 +61,7 @@ namespace U4DosRandomizer
 			return neighbors;
 		}
 
-		public IEnumerable<Tile> NeighborAndAdjacentCoordinates()
+		public IEnumerable<ITile> NeighborAndAdjacentCoordinates()
 		{
 			Tile[] neighbors = new Tile[8];
 			neighbors[0] = new Tile(X - 1, Y, Tiles, _wrapper);

@@ -66,15 +66,18 @@ namespace U4DosRandomizer
 
 		public override bool Equals(Object obj)
 		{
-			return _current.Equals(obj);
+			if (obj == null || !(obj is ITile))
+				return false;
+			else
+				return X == ((ITile)obj).X && Y == ((ITile)obj).Y;
 		}
 
-		public IEnumerable<Tile> NeighborCoordinates()
+		public IEnumerable<ITile> NeighborCoordinates()
 		{
 			return _current.NeighborCoordinates();
 		}
 
-		public IEnumerable<Tile> NeighborAndAdjacentCoordinates()
+		public IEnumerable<ITile> NeighborAndAdjacentCoordinates()
 		{
 			return _current.NeighborAndAdjacentCoordinates();
 		}

@@ -28,14 +28,23 @@ namespace U4DosRandomizer
 		byte ITile.GetTile()
 		{
 			return _coord.GetTile();
-
 		}
 
-        public IEnumerable<Tile> NeighborAndAdjacentCoordinates()
+		void ITile.SetTile(byte tile)
+		{
+			_coord.SetTile(tile);
+		}
+
+		public IEnumerable<ITile> NeighborAndAdjacentCoordinates()
         {
 			return _coord.NeighborAndAdjacentCoordinates();
         }
 
-        #endregion
-    }
+		public IEnumerable<ITile> NeighborCoordinates()
+		{
+			return _coord.NeighborCoordinates();
+		}
+
+		#endregion
+	}
 }

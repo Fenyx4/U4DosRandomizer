@@ -43,6 +43,42 @@ namespace U4DosRandomizer
             }
         }
 
+        //https://stackoverflow.com/questions/3041366/shortest-distance-between-points-on-a-toroidally-wrapped-x-and-y-wrapping-ma
+        public int DistanceSquared(ICoordinate destination, ICoordinate origin)
+        {
+            var deltaX = Math.Abs(destination.X - origin.X);
+            if (deltaX > SIZE / 2)
+            {
+                deltaX = SIZE - deltaX;
+            }
+            var deltaY = Math.Abs(destination.Y - origin.Y);
+            if (deltaY > SIZE / 2)
+            {
+                deltaY = SIZE - deltaY;
+            }
+            var distanceSquared = (deltaX * deltaX + deltaY * deltaY);
+
+            return distanceSquared;
+        }
+
+        public List<ITile> GetAllMatchingTiles(Func<Tile, bool> criteria, int minX = 0, int maxX = SIZE, int minY = 0, int maxY = SIZE)
+        {
+            var tiles = new List<ITile>();
+            for (int x = minX; x < maxX; x++)
+            {
+                for (int y = minX; y < maxX; y++)
+                {
+                    var tile = GetCoordinate(x, y);
+                    if (criteria(tile))
+                    {
+                        tiles.Add(tile);
+                    }
+                }
+            }
+
+            return tiles;
+        }
+
         public static bool IsMatchingTile(ITile coord, List<byte> validTiles)
         {
             return validTiles.Contains(coord.GetTile());
@@ -51,6 +87,11 @@ namespace U4DosRandomizer
         public static bool IsWalkable(ITile coord)
         {
             return (coord.GetTile() >= TileInfo.Swamp && coord.GetTile() <= TileInfo.Hills) || (coord.GetTile() >= TileInfo.Dungeon_Entrance && coord.GetTile() <= TileInfo.Village);
+        }
+
+        public bool IsWalkable(byte x, byte y)
+        {
+            return IsWalkable(GetCoordinate(x, y));
         }
 
         public static bool IsWalkableOrSailable(ITile coord)
@@ -135,5 +176,19 @@ namespace U4DosRandomizer
             {TileInfo.Lava_Flow, SixLabors.ImageSharp.Color.Red },
             //{TileInfo.Slime_2, SixLabors.ImageSharp.Color.Purple },
         };
+
+        public byte[,] ToArray()
+        {
+            byte[,] copy = new byte[SIZE, SIZE];
+            for(int x = 0; x < SIZE; x++)
+            {
+                for(int y = 0; y < SIZE; y++)
+                {
+                    copy[x, y] = _worldMapTiles[x, y];
+                }
+            }
+
+            return copy;
+        }
     }
 }

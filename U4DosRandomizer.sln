@@ -17,7 +17,9 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".github", ".github", "{2840
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "U4DosRandomizer.Benchmarks", "U4DosRandomizer.Benchmarks\U4DosRandomizer.Benchmarks.csproj", "{2469CC0F-63BC-44CC-BE1D-8315D6B3247D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "U4DosRandomizer.Patcher", "U4DosRandomizer.Patcher\U4DosRandomizer.Patcher.csproj", "{A6D09746-63C6-4853-9F12-6844B46ABDEC}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "U4DosRandomizer.Patcher", "U4DosRandomizer.Patcher\U4DosRandomizer.Patcher.csproj", "{A6D09746-63C6-4853-9F12-6844B46ABDEC}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "U4Randomizer.Visualizer", "U4Randomizer.Visualizer\U4Randomizer.Visualizer.csproj", "{A4206EBD-CC3D-431A-A6A6-254C21A71098}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -41,6 +43,10 @@ Global
 		{A6D09746-63C6-4853-9F12-6844B46ABDEC}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A6D09746-63C6-4853-9F12-6844B46ABDEC}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A6D09746-63C6-4853-9F12-6844B46ABDEC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A4206EBD-CC3D-431A-A6A6-254C21A71098}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A4206EBD-CC3D-431A-A6A6-254C21A71098}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A4206EBD-CC3D-431A-A6A6-254C21A71098}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A4206EBD-CC3D-431A-A6A6-254C21A71098}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

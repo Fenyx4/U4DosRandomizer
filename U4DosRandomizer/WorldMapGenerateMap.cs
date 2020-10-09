@@ -16,6 +16,9 @@ namespace U4DosRandomizer
         private double _generatedMin;
         private double _generatedMax;
 
+        private List<ITile> excludeLocations = new List<ITile>();
+        private List<ITile> usedLocations = new List<ITile>();
+
         public WorldMapGenerateMap()
         { 
         }
@@ -118,24 +121,6 @@ namespace U4DosRandomizer
         {
             var file = Path.Combine(path, filename);
             FileHelper.Restore(file);
-        }
-
-        public List<Tile> GetAllMatchingTiles(Func<Tile, bool> criteria, int minX = 0, int maxX = SIZE, int minY = 0, int maxY = SIZE)
-        {
-            var tiles = new List<Tile>();
-            for (int x = minX; x < maxX; x++)
-            {
-                for(int y = minX; y < maxX; y++)
-                {
-                    var tile = GetCoordinate(x, y);
-                    if(criteria(tile))
-                    {
-                        tiles.Add(tile);
-                    }
-                }
-            }
-
-            return tiles;
         }
 
         private byte[,] ScrubMap(Random random)
@@ -242,24 +227,6 @@ namespace U4DosRandomizer
             return _worldMapTiles[Wrap(x), Wrap(y)] == tile;
         }
 
-        //https://stackoverflow.com/questions/3041366/shortest-distance-between-points-on-a-toroidally-wrapped-x-and-y-wrapping-ma
-        public static int DistanceSquared(ICoordinate destination, ICoordinate origin)
-        {
-            var deltaX = Math.Abs(destination.X - origin.X);
-            if(deltaX > SIZE/2)
-            {
-                deltaX = SIZE - deltaX;
-            }
-            var deltaY = Math.Abs(destination.Y - origin.Y);
-            if (deltaY > SIZE / 2)
-            {
-                deltaY = SIZE - deltaY;
-            }
-            var distanceSquared = (deltaX * deltaX + deltaY * deltaY);
-
-            return distanceSquared;
-        }
-
         public override void Load(string path, int mapSeed, Random mapGeneratorSeed, Random randomMap)
         {
             var file = Path.Combine(path, filename);
@@ -288,14 +255,13 @@ namespace U4DosRandomizer
         public override void Randomize(UltimaData ultimaData, Random randomLocations, Random randomItems)
         {
             //Completely random location placements of buildings still. Just trying to make sure I'm editing the files correctly right now. Not looking for a cohesive map that makes sense.
-            var exclude = RandomizeLocations(ultimaData, randomLocations);
+            RandomizeLocations(ultimaData, randomLocations);
 
-            RandomizeItems(ultimaData, randomItems, exclude);
+            RandomizeItems(ultimaData, randomItems);
         }
 
-        private List<Tile> RandomizeLocations(UltimaData ultimaData, Random random)
+        private void RandomizeLocations(UltimaData ultimaData, Random random)
         {
-            var excludeLocations = new List<Tile>();
             // Lay down Stygian Abyss first so it doesn't stomp on other things
             // TODO: Make the entrance to the Abyss more random instead of laying down what is in the base game
             // Find a reasonable mountainous area
@@ -358,24 +324,29 @@ namespace U4DosRandomizer
             // Buildings
             possibleLocations = GetAllMatchingTiles(WorldMapGenerateMap.IsWalkableGround);
             possibleLocations.RemoveAll(c => excludeLocations.Contains(c));
+            List<ITile> evenlyDistributedLocations = GetEvenlyDistributedValidLocations(random, 8, usedLocations, possibleLocations, ultimaData, false);
+            possibleLocations = possibleLocations.Except(evenlyDistributedLocations).ToList();
 
             // Towns
-            Tile loc = null;
+            ITile loc = null;
             for (int i = 0; i < 7; i++)
             {
-                loc = RandomSelectFromListCheckPathChangeAndRemove(random, possibleLocations, TileInfo.Town, ultimaData, false);
+                loc = RandomSelectFromListCheckPathChangeAndRemove(random, evenlyDistributedLocations, TileInfo.Town);
                 ultimaData.Towns[i].X = loc.X;
                 ultimaData.Towns[i].Y = loc.Y;
-
+                usedLocations.Add(ultimaData.Towns[i]);
             }
-            loc = RandomSelectFromListCheckPathChangeAndRemove(random, possibleLocations, TileInfo.Ruins, ultimaData, false); // Magincia
+            loc = RandomSelectFromListCheckPathChangeAndRemove(random, evenlyDistributedLocations, TileInfo.Ruins); // Magincia
             ultimaData.Towns[7].X = loc.X;
             ultimaData.Towns[7].Y = loc.Y;
 
             // Castles
+            var numLocations = 4 + ultimaData.Castles.Count + ultimaData.Shrines.Count - 1;
+            evenlyDistributedLocations = GetEvenlyDistributedValidLocations(random, numLocations, usedLocations, possibleLocations, ultimaData, true);
+            possibleLocations = possibleLocations.Except(evenlyDistributedLocations).ToList();
             for (int i = 0; i < 3; i++)
             {
-                loc = RandomSelectFromListCheckPathChangeAndRemove(random, possibleLocations, TileInfo.Castle, ultimaData);
+                loc = RandomSelectFromListCheckPathChangeAndRemove(random, evenlyDistributedLocations, TileInfo.Castle);
                 ultimaData.Castles[i].X = loc.X;
                 ultimaData.Castles[i].Y = loc.Y;
             }
@@ -383,7 +354,7 @@ namespace U4DosRandomizer
             // Villages
             for (int i = 0; i < 4; i++)
             {
-                loc = RandomSelectFromListCheckPathChangeAndRemove(random, possibleLocations, TileInfo.Village, ultimaData);
+                loc = RandomSelectFromListCheckPathChangeAndRemove(random, evenlyDistributedLocations, TileInfo.Village);
                 ultimaData.Towns[i+8].X = loc.X;
                 ultimaData.Towns[i+8].Y = loc.Y;
             }
@@ -397,7 +368,7 @@ namespace U4DosRandomizer
                 }
                 else
                 {
-                    loc = RandomSelectFromListCheckPathChangeAndRemove(random, possibleLocations, TileInfo.Shrine, ultimaData);
+                    loc = RandomSelectFromListCheckPathChangeAndRemove(random, evenlyDistributedLocations, TileInfo.Shrine);
                     ultimaData.Shrines[i].X = loc.X;
                     ultimaData.Shrines[i].Y = loc.Y;
                 }
@@ -425,11 +396,11 @@ namespace U4DosRandomizer
             ultimaData.BlinkExclusion2Y2 = ultimaData.DaemonSpawnY2;
 
             // Moongates
-            List<Tile> path = new List<Tile>();
+            List<ITile> path = new List<ITile>();
             List<byte> validTiles = new List<byte>() { TileInfo.Grasslands, TileInfo.Scrubland, TileInfo.Swamp, TileInfo.Forest, TileInfo.Hills };
             for (int i = 0; i < 8; i++)
             {
-                path = new List<Tile>();
+                path = new List<ITile>();
                 var distance = random.Next(5, 10);
                 while (path.Count == 0 && distance > 0)
                 {
@@ -466,7 +437,7 @@ namespace U4DosRandomizer
                     possibleLocations = GetAllMatchingTiles(IsGrass);
                     possibleLocations.RemoveAll(c => excludeLocations.Contains(c));
 
-                    loc = RandomSelectFromListCheckPathChangeAndRemove(random, possibleLocations, TileInfo.Grasslands, ultimaData, false);
+                    loc = RandomSelectFromListCheckPathChangeAndRemove(random, possibleLocations, TileInfo.Grasslands);
                     ultimaData.Moongates[i].X = loc.X;
                     ultimaData.Moongates[i].Y = loc.Y;
                 }
@@ -481,7 +452,7 @@ namespace U4DosRandomizer
                 Tile lcbWestSide = GetCoordinate(lcb.X - 1, lcb.Y);
                 Tile lcbEastSide = GetCoordinate(lcb.X + 1, lcb.Y);
 
-                path = new List<Tile>();
+                path = new List<ITile>();
                 if (IsWalkableGround(lcb) && IsWalkableGround(lcbEntrance) && !excludeLocations.Contains(lcb))
                 {
                     path = Search.GetPath(SIZE, SIZE, lcbEntrance,
@@ -512,9 +483,11 @@ namespace U4DosRandomizer
             coord => { return IsGrass(coord) || coord.GetTile() == TileInfo.Deep_Water; },
             IsWalkableOrSailable).Count > 0);
             possibleLocations.RemoveAll(c => excludeLocations.Contains(c));
+            evenlyDistributedLocations = GetEvenlyDistributedValidLocations(random, 8, usedLocations, possibleLocations, ultimaData, false);
+            possibleLocations = possibleLocations.Except(evenlyDistributedLocations).ToList();
             for (int i = 0; i < 6; i++)
             {
-                loc = RandomSelectFromListCheckPathChangeAndRemove(random, possibleLocations, TileInfo.Dungeon_Entrance, ultimaData);
+                loc = RandomSelectFromListCheckPathChangeAndRemove(random, evenlyDistributedLocations, TileInfo.Dungeon_Entrance);
                 ultimaData.Dungeons[i].X = loc.X;
                 ultimaData.Dungeons[i].Y = loc.Y;
             }
@@ -523,7 +496,7 @@ namespace U4DosRandomizer
             // TODO: Hythloth prettier
             possibleLocations = GetAllMatchingTiles(c => AreaIsAll(TileInfo.Mountains, 4, c));
 
-            path = new List<Tile>();
+            path = new List<ITile>();
             while (path.Count == 0)
             {
                 loc = possibleLocations[random.Next(0, possibleLocations.Count)];
@@ -594,60 +567,73 @@ namespace U4DosRandomizer
             loc = GetRandomCoordinate(random, c => c.GetTile() == TileInfo.Deep_Water, excludeLocations);
             ultimaData.WhirlpoolExit = new Coordinate(loc.X, loc.Y);
 
-            return excludeLocations;
+            return;
         }
 
-        private void RandomizeItems(UltimaData ultimaData, Random random, List<Tile> exclude)
+        private void RandomizeItems(UltimaData ultimaData, Random random)
         {
-            Tile loc = null;// RandomizeLocation(random, TileInfo.Swamp, worldMap, WorldMap.IsWalkableGround, exclude);
+            ITile loc = null;// RandomizeLocation(random, TileInfo.Swamp, worldMap, WorldMap.IsWalkableGround, exclude);
             var possibleLocations = GetAllMatchingTiles(IsWalkableGround);
-            possibleLocations.RemoveAll(c => exclude.Contains(c));
-            loc = RandomSelectFromListCheckPathChangeAndRemove(random, possibleLocations, TileInfo.Swamp, ultimaData);
+            possibleLocations.RemoveAll(c => excludeLocations.Contains(c));
+            List<ITile> evenlyDistributedLocations = GetEvenlyDistributedValidLocations(random, 2, usedLocations, possibleLocations, ultimaData, true);
+            possibleLocations = possibleLocations.Except(evenlyDistributedLocations).ToList();
+
+            loc = RandomSelectFromListCheckPathChangeAndRemove(random, evenlyDistributedLocations, TileInfo.Swamp);
             ultimaData.Items[ultimaData.ITEM_MANDRAKE].X = loc.X;
             ultimaData.Items[ultimaData.ITEM_MANDRAKE].Y = loc.Y;
-            exclude.Add(loc);
+            excludeLocations.Add(loc);
 
-            loc = RandomSelectFromListCheckPathChangeAndRemove(random, possibleLocations, null, ultimaData);
+            loc = RandomSelectFromListCheckPathChangeAndRemove(random, evenlyDistributedLocations, null);
             ultimaData.Items[ultimaData.ITEM_HORN].X = loc.X;
             ultimaData.Items[ultimaData.ITEM_HORN].Y = loc.Y;
-            exclude.Add(loc);
+            excludeLocations.Add(loc);
 
             possibleLocations = GetAllMatchingTiles(c => c.GetTile() == TileInfo.Swamp);
-            possibleLocations.RemoveAll(c => exclude.Contains(c));
-            loc = RandomSelectFromListCheckPathChangeAndRemove(random, possibleLocations, TileInfo.Swamp, ultimaData);
+            possibleLocations.RemoveAll(c => excludeLocations.Contains(c));
+            evenlyDistributedLocations = GetEvenlyDistributedValidLocations(random, 1, usedLocations, possibleLocations, ultimaData, true);
+            possibleLocations = possibleLocations.Except(evenlyDistributedLocations).ToList();
+            loc = RandomSelectFromListCheckPathChangeAndRemove(random, evenlyDistributedLocations, TileInfo.Swamp);
             ultimaData.Items[ultimaData.ITEM_MANDRAKE2].X = loc.X;
             ultimaData.Items[ultimaData.ITEM_MANDRAKE2].Y = loc.Y;
-            exclude.Add(loc);
+            excludeLocations.Add(loc);
 
             possibleLocations = GetAllMatchingTiles(c => c.GetTile() == TileInfo.Forest);
-            possibleLocations.RemoveAll(c => exclude.Contains(c));
-            loc = RandomSelectFromListCheckPathChangeAndRemove(random, possibleLocations, TileInfo.Forest, ultimaData);
+            possibleLocations.RemoveAll(c => excludeLocations.Contains(c));
+            evenlyDistributedLocations = GetEvenlyDistributedValidLocations(random, 2, usedLocations, possibleLocations, ultimaData, true);
+            possibleLocations = possibleLocations.Except(evenlyDistributedLocations).ToList();
+            loc = RandomSelectFromListCheckPathChangeAndRemove(random, evenlyDistributedLocations, TileInfo.Forest);
             ultimaData.Items[ultimaData.ITEM_NIGHTSHADE].X = loc.X;
             ultimaData.Items[ultimaData.ITEM_NIGHTSHADE].Y = loc.Y;
-            exclude.Add(loc);
+            excludeLocations.Add(loc);
 
-            loc = RandomSelectFromListCheckPathChangeAndRemove(random, possibleLocations, TileInfo.Forest, ultimaData);
+            loc = RandomSelectFromListCheckPathChangeAndRemove(random, evenlyDistributedLocations, TileInfo.Forest);
             ultimaData.Items[ultimaData.ITEM_NIGHTSHADE2].X = loc.X;
             ultimaData.Items[ultimaData.ITEM_NIGHTSHADE2].Y = loc.Y;
-            exclude.Add(loc);
+            excludeLocations.Add(loc);
 
-            possibleLocations = GetAllMatchingTiles(c => AreaIsAll(TileInfo.Deep_Water, 14, c) && !exclude.Contains(c));
-            loc = possibleLocations[random.Next(0, possibleLocations.Count)];
+            possibleLocations = GetAllMatchingTiles(c => AreaIsAll(TileInfo.Deep_Water, 14, c) && !excludeLocations.Contains(c));
+            evenlyDistributedLocations = GetEvenlyDistributedValidLocations(random, 1, usedLocations, possibleLocations, ultimaData, true);
+            possibleLocations = possibleLocations.Except(evenlyDistributedLocations).ToList();
+            loc = evenlyDistributedLocations[0];
             ultimaData.Items[ultimaData.ITEM_SKULL].X = loc.X;
             ultimaData.Items[ultimaData.ITEM_SKULL].Y = loc.Y;
             ApplyShape(loc, "skull");
-            exclude.Add(loc);
+            excludeLocations.Add(loc);
 
-            possibleLocations = GetAllMatchingTiles(c => AreaIsAll(TileInfo.Deep_Water, 7, c) && !exclude.Contains(c));
-            loc = possibleLocations[random.Next(0, possibleLocations.Count)];
+            possibleLocations = GetAllMatchingTiles(c => AreaIsAll(TileInfo.Deep_Water, 7, c) && !excludeLocations.Contains(c));
+            evenlyDistributedLocations = GetEvenlyDistributedValidLocations(random, 1, usedLocations, possibleLocations, ultimaData, true);
+            possibleLocations = possibleLocations.Except(evenlyDistributedLocations).ToList();
+            loc = evenlyDistributedLocations[0];
             ultimaData.Items[ultimaData.ITEM_BELL].X = loc.X;
             ultimaData.Items[ultimaData.ITEM_BELL].Y = loc.Y;
             ApplyShape(loc, "bell");
-            exclude.Add(loc);
+            excludeLocations.Add(loc);
 
             // TODO Put in ocean
-            possibleLocations = GetAllMatchingTiles(c => c.GetTile() == TileInfo.Deep_Water && !exclude.Contains(c));
-            loc = possibleLocations[random.Next(0, possibleLocations.Count)];
+            possibleLocations = GetAllMatchingTiles(c => c.GetTile() == TileInfo.Deep_Water && !excludeLocations.Contains(c));
+            evenlyDistributedLocations = GetEvenlyDistributedValidLocations(random, 1, usedLocations, possibleLocations, ultimaData, true);
+            possibleLocations = possibleLocations.Except(evenlyDistributedLocations).ToList();
+            loc = evenlyDistributedLocations[0];
             ultimaData.Items[ultimaData.ITEM_WHEEL].X = loc.X;
             ultimaData.Items[ultimaData.ITEM_WHEEL].Y = loc.Y;
 
@@ -656,7 +642,7 @@ namespace U4DosRandomizer
             ultimaData.Items[ultimaData.ITEM_BLACK_STONE].Y = ultimaData.Moongates[0].Y;
 
             // White stone
-            possibleLocations = GetAllMatchingTiles(c => AreaIsAll(TileInfo.Mountains, 4, c) && !exclude.Contains(c));
+            possibleLocations = GetAllMatchingTiles(c => AreaIsAll(TileInfo.Mountains, 4, c) && !excludeLocations.Contains(c));
             loc = possibleLocations[random.Next(0, possibleLocations.Count)];
             ultimaData.Items[ultimaData.ITEM_WHITE_STONE].X = Convert.ToByte(loc.X - 1);
             ultimaData.Items[ultimaData.ITEM_WHITE_STONE].Y = loc.Y;
@@ -668,7 +654,7 @@ namespace U4DosRandomizer
             // Original game only had single tiles in very special circumstances
             RemoveSingleTiles();
             var rivers = AddRivers(random);
-            Dictionary<Tile, List<River>> collectionOfRiversWithSameMouth = new Dictionary<Tile, List<River>>();
+            Dictionary<ITile, List<River>> collectionOfRiversWithSameMouth = new Dictionary<ITile, List<River>>();
 
             foreach (var river in rivers)
             {
@@ -786,17 +772,17 @@ namespace U4DosRandomizer
         private void FindOcean()
         {
             // Find Ocean
-            var bodiesOfWater = new List<List<Tile>>();
-            var closedSet = new HashSet<Tile>();
+            var bodiesOfWater = new List<List<ITile>>();
+            var closedSet = new HashSet<ITile>();
             for (int x = 0; x < SIZE; x++)
             {
                 for (int y = 0; y < SIZE; y++)
                 {
-                    var tile = GetCoordinate(x, y);
+                    ITile tile = GetCoordinate(x, y);
                     if (!closedSet.Contains(tile) && (tile.GetTile() == TileInfo.Deep_Water || tile.GetTile() == TileInfo.Medium_Water) )
                     {
-                        var bodyOfWater = new List<Tile>();
-                        var queue = new Queue<Tile>();
+                        var bodyOfWater = new List<ITile>();
+                        var queue = new Queue<ITile>();
                         queue.Enqueue(tile);
                         while (queue.Count() > 0)
                         {
@@ -836,8 +822,8 @@ namespace U4DosRandomizer
             // Add to Rivers
             foreach(var riverCollection in rivers)
             {
-                var openSet = new HashSet<Tile>();
-                var queue = new Queue<Tuple<Tile, int>>();
+                var openSet = new HashSet<ITile>();
+                var queue = new Queue<Tuple<ITile, int>>();
                 foreach (var river in riverCollection)
                 {
                     //foreach(var tile in river.Path)
@@ -846,13 +832,13 @@ namespace U4DosRandomizer
                         if (!openSet.Contains(river.Path[i]))
                         {
                             openSet.Add(river.Path[i]);
-                            queue.Enqueue(new Tuple<Tile,int>(river.Path[i], 0));
+                            queue.Enqueue(new Tuple<ITile,int>(river.Path[i], 0));
                         }
                     }
                 }
 
-                var finalSet = new HashSet<Tile>();
-                var closedSet = new HashSet<Tile>();
+                var finalSet = new HashSet<ITile>();
+                var closedSet = new HashSet<ITile>();
 
                 while(openSet.Count > 0)
                 {
@@ -872,7 +858,7 @@ namespace U4DosRandomizer
                                     {
                                         finalSet.Add(neighbor);
                                         openSet.Add(neighbor);
-                                        queue.Enqueue(new Tuple<Tile, int>(neighbor, current.Item2 + 1));
+                                        queue.Enqueue(new Tuple<ITile, int>(neighbor, current.Item2 + 1));
                                     }
                                 }
                             }
@@ -1046,7 +1032,7 @@ namespace U4DosRandomizer
             foreach (var highPoint in highPoints)
             {
                 // find shortest path
-                List<Tile> path = GetRiverPath(highPoint, IsCoordinateWater);
+                List<ITile> path = GetRiverPath(highPoint, IsCoordinateWater);
                 path.RemoveAt(path.Count() - 1);
                 var river = new River();
                 river.Path = path;
@@ -1077,7 +1063,7 @@ namespace U4DosRandomizer
             return rivers;
         }
 
-        public List<Tile> GetRiverPath(Tile startTile, IsNodeValid matchesGoal)
+        public List<ITile> GetRiverPath(ITile startTile, IsNodeValid matchesGoal)
         {
             return Search.GetPath(WorldMapGenerateMap.SIZE, WorldMapGenerateMap.SIZE, startTile, matchesGoal, delegate { return true; }, GoDownhillHueristic);
         }
@@ -1136,9 +1122,9 @@ namespace U4DosRandomizer
             return coordinate.GetTile() < TileInfo.Shallow_Water;
         }
 
-        public HashSet<Tile> GetTilesNear(ITile tile, int distance)
+        public HashSet<ITile> GetTilesNear(ITile tile, int distance)
         {
-            var results = new HashSet<Tile>();
+            var results = new HashSet<ITile>();
             for(int x = -distance; x <= distance; x++)
             {
                 for (int y = -distance; y <= distance; y++)
@@ -1152,11 +1138,10 @@ namespace U4DosRandomizer
             return results;
         }
 
-        public List<Tile> GetPathableTilesNear(ITile goal, int distance, Func<ITile, bool> isWalkableGround)
+        public List<ITile> GetPathableTilesNear(ITile goal, int distance, Func<ITile, bool> isWalkableGround)
         {
             var possibleTiles = GetTilesNear(goal, distance);
-            var results = new HashSet<Tile>();
-            var pathableSet = new HashSet<Tile>();
+            var results = new HashSet<ITile>();
 
             results = Search.GetSuccessfulPaths(SIZE, SIZE, goal, possibleTiles, c => { return isWalkableGround(c); });
 
@@ -1224,26 +1209,92 @@ namespace U4DosRandomizer
             }
         }
 
-        private static Tile RandomSelectFromListCheckPathChangeAndRemove(Random random, List<Tile> possibleLocations, byte? tile, UltimaData ultimaData, bool requirePath = true)
+        private List<ITile> GetEvenlyDistributedValidLocations(Random random, int totalResults, List<ITile> usedLocations, List<ITile> possibleLocations, UltimaData ultimaData, bool requirePath)
         {
-            Tile loc = null;
+            var numCandidates = 10;
+            var results = new List<ITile>();
+
+            var randomIdx = random.Next(0, possibleLocations.Count);
+            var original = possibleLocations[randomIdx];
+
+            results.Add(original);
+            usedLocations.Add(original);
+
+            for (int i = 0; i < totalResults; i++)
+            {
+                ITile bestCandidate = null;
+                var bestDistance = 0;
+                for (int sample = 0; sample < numCandidates; sample++)
+                {
+                    randomIdx = random.Next(0, possibleLocations.Count);
+                    ITile selection = null; // possibleLocations[randomIdx];
+                    if(requirePath)
+                    {
+                        while(selection == null)
+                        {
+                            selection = possibleLocations[randomIdx];
+                            var path = Search.GetPath(WorldMapGenerateMap.SIZE, WorldMapGenerateMap.SIZE, selection,
+                            c => { return IsWalkableOrSailable(c) || selection.Equals(c); },
+                            c => { return ultimaData.Towns.Contains(c); });
+
+                            if (path.Count == 0)
+                            {
+                                selection = null;
+                            }
+                        }
+                    }
+                    else
+                    {
+                        selection = possibleLocations[randomIdx];
+                    }
+
+                    var distance = DistanceSquared(FindClosest(selection, usedLocations), selection);
+
+                    if (distance > bestDistance)
+                    {
+                        bestDistance = distance;
+                        bestCandidate = selection;
+                    }
+                }
+
+                var result = bestCandidate;
+                results.Add(result);
+                usedLocations.Add(result);
+            }
+
+            return results;
+        }
+
+        private ICoordinate FindClosest(ITile selection, List<ITile> locations)
+        {
+            ITile closest = null;
+            var closestDistance = int.MaxValue;
+            for (int i = 0; i < locations.Count(); i++)
+            {
+                var distance = DistanceSquared(selection, locations[i]);
+                if (distance > 0 && distance < closestDistance)
+                {
+                    closest = locations[i];
+                    closestDistance = distance;
+                }
+            }
+
+            return closest;
+        }
+
+        private static ITile RandomSelectFromListCheckPathChangeAndRemove(Random random, List<ITile> possibleLocations, byte? tile)
+        {
+            ITile loc = null;
             while (loc == null && possibleLocations.Count > 0)
             {
                 var randomIdx = random.Next(0, possibleLocations.Count);
-                var selection = possibleLocations[randomIdx];
+                loc = possibleLocations[randomIdx];
 
-                var path = Search.GetPath(WorldMapGenerateMap.SIZE, WorldMapGenerateMap.SIZE, selection,
-                c => { return IsWalkableOrSailable(c) || selection.Equals(c); },
-                c => { return ultimaData.Towns.Contains(c); });
-
-                if (path.Count > 0)
+                if (tile != null)
                 {
-                    loc = selection;
-                    if (tile != null)
-                    {
-                        loc.SetTile(tile.Value);
-                    }
+                    loc.SetTile(tile.Value);
                 }
+
                 possibleLocations.RemoveAt(randomIdx);
             }
 
@@ -1268,7 +1319,7 @@ namespace U4DosRandomizer
             return loc;
         }
 
-        private Tile GetRandomCoordinate(Random random, Func<Tile, bool> criteria, List<Tile> excludes)
+        private Tile GetRandomCoordinate(Random random, Func<Tile, bool> criteria, List<ITile> excludes)
         {
             while (true)
             {
