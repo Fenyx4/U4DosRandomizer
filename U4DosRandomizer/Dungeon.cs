@@ -36,6 +36,17 @@ namespace U4DosRandomizer
             }
         }
 
+        public IEnumerable<DungeonTile> Tiles(int level)
+        {
+            for (int row = 0; row < 8; row++)
+            {
+                for (int col = 0; col < 8; col++)
+                {
+                    yield return GetTile(level, row, col);
+                }
+            }
+        }
+
         public byte[] Save()
         {
             var dungeonBytes = new byte[8 * 8 * 8 + 256 * rooms.Count];
