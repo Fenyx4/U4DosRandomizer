@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
+using U4DosRandomizer.Helpers;
 
 namespace U4DosRandomizer
 {
@@ -10,14 +11,16 @@ namespace U4DosRandomizer
 
         public override void Load(string path, int mapSeed, Random mapGeneratorSeed, Random randomMap)
         {
-            var file = Path.Combine(path, $"{filename}.orig");
+            var file = Path.Combine(path, filename);
+
+            FileHelper.TryBackupOriginalFile(file);
 
             _worldMapTiles = new byte[SIZE, SIZE];
 
             int chunkwidth = 32;
             int chunkSize = chunkwidth * chunkwidth;
             byte[] chunk; // = new byte[chunkSize];
-            using (var worldMap = new System.IO.BinaryReader(new System.IO.FileStream(file, System.IO.FileMode.Open)))
+            using (var worldMap = new System.IO.BinaryReader(new System.IO.FileStream($"{file}.orig", System.IO.FileMode.Open)))
             {
                 for (int chunkCount = 0; chunkCount < 64; chunkCount++)
                 {

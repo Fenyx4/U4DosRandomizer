@@ -154,6 +154,10 @@ namespace U4DosRandomizer
             {
                 worldMap = new WorldMapUnchanged();
             }
+            else if (flags.Overworld == 2)
+            {
+                worldMap = new WorldMapShuffleLocations();
+            }
             worldMap.Load(path, randomValues[0], new Random(randomValues[1]), new Random(randomValues[2]));
 
             var avatar = new Avatar();

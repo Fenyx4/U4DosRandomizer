@@ -1122,33 +1122,6 @@ namespace U4DosRandomizer
             return coordinate.GetTile() < TileInfo.Shallow_Water;
         }
 
-        public HashSet<ITile> GetTilesNear(ITile tile, int distance)
-        {
-            var results = new HashSet<ITile>();
-            for(int x = -distance; x <= distance; x++)
-            {
-                for (int y = -distance; y <= distance; y++)
-                {
-                    int x_res = tile.X + x;
-                    int y_res = tile.Y + y;
-                    results.Add(new Tile(x_res, y_res, _worldMapTiles, v => Wrap(v)));
-                }
-            }
-
-            return results;
-        }
-
-        public List<ITile> GetPathableTilesNear(ITile goal, int distance, Func<ITile, bool> isWalkableGround)
-        {
-            var possibleTiles = GetTilesNear(goal, distance);
-            var results = new HashSet<ITile>();
-
-            results = Search.GetSuccessfulPaths(SIZE, SIZE, goal, possibleTiles, c => { return isWalkableGround(c); });
-
-
-            return results.ToList();
-        }
-
         private Tile FindRandomPointHigherThan(int tile, Random random)
         {
             Tile result = null;
