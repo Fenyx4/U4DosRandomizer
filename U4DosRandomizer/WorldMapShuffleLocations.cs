@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
+using System.Linq;
 using System.Text;
 using U4DosRandomizer.Helpers;
 
@@ -72,6 +73,8 @@ namespace U4DosRandomizer
             }
 
             // Moongates
+            var originalNewMoonX = ultimaData.Moongates[0].X;
+            var originalNewMoonY = ultimaData.Moongates[0].Y;
             for (int i = 0; i < ultimaData.Moongates.Count; i++)
             {
                 var val = random1.Next(0, (ultimaData.Moongates.Count - 1) - i);
@@ -93,6 +96,11 @@ namespace U4DosRandomizer
                 var val = random1.Next(0, (10 - 1) - i);
                 Swap(ultimaData.Items, val, (10 - 1) - i);
             }
+
+            //Whatever is now at the original new moon moongate location gets moved to whereever the new moongate is now
+            var item = ultimaData.Items.Single(x => x.X == originalNewMoonX && x.Y == originalNewMoonY && x.Location == 0x00);
+            item.X = ultimaData.Moongates[0].X;
+            item.Y = ultimaData.Moongates[0].Y;
 
             return;
         }

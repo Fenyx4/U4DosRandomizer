@@ -11,10 +11,11 @@ Requires Ultima IV which is available for free at https://www.gog.com/game/ultim
 
 ```
 Options:
-  -s |--s <seed>    The seed for the randomizer. Same seed will produce the same map.
-  -p |--p <path>    Path to Ultima 4 installation. Leaving blank will assume it is the working directory.
+  -s |--s <seed>    The seed for the randomizer.  Same seed will produce the same map. Defaults to random value.
+  -p |--p <path>    Path to Ultima 4 installation.  Leaving blank will assume it is the working directory.
   -r |--r           Restore original Ultima 4 files.
-  -m |--m           Output a minimap of the overworld.
+  --miniMap         Output a minimap of the overworld.
+  -o |--overworld   Sets randomization level for Overworld map. 1 - No change. 2 - Shuffle castles, towns, moongates, shrines, items. 5 - Randomly generate whole map. Defaults to 5.
   --spellRemove     Put in the letters of the spells you want removed. e.g. "--spellRemove zed" would remove zdown, energy field and dispel.
   --mixQuantity     Lets you input how much of a spell you want to mix.
   --dngStone        Randomize the location of stones in the dungeons

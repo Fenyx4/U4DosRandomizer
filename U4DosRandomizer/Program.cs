@@ -17,7 +17,7 @@ namespace U4DosRandomizer
             CommandOption seedArg = commandLineApplication.Option(
                 "-s |--s <seed>",
                 "The seed for the randomizer. "
-                + " Same seed will produce the same map.",
+                + " Same seed will produce the same map. Defaults to random value.",
                 CommandOptionType.SingleValue);
             CommandOption pathArg = commandLineApplication.Option(
                 "-p |--p <path>",
@@ -34,7 +34,7 @@ namespace U4DosRandomizer
                 CommandOptionType.NoValue);
             CommandOption overworldArg = commandLineApplication.Option(
                 "-o |--overworld",
-                "Sets randomization level for Overworld map. ",
+                "Sets randomization level for Overworld map. 1 - No change. 2 - Shuffle castles, towns, moongates, shrines. 5 - Randomly generate whole map. Defaults to 5.",
                 CommandOptionType.SingleValue);
             CommandOption spellRemoveArg = commandLineApplication.Option(
                 "--spellRemove",
@@ -212,7 +212,7 @@ namespace U4DosRandomizer
             //Console.WriteLine(Talk.GetSextantText(ultimaData.LCB[0]));
 
             title.Update(ultimaData);
-            talk.Update(ultimaData, avatar);
+            talk.Update(ultimaData, avatar, flags);
             avatar.Update(ultimaData, flags);
             dungeons.Update(ultimaData);
 
