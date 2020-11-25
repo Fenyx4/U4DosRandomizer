@@ -68,12 +68,6 @@ C_61D1();*/
 	do {
 		for(activeChara = 0; /*C_5A88:*/activeChara < Party.f_1d8 && !IsCombatEnded(); activeChara++) {
 /*C_5A9E*/
-			/*If they operative character is not around or unconcious then make the next character the operative character*/
-			if(operativeChara >= 0 && !(Fighters._chtile[operativeChara] && isCharaConscious(operativeChara)))
-			{
-				operativeChara = (operativeChara + 1)%8;
-			}
-
 			if(Fighters._chtile[activeChara] && isCharaConscious(activeChara) && (operativeChara == activeChara || operativeChara < 0)) {
 				D_95C8 = 4;
 				Gra_11(activeChara);
@@ -159,6 +153,11 @@ C_61D1();*/
 				Gra_11(activeChara);
 				activeCharaX = -1;
 				dspl_Stats();
+			}
+			/* If the active character is the operative character then the charactere must be unavailable. Try to find an available character */
+			else if ( operativeChara == activeChara )
+			{
+				operativeChara = (operativeChara + 1)%8;
 			}
 			if(!D_07F8) {
 				D_07F8 = 1;
