@@ -403,6 +403,7 @@ extern struct tCombat /*D_9470*/Combat;
 extern struct t_68 /*D_9530*/Fighters;
 extern int /*D_9598*/File_DNG;
 extern int /*D_959A*/activeChara;
+extern int operativeChara;
 extern struct aStruct D_959C;
 extern unsigned char /*D_959E*/tile_east;
 extern void far /*D_95A0*/*pCharset;

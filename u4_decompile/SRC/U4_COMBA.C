@@ -63,11 +63,18 @@ C_61D1();*/
 
 	u_kbflush();
 	bp_04 = 0;
+	operativeChara = -1;
 	D_96EE = D_96F4 = 0;
 	do {
 		for(activeChara = 0; /*C_5A88:*/activeChara < Party.f_1d8 && !IsCombatEnded(); activeChara++) {
 /*C_5A9E*/
-			if(Fighters._chtile[activeChara] && isCharaConscious(activeChara)) {
+			/*If they operative character is not around or unconcious then make the next character the operative character*/
+			if(operativeChara >= 0 && !(Fighters._chtile[operativeChara] && isCharaConscious(operativeChara)))
+			{
+				operativeChara = (operativeChara + 1)%8;
+			}
+
+			if(Fighters._chtile[activeChara] && isCharaConscious(activeChara) && (operativeChara == activeChara || operativeChara < 0)) {
 				D_95C8 = 4;
 				Gra_11(activeChara);
 				activeCharaX = Combat._charaX[activeChara];
@@ -118,10 +125,28 @@ C_61D1();*/
 					case KBD_T:
 					case KBD_W:
 					case KBD_X:
-					case KBD_Y: w_NotHere(); break;
+					case KBD_Y: w_NotHere(); break;					
 					case KBD_CTRL_S:
 						if(bp_04 == KBD_ALT_Z) {
 							C_1C21();
+							break;
+						}
+					case KBD_0:
+					case KBD_1:
+					case KBD_2:
+					case KBD_3:
+					case KBD_4:
+					case KBD_5:
+					case KBD_6:
+					case KBD_7:
+					case KBD_8:
+						if((si&0xf) <= Party.f_1d8)
+						{
+							operativeChara = (si&0xf) - 1;
+							u4_puts("Set Active Plr:");
+							Gra_CR();
+							u4_puts(Party.chara[operativeChara]._name);
+							Gra_CR();
 							break;
 						}
 					default:
