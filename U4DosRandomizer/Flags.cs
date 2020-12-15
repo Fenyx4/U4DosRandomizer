@@ -11,5 +11,6 @@
         public bool DngStone { get; internal set; }
         public bool MixQuantity { get; internal set; }
         public int Overworld { get; internal set; }
+        public bool Fixes { get; internal set; }
     }
 }

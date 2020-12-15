@@ -53,7 +53,7 @@ namespace U4DosRandomizer
             }
         }
 
-        public void Update(UltimaData ultimaData, Avatar avatar)
+        public void Update(UltimaData ultimaData, Avatar avatar, Flags flags)
         {
             Person person = null;
             // --- Items ---
@@ -124,7 +124,7 @@ namespace U4DosRandomizer
             // --- Shrines ---
             // Humility
             // TODO make response descriptive
-            if(ultimaData.Shrines[avatar.AvatarOffset.LOC_HUMILITY - avatar.AvatarOffset.LOC_SHRINES].IsDirty())
+            if (ultimaData.Shrines[avatar.AvatarOffset.LOC_HUMILITY - avatar.AvatarOffset.LOC_SHRINES].IsDirty())
             {
                 person = FindPerson("Simple");
                 person.KeywordResponse2 = $"The shrine lies\nnear\n{GetSextantText(ultimaData.Shrines[avatar.AvatarOffset.LOC_HUMILITY - avatar.AvatarOffset.LOC_SHRINES])} and\nis guarded by\nendless hoards\nof daemons!";
@@ -202,7 +202,7 @@ namespace U4DosRandomizer
             }
             if (ultimaData.Towns[avatar.AvatarOffset.LOC_MOONGLOW - avatar.AvatarOffset.LOC_TOWNS].IsDirty())
             {
-                ultimaData.LBText[6] = $"\nHe says:\nThe towne\nof Moonglow to\nthe {CoordinateToCardinal(ultimaData.LCB[0], ultimaData.Towns[avatar.AvatarOffset.LOC_MOONGLOW-avatar.AvatarOffset.LOC_TOWNS])} is\nwhere the virtue\nof Honesty\nthrives!\n";
+                ultimaData.LBText[6] = $"\nHe says:\nThe towne\nof Moonglow to\nthe {CoordinateToCardinal(ultimaData.LCB[0], ultimaData.Towns[avatar.AvatarOffset.LOC_MOONGLOW - avatar.AvatarOffset.LOC_TOWNS])} is\nwhere the virtue\nof Honesty\nthrives!\n";
             }
             if (ultimaData.Towns[avatar.AvatarOffset.LOC_BRITAIN - avatar.AvatarOffset.LOC_TOWNS].IsDirty())
             {
@@ -238,6 +238,18 @@ namespace U4DosRandomizer
             // --- Other ---
             // TODO: Pirate location? Bucaneer's Den?
             person = FindPerson("Wilmoore");
+
+            // --- Fixes ---
+            if (flags.Fixes)
+            {
+                person = FindPerson("Calabrini");
+                person.Keyword2 = "INJU";
+                person.Question = "Dost thou seek an inn or art thou injured?";
+
+                person = FindPerson("Michelle");
+                person.No = "Then thou should visit our physician!";
+                person.Keyword2 = "PHYS";
+            }
 
         }
 

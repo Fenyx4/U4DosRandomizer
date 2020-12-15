@@ -48,6 +48,10 @@ namespace U4DosRandomizer
                 "--dngStone",
                 "Randomize the location of stones in the dungeons ",
                 CommandOptionType.NoValue);
+            CommandOption fixesArg = commandLineApplication.Option(
+                "--fixes",
+                "Collection of non-gameplay fixes.",
+                CommandOptionType.NoValue);
             commandLineApplication.HelpOption("-? | -h | --help");
 
             commandLineApplication.OnExecute(() =>
@@ -105,6 +109,7 @@ namespace U4DosRandomizer
                     flags.SpellRemove = spellRemoveArg.Value();
                     flags.DngStone = dngStoneArg.HasValue();
                     flags.MixQuantity = minQuantityArg.HasValue();
+                    flags.Fixes = fixesArg.HasValue();
                     Randomize(seed, path, flags);
                     //Console.WriteLine("Seed: " + seed);
                     //var random = new Random(seed);
@@ -212,7 +217,7 @@ namespace U4DosRandomizer
             //Console.WriteLine(Talk.GetSextantText(ultimaData.LCB[0]));
 
             title.Update(ultimaData);
-            talk.Update(ultimaData, avatar);
+            talk.Update(ultimaData, avatar, flags);
             avatar.Update(ultimaData, flags);
             dungeons.Update(ultimaData);
 
