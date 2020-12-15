@@ -123,6 +123,8 @@ namespace U4DosRandomizer
         public int WHITE_STONE_LOCATION_TEXT { get; } = 0x17434;
         public int BLACK_STONE_LOCATION_TEXT { get; } = 0x174F9;
 
+        public int SHOP_LOCATION_OFFSET { get; } = 0x11F7F;
+
         public int DEMON_SPAWN_TRIGGER_X1_OFFSET { get; } = 0x2F17;
         public int DEMON_SPAWN_TRIGGER_X2_OFFSET { get; } = 0x2F1E;
         public int DEMON_SPAWN_TRIGGER_Y1_OFFSET { get; } = 0x2F25;

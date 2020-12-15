@@ -98,5 +98,6 @@ namespace U4DosRandomizer
         int BLINK_DESTINATION2_EXCLUSION_X2_OFFSET { get; }
         int BLINK_DESTINATION2_EXCLUSION_Y1_OFFSET { get; }
         int BLINK_DESTINATION2_EXCLUSION_Y2_OFFSET { get; }
+        int SHOP_LOCATION_OFFSET { get; }
     }
 }

@@ -133,6 +133,8 @@ namespace U4DosRandomizer
         public byte BlinkExclusion2Y1 { get; internal set; }
         public byte BlinkExclusion2Y2 { get; internal set; }
         public List<Coordinate> AbyssEjectionLocations { get; internal set; }
+        public List<List<byte>> ShopLocations { get; set; }
+
 
         public UltimaData()
         {
@@ -141,6 +143,7 @@ namespace U4DosRandomizer
             LBText = new List<string>();
             PirateCove = new List<Coordinate>();
             AbyssEjectionLocations = new List<Coordinate>();
+            ShopLocations = new List<List<byte>>();
         }
 
         public int ITEM_MANDRAKE { get; } = 0;
@@ -167,32 +170,32 @@ namespace U4DosRandomizer
         public int ITEM_RUNE_SPIRITUALITY { get; } = 21;
         public int ITEM_RUNE_HUMILITY { get; } = 22;
         /*
-         * https://github.com/ergonomy-joe/u4-decompiled/blob/master/SRC/U4_SRCH.C#L246
-         * 0 - Mandrake
-         * 1 - Mandrake
-         * 2 - Nightshade
-         * 3 - Nightshade
-         * 4 - Bell of Courage
-         * 5 - Silver Horn
-         * 6 - Wheel of H.M.S. Cape
-         * 7 - Skull of Mondain
-         * 8 - Black Stone
-         * 9 - White Stone
-         * 10 - Book of Truth
-         * 11 - Candle of Love
-         * 12 - telescope (Crashes if moved)
-         * 13 - Mystic Armor
-         * 14 - Mystic Weapon
-         * 15 - Rune of the Great Stygian Abyss
-         * 16 - Rune of the Great Stygian Abyss
-         * 17 - Rune of the Great Stygian Abyss
-         * 18 - Rune of the Great Stygian Abyss
-         * 19 - Rune of the Great Stygian Abyss
-         * 20 - Rune of the Great Stygian Abyss
-         * 21 - Rune of the Great Stygian Abyss
-         * 22 - Rune of the Great Stygian Abyss
-         * 23 - ??
-         * All runes on the surface are bugged to be Great Stygian Abyss. I'll figure out which are which later although it doesn't really matter. They just have to be located in the right town.
-         */
+* https://github.com/ergonomy-joe/u4-decompiled/blob/master/SRC/U4_SRCH.C#L246
+* 0 - Mandrake
+* 1 - Mandrake
+* 2 - Nightshade
+* 3 - Nightshade
+* 4 - Bell of Courage
+* 5 - Silver Horn
+* 6 - Wheel of H.M.S. Cape
+* 7 - Skull of Mondain
+* 8 - Black Stone
+* 9 - White Stone
+* 10 - Book of Truth
+* 11 - Candle of Love
+* 12 - telescope (Crashes if moved)
+* 13 - Mystic Armor
+* 14 - Mystic Weapon
+* 15 - Rune of the Great Stygian Abyss
+* 16 - Rune of the Great Stygian Abyss
+* 17 - Rune of the Great Stygian Abyss
+* 18 - Rune of the Great Stygian Abyss
+* 19 - Rune of the Great Stygian Abyss
+* 20 - Rune of the Great Stygian Abyss
+* 21 - Rune of the Great Stygian Abyss
+* 22 - Rune of the Great Stygian Abyss
+* 23 - ??
+* All runes on the surface are bugged to be Great Stygian Abyss. I'll figure out which are which later although it doesn't really matter. They just have to be located in the right town.
+*/
     }
 }

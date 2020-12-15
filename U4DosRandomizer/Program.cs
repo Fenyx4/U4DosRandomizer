@@ -177,6 +177,11 @@ namespace U4DosRandomizer
             var dungeons = new Dungeons();
             dungeons.Load(path, ultimaData);
 
+            if (flags.Fixes)
+            {
+                ultimaData.ShopLocations[avatar.AvatarOffset.LOC_SERPENT - 1][5] = 0x12;
+            }
+
             worldMap.Randomize(ultimaData, new Random(randomValues[3]), new Random(randomValues[4]));
 
             // Other stones

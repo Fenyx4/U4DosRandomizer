@@ -186,6 +186,15 @@ namespace U4DosRandomizer
             {
                 data.AbyssEjectionLocations.Add(new Coordinate(avatarBytes[i + AvatarOffset.ABYSS_EJECTION_LOCATIONS_X], avatarBytes[i + AvatarOffset.ABYSS_EJECTION_LOCATIONS_Y]));
             }
+
+            for (int townIdx = 0; townIdx < 16; townIdx++)
+            {
+                data.ShopLocations.Add(new List<byte>());
+                for(int shopIdx = 0; shopIdx < 8; shopIdx++)
+                {
+                    data.ShopLocations[townIdx].Add(avatarBytes[townIdx * 8 + shopIdx + AvatarOffset.SHOP_LOCATION_OFFSET]);
+                }
+            }
         }
 
         internal static void Restore(string path)
@@ -341,6 +350,14 @@ namespace U4DosRandomizer
                 //Console.WriteLine(Talk.GetSextantText(data.AbyssEjectionLocations[i]));
                 avatarBytes[AvatarOffset.ABYSS_EJECTION_LOCATIONS_X + i] = data.AbyssEjectionLocations[i].X;
                 avatarBytes[AvatarOffset.ABYSS_EJECTION_LOCATIONS_Y + i] = data.AbyssEjectionLocations[i].Y;
+            }
+
+            for (int townIdx = 0; townIdx < 16; townIdx++)
+            {
+                for (int shopIdx = 0; shopIdx < 8; shopIdx++)
+                {
+                    avatarBytes[townIdx * 8 + shopIdx + AvatarOffset.SHOP_LOCATION_OFFSET] = data.ShopLocations[townIdx][shopIdx];
+                }
             }
         }
 
