@@ -287,9 +287,18 @@ int /*bp04*/_range;
 	}
 	hit_tile = (loc_C->_weapon == 14)?TIL_4E:TIL_4F;
 	/*dexterity test*/
-	if(loc_C->_dex < 40 && U4_RND1(0xff) > loc_C->_dex + 0x80) {
-		w_missed(_range);
-		return;
+	/*This should always evaluate to false. Leaving it functioning like regular. Randomizer will have option to turn it on by changing the 8 to a 0.*/
+	if(U4_RND1(7) > 8) {
+		if(U4_RND1(0xff) > loc_C->_dex * 2 + 0x80) {
+			w_missed(_range);
+			return;
+		}
+	}
+	else {
+		if(loc_C->_dex < 40 && U4_RND1(0xff) > loc_C->_dex + 0x80) {
+			w_missed(_range);
+			return;
+		}
 	}
 	/*success*/
 	loc_B = &(Combat_MAP(Combat._npcY[_npcId], Combat._npcX[_npcId]));
