@@ -214,8 +214,15 @@ static unsigned D_8CE6;/*type?*/
 			dspl_Stats();
 			u4_puts(D_8CCE[1]);
 			u4_puts(/*D_2C1A*/" says: Oh, Thank thee! I shall never forget thy kindness!\n");
-			if((Party._moves >> 4) != Party.f_1ec)
+			if((Party._moves >> 4) != Party.f_1ec) {
 				karma_inc(&(Party._compa), 2);
+				/*This should always evaluate to false. Leaving it functioning like regular. Randomizer will have option to turn it on by changing the 8 to a 0.*/
+				if(U4_RND1(7) > 8) {
+					if(Party._gold == 0) {
+						karma_inc(&(Party._sacri), 3);
+					}
+				}
+			}
 			Party.f_1ec = Party._moves >> 4;
 		}
 	}
