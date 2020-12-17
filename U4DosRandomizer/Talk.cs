@@ -242,13 +242,57 @@ namespace U4DosRandomizer
             // --- Fixes ---
             if (flags.Fixes)
             {
+                person = FindPerson("Water");
+                person.QuestionFlag = 6;
+
+                person = FindPerson("Estro");
+                person.Keyword1 = "RESE";
+
+                person = FindPerson("a truth\nseeker.");
+                person.KeywordResponse2 = person.KeywordResponse2.Replace("minutes", "cycles");
+
+                person = FindPerson("Catriona");
+                person.Yes = person.Yes + ".";
+
+                person = FindPerson("a ranger.");
+                person.Yes = person.Yes.Replace("knowns", "knows");
+
                 person = FindPerson("Calabrini");
                 person.Keyword2 = "INJU";
-                person.Question = "Dost thou seek an inn or art thou injured?";
+                person.Question = "Dost thou seek\nan inn or art\nthou injured?";
 
                 person = FindPerson("Michelle");
-                person.No = "Then thou should visit our physician!";
+                person.No = "Then thou should\nvisit our\nphysician!";
                 person.Keyword2 = "PHYS";
+                person.KeywordResponse1 = person.KeywordResponse1.Replace("west", "north");
+                person.KeywordResponse2 = "Got north and take\nthe western door.";
+
+                person = FindPerson("Tracie");
+                person.Look = "A starving journalist";
+
+                person = FindPerson("Iolo");
+                person.Look = "A charming bard";
+
+                person = FindPerson("Sir William");
+                person.KeywordResponse2 = person.KeywordResponse2.Replace("never", "Never");
+
+                person = FindPerson("Alkerion");
+                person.QuestionFlag = 6;
+
+                person = FindPerson("Dupre");
+                person.Look = "A handsome fighter";
+
+                person = FindPerson("Virgil");
+                person.Question = "Is it thine?";
+
+                person = FindPerson("Shamino");
+                person.QuestionFlag = 6;
+
+                person = FindPerson("Traveling Dan");
+                person.Look = "A short, rotund\nman with a hat\nand vest.";
+
+                person = FindPerson("Charm");
+                person.QuestionFlag = 6;
             }
 
         }
