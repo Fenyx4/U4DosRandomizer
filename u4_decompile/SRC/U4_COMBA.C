@@ -361,7 +361,7 @@ C_61D1()
 	int loc_A, loc_B, loc_D;
 
 	loc_C = &(Party.chara[activeChara]);
-	AskDir(/*D_2060*/"Dir: ", &loc_A, &loc_B);
+	AskDirWithDiagonal(/*D_2060*/"Dir: ", &loc_A, &loc_B);
 	if(!(loc_A | loc_B))
 		return;
 	hit_x = Combat._charaX[activeChara];

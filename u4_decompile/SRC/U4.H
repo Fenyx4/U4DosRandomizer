@@ -195,6 +195,7 @@ extern /*C_11EB*/w_NoneLeft();
 extern /*C_11F9*/AskLetter(char *, char, char);
 extern /*C_1287*/AskChara(char *);
 extern /*C_12D6*/AskDir(char *, int *, int *);
+extern AskDirWithDiagonal(char *, int *, int *);
 extern /*C_138B*/food_dec(int);
 extern /*C_13B6*/MP_recover();
 extern /*C_1445*/u4_gets(char *, int);
