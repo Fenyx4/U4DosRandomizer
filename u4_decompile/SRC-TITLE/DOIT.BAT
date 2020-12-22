@@ -1,12 +1,12 @@
 @echo off
 set OLDPATH=%PATH%
 
-set MSC4=\TOOLS\MSC400
+set MSC4=D:\MSC400
 set PATH=%MSC4%
 set INCLUDE=%MSC4%\INCLUDE
 set LIB=%MSC4%\LIB
 set CFLAGS=/Ox /Zp /Gc
-set AS=\TOOLS\MASM300
+set AS=D:\MASM300\MASM.EXE
 
 echo START > log.txt
 
@@ -28,8 +28,8 @@ REM MSC %CFLAGS% errmsg; >> log.txt
 
 LINK /MAP title_x file title_0 graph beep inflate low title_1 util2 VAR  %LIB%\binmode data errmsg,title_0; >> log.txt
 
-\tools\exepack title_0.exe tmp.exe
-\tools\unp tmp.exe
+D:\exepack title_0.exe tmp.exe
+D:\unp tmp.exe
 copy tmp.exe title_0.exe
 del tmp.exe
 copy title_0.exe ..\original\
