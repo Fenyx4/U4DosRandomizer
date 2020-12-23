@@ -817,9 +817,8 @@ char *bp04;
 	txt_Y ++;
 	txt_X = 11;
 	u4_puts(/*D_3100*/"press drive letter");
-	while(!u_kbhit());
+	bp_02 = C_3290() & 0xff;
 	do {
-		bp_02 = u_kbread() & 0xff;
 		u4_toupper(bp_02);
 		if(bp_02 != 'B' || D_7082 != 0) {
 			if(bp_02 >= 'A' && bp_02 <= 'P') {
@@ -831,6 +830,7 @@ char *bp04;
 			return;
 		sound_1();
 		while(!u_kbhit());
+		bp_02 = u_kbread() & 0xff;
 	} while(1);
 }
 
