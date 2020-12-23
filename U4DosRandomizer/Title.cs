@@ -1,5 +1,8 @@
-﻿using System.IO;
+﻿using Octodiff.Core;
+using Octodiff.Diagnostics;
+using System.IO;
 using U4DosRandomizer.Helpers;
+using U4DosRandomizer.Resources;
 
 namespace U4DosRandomizer
 {
@@ -14,7 +17,24 @@ namespace U4DosRandomizer
 
             FileHelper.TryBackupOriginalFile(file);
 
-            using (var titleStream = new System.IO.FileStream($"{file}.orig", System.IO.FileMode.Open))
+            // Apply delta file to create new file
+            var newFilePath2 = file;
+            var newFileOutputDirectory = Path.GetDirectoryName(newFilePath2);
+            if (!Directory.Exists(newFileOutputDirectory))
+                Directory.CreateDirectory(newFileOutputDirectory);
+            var deltaApplier = new DeltaApplier { SkipHashCheck = false };
+            using (var basisStream = new FileStream($"{file}.orig", FileMode.Open, FileAccess.Read, FileShare.Read))
+            {
+                using (var deltaStream = new MemoryStream(Patches.TITLE_EXE))
+                {
+                    using (var newFileStream = new FileStream(newFilePath2, FileMode.Create, FileAccess.ReadWrite, FileShare.Read))
+                    {
+                        deltaApplier.Apply(basisStream, new BinaryDeltaReader(deltaStream, new ConsoleProgressReporter()), newFileStream);
+                    }
+                }
+            }
+
+            using (var titleStream = new System.IO.FileStream(file, System.IO.FileMode.Open))
             {
                 titleBytes = titleStream.ReadAllBytes();
             }

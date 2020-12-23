@@ -25,4 +25,9 @@ All the files the randomizer changes get backed up with the extension ".orig" ad
 
 Example: https://imgur.com/qNRxpSy
 
+## Helping
+
+```-b "E:\Projects\U4DosRandomizer\u4_decompile\SRC\ORIGINAL\AVATAR.EXE" -s "E:\Projects\U4DosRandomizer\u4_decompile\SRC\ORIGINAL\AVATAR.EXE.sig" -n "E:\Projects\U4DosRandomizer\u4_decompile\SRC\ORIGINAL\U4_MAIN.EXE" -d "E:\Projects\U4DosRandomizer\u4_decompile\SRC\ORIGINAL\AVATAR.EXE.octodiff"```
+```-b "E:\Projects\U4DosRandomizer\u4_decompile\SRC-TITLE\ORIGINAL\TITLE.EXE.orig" -s "E:\Projects\U4DosRandomizer\u4_decompile\SRC-TITLE\ORIGINAL\TITLE.EXE.sig" -n "E:\Projects\U4DosRandomizer\u4_decompile\SRC-TITLE\ORIGINAL\TITLE_0.EXE" -d "E:\Projects\U4DosRandomizer\u4_decompile\SRC-TITLE\ORIGINAL\TITLE.EXE.octodiff"```
+
 "The generation of random numbers is too important to be left to chance." - Robert R. Coveyou

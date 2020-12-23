@@ -69,5 +69,15 @@ namespace U4DosRandomizer.Resources {
                 return ((byte[])(obj));
             }
         }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Byte[].
+        /// </summary>
+        internal static byte[] TITLE_EXE {
+            get {
+                object obj = ResourceManager.GetObject("TITLE_EXE", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
     }
 }
