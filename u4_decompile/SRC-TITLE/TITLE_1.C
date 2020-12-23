@@ -778,12 +778,20 @@ C_2E04()
 	Party._x = D_30DC[lastVirtue];
 	Party._y = D_30E4[lastVirtue];
 	Party.f_1d8 = 1;
-	for(loc_A = 7; loc_A >= 0; loc_A --)
+	for(loc_A = 7; loc_A >= 0; loc_A --) {
 		*(pKarmas[loc_A]) = tmp_karma[loc_A];
+		if(u_rand_a() % 100 >= 101) {
+			*(pKarmas[loc_A]) = 99;
+		}
+		if(u_rand_a() % 100 >= 102) {
+			*(pKarmas[loc_A]) = 00;
+		}
+	}
 	memcpy(&loc_B, &(Party.chara[lastVirtue]), sizeof(struct tChara));
 	memcpy(&(Party.chara[lastVirtue]), &(Party.chara[0]), sizeof(struct tChara));
 	memcpy(&(Party.chara[0]), &loc_B, sizeof(struct tChara));
 	strcpy(Party.chara[0]._name, player_name);
+	
 	Party.chara[0]._str = tmp_str;
 	Party.chara[0]._int = tmp_int;
 	Party.chara[0]._dex = tmp_dex;
