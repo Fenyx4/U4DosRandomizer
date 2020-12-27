@@ -52,6 +52,10 @@ namespace U4DosRandomizer
                 "--fixes",
                 "Collection of non-gameplay fixes.",
                 CommandOptionType.NoValue);
+            CommandOption questItemsArg = commandLineApplication.Option(
+                "--questItems",
+                "Percentage chance to start with a quest item.",
+                CommandOptionType.SingleValue);
             commandLineApplication.HelpOption("-? | -h | --help");
 
             commandLineApplication.OnExecute(() =>
@@ -71,6 +75,15 @@ namespace U4DosRandomizer
                     if (!int.TryParse(overworldArg.Value(), out overworld))
                     {
                         throw new InvalidCastException("Overworld argument must be a number");
+                    }
+                }
+
+                var questItems = 0;
+                if (questItemsArg.HasValue())
+                {
+                    if (!int.TryParse(questItemsArg.Value(), out questItems) && questItems >= 0 && questItems <= 100)
+                    {
+                        throw new InvalidCastException("QuestItems argument must be a number between 0 and 100 inclusive");
                     }
                 }
 
@@ -110,6 +123,7 @@ namespace U4DosRandomizer
                     flags.DngStone = dngStoneArg.HasValue();
                     flags.MixQuantity = minQuantityArg.HasValue();
                     flags.Fixes = fixesArg.HasValue();
+                    flags.QuestItemPercentage = questItems;
                     Randomize(seed, path, flags);
                     //Console.WriteLine("Seed: " + seed);
                     //var random = new Random(seed);
@@ -177,6 +191,9 @@ namespace U4DosRandomizer
             var dungeons = new Dungeons();
             dungeons.Load(path, ultimaData);
 
+            var party = new Party();
+            party.Load(path, ultimaData);
+
             if (flags.Fixes)
             {
                 ultimaData.ShopLocations[avatar.AvatarOffset.LOC_SERPENT - 1][5] = 0x12;
@@ -221,11 +238,83 @@ namespace U4DosRandomizer
 
             //Console.WriteLine(Talk.GetSextantText(ultimaData.LCB[0]));
 
+            //for (int i = 0; i < 8; i++)
+            //{
+            //    ultimaData.StartingArmor[i] = Convert.ToUInt16(i + 10);
+            //}
+
+            //for (int i = 0; i < 16; i++)
+            //{
+            //    ultimaData.StartingWeapons[i] = Convert.ToUInt16(i + 10);
+            //}
+
+            //ultimaData.StartingFood = 2345 * 100 + 99;
+            //ultimaData.StartingGold = 1337;
+            //for (int i = 0; i < 4; i++)
+            //{
+            //    ultimaData.StartingEquipment[i] = Convert.ToUInt16(i + 10);
+            //}
+            //for (int i = 0; i < 8; i++)
+            //{
+            //    ultimaData.StartingReagents[i] = Convert.ToUInt16(i + 10);
+            //}
+            //for (int i = 0; i < 26; i++)
+            //{
+            //    ultimaData.StartingMixtures[i] = Convert.ToUInt16(i + 10);
+            //}
+
+            //ultimaData.StartingItems = 0XFFFF;
+            if (flags.QuestItemPercentage > 0)
+            {
+                ushort ushortone = 1;
+
+                ultimaData.StartingItems = 0;
+                for (ushort i = 0; i < 16; i++)
+                {
+                    if (random.Next(0, 100) < flags.QuestItemPercentage)
+                    {
+                        ultimaData.StartingItems |= (ushort)(ushortone << i);
+                    }
+                }
+                // Never have the skull destroyed
+                ultimaData.StartingItems &= (ushort)(~(ushortone << 1));
+                // Don' pre-use bell, book and candle
+                ultimaData.StartingItems &= (ushort)(~(ushortone << 10));
+                ultimaData.StartingItems &= (ushort)(~(ushortone << 11));
+                ultimaData.StartingItems &= (ushort)(~(ushortone << 12));
+
+                ultimaData.StartingRunes = 0;
+                for (ushort i = 0; i < 8; i++)
+                {
+                    if (random.Next(0, 100) < flags.QuestItemPercentage)
+                    {
+                        ultimaData.StartingRunes |= (byte)(1 << i);
+                    }
+                }
+
+                ultimaData.StartingStones = 0;
+                for (ushort i = 0; i < 8; i++)
+                {
+                    if (random.Next(0, 100) < flags.QuestItemPercentage)
+                    {
+                        ultimaData.StartingStones |= (byte)(1 << i);
+                    }
+                }
+            }
+
+            
+
+            
+            //ultimaData.StartingStones = 0XFF;
+            //ultimaData.StartingRunes = 0XFF;
+
             title.Update(ultimaData);
             talk.Update(ultimaData, avatar, flags);
             avatar.Update(ultimaData, flags);
             dungeons.Update(ultimaData);
+            party.Update(ultimaData);
 
+            party.Save(path);
             dungeons.Save(path);
             title.Save(path);
             talk.Save(path);
