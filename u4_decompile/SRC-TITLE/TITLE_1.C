@@ -756,6 +756,7 @@ C_2C12()
 
 unsigned char D_30DC[] = {0xE7,0x53,0x23,0x3B,0x9E,0x69,0x17,0xBA};
 unsigned char D_30E4[] = {0x88,0x69,0xDD,0x2C,0x15,0xB7,0x81,0xAB};
+unsigned char karma_starts[] = {0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF};
 
 unsigned /*D_30EC*/*pKarmas[] = {
 	&(Party._hones),
@@ -778,12 +779,24 @@ C_2E04()
 	Party._x = D_30DC[lastVirtue];
 	Party._y = D_30E4[lastVirtue];
 	Party.f_1d8 = 1;
-	for(loc_A = 7; loc_A >= 0; loc_A --)
+	for(loc_A = 7; loc_A >= 0; loc_A --) {
 		*(pKarmas[loc_A]) = tmp_karma[loc_A];
+	}
+	
+	/*Set Karma*/
+	if(U4_RND1(7) > 8) {
+		for(loc_A = 7; loc_A >= 0; loc_A --) {
+			if(karma_starts[loc_A] != 0xFF)	{
+				*(pKarmas[loc_A]) = karma_starts[loc_A];
+			}
+		}
+	}
+	
 	memcpy(&loc_B, &(Party.chara[lastVirtue]), sizeof(struct tChara));
 	memcpy(&(Party.chara[lastVirtue]), &(Party.chara[0]), sizeof(struct tChara));
 	memcpy(&(Party.chara[0]), &loc_B, sizeof(struct tChara));
 	strcpy(Party.chara[0]._name, player_name);
+	
 	Party.chara[0]._str = tmp_str;
 	Party.chara[0]._int = tmp_int;
 	Party.chara[0]._dex = tmp_dex;
@@ -817,9 +830,8 @@ char *bp04;
 	txt_Y ++;
 	txt_X = 11;
 	u4_puts(/*D_3100*/"press drive letter");
-	while(!u_kbhit());
+	bp_02 = C_3290() & 0xff;
 	do {
-		bp_02 = u_kbread() & 0xff;
 		u4_toupper(bp_02);
 		if(bp_02 != 'B' || D_7082 != 0) {
 			if(bp_02 >= 'A' && bp_02 <= 'P') {
@@ -831,6 +843,7 @@ char *bp04;
 			return;
 		sound_1();
 		while(!u_kbhit());
+		bp_02 = u_kbread() & 0xff;
 	} while(1);
 }
 

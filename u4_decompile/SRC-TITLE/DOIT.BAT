@@ -5,7 +5,7 @@ set MSC4=D:\MSC400
 set PATH=%MSC4%
 set INCLUDE=%MSC4%\INCLUDE
 set LIB=%MSC4%\LIB
-set CFLAGS=/Ox /Zp /Gc
+set CFLAGS=/Ox /Zp /Gc /J
 set AS=D:\MASM300\MASM.EXE
 
 echo START > log.txt

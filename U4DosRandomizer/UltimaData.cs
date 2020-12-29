@@ -135,6 +135,18 @@ namespace U4DosRandomizer
         public List<Coordinate> AbyssEjectionLocations { get; internal set; }
         public List<List<byte>> ShopLocations { get; set; }
 
+        public uint StartingFood { get; internal set; }
+        public ushort StartingGold { get; internal set; }
+        public List<byte> StartingKarma { get; internal set; }
+        public List<ushort> StartingEquipment { get; internal set; }
+        public List<ushort> StartingArmor { get; internal set; }
+        public List<ushort> StartingWeapons { get; internal set; }
+        public List<ushort> StartingReagents { get; internal set; }
+        public List<ushort> StartingMixtures { get; internal set; }
+        public ushort StartingItems { get; internal set; }
+        public byte StartingStones { get; internal set; }
+        public byte StartingRunes { get; internal set; }
+
 
         public UltimaData()
         {
@@ -144,6 +156,13 @@ namespace U4DosRandomizer
             PirateCove = new List<Coordinate>();
             AbyssEjectionLocations = new List<Coordinate>();
             ShopLocations = new List<List<byte>>();
+            StartingKarma = new List<byte>();
+            StartingEquipment = new List<ushort>();
+            StartingArmor = new List<ushort>();
+            StartingWeapons = new List<ushort>();
+            StartingReagents = new List<ushort>();
+            StartingMixtures = new List<ushort>();
+
         }
 
         public int ITEM_MANDRAKE { get; } = 0;
