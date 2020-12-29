@@ -137,7 +137,7 @@ namespace U4DosRandomizer
 
         public uint StartingFood { get; internal set; }
         public ushort StartingGold { get; internal set; }
-        public List<ushort> StartingKarma { get; internal set; }
+        public List<byte> StartingKarma { get; internal set; }
         public List<ushort> StartingEquipment { get; internal set; }
         public List<ushort> StartingArmor { get; internal set; }
         public List<ushort> StartingWeapons { get; internal set; }
@@ -156,7 +156,7 @@ namespace U4DosRandomizer
             PirateCove = new List<Coordinate>();
             AbyssEjectionLocations = new List<Coordinate>();
             ShopLocations = new List<List<byte>>();
-            StartingKarma = new List<ushort>();
+            StartingKarma = new List<byte>();
             StartingEquipment = new List<ushort>();
             StartingArmor = new List<ushort>();
             StartingWeapons = new List<ushort>();

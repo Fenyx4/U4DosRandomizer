@@ -94,34 +94,14 @@ namespace U4DosRandomizer
                 titleBytes[ITEMS1_OFFSET + offset] = itemBytes[offset];
             }
 
-            UpdateWithList(data.StartingEquipment, EQUIPMENT_OFFSET);
-            UpdateWithList(data.StartingArmor, ARMOR_OFFSET);
-            UpdateWithList(data.StartingWeapons, WEAPONS_OFFSET);
-            UpdateWithList(data.StartingReagents, REAGENTS_OFFSET);
-            UpdateWithList(data.StartingMixtures, MIXTURES_OFFSET);
+            titleBytes.OverwriteBytes(data.StartingEquipment, EQUIPMENT_OFFSET);
+            titleBytes.OverwriteBytes(data.StartingArmor, ARMOR_OFFSET);
+            titleBytes.OverwriteBytes(data.StartingWeapons, WEAPONS_OFFSET);
+            titleBytes.OverwriteBytes(data.StartingReagents, REAGENTS_OFFSET);
+            titleBytes.OverwriteBytes(data.StartingMixtures, MIXTURES_OFFSET);
 
             titleBytes[STONES_OFFSET] = data.StartingStones;
             titleBytes[RUNES_OFFSET] = data.StartingRunes;
-        }
-
-        public void UpdateWithList(List<ushort> list, int startingOffset)
-        {
-            for (int listItem = 0; listItem < list.Count; listItem++)
-            {
-                var itemBytes = BitConverter.GetBytes(list[listItem]);
-                for (int offset = 0; offset < itemBytes.Length; offset++)
-                {
-                    titleBytes[startingOffset + (listItem* itemBytes.Length) + offset] = itemBytes[offset];
-                }
-            }
-        }
-
-        public void UpdateWithList(List<byte> list, int startingOffset)
-        {
-            for (int offset = 0; offset < list.Count; offset++)
-            {
-                titleBytes[startingOffset + offset] = list[offset];
-            }
         }
 
         public void Save(string path)

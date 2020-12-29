@@ -756,6 +756,7 @@ C_2C12()
 
 unsigned char D_30DC[] = {0xE7,0x53,0x23,0x3B,0x9E,0x69,0x17,0xBA};
 unsigned char D_30E4[] = {0x88,0x69,0xDD,0x2C,0x15,0xB7,0x81,0xAB};
+unsigned char karma_starts[] = {0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF};
 
 unsigned /*D_30EC*/*pKarmas[] = {
 	&(Party._hones),
@@ -780,13 +781,17 @@ C_2E04()
 	Party.f_1d8 = 1;
 	for(loc_A = 7; loc_A >= 0; loc_A --) {
 		*(pKarmas[loc_A]) = tmp_karma[loc_A];
-		if(u_rand_a() % 100 >= 101) {
-			*(pKarmas[loc_A]) = 99;
-		}
-		if(u_rand_a() % 100 >= 102) {
-			*(pKarmas[loc_A]) = 00;
+	}
+	
+	/*Set Karma*/
+	if(U4_RND1(7) > 8) {
+		for(loc_A = 7; loc_A >= 0; loc_A --) {
+			if(karma_starts[loc_A] != 0xFF)	{
+				*(pKarmas[loc_A]) = karma_starts[loc_A];
+			}
 		}
 	}
+	
 	memcpy(&loc_B, &(Party.chara[lastVirtue]), sizeof(struct tChara));
 	memcpy(&(Party.chara[lastVirtue]), &(Party.chara[0]), sizeof(struct tChara));
 	memcpy(&(Party.chara[0]), &loc_B, sizeof(struct tChara));

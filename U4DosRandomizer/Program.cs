@@ -56,6 +56,14 @@ namespace U4DosRandomizer
                 "--questItems",
                 "Percentage chance to start with a quest item.",
                 CommandOptionType.SingleValue);
+            CommandOption karmaValueArg = commandLineApplication.Option(
+                "--karmaValue",
+                "Value to override starting karma value for a virtue. Leave blank for random.",
+                CommandOptionType.SingleValue);
+            CommandOption karmaPercentageArg = commandLineApplication.Option(
+                "--karmaPercentage",
+                "Percentage chance to override a starting karma value for a virtue. Default 0 (no override).",
+                CommandOptionType.SingleValue);
             commandLineApplication.HelpOption("-? | -h | --help");
 
             commandLineApplication.OnExecute(() =>
@@ -85,6 +93,27 @@ namespace U4DosRandomizer
                     {
                         throw new InvalidCastException("QuestItems argument must be a number between 0 and 100 inclusive");
                     }
+                }
+
+                var karmaPercentage = 0;
+                if (karmaPercentageArg.HasValue())
+                {
+                    if (!int.TryParse(karmaPercentageArg.Value(), out karmaPercentage) && karmaPercentage >= 0 && karmaPercentage <= 100)
+                    {
+                        throw new InvalidCastException("KarmaPercentage argument must be a number between 0 and 100 inclusive");
+                    }
+                }
+
+                int? karmaValue = null;
+                var karmaValueTmp = 0;
+                if (karmaValueArg.HasValue())
+                {
+                    if (!int.TryParse(karmaValueArg.Value(), out karmaValueTmp) && karmaValueTmp >= 1 && karmaValueTmp <= 100)
+                    {
+                        throw new InvalidCastException("KarmaValue argument must be a number between 1 and 100 inclusive");
+                    }
+
+                    karmaValue = karmaValueTmp;
                 }
 
                 var path = Directory.GetCurrentDirectory();
@@ -124,6 +153,8 @@ namespace U4DosRandomizer
                     flags.MixQuantity = minQuantityArg.HasValue();
                     flags.Fixes = fixesArg.HasValue();
                     flags.QuestItemPercentage = questItems;
+                    flags.KarmaSetPercentage = karmaPercentage;
+                    flags.KarmaValue = karmaValue;
                     Randomize(seed, path, flags);
                     //Console.WriteLine("Seed: " + seed);
                     //var random = new Random(seed);
@@ -302,13 +333,22 @@ namespace U4DosRandomizer
                 }
             }
 
-            
+            if(flags.KarmaSetPercentage > 0)
+            {
+                for(int virtue = 0; virtue < 8; virtue++ )
+                {
+                    if(random.Next(0, 100) < flags.KarmaSetPercentage)
+                    {
+                        ultimaData.StartingKarma[virtue] = (flags.KarmaValue.HasValue ? (byte)flags.KarmaValue.Value : (byte)random.Next(0, 100));
+                    }
+                }
+            }
 
             
             //ultimaData.StartingStones = 0XFF;
             //ultimaData.StartingRunes = 0XFF;
 
-            title.Update(ultimaData);
+            title.Update(ultimaData, flags);
             talk.Update(ultimaData, avatar, flags);
             avatar.Update(ultimaData, flags);
             dungeons.Update(ultimaData);
