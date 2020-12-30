@@ -88,7 +88,7 @@ namespace U4DosRandomizer
 
             for (int offset = 0; offset < 8; offset++)
             {
-                titleBytes[KARMA_OVERRIDE_VALUES_OFFSET + offset] = data.StartingKarma[offset];
+                titleBytes[KARMA_OVERRIDE_VALUES_OFFSET + offset] = (data.StartingKarma[offset] == 100 ? (byte)0 : data.StartingKarma[offset]);
             }
         }
 
