@@ -225,6 +225,9 @@ namespace U4DosRandomizer
             var party = new Party();
             party.Load(path, ultimaData);
 
+            var towns = new Towns();
+            towns.Load(path, ultimaData);
+
             if (flags.Fixes)
             {
                 ultimaData.ShopLocations[avatar.AvatarOffset.LOC_SERPENT - 1][5] = 0x12;
@@ -353,7 +356,9 @@ namespace U4DosRandomizer
             avatar.Update(ultimaData, flags);
             dungeons.Update(ultimaData);
             party.Update(ultimaData);
+            towns.Update(ultimaData, flags);
 
+            towns.Save(path);
             party.Save(path);
             dungeons.Save(path);
             title.Save(path);
