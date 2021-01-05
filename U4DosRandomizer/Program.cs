@@ -1,9 +1,12 @@
 using Microsoft.Extensions.CommandLineUtils;
+using Newtonsoft.Json;
 using SixLabors.ImageSharp;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Runtime.Serialization.Formatters.Binary;
+using System.Text;
 
 namespace U4DosRandomizer
 {
@@ -145,7 +148,7 @@ namespace U4DosRandomizer
                 }
                 else
                 {
-                    Flags flags = new Flags();
+                    Flags flags = new Flags(seed, 9);
                     flags.Overworld = overworld;
                     flags.MiniMap = minimapArg.HasValue();
                     flags.SpellRemove = spellRemoveArg.Value();
@@ -182,8 +185,18 @@ namespace U4DosRandomizer
 
         private static void Randomize(int seed, string path, Flags flags)
         {
-            System.IO.File.AppendAllText(@"seed.txt", seed.ToString() + Environment.NewLine);
-            Console.WriteLine("Seed: " + seed);
+            //Console.WriteLine("Seed: " + seed);
+
+            string json = JsonConvert.SerializeObject(flags);
+            Console.WriteLine("Flags JSON  : " + json);
+            var encoded = flags.GetEncoded();
+            Console.WriteLine("Flags Base64: " + encoded);
+
+            System.IO.File.AppendAllText(@"seed.txt", seed.ToString() + " " + "encoded" + Environment.NewLine);
+            //flags.DecodeAndSet(encoded);
+            //json = JsonConvert.SerializeObject(flags);
+            //Console.WriteLine("Flags JSON  : " + json);
+
             var random = new Random(seed);
 
             var randomValues = new List<int>();
@@ -351,7 +364,7 @@ namespace U4DosRandomizer
             //ultimaData.StartingStones = 0XFF;
             //ultimaData.StartingRunes = 0XFF;
 
-            title.Update(ultimaData, flags);
+            title.Update(ultimaData, flags, encoded);
             talk.Update(ultimaData, avatar, flags);
             avatar.Update(ultimaData, flags);
             dungeons.Update(ultimaData);
