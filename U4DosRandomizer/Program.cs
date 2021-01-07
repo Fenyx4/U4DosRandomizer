@@ -52,6 +52,10 @@ namespace U4DosRandomizer
                 "--fixes",
                 "Collection of non-gameplay fixes.",
                 CommandOptionType.NoValue);
+            CommandOption hythlothFixArg = commandLineApplication.Option(
+                "--hythlothFix",
+                "Fixes an issue with Hythloth dungeon room.",
+                CommandOptionType.NoValue);
             CommandOption questItemsArg = commandLineApplication.Option(
                 "--questItems",
                 "Percentage chance to start with a quest item.",
@@ -64,6 +68,7 @@ namespace U4DosRandomizer
                 "--karmaPercentage",
                 "Percentage chance to override a starting karma value for a virtue. Default 0 (no override).",
                 CommandOptionType.SingleValue);
+
             commandLineApplication.HelpOption("-? | -h | --help");
 
             commandLineApplication.OnExecute(() =>
@@ -152,6 +157,7 @@ namespace U4DosRandomizer
                     flags.DngStone = dngStoneArg.HasValue();
                     flags.MixQuantity = minQuantityArg.HasValue();
                     flags.Fixes = fixesArg.HasValue();
+                    flags.FixHythloth = hythlothFixArg.HasValue();
                     flags.QuestItemPercentage = questItems;
                     flags.KarmaSetPercentage = karmaPercentage;
                     flags.KarmaValue = karmaValue;
@@ -220,7 +226,7 @@ namespace U4DosRandomizer
             talk.Load(path);
 
             var dungeons = new Dungeons();
-            dungeons.Load(path, ultimaData);
+            dungeons.Load(path, ultimaData, flags);
 
             var party = new Party();
             party.Load(path, ultimaData);
@@ -234,26 +240,6 @@ namespace U4DosRandomizer
             }
 
             worldMap.Randomize(ultimaData, new Random(randomValues[3]), new Random(randomValues[4]));
-
-            // Other stones
-            if (flags.DngStone)
-            {
-                foreach (var dungeonName in dungeons.dungeons.Keys)
-                {
-                    if (dungeonName.ToLower() != "abyss" && dungeonName.ToLower() != "hythloth")
-                    {
-                        var dungeon = dungeons.dungeons[dungeonName];
-                        var stones = dungeon.GetTiles(DungeonTileInfo.AltarOrStone);
-                        foreach (var stone in stones)
-                        {
-                            stone.SetTile(DungeonTileInfo.Nothing);
-                        }
-                        var possibleDungeonLocations = dungeon.GetTiles(DungeonTileInfo.Nothing);
-                        var dungeonLoc = possibleDungeonLocations[random.Next(0, possibleDungeonLocations.Count - 1)];
-                        dungeonLoc.SetTile(DungeonTileInfo.AltarOrStone);
-                    }
-                }
-            }
 
             if (!String.IsNullOrWhiteSpace(flags.SpellRemove))
             {
@@ -354,7 +340,7 @@ namespace U4DosRandomizer
             title.Update(ultimaData, flags);
             talk.Update(ultimaData, avatar, flags);
             avatar.Update(ultimaData, flags);
-            dungeons.Update(ultimaData);
+            dungeons.Update(ultimaData, flags);
             party.Update(ultimaData);
             towns.Update(ultimaData, flags);
 

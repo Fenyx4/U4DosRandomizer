@@ -15,5 +15,6 @@
         public int QuestItemPercentage { get; internal set; }
         public int KarmaSetPercentage { get; internal set; }
         public int? KarmaValue { get; internal set; }
+        public bool FixHythloth { get; internal set; }
     }
 }
