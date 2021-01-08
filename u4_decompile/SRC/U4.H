@@ -342,6 +342,7 @@ extern char cdecl /*D_06A6*/SoundFlag;
 extern unsigned D_07F8;
 extern unsigned /*D_07FA*/*pKarmas[];
 extern int /*D_080A*/activeCharaX;
+extern int sleepBackOff;
 extern char D_080C[], D_0810[];
 extern char D_0814[], D_081C[];/*moongates positions*/
 extern char *D_0824[];

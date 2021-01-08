@@ -64,6 +64,7 @@ C_61D1();*/
 	u_kbflush();
 	bp_04 = 0;
 	D_96EE = D_96F4 = 0;
+	sleepBackOff = 3;
 	do {
 		for(activeChara = 0; /*C_5A88:*/activeChara < Party.f_1d8 && !IsCombatEnded(); activeChara++) {
 /*C_5A9E*/
