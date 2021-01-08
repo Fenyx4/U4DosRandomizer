@@ -784,7 +784,7 @@ C_2E04()
 	}
 	
 	/*Set Karma*/
-	if(U4_RND1(7) > 8) {
+	if(U4_RND1(7) > 9) {
 		for(loc_A = 7; loc_A >= 0; loc_A --) {
 			if(karma_starts[loc_A] != 0xFF)	{
 				*(pKarmas[loc_A]) = karma_starts[loc_A];
