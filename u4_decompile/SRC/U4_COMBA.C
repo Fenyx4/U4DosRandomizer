@@ -116,18 +116,6 @@ C_61D1();*/
 					case KBD_U: CMD_Use(); break;
 					case KBD_V: CMD_Volume(); break;
 					case KBD_Z: CMD_Ztats(); break;
-					case KBD_S:
-						RST_MSK(operativeChara, activeChara);						
-						if(operativeChara == 0) {
-							operativeChara = 0xFF;
-							u4_puts("Set Active Plr:");
-							u4_puts("None!");
-						} else {
-							u4_puts("Remove Active Plr:");
-							u4_puts(Party.chara[(si&0xf) - 1]._name);
-						}
-						Gra_CR();
-						break;
 					case KBD_B:
 					case KBD_D:
 					case KBD_E:
@@ -151,12 +139,28 @@ C_61D1();*/
 							C_1C21();
 							break;
 						}
+					case KBD_S:
+						if(U4_RND1(7) > 8) {
+							RST_MSK(operativeChara, activeChara);						
+							if(operativeChara == 0) {
+								operativeChara = 0xFF;
+								u4_puts("Set Active Plr:");
+								u4_puts("None!");
+							} else {
+								u4_puts("Remove Active Plr:");
+								u4_puts(Party.chara[(si&0xf) - 1]._name);
+							}
+							Gra_CR();
+							break;
+						}
 					case KBD_0: 
-						operativeChara = 0xFF; 
-						u4_puts("Set Active Plr:");
-						u4_puts("None!");
-						Gra_CR();
-						break;
+						if(U4_RND1(7) > 8) {
+							operativeChara = 0xFF; 
+							u4_puts("Set Active Plr:");
+							u4_puts("None!");
+							Gra_CR();
+							break;
+						}
 					case KBD_1:
 					case KBD_2:
 					case KBD_3:
@@ -165,14 +169,16 @@ C_61D1();*/
 					case KBD_6:
 					case KBD_7:
 					case KBD_8:
-						if((si&0xf) <= Party.f_1d8)
-						{
-							operativeChara = 0;
-							SET_MSK(operativeChara, (si&0xf) - 1);
-							u4_puts("Set Active Plr:");
-							u4_puts(Party.chara[(si&0xf) - 1]._name);
-							Gra_CR();
-							break;
+						if(U4_RND1(7) > 8) {
+							if((si&0xf) <= Party.f_1d8)
+							{
+								operativeChara = 0;
+								SET_MSK(operativeChara, (si&0xf) - 1);
+								u4_puts("Set Active Plr:");
+								u4_puts(Party.chara[(si&0xf) - 1]._name);
+								Gra_CR();
+								break;
+							}
 						}
 					default:
 						u4_puts(/*D_1FED*/"Bad command\n");
