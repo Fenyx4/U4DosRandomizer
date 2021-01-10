@@ -426,7 +426,11 @@ C_61D1()
 	int loc_A, loc_B, loc_D;
 
 	loc_C = &(Party.chara[activeChara]);
-	AskDirWithDiagonal(/*D_2060*/"Dir: ", &loc_A, &loc_B);
+	if(U4_RND1(7) > 8) {
+		AskDirWithDiagonal(/*D_2060*/"Dir: ", &loc_A, &loc_B);
+	} else {
+		AskDir(/*D_2060*/"Dir: ", &loc_A, &loc_B);
+	}
 	if(!(loc_A | loc_B))
 		return;
 	hit_x = Combat._charaX[activeChara];
