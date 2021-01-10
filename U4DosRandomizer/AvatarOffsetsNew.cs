@@ -58,10 +58,10 @@ namespace U4DosRandomizer
             }
         }
 
-        public int MOONGATE_X_OFFSET { get; } = 0x0fa44; //0fad1
-        public int MOONGATE_Y_OFFSET { get; } = 0x0fa4c; //fad9
-        public int AREA_X_OFFSET { get; } = 0x0fa74; //fb01 // towns, cities, castles, dungeons, shrines
-        public int AREA_Y_OFFSET { get; } = 0x0fa94; //fb21
+        public int MOONGATE_X_OFFSET { get; } = 0x0fdee; //0fad1
+        public int MOONGATE_Y_OFFSET { get; } = 0x0fdf6; //fad9
+        public int AREA_X_OFFSET { get; } = 0x0fe1e; //fb01 // towns, cities, castles, dungeons, shrines
+        public int AREA_Y_OFFSET { get; } = 0x0fe3e; //fb21
         public int LOC_BUILDINGS { get; } = 0x01;
 
         public int LOC_CASTLES { get; } = 0x01;
@@ -138,25 +138,25 @@ namespace U4DosRandomizer
          * 30 - Spirituality
          * 31 - Humility
          */
-        public int PIRATE_COVE_X_OFFSET { get; } = 0x0fb1c; //fba9 // length 8
-        public int PIRATE_COVE_Y_OFFSET { get; } = 0x0fb24; //fbb1 // length 8
-        public int PIRATE_COVE_SHIP_TILES { get; } = 0x0fb2c; //fbb9 // length 8 (Direction pirates are facing)
-        public int PIRATE_COVE_SPAWN_TRIGGER_Y_OFFSET1 { get; } = 0x02f04; //3084
-        public int PIRATE_COVE_SPAWN_TRIGGER_X_OFFSET1 { get; } = 0x02f0b; //308B
-        public int PIRATE_COVE_SPAWN_TRIGGER_Y_OFFSET2 { get; } = 0x02fa3; //3123
-        public int PIRATE_COVE_SPAWN_TRIGGER_X_OFFSET2 { get; } = 0x02faa; //312A
-        public int MONSTER_HP_OFFSET { get; } = 0x11602; //11685 // length 52
-        public int MONSTER_LEADER_TYPES_OFFSET { get; } = 0x11636; //116b9 // length 36
-        public int MONSTER_ENCOUNTER_SIZE_OFFSET { get; } = 0x1165a; //116dd // length 36
-        public int ALTAR_EXIT_DESTINATION { get; } = 0x1184a; //118c5 // length 12 : altar room exit destinations 
+        public int PIRATE_COVE_X_OFFSET { get; } = 0x0fec6; //fba9 // length 8
+        public int PIRATE_COVE_Y_OFFSET { get; } = 0x0fece; //fbb1 // length 8
+        public int PIRATE_COVE_SHIP_TILES { get; } = 0x0fed6; //fbb9 // length 8 (Direction pirates are facing)
+        public int PIRATE_COVE_SPAWN_TRIGGER_Y_OFFSET1 { get; } = 0x0302b; //3084
+        public int PIRATE_COVE_SPAWN_TRIGGER_X_OFFSET1 { get; } = 0x03032; //308B
+        public int PIRATE_COVE_SPAWN_TRIGGER_Y_OFFSET2 { get; } = 0x030CA; //3123
+        public int PIRATE_COVE_SPAWN_TRIGGER_X_OFFSET2 { get; } = 0x030d1; //312A
+        public int MONSTER_HP_OFFSET { get; } = 0x11a00; //11685 // length 52
+        public int MONSTER_LEADER_TYPES_OFFSET { get; } = 0x11a34; //116b9 // length 36
+        public int MONSTER_ENCOUNTER_SIZE_OFFSET { get; } = 0x11a58; //116dd // length 36
+        public int ALTAR_EXIT_DESTINATION { get; } = 0x11c48; //118c5 // length 12 : altar room exit destinations 
         /*
          *     0-3 { get; } = truth (north, east, south, west)
          *     4-7 { get; } = love
          *     8-11 { get; } = courage
          */
-        public int AMBUSH_MONSTER_TYPES { get; } = 0x1188E8; //11963 //length 8 : ambush monster types
-        public int CITY_RUNE_MASK_PAIRS_OFFSET { get; } = 0x11b42; //11baf // length 16 : city/runemask pairs (city id, corresponding rune bitmask)
-        public int ITEM_LOCATIONS_OFFSET { get; } = 0x11b5e; //11bcb // length 120 : 24 five-byte item location records (see below)
+        public int AMBUSH_MONSTER_TYPES { get; } = 0x11CE6; //11963 //length 8 : ambush monster types
+        public int CITY_RUNE_MASK_PAIRS_OFFSET { get; } = 0x11f40; //11baf // length 16 : city/runemask pairs (city id, corresponding rune bitmask)
+        public int ITEM_LOCATIONS_OFFSET { get; } = 0x11f5c; //11bcb // length 120 : 24 five-byte item location records (see below)
         /*
          * Each item location record has the following structure:
 
@@ -167,28 +167,28 @@ namespace U4DosRandomizer
             0x3	2	 ??? (a pointer?)
          */
         
-        public int LB_TEXT_OFFSET { get; } = 0x15695; //156ca
-        public int SHRINE_TEXT_OFFSET { get; } = 0x16dbe; //16df2
+        public int LB_TEXT_OFFSET { get; } = 0x15a93; //156ca
+        public int SHRINE_TEXT_OFFSET { get; } = 0x171BC; //16df2
 
-        public int WHITE_STONE_LOCATION_TEXT { get; } = 0x17400; //17434
-        public int BLACK_STONE_LOCATION_TEXT { get; } = 0x174C5; //174F9
+        public int WHITE_STONE_LOCATION_TEXT { get; } = 0x177FE; //17434
+        public int BLACK_STONE_LOCATION_TEXT { get; } = 0x178c3; //174F9
 
-        public int SHOP_LOCATION_OFFSET { get; } = 0x11F12; //11F7F
+        public int SHOP_LOCATION_OFFSET { get; } = 0x12310; //11F7F
 
-        public int DEMON_SPAWN_TRIGGER_X1_OFFSET { get; } = 0x2D8C; //2F17 !!! e5
-        public int DEMON_SPAWN_TRIGGER_X2_OFFSET { get; } = 0x2D90; //2F1E !!! ea
-        public int DEMON_SPAWN_TRIGGER_Y1_OFFSET { get; } = 0x2DA1; //2F25 !!! d4
-        public int DEMON_SPAWN_TRIGGER_Y2_OFFSET { get; } = 0x2DA5; //2F2C !!! d9
-        public int DEMON_SPAWN_LOCATION_X_OFFSET { get; } = 0x285C; //29EA
+        public int DEMON_SPAWN_TRIGGER_X1_OFFSET { get; } = 0x2EB3; //2F17 !!! e5
+        public int DEMON_SPAWN_TRIGGER_X2_OFFSET { get; } = 0x2EB7; //2F1E !!! ea
+        public int DEMON_SPAWN_TRIGGER_Y1_OFFSET { get; } = 0x2EC8; //2F25 !!! d4
+        public int DEMON_SPAWN_TRIGGER_Y2_OFFSET { get; } = 0x2ECC; //2F2C !!! d9
+        public int DEMON_SPAWN_LOCATION_X_OFFSET { get; } = 0x2983; //29EA
 
-        public int BALLOON_SPAWN_TRIGGER_X_OFFSET { get; } = 0x281A; //29A8
-        public int BALLOON_SPAWN_TRIGGER_Y_OFFSET { get; } = 0x2821; //29AF
+        public int BALLOON_SPAWN_TRIGGER_X_OFFSET { get; } = 0x2941; //29A8
+        public int BALLOON_SPAWN_TRIGGER_Y_OFFSET { get; } = 0x2948; //29AF
 
-        public int BALLOON_SPAWN_LOCATION_X_OFFSET { get; } = 0x2830; //29BE
-        public int BALLOON_SPAWN_LOCATION_Y_OFFSET { get; } = 0x2835; //29C3
+        public int BALLOON_SPAWN_LOCATION_X_OFFSET { get; } = 0x2957; //29BE
+        public int BALLOON_SPAWN_LOCATION_Y_OFFSET { get; } = 0x295C; //29C3
 
-        public int LBC_DUNGEON_EXIT_X_OFFSET { get; } = 0x45E6; //4766
-        public int LBC_DUNGEON_EXIT_Y_OFFSET { get; } = 0x45EB; //476B
+        public int LBC_DUNGEON_EXIT_X_OFFSET { get; } = 0x470D; //4766
+        public int LBC_DUNGEON_EXIT_Y_OFFSET { get; } = 0x4712; //476B
 
         public int ITEM_USE_TRIGGER_BELL_X_OFFSET { get; } = 0x04D1; //693
         public int ITEM_USE_TRIGGER_BELL_Y_OFFSET { get; } = 0x04D8; //69A
@@ -199,40 +199,40 @@ namespace U4DosRandomizer
         public int ITEM_USE_TRIGGER_SKULL_X_OFFSET { get; } = 0x0621; //7E3
         public int ITEM_USE_TRIGGER_SKULL_Y_OFFSET { get; } = 0x0628; //7EA
 
-        public int WHIRLPOOL_EXIT_X_OFFSET { get; } = 0x79B6; //7A92
-        public int WHIRLPOOL_EXIT_Y_OFFSET { get; } = 0x79BB; //7A97
+        public int WHIRLPOOL_EXIT_X_OFFSET { get; } = 0x7C9A; //7A92
+        public int WHIRLPOOL_EXIT_Y_OFFSET { get; } = 0x7C9F; //7A97
 
-        public int ABYSS_EJECTION_LOCATIONS_X { get; } = 0xFE20; //FEAD  // Length 13 - Exit coords for when you fail tests in the Abyss https://github.com/ergonomy-joe/u4-decompiled/blob/c2c2108fa3bb346bcd1d8c207c526f33a4c8f5ef/SRC/U4_END.C#L37
-        public int ABYSS_EJECTION_LOCATIONS_Y { get; } = 0xFE2E; //FEBB
+        public int ABYSS_EJECTION_LOCATIONS_X { get; } = 0x101CA; //FEAD  // Length 13 - Exit coords for when you fail tests in the Abyss https://github.com/ergonomy-joe/u4-decompiled/blob/c2c2108fa3bb346bcd1d8c207c526f33a4c8f5ef/SRC/U4_END.C#L37
+        public int ABYSS_EJECTION_LOCATIONS_Y { get; } = 0x101DB; //FEBB
 
-        public int SPELL_RECIPE_OFFSET { get; } = 0x119BC; //11A29
+        public int SPELL_RECIPE_OFFSET { get; } = 0x11DBA; //11A29
 
-        public int BLINK_CAST_EXCLUSION_X1_OFFSET { get; } = 0x666D;
+        public int BLINK_CAST_EXCLUSION_X1_OFFSET { get; } = 0x6951; // New 666D
 
-        public int BLINK_CAST_EXCLUSION_X2_OFFSET { get; } = 0x6671;
+        public int BLINK_CAST_EXCLUSION_X2_OFFSET { get { return BLINK_CAST_EXCLUSION_X1_OFFSET + 4; } } // New
 
-        public int BLINK_CAST_EXCLUSION_Y1_OFFSET { get; } = 0x6682;
+        public int BLINK_CAST_EXCLUSION_Y1_OFFSET { get; } = 0x6966; // New
 
-        public int BLINK_CAST_EXCLUSION_Y2_OFFSET { get; } = 0x6686;
+        public int BLINK_CAST_EXCLUSION_Y2_OFFSET { get { return BLINK_CAST_EXCLUSION_Y1_OFFSET + 4; } } // New
 
 
-        public int BLINK_DESTINATION_EXCLUSION_X1_OFFSET { get; } = 0x6707;
+        public int BLINK_DESTINATION_EXCLUSION_X1_OFFSET { get; } = 0x69EB; // New
 
-        public int BLINK_DESTINATION_EXCLUSION_X2_OFFSET { get; } = 0x670B;
+        public int BLINK_DESTINATION_EXCLUSION_X2_OFFSET { get { return BLINK_DESTINATION_EXCLUSION_X1_OFFSET + 4; } }  // New
 
-        public int BLINK_DESTINATION_EXCLUSION_Y1_OFFSET { get; } = 0x6726;
+        public int BLINK_DESTINATION_EXCLUSION_Y1_OFFSET { get; } = 0x6A0A; // New
 
-        public int BLINK_DESTINATION_EXCLUSION_Y2_OFFSET { get; } = 0x672A;
+        public int BLINK_DESTINATION_EXCLUSION_Y2_OFFSET { get { return BLINK_DESTINATION_EXCLUSION_Y1_OFFSET + 4; } } // New
 
-        public int BLINK_DESTINATION2_EXCLUSION_X1_OFFSET { get; } = 0x6749;
+        public int BLINK_DESTINATION2_EXCLUSION_X1_OFFSET { get; } = 0x6A2D; // New
 
-        public int BLINK_DESTINATION2_EXCLUSION_X2_OFFSET { get; } = 0x674D;
+        public int BLINK_DESTINATION2_EXCLUSION_X2_OFFSET { get { return BLINK_DESTINATION2_EXCLUSION_X1_OFFSET + 4; } } // New
 
-        public int BLINK_DESTINATION2_EXCLUSION_Y1_OFFSET { get; } = 0x676C;
+        public int BLINK_DESTINATION2_EXCLUSION_Y1_OFFSET { get; } = 0x6A50; // New
 
-        public int BLINK_DESTINATION2_EXCLUSION_Y2_OFFSET { get; } = 0x6770;
+        public int BLINK_DESTINATION2_EXCLUSION_Y2_OFFSET { get { return BLINK_DESTINATION2_EXCLUSION_Y1_OFFSET + 4; } }  // New
 
-        public int ENABLE_MIX_QUANTITY_OFFSET { get; } = 0x8D79;
+        public int ENABLE_MIX_QUANTITY_OFFSET { get; } = 0x905D; // New
 
         public const byte Reagent_ash = (0x80 >> 0);
         public const byte Reagent_ginseng = (0x80 >> 1);
