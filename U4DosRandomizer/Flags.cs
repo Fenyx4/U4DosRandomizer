@@ -23,6 +23,12 @@ namespace U4DosRandomizer
         public int KarmaSetPercentage { get; internal set; }
         public int? KarmaValue { get; internal set; }
         public bool FixHythloth { get; internal set; }
+        public bool SleepLockAssist { get; internal set; }
+        public bool ActivePlayer { get; internal set; }
+        public bool HitChance { get; internal set; }
+        public bool DiagonalAttack { get; internal set; }
+        public bool SacrificeFix { get; internal set; }
+
         public List<int> SupportedVersions = new List<int>() { 9 };
 
         public string GetEncoded()

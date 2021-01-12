@@ -140,7 +140,8 @@ C_61D1();*/
 							break;
 						}
 					case KBD_S:
-						if(U4_RND1(7) > 8) {
+						/*This should always evaluate to false. Leaving it functioning like regular. Randomizer will have option to turn it on by changing the 8 to a 0.*/
+						if(U4_RND1(7) >= 8) {
 							RST_MSK(operativeChara, activeChara);						
 							if(operativeChara == 0) {
 								operativeChara = 0xFF;
@@ -148,13 +149,13 @@ C_61D1();*/
 								u4_puts("None!");
 							} else {
 								u4_puts("Remove Active Plr:");
-								u4_puts(Party.chara[(si&0xf) - 1]._name);
+								u4_puts(Party.chara[activeChara]._name);
 							}
 							Gra_CR();
 							break;
 						}
 					case KBD_0: 
-						if(U4_RND1(7) > 8) {
+						if(U4_RND1(7) >= 8) {
 							operativeChara = 0xFF; 
 							u4_puts("Set Active Plr:");
 							u4_puts("None!");
@@ -169,7 +170,7 @@ C_61D1();*/
 					case KBD_6:
 					case KBD_7:
 					case KBD_8:
-						if(U4_RND1(7) > 8) {
+						if(U4_RND1(7) >= 8) {
 							if((si&0xf) <= Party.f_1d8)
 							{
 								operativeChara = 0;
@@ -344,7 +345,7 @@ int /*bp04*/_range;
 	hit_tile = (loc_C->_weapon == 14)?TIL_4E:TIL_4F;
 	/*dexterity test*/
 	/*This should always evaluate to false. Leaving it functioning like regular. Randomizer will have option to turn it on by changing the 8 to a 0.*/
-	if(U4_RND1(7) > 8) {
+	if(U4_RND1(7) >= 8) {
 		if(U4_RND1(0xff) > loc_C->_dex * 2 + 0x80) {
 			w_missed(_range);
 			return;
@@ -426,7 +427,8 @@ C_61D1()
 	int loc_A, loc_B, loc_D;
 
 	loc_C = &(Party.chara[activeChara]);
-	if(U4_RND1(7) > 8) {
+	/*This should always evaluate to false. Leaving it functioning like regular. Randomizer will have option to turn it on by changing the 8 to a 0.*/
+	if(U4_RND1(7) >= 8) {
 		AskDirWithDiagonal(/*D_2060*/"Dir: ", &loc_A, &loc_B);
 	} else {
 		AskDir(/*D_2060*/"Dir: ", &loc_A, &loc_B);

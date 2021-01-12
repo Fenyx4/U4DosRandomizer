@@ -22,7 +22,7 @@ namespace U4DosRandomizer
             PropertyInfo[] properties = this.GetType().GetInterface("IAvatarOffset").GetProperties();
             foreach (PropertyInfo pi in properties)
             {
-                if(pi.Name.ToLower().Contains("offset") && !pi.Name.ToLower().Contains("blink") && pi.Name != "ENABLE_MIX_QUANTITY_OFFSET")
+                if(pi.Name.ToLower().Contains("offset") && !pi.Name.ToLower().Contains("blink") && !pi.Name.ToLower().Contains("enable"))
                 {
                     var newValue = avatarBytes[(int)pi.GetValue(this, null)];
                     var oldValue = originalAvatarBytes[(int)pi.GetValue(originalOffsets, null)];
@@ -47,7 +47,7 @@ namespace U4DosRandomizer
                         throw new Exception($"Offset {pi.Name} appears to be wrong.");
                     }
                 }
-                else if (pi.Name == "ENABLE_MIX_QUANTITY_OFFSET")
+                else if (pi.Name.Contains("enable"))
                 {
                     var newValue = avatarBytes[(int)pi.GetValue(this, null)];
                     if (newValue != 0x08)
@@ -58,10 +58,10 @@ namespace U4DosRandomizer
             }
         }
 
-        public int MOONGATE_X_OFFSET { get; } = 0x0fdee; //0fad1
-        public int MOONGATE_Y_OFFSET { get; } = 0x0fdf6; //fad9
-        public int AREA_X_OFFSET { get; } = 0x0fe1e; //fb01 // towns, cities, castles, dungeons, shrines
-        public int AREA_Y_OFFSET { get; } = 0x0fe3e; //fb21
+        public int MOONGATE_X_OFFSET { get; } = 0x0fdfe; //0fad1
+        public int MOONGATE_Y_OFFSET { get; } = 0x0fe06; //fad9
+        public int AREA_X_OFFSET { get; } = 0x0fe2e; //fb01 // towns, cities, castles, dungeons, shrines
+        public int AREA_Y_OFFSET { get; } = 0x0fe4e; //fb21
         public int LOC_BUILDINGS { get; } = 0x01;
 
         public int LOC_CASTLES { get; } = 0x01;
@@ -138,25 +138,25 @@ namespace U4DosRandomizer
          * 30 - Spirituality
          * 31 - Humility
          */
-        public int PIRATE_COVE_X_OFFSET { get; } = 0x0fec6; //fba9 // length 8
-        public int PIRATE_COVE_Y_OFFSET { get; } = 0x0fece; //fbb1 // length 8
-        public int PIRATE_COVE_SHIP_TILES { get; } = 0x0fed6; //fbb9 // length 8 (Direction pirates are facing)
+        public int PIRATE_COVE_X_OFFSET { get; } = 0x0fed6; //fba9 // length 8
+        public int PIRATE_COVE_Y_OFFSET { get; } = 0x0fede; //fbb1 // length 8
+        public int PIRATE_COVE_SHIP_TILES { get; } = 0x0fee6; //fbb9 // length 8 (Direction pirates are facing)
         public int PIRATE_COVE_SPAWN_TRIGGER_Y_OFFSET1 { get; } = 0x0302b; //3084
         public int PIRATE_COVE_SPAWN_TRIGGER_X_OFFSET1 { get; } = 0x03032; //308B
         public int PIRATE_COVE_SPAWN_TRIGGER_Y_OFFSET2 { get; } = 0x030CA; //3123
         public int PIRATE_COVE_SPAWN_TRIGGER_X_OFFSET2 { get; } = 0x030d1; //312A
-        public int MONSTER_HP_OFFSET { get; } = 0x11a00; //11685 // length 52
-        public int MONSTER_LEADER_TYPES_OFFSET { get; } = 0x11a34; //116b9 // length 36
-        public int MONSTER_ENCOUNTER_SIZE_OFFSET { get; } = 0x11a58; //116dd // length 36
-        public int ALTAR_EXIT_DESTINATION { get; } = 0x11c48; //118c5 // length 12 : altar room exit destinations 
+        public int MONSTER_HP_OFFSET { get; } = 0x11a10; //11685 // length 52
+        public int MONSTER_LEADER_TYPES_OFFSET { get; } = 0x11a44; //116b9 // length 36
+        public int MONSTER_ENCOUNTER_SIZE_OFFSET { get; } = 0x11a68; //116dd // length 36
+        public int ALTAR_EXIT_DESTINATION { get; } = 0x11c58; //118c5 // length 12 : altar room exit destinations 
         /*
          *     0-3 { get; } = truth (north, east, south, west)
          *     4-7 { get; } = love
          *     8-11 { get; } = courage
          */
-        public int AMBUSH_MONSTER_TYPES { get; } = 0x11CE6; //11963 //length 8 : ambush monster types
-        public int CITY_RUNE_MASK_PAIRS_OFFSET { get; } = 0x11f40; //11baf // length 16 : city/runemask pairs (city id, corresponding rune bitmask)
-        public int ITEM_LOCATIONS_OFFSET { get; } = 0x11f5c; //11bcb // length 120 : 24 five-byte item location records (see below)
+        public int AMBUSH_MONSTER_TYPES { get; } = 0x11CF6; //11963 //length 8 : ambush monster types
+        public int CITY_RUNE_MASK_PAIRS_OFFSET { get; } = 0x11f50; //11baf // length 16 : city/runemask pairs (city id, corresponding rune bitmask)
+        public int ITEM_LOCATIONS_OFFSET { get; } = 0x11f6c; //11bcb // length 120 : 24 five-byte item location records (see below)
         /*
          * Each item location record has the following structure:
 
@@ -167,13 +167,13 @@ namespace U4DosRandomizer
             0x3	2	 ??? (a pointer?)
          */
         
-        public int LB_TEXT_OFFSET { get; } = 0x15a93; //156ca
-        public int SHRINE_TEXT_OFFSET { get; } = 0x171BC; //16df2
+        public int LB_TEXT_OFFSET { get; } = 0x15aa3; //156ca
+        public int SHRINE_TEXT_OFFSET { get; } = 0x171CC; //16df2
 
-        public int WHITE_STONE_LOCATION_TEXT { get; } = 0x177FE; //17434
-        public int BLACK_STONE_LOCATION_TEXT { get; } = 0x178c3; //174F9
+        public int WHITE_STONE_LOCATION_TEXT { get; } = 0x1780E; //17434
+        public int BLACK_STONE_LOCATION_TEXT { get; } = 0x178d3; //174F9
 
-        public int SHOP_LOCATION_OFFSET { get; } = 0x12310; //11F7F
+        public int SHOP_LOCATION_OFFSET { get; } = 0x12320; //11F7F
 
         public int DEMON_SPAWN_TRIGGER_X1_OFFSET { get; } = 0x2EB3; //2F17 !!! e5
         public int DEMON_SPAWN_TRIGGER_X2_OFFSET { get; } = 0x2EB7; //2F1E !!! ea
@@ -199,40 +199,52 @@ namespace U4DosRandomizer
         public int ITEM_USE_TRIGGER_SKULL_X_OFFSET { get; } = 0x0621; //7E3
         public int ITEM_USE_TRIGGER_SKULL_Y_OFFSET { get; } = 0x0628; //7EA
 
-        public int WHIRLPOOL_EXIT_X_OFFSET { get; } = 0x7C9A; //7A92
-        public int WHIRLPOOL_EXIT_Y_OFFSET { get; } = 0x7C9F; //7A97
+        public int WHIRLPOOL_EXIT_X_OFFSET { get; } = 0x7CA8; //7A92
+        public int WHIRLPOOL_EXIT_Y_OFFSET { get; } = 0x7CAD; //7A97
 
-        public int ABYSS_EJECTION_LOCATIONS_X { get; } = 0x101CA; //FEAD  // Length 13 - Exit coords for when you fail tests in the Abyss https://github.com/ergonomy-joe/u4-decompiled/blob/c2c2108fa3bb346bcd1d8c207c526f33a4c8f5ef/SRC/U4_END.C#L37
-        public int ABYSS_EJECTION_LOCATIONS_Y { get; } = 0x101DB; //FEBB
+        public int ABYSS_EJECTION_LOCATIONS_X { get; } = 0x101DA; //FEAD  // Length 13 - Exit coords for when you fail tests in the Abyss https://github.com/ergonomy-joe/u4-decompiled/blob/c2c2108fa3bb346bcd1d8c207c526f33a4c8f5ef/SRC/U4_END.C#L37
+        public int ABYSS_EJECTION_LOCATIONS_Y { get; } = 0x101FB; //FEBB
 
-        public int SPELL_RECIPE_OFFSET { get; } = 0x11DBA; //11A29
+        public int SPELL_RECIPE_OFFSET { get; } = 0x11DCA; //11A29
 
-        public int BLINK_CAST_EXCLUSION_X1_OFFSET { get; } = 0x6951; // New 666D
+        public int BLINK_CAST_EXCLUSION_X1_OFFSET { get; } = 0x695F; // New
 
         public int BLINK_CAST_EXCLUSION_X2_OFFSET { get { return BLINK_CAST_EXCLUSION_X1_OFFSET + 4; } } // New
 
-        public int BLINK_CAST_EXCLUSION_Y1_OFFSET { get; } = 0x6966; // New
+        public int BLINK_CAST_EXCLUSION_Y1_OFFSET { get; } = 0x6974; // New
 
         public int BLINK_CAST_EXCLUSION_Y2_OFFSET { get { return BLINK_CAST_EXCLUSION_Y1_OFFSET + 4; } } // New
 
 
-        public int BLINK_DESTINATION_EXCLUSION_X1_OFFSET { get; } = 0x69EB; // New
+        public int BLINK_DESTINATION_EXCLUSION_X1_OFFSET { get; } = 0x69F9; // New
 
         public int BLINK_DESTINATION_EXCLUSION_X2_OFFSET { get { return BLINK_DESTINATION_EXCLUSION_X1_OFFSET + 4; } }  // New
 
-        public int BLINK_DESTINATION_EXCLUSION_Y1_OFFSET { get; } = 0x6A0A; // New
+        public int BLINK_DESTINATION_EXCLUSION_Y1_OFFSET { get; } = 0x6A18; // New
 
         public int BLINK_DESTINATION_EXCLUSION_Y2_OFFSET { get { return BLINK_DESTINATION_EXCLUSION_Y1_OFFSET + 4; } } // New
 
-        public int BLINK_DESTINATION2_EXCLUSION_X1_OFFSET { get; } = 0x6A2D; // New
+        public int BLINK_DESTINATION2_EXCLUSION_X1_OFFSET { get; } = 0x6A3B; // New
 
         public int BLINK_DESTINATION2_EXCLUSION_X2_OFFSET { get { return BLINK_DESTINATION2_EXCLUSION_X1_OFFSET + 4; } } // New
 
-        public int BLINK_DESTINATION2_EXCLUSION_Y1_OFFSET { get; } = 0x6A50; // New
+        public int BLINK_DESTINATION2_EXCLUSION_Y1_OFFSET { get; } = 0x6A5E; // New
 
         public int BLINK_DESTINATION2_EXCLUSION_Y2_OFFSET { get { return BLINK_DESTINATION2_EXCLUSION_Y1_OFFSET + 4; } }  // New
 
-        public int ENABLE_MIX_QUANTITY_OFFSET { get; } = 0x905D; // New
+        public int ENABLE_MIX_QUANTITY_OFFSET { get; } = 0x906B; // New
+
+        public int ENABLE_SLEEP_BACKOFF_OFFSET { get; } = 0xA1CE; // New
+
+        public int ENABLE_ACTIVE_PLAYER_1_OFFSET { get; } = 0x5E35; // New
+        public int ENABLE_ACTIVE_PLAYER_2_OFFSET { get; } = 0x5E7C; // New
+        public int ENABLE_ACTIVE_PLAYER_3_OFFSET { get; } = 0x5E97; // New
+
+        public int ENABLE_HIT_CHANCE_OFFSET { get; } = 0x6381; // New
+
+        public int ENABLE_DIAGONAL_ATTACK_OFFSET { get; } = 0x6535; // New
+
+        public int ENABLE_SACRIFICE_FIX_OFFSET { get; } = 0xA89F; // New
 
         public const byte Reagent_ash = (0x80 >> 0);
         public const byte Reagent_ginseng = (0x80 >> 1);

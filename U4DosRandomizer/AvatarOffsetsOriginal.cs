@@ -184,6 +184,20 @@ namespace U4DosRandomizer
 
         public int BLINK_DESTINATION2_EXCLUSION_Y2_OFFSET => throw new NotImplementedException();
 
+        public int ENABLE_SLEEP_BACKOFF_OFFSET => throw new NotImplementedException();
+
+        public int ENABLE_ACTIVE_PLAYER_1_OFFSET => throw new NotImplementedException();
+
+        public int ENABLE_ACTIVE_PLAYER_2_OFFSET => throw new NotImplementedException();
+
+        public int ENABLE_ACTIVE_PLAYER_3_OFFSET => throw new NotImplementedException();
+
+        public int ENABLE_HIT_CHANCE_OFFSET => throw new NotImplementedException();
+
+        public int ENABLE_DIAGONAL_ATTACK_OFFSET => throw new NotImplementedException();
+
+        public int ENABLE_SACRIFICE_FIX_OFFSET => throw new NotImplementedException();
+
         public const byte Reagent_ash = (0x80 >> 0);
         public const byte Reagent_ginseng = (0x80 >> 1);
         public const byte Reagent_garlic = (0x80 >> 2);

@@ -59,6 +59,26 @@ namespace U4DosRandomizer
                 "--hythlothFix",
                 "Fixes an issue with Hythloth dungeon room.",
                 CommandOptionType.NoValue);
+            CommandOption sleepLockAssistArg = commandLineApplication.Option(
+                "--sleepLockAssist",
+                "Helps prevent sleeplock in battles.",
+                CommandOptionType.NoValue);
+            CommandOption activePlayerArg = commandLineApplication.Option(
+                "--activePlayer",
+                "Allow selecting which characters are active in combat.",
+                CommandOptionType.NoValue);
+            CommandOption appleHitChanceArg = commandLineApplication.Option(
+                "--appleHitChance",
+                "Change hit chance to behave like the original Apple II version.",
+                CommandOptionType.NoValue);
+            CommandOption diagonalAttackArg = commandLineApplication.Option(
+                "--diagonalAttack",
+                "Allow diagonal attacks in combat.",
+                CommandOptionType.NoValue);
+            CommandOption sacrificeFixArg = commandLineApplication.Option(
+                "--sacrificeFix",
+                "Adds a way to gain sacrifice which the shrine says should work.",
+                CommandOptionType.NoValue);
             CommandOption questItemsArg = commandLineApplication.Option(
                 "--questItems",
                 "Percentage chance to start with a quest item.",
@@ -161,6 +181,11 @@ namespace U4DosRandomizer
                     flags.MixQuantity = minQuantityArg.HasValue();
                     flags.Fixes = fixesArg.HasValue();
                     flags.FixHythloth = hythlothFixArg.HasValue();
+                    flags.SleepLockAssist = sleepLockAssistArg.HasValue();
+                    flags.ActivePlayer = activePlayerArg.HasValue();
+                    flags.HitChance = appleHitChanceArg.HasValue();
+                    flags.DiagonalAttack = diagonalAttackArg.HasValue();
+                    flags.SacrificeFix = sacrificeFixArg.HasValue();
                     flags.QuestItemPercentage = questItems;
                     flags.KarmaSetPercentage = karmaPercentage;
                     flags.KarmaValue = karmaValue;

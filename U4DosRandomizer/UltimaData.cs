@@ -124,14 +124,18 @@ namespace U4DosRandomizer
                 Items = value.AsReadOnly();
             }
         }
-        public byte BlinkExclusionX1 { get; internal set; }
-        public byte BlinkExclusionX2 { get; internal set; }
-        public byte BlinkExclusionY1 { get; internal set; }
-        public byte BlinkExclusionY2 { get; internal set; }
-        public byte BlinkExclusion2X1 { get; internal set; }
-        public byte BlinkExclusion2X2 { get; internal set; }
-        public byte BlinkExclusion2Y1 { get; internal set; }
-        public byte BlinkExclusion2Y2 { get; internal set; }
+        public byte BlinkCastExclusionX1 { get; internal set; }
+        public byte BlinkCastExclusionX2 { get; internal set; }
+        public byte BlinkCastExclusionY1 { get; internal set; }
+        public byte BlinkCastExclusionY2 { get; internal set; }
+        public byte BlinkDestinationExclusionX1 { get; internal set; }
+        public byte BlinkDestinationExclusionX2 { get; internal set; }
+        public byte BlinkDestinationExclusionY1 { get; internal set; }
+        public byte BlinkDestinationExclusionY2 { get; internal set; }
+        public byte BlinkDestinationExclusion2X1 { get; internal set; }
+        public byte BlinkDestinationExclusion2X2 { get; internal set; }
+        public byte BlinkDestinationExclusion2Y1 { get; internal set; }
+        public byte BlinkDestinationExclusion2Y2 { get; internal set; }
         public List<Coordinate> AbyssEjectionLocations { get; internal set; }
         public List<List<byte>> ShopLocations { get; set; }
 

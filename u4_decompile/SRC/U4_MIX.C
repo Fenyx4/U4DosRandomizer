@@ -65,7 +65,7 @@ unsigned char D_277E[] = {
 		u4_puts(D_1E98[101 + loc_C]);
 		Gra_CR();
 		/*This should always evaluate to false. Leaving it functioning like regular. Randomizer will have option to turn it on by changing the 8 to a 0.*/
-		if(U4_RND1(7) > 8) {
+		if(U4_RND1(7) >= 8) {
 			u4_puts("How much?\x12\x12\x12\b\b");
 			quantity = AskInt(2);
 		} else {

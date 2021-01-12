@@ -172,15 +172,20 @@ namespace U4DosRandomizer
                 data.SpellsRecipes.Add(new ByteDirtyWrapper(avatarBytes[AvatarOffset.SPELL_RECIPE_OFFSET + i]));
             }
 
-            data.BlinkExclusionX1 = avatarBytes[AvatarOffset.BLINK_DESTINATION_EXCLUSION_X1_OFFSET];
-            data.BlinkExclusionX2 = avatarBytes[AvatarOffset.BLINK_DESTINATION_EXCLUSION_X2_OFFSET];
-            data.BlinkExclusionY1 = avatarBytes[AvatarOffset.BLINK_DESTINATION_EXCLUSION_Y1_OFFSET];
-            data.BlinkExclusionY2 = avatarBytes[AvatarOffset.BLINK_DESTINATION_EXCLUSION_Y2_OFFSET];
+            data.BlinkCastExclusionX1 = avatarBytes[AvatarOffset.BLINK_CAST_EXCLUSION_X1_OFFSET];
+            data.BlinkCastExclusionX2 = avatarBytes[AvatarOffset.BLINK_CAST_EXCLUSION_X2_OFFSET];
+            data.BlinkCastExclusionY1 = avatarBytes[AvatarOffset.BLINK_CAST_EXCLUSION_Y1_OFFSET];
+            data.BlinkCastExclusionY2 = avatarBytes[AvatarOffset.BLINK_CAST_EXCLUSION_Y2_OFFSET];
 
-            data.BlinkExclusion2X1 = avatarBytes[AvatarOffset.BLINK_DESTINATION2_EXCLUSION_X1_OFFSET];
-            data.BlinkExclusion2X2 = avatarBytes[AvatarOffset.BLINK_DESTINATION2_EXCLUSION_X2_OFFSET];
-            data.BlinkExclusion2Y1 = avatarBytes[AvatarOffset.BLINK_DESTINATION2_EXCLUSION_Y1_OFFSET];
-            data.BlinkExclusion2Y2 = avatarBytes[AvatarOffset.BLINK_DESTINATION2_EXCLUSION_Y2_OFFSET];
+            data.BlinkDestinationExclusionX1 = avatarBytes[AvatarOffset.BLINK_DESTINATION_EXCLUSION_X1_OFFSET];
+            data.BlinkDestinationExclusionX2 = avatarBytes[AvatarOffset.BLINK_DESTINATION_EXCLUSION_X2_OFFSET];
+            data.BlinkDestinationExclusionY1 = avatarBytes[AvatarOffset.BLINK_DESTINATION_EXCLUSION_Y1_OFFSET];
+            data.BlinkDestinationExclusionY2 = avatarBytes[AvatarOffset.BLINK_DESTINATION_EXCLUSION_Y2_OFFSET];
+                      
+            data.BlinkDestinationExclusion2X1 = avatarBytes[AvatarOffset.BLINK_DESTINATION2_EXCLUSION_X1_OFFSET];
+            data.BlinkDestinationExclusion2X2 = avatarBytes[AvatarOffset.BLINK_DESTINATION2_EXCLUSION_X2_OFFSET];
+            data.BlinkDestinationExclusion2Y1 = avatarBytes[AvatarOffset.BLINK_DESTINATION2_EXCLUSION_Y1_OFFSET];
+            data.BlinkDestinationExclusion2Y2 = avatarBytes[AvatarOffset.BLINK_DESTINATION2_EXCLUSION_Y2_OFFSET];
 
             for (int i = 0; i < 13; i++)
             {
@@ -328,22 +333,34 @@ namespace U4DosRandomizer
             }
 
             // Cast exclusion isn't precise enough so allow them to cast anywhere and exclude the destination
-            avatarBytes[AvatarOffset.BLINK_CAST_EXCLUSION_X1_OFFSET] = 0x01;
-            avatarBytes[AvatarOffset.BLINK_CAST_EXCLUSION_X2_OFFSET] = 0x01;
-            avatarBytes[AvatarOffset.BLINK_CAST_EXCLUSION_Y1_OFFSET] = 0x01;
-            avatarBytes[AvatarOffset.BLINK_CAST_EXCLUSION_Y2_OFFSET] = 0x01;
+            avatarBytes[AvatarOffset.BLINK_CAST_EXCLUSION_X1_OFFSET] = data.BlinkCastExclusionX1;
+            avatarBytes[AvatarOffset.BLINK_CAST_EXCLUSION_X2_OFFSET] = data.BlinkCastExclusionX2;
+            avatarBytes[AvatarOffset.BLINK_CAST_EXCLUSION_Y1_OFFSET] = data.BlinkCastExclusionY1;
+            avatarBytes[AvatarOffset.BLINK_CAST_EXCLUSION_Y2_OFFSET] = data.BlinkCastExclusionY2;
 
-            avatarBytes[AvatarOffset.BLINK_DESTINATION_EXCLUSION_X1_OFFSET] = data.BlinkExclusionX1;
-            avatarBytes[AvatarOffset.BLINK_DESTINATION_EXCLUSION_X2_OFFSET] = data.BlinkExclusionX2;
-            avatarBytes[AvatarOffset.BLINK_DESTINATION_EXCLUSION_Y1_OFFSET] = data.BlinkExclusionY1;
-            avatarBytes[AvatarOffset.BLINK_DESTINATION_EXCLUSION_Y2_OFFSET] = data.BlinkExclusionY2;
+            avatarBytes[AvatarOffset.BLINK_DESTINATION_EXCLUSION_X1_OFFSET] = data.BlinkDestinationExclusionX1;
+            avatarBytes[AvatarOffset.BLINK_DESTINATION_EXCLUSION_X2_OFFSET] = data.BlinkDestinationExclusionX2;
+            avatarBytes[AvatarOffset.BLINK_DESTINATION_EXCLUSION_Y1_OFFSET] = data.BlinkDestinationExclusionY1;
+            avatarBytes[AvatarOffset.BLINK_DESTINATION_EXCLUSION_Y2_OFFSET] = data.BlinkDestinationExclusionY2;
 
-            avatarBytes[AvatarOffset.BLINK_DESTINATION2_EXCLUSION_X1_OFFSET] = data.BlinkExclusion2X1;
-            avatarBytes[AvatarOffset.BLINK_DESTINATION2_EXCLUSION_X2_OFFSET] = data.BlinkExclusion2X2;
-            avatarBytes[AvatarOffset.BLINK_DESTINATION2_EXCLUSION_Y1_OFFSET] = data.BlinkExclusion2Y1;
-            avatarBytes[AvatarOffset.BLINK_DESTINATION2_EXCLUSION_Y2_OFFSET] = data.BlinkExclusion2Y2;
+            avatarBytes[AvatarOffset.BLINK_DESTINATION2_EXCLUSION_X1_OFFSET] = data.BlinkDestinationExclusion2X1;
+            avatarBytes[AvatarOffset.BLINK_DESTINATION2_EXCLUSION_X2_OFFSET] = data.BlinkDestinationExclusion2X2;
+            avatarBytes[AvatarOffset.BLINK_DESTINATION2_EXCLUSION_Y1_OFFSET] = data.BlinkDestinationExclusion2Y1;
+            avatarBytes[AvatarOffset.BLINK_DESTINATION2_EXCLUSION_Y2_OFFSET] = data.BlinkDestinationExclusion2Y2;
 
             avatarBytes[AvatarOffset.ENABLE_MIX_QUANTITY_OFFSET] = flags.MixQuantity ? (byte)0x0 : (byte)0x9;
+
+            avatarBytes[AvatarOffset.ENABLE_SLEEP_BACKOFF_OFFSET] = flags.SleepLockAssist ? (byte)0x0 : (byte)0x9;
+
+            avatarBytes[AvatarOffset.ENABLE_ACTIVE_PLAYER_1_OFFSET] = flags.ActivePlayer ? (byte)0x0 : (byte)0x9;
+            avatarBytes[AvatarOffset.ENABLE_ACTIVE_PLAYER_2_OFFSET] = flags.ActivePlayer ? (byte)0x0 : (byte)0x9;
+            avatarBytes[AvatarOffset.ENABLE_ACTIVE_PLAYER_3_OFFSET] = flags.ActivePlayer ? (byte)0x0 : (byte)0x9;
+
+            avatarBytes[AvatarOffset.ENABLE_HIT_CHANCE_OFFSET] = flags.HitChance ? (byte)0x0 : (byte)0x9;
+
+            avatarBytes[AvatarOffset.ENABLE_DIAGONAL_ATTACK_OFFSET] = flags.DiagonalAttack ? (byte)0x0 : (byte)0x9;
+
+            avatarBytes[AvatarOffset.ENABLE_SACRIFICE_FIX_OFFSET] = flags.SacrificeFix ? (byte)0x0 : (byte)0x9;
 
             for (int i = 0; i < data.AbyssEjectionLocations.Count; i++)
             {

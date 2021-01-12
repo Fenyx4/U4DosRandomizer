@@ -415,7 +415,8 @@ C_9D51:
 	if(U4_RND2(sleepBackOff) == 0) {
 		if((unsigned char)Fighters._tile[bp08] == TIL_FC || (unsigned char)Fighters._tile[bp08] == TIL_B0) {
 			if(spell_sta != 'N') {
-				if(U4_RND1(7) > 9 && ++sleepBackOff > 25)
+				/*This should always evaluate to false. Leaving it functioning like regular. Randomizer will have option to turn it on by changing the 8 to a 0.*/
+				if(U4_RND1(7) >= 8 && ++sleepBackOff > 25)
 					sleepBackOff = 25;
 				/*u4_putl(sleepBackOff, 2, '0');*/
 				t_callback();

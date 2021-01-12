@@ -304,10 +304,15 @@ namespace U4DosRandomizer
             //worldMap.GetCoordinate(ultimaData.PirateCoveSpawnTrigger.X, ultimaData.PirateCoveSpawnTrigger.Y).SetTile(TileInfo.A);
 
             // Blink Exclusion
-            ultimaData.BlinkExclusionX1 = Convert.ToByte(Wrap(stygian.X - 5));
-            ultimaData.BlinkExclusionY1 = Convert.ToByte(Wrap(stygian.Y - 18));
-            ultimaData.BlinkExclusionX2 = Convert.ToByte(Wrap(stygian.X + 9));
-            ultimaData.BlinkExclusionY2 = Convert.ToByte(Wrap(stygian.Y + 5));
+            // Cast exclusion isn't precise enough so allow them to cast anywhere and exclude the destination
+            ultimaData.BlinkCastExclusionX1 = 0x01;
+            ultimaData.BlinkCastExclusionX2 = 0x01;
+            ultimaData.BlinkCastExclusionY1 = 0x01;
+            ultimaData.BlinkCastExclusionY2 = 0x01;
+            ultimaData.BlinkDestinationExclusionX1 = Convert.ToByte(Wrap(stygian.X - 5));
+            ultimaData.BlinkDestinationExclusionY1 = Convert.ToByte(Wrap(stygian.Y - 18));
+            ultimaData.BlinkDestinationExclusionX2 = Convert.ToByte(Wrap(stygian.X + 9));
+            ultimaData.BlinkDestinationExclusionY2 = Convert.ToByte(Wrap(stygian.Y + 5));
 
             //for (int x = 0; x < WorldMap.SIZE; x++)
             //{
@@ -390,10 +395,10 @@ namespace U4DosRandomizer
             ultimaData.DaemonSpawnX2 = Wrap(loc.X + 1);
             ultimaData.DaemonSpawnY1 = Wrap(loc.Y - 4);
             ultimaData.DaemonSpawnY2 = Wrap(loc.Y + 1);
-            ultimaData.BlinkExclusion2X1 = ultimaData.DaemonSpawnX1;
-            ultimaData.BlinkExclusion2X2 = ultimaData.DaemonSpawnX2;
-            ultimaData.BlinkExclusion2Y1 = ultimaData.DaemonSpawnY1;
-            ultimaData.BlinkExclusion2Y2 = ultimaData.DaemonSpawnY2;
+            ultimaData.BlinkDestinationExclusion2X1 = ultimaData.DaemonSpawnX1;
+            ultimaData.BlinkDestinationExclusion2X2 = ultimaData.DaemonSpawnX2;
+            ultimaData.BlinkDestinationExclusion2Y1 = ultimaData.DaemonSpawnY1;
+            ultimaData.BlinkDestinationExclusion2Y2 = ultimaData.DaemonSpawnY2;
 
             // Moongates
             List<ITile> path = new List<ITile>();

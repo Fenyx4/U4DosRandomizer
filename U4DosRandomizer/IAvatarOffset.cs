@@ -94,6 +94,13 @@ namespace U4DosRandomizer
         int BLINK_DESTINATION_EXCLUSION_Y1_OFFSET { get; }
         int BLINK_DESTINATION_EXCLUSION_Y2_OFFSET { get; }
         int ENABLE_MIX_QUANTITY_OFFSET { get; }
+        int ENABLE_SLEEP_BACKOFF_OFFSET { get; }
+        int ENABLE_ACTIVE_PLAYER_1_OFFSET { get; }
+        int ENABLE_ACTIVE_PLAYER_2_OFFSET { get; }
+        int ENABLE_ACTIVE_PLAYER_3_OFFSET { get; }
+        int ENABLE_HIT_CHANCE_OFFSET { get; }
+        int ENABLE_DIAGONAL_ATTACK_OFFSET { get; }
+        int ENABLE_SACRIFICE_FIX_OFFSET { get; }
         int BLINK_DESTINATION2_EXCLUSION_X1_OFFSET { get; }
         int BLINK_DESTINATION2_EXCLUSION_X2_OFFSET { get; }
         int BLINK_DESTINATION2_EXCLUSION_Y1_OFFSET { get; }
