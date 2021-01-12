@@ -42,15 +42,6 @@
 #define u4_max(a,b) ((a) >= (b)?(a):(b))
 #define u4_min(a,b) ((a) >  (b)?(b):(a))
 
-#define MASK_1 0x01
-#define MASK_2 0x02
-#define MASK_3 0x04
-#define MASK_4 0x08
-#define MASK_5 0x10
-#define MASK_6 0x20
-#define MASK_7 0x40
-#define MASK_8 0x80
-
 typedef unsigned char tMap32x32[32][32];
 typedef unsigned char tMap8x8x8[8][8][8];
 
@@ -414,7 +405,6 @@ extern struct tCombat /*D_9470*/Combat;
 extern struct t_68 /*D_9530*/Fighters;
 extern int /*D_9598*/File_DNG;
 extern int /*D_959A*/activeChara;
-extern int operativeChara;
 extern struct aStruct D_959C;
 extern unsigned char /*D_959E*/tile_east;
 extern void far /*D_95A0*/*pCharset;

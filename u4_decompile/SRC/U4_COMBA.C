@@ -5,8 +5,6 @@
  */
 
 #include "u4.h"
-/*#include <stdio.h>
-#include <stdlib.h>*/
 
 /*C_59D5*/COM_GetFighterId(_x, _y)
 unsigned char _x;
@@ -62,24 +60,15 @@ C_61D1();*/
 {
 	register unsigned si;
 	unsigned bp_04;
-	unsigned validCharCheck;
 
 	u_kbflush();
 	bp_04 = 0;
-	operativeChara = 0xFF;
 	D_96EE = D_96F4 = 0;
 	sleepBackOff = 3;
 	do {
 		for(activeChara = 0; /*C_5A88:*/activeChara < Party.f_1d8 && !IsCombatEnded(); activeChara++) {
 /*C_5A9E*/
-			for(validCharCheck = 0; validCharCheck < Party.f_1d8; validCharCheck++) {
-				if(operativeChara != 0xFF && TST_MSK(operativeChara, validCharCheck) && !(Fighters._chtile[validCharCheck] && isCharaConscious(validCharCheck))) {
-					RST_MSK(operativeChara, validCharCheck);
-					SET_MSK(operativeChara, (validCharCheck + 1)%8);
-				}
-			}
-			
-			if(Fighters._chtile[activeChara] && isCharaConscious(activeChara) && TST_MSK(operativeChara, activeChara)) {
+			if(Fighters._chtile[activeChara] && isCharaConscious(activeChara)) {
 				D_95C8 = 4;
 				Gra_11(activeChara);
 				activeCharaX = Combat._charaX[activeChara];
@@ -95,10 +84,6 @@ C_61D1();*/
 				si = u_kbhit()?u_kbread():KBD_SPACE;
 				if(u4_isupper((unsigned char)si))
 					si = (si & 0xff00) | u4_lower((unsigned char)si);
-				
-				/*itoa(si, Party.chara[7]._name, 16);
-				u4_puts(Party.chara[7]._name);*/
-			
 				switch(si) {
 					case KBD_SPACE: w_Pass(); break;
 					case 0x487e:
@@ -130,56 +115,15 @@ C_61D1();*/
 					case KBD_O:
 					case KBD_P:
 					case KBD_Q:
+					case KBD_S:
 					case KBD_T:
 					case KBD_W:
 					case KBD_X:
-					case KBD_Y: w_NotHere(); break;					
+					case KBD_Y: w_NotHere(); break;
 					case KBD_CTRL_S:
 						if(bp_04 == KBD_ALT_Z) {
 							C_1C21();
 							break;
-						}
-					case KBD_S:
-						/*This should always evaluate to false. Leaving it functioning like regular. Randomizer will have option to turn it on by changing the 8 to a 0.*/
-						if(U4_RND1(7) >= 8) {
-							RST_MSK(operativeChara, activeChara);						
-							if(operativeChara == 0) {
-								operativeChara = 0xFF;
-								u4_puts("Set Active Plr:");
-								u4_puts("None!");
-							} else {
-								u4_puts("Remove Active Plr:");
-								u4_puts(Party.chara[activeChara]._name);
-							}
-							Gra_CR();
-							break;
-						}
-					case KBD_0: 
-						if(U4_RND1(7) >= 8) {
-							operativeChara = 0xFF; 
-							u4_puts("Set Active Plr:");
-							u4_puts("None!");
-							Gra_CR();
-							break;
-						}
-					case KBD_1:
-					case KBD_2:
-					case KBD_3:
-					case KBD_4:
-					case KBD_5:
-					case KBD_6:
-					case KBD_7:
-					case KBD_8:
-						if(U4_RND1(7) >= 8) {
-							if((si&0xf) <= Party.f_1d8)
-							{
-								operativeChara = 0;
-								SET_MSK(operativeChara, (si&0xf) - 1);
-								u4_puts("Set Active Plr:");
-								u4_puts(Party.chara[(si&0xf) - 1]._name);
-								Gra_CR();
-								break;
-							}
 						}
 					default:
 						u4_puts(/*D_1FED*/"Bad command\n");

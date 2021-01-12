@@ -13,7 +13,7 @@ PUBLIC D_9440,ship_x,ship_y,tile_cur
 PUBLIC D_9445,D_9446,D_9448,D_944A
 PUBLIC D_9452,pShapes,D_9458,CurMode
 PUBLIC spell_cnt,D_946C,Combat,Fighters
-PUBLIC File_DNG,activeChara,D_959C,sleepBackOff,operativeChara
+PUBLIC File_DNG,activeChara,D_959C,sleepBackOff
 PUBLIC tile_east,pCharset,spell_sta,D_95A5
 PUBLIC txt_X,tile_north,activeCharaY
 PUBLIC hit_tile,hit_x,hit_y
@@ -60,7 +60,6 @@ Fighters	db 68h dup(?)	;D_9530
 File_DNG	dw ?	;D_9598
 activeChara	dw ?	;D_959A
 D_959C	db ?,?
-operativeChara	dw ?
 sleepBackOff	dw ?
 tile_east	db ?	;D_959E
 	db ?
