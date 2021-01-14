@@ -188,10 +188,6 @@ namespace U4DosRandomizer
 
         public int ENABLE_ACTIVE_PLAYER_1_OFFSET => throw new NotImplementedException();
 
-        public int ENABLE_ACTIVE_PLAYER_2_OFFSET => throw new NotImplementedException();
-
-        public int ENABLE_ACTIVE_PLAYER_3_OFFSET => throw new NotImplementedException();
-
         public int ENABLE_HIT_CHANCE_OFFSET => throw new NotImplementedException();
 
         public int ENABLE_DIAGONAL_ATTACK_OFFSET => throw new NotImplementedException();

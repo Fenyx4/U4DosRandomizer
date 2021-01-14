@@ -81,9 +81,9 @@ void cdecl /*C_191E*/main()
 						break;
 					}
 					else {
-						u4_puts("Seed: 2147483647\n");
+						u4_puts("Seed:           \n");
 						u4_puts("Ver: 0.2.3\n");
-						u4_puts("Encode: CfxpiEkPATJkZQAAAAA=               \n");
+						u4_puts("Encode:                                    \n");
 						break;
 					}
 				default:

@@ -353,8 +353,6 @@ namespace U4DosRandomizer
             avatarBytes[AvatarOffset.ENABLE_SLEEP_BACKOFF_OFFSET] = flags.SleepLockAssist ? (byte)0x0 : (byte)0x9;
 
             avatarBytes[AvatarOffset.ENABLE_ACTIVE_PLAYER_1_OFFSET] = flags.ActivePlayer ? (byte)0x0 : (byte)0x9;
-            avatarBytes[AvatarOffset.ENABLE_ACTIVE_PLAYER_2_OFFSET] = flags.ActivePlayer ? (byte)0x0 : (byte)0x9;
-            avatarBytes[AvatarOffset.ENABLE_ACTIVE_PLAYER_3_OFFSET] = flags.ActivePlayer ? (byte)0x0 : (byte)0x9;
 
             avatarBytes[AvatarOffset.ENABLE_HIT_CHANCE_OFFSET] = flags.HitChance ? (byte)0x0 : (byte)0x9;
 
