@@ -91,6 +91,10 @@ namespace U4DosRandomizer
                 "--karmaPercentage",
                 "Percentage chance to override a starting karma value for a virtue. Default 0 (no override).",
                 CommandOptionType.SingleValue);
+            CommandOption spoilerLogArg = commandLineApplication.Option(
+                "--spoilerLog",
+                "Output a spoiler log.",
+                CommandOptionType.SingleValue);
 
             commandLineApplication.HelpOption("-? | -h | --help");
 
@@ -223,7 +227,10 @@ namespace U4DosRandomizer
             var encoded = flags.GetEncoded();
             Console.WriteLine("Flags Base64: " + encoded);
 
+            StreamWriter spoilerWriter = new StreamWriter("spoiler.txt");
+            SpoilerLog spoilerLog = new SpoilerLog(spoilerWriter);
             System.IO.File.AppendAllText(@"seed.txt", seed.ToString() + " " + "encoded" + Environment.NewLine);
+            spoilerLog.WriteFlags(flags);
             //flags.DecodeAndSet(encoded);
             //json = JsonConvert.SerializeObject(flags);
             //Console.WriteLine("Flags JSON  : " + json);
@@ -242,39 +249,40 @@ namespace U4DosRandomizer
 
             if (flags.Overworld == 5)
             {
-                worldMap = new WorldMapGenerateMap();
+                worldMap = new WorldMapGenerateMap(spoilerLog);
             }
             else if (flags.Overworld == 1)
             {
-                worldMap = new WorldMapUnchanged();
+                worldMap = new WorldMapUnchanged(spoilerLog);
             }
             else if (flags.Overworld == 2)
             {
-                worldMap = new WorldMapShuffleLocations();
+                worldMap = new WorldMapShuffleLocations(spoilerLog);
             }
             worldMap.Load(path, randomValues[0], new Random(randomValues[1]), new Random(randomValues[2]));
 
-            var avatar = new Avatar();
+            var avatar = new Avatar(spoilerLog);
             avatar.Load(path, ultimaData, worldMap);
 
-            var title = new Title();
+            var title = new Title(spoilerLog);
             title.Load(path, ultimaData);
 
-            var talk = new Talk();
+            var talk = new Talk(spoilerLog);
             talk.Load(path);
 
-            var dungeons = new Dungeons();
+            var dungeons = new Dungeons(spoilerLog);
             dungeons.Load(path, ultimaData, flags);
 
-            var party = new Party();
+            var party = new Party(spoilerLog);
             party.Load(path, ultimaData);
 
-            var towns = new Towns();
+            var towns = new Towns(spoilerLog);
             towns.Load(path, ultimaData);
 
             if (flags.Fixes)
             {
-                ultimaData.ShopLocations[avatar.AvatarOffset.LOC_SERPENT - 1][5] = 0x12;
+                spoilerLog.Add(SpoilerCategory.Fix, "Serpent Hold's Healer");
+                ultimaData.ShopLocations[ultimaData.LOC_SERPENT - 1][5] = 0x12;
             }
 
             worldMap.Randomize(ultimaData, new Random(randomValues[3]), new Random(randomValues[4]));
@@ -358,6 +366,12 @@ namespace U4DosRandomizer
                         ultimaData.StartingStones |= (byte)(1 << i);
                     }
                 }
+
+                LogQuestItems(spoilerLog,ultimaData);
+            }
+            else
+            {
+                spoilerLog.Add(SpoilerCategory.Start, "No change to starting quest items.");
             }
 
             if(flags.KarmaSetPercentage > 0)
@@ -367,6 +381,11 @@ namespace U4DosRandomizer
                     if(random.Next(0, 100) < flags.KarmaSetPercentage)
                     {
                         ultimaData.StartingKarma[virtue] = (flags.KarmaValue.HasValue ? (byte)flags.KarmaValue.Value : (byte)random.Next(0, 100));
+                        spoilerLog.Add(SpoilerCategory.Start, $"{ultimaData.ItemNames[virtue + 15]} karma at {ultimaData.StartingKarma[virtue]}");
+                    }
+                    else
+                    {
+                        spoilerLog.Add(SpoilerCategory.Start, $"{ultimaData.ItemNames[virtue + 15]} karma unchanged.");
                     }
                 }
             }
@@ -396,9 +415,81 @@ namespace U4DosRandomizer
                 image.SaveAsPng($"worldMap-{seed}.png");
             }
 
+            spoilerWriter.Close();
+
             //PrintWorldMapInfo();
         }
-        
+
+        private static void LogQuestItems(SpoilerLog spoilerLog, UltimaData ultimaData)
+        {
+            ushort ushortone = 1;
+            var startingItems = new List<string>
+            {
+                "Skull",
+                "Skull destroyed",
+                "Candle",
+                "Book",
+                "Bell",
+                "Courage Key",
+                "Love Key",
+                "Truth Key",
+                "Silver Horn",
+                "Wheel of the H.M.S. Cape",
+                "Candle used",
+                "Book used",
+                "Bell used"
+            };
+
+            for(int i = 0; i < startingItems.Count; i++)
+            {
+                if((ultimaData.StartingItems & (ushort)(ushortone << i)) != 0)
+                {
+                    spoilerLog.Add(SpoilerCategory.Start, startingItems[i]);
+                }
+                else
+                {
+                    spoilerLog.Add(SpoilerCategory.Start, $"No {startingItems[i]}");
+                }
+            }
+
+            for (int i = 0; i < 8; i++)
+            {
+                if ((ultimaData.StartingRunes & (ushort)(ushortone << i)) != 0)
+                {
+                    spoilerLog.Add(SpoilerCategory.Start, ultimaData.ItemNames[i + 15]);
+                }
+                else
+                {
+                    spoilerLog.Add(SpoilerCategory.Start, $"No {ultimaData.ItemNames[i + 15]}");
+                }
+            }
+
+            var startingStones = new List<string>
+            {
+                "Blue",
+                "Yellow",
+                "Red",
+                "Green",
+                "Orange",
+                "Purple",
+                "White",
+                "Black"
+            };
+
+            for (int i = 0; i < startingStones.Count; i++)
+            {
+                if ((ultimaData.StartingStones & (ushort)(ushortone << i)) != 0)
+                {
+                    spoilerLog.Add(SpoilerCategory.Start, startingStones[i]);
+                }
+                else
+                {
+                    spoilerLog.Add(SpoilerCategory.Start, $"No {startingStones[i]}");
+                }
+            }
+
+        }
+
         private static void PrintWorldMapInfo()
         {
             var world = new byte[256 * 256];
@@ -443,3 +534,4 @@ namespace U4DosRandomizer
         
     }
 }
+

@@ -8,6 +8,12 @@ namespace U4DosRandomizer
 {
     public class WorldMapUnchanged : WorldMapAbstract, IWorldMap
     {
+        private SpoilerLog SpoilerLog { get; }
+
+        public WorldMapUnchanged(SpoilerLog spoilerLog)
+        {
+            this.SpoilerLog = spoilerLog;
+        }
 
         public override void Load(string path, int mapSeed, Random mapGeneratorSeed, Random randomMap)
         {
@@ -37,6 +43,7 @@ namespace U4DosRandomizer
 
         public override void Randomize(UltimaData ultimaData, Random random1, Random random2)
         {
+            SpoilerLog.Add(SpoilerCategory.Location, "Locations unchanged");
             return;
         }
     }

@@ -125,6 +125,13 @@ namespace U4DosRandomizer
         public static int STONES_OFFSET = 0x1D6;
         public static int RUNES_OFFSET = 0x1D7;
 
+        public Party(SpoilerLog spoilerLog)
+        {
+            SpoilerLog = spoilerLog;
+        }
+
+        private SpoilerLog SpoilerLog { get; }
+
         internal static void Restore(string path)
         {
             var file = Path.Combine(path, filename);

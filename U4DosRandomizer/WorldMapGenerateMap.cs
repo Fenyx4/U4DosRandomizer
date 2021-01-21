@@ -19,8 +19,11 @@ namespace U4DosRandomizer
         private List<ITile> excludeLocations = new List<ITile>();
         private List<ITile> usedLocations = new List<ITile>();
 
-        public WorldMapGenerateMap()
-        { 
+        private SpoilerLog SpoilerLog { get; }
+
+        public WorldMapGenerateMap(SpoilerLog spoilerLog)
+        {
+            SpoilerLog = spoilerLog;
         }
 
         private List<Tile> _potentialSwamps = new List<Tile>();
@@ -254,11 +257,29 @@ namespace U4DosRandomizer
 
         public override void Randomize(UltimaData ultimaData, Random randomLocations, Random randomItems)
         {
-            //Completely random location placements of buildings still. Just trying to make sure I'm editing the files correctly right now. Not looking for a cohesive map that makes sense.
             RandomizeLocations(ultimaData, randomLocations);
 
             RandomizeItems(ultimaData, randomItems);
+            WriteSpoilerLog(ultimaData);
         }
+
+        private void WriteSpoilerLog(UltimaData data)
+        {
+            SpoilerLog.Add(SpoilerCategory.MiscWorldLocation, $"Pirate Cove at {Talk.GetSextantText(data.PirateCoveSpawnTrigger, ' ')}");
+            for(int i = 0; i < data.LOC_HUMILITY - 1; i++)
+            {
+                SpoilerLog.Add(SpoilerCategory.Location, $"{data.LocationNames[i]} at {Talk.GetSextantText(data.GetLocation(i), ' ')}");
+            }
+            for(int i = 0; i < 8; i++)
+            {
+                SpoilerLog.Add(SpoilerCategory.Location, $"Moongate at {Talk.GetSextantText(data.Moongates[i])}");
+            }
+            for (int i = 0; i < data.Items.Count; i++)
+            {
+                SpoilerLog.Add(SpoilerCategory.Location, $"{data.ItemNames[i]} at {Talk.GetSextantText(data.Items[i], ' ')}");
+            }
+        }
+
 
         private void RandomizeLocations(UltimaData ultimaData, Random random)
         {
@@ -1189,6 +1210,7 @@ namespace U4DosRandomizer
 
         private List<ITile> GetEvenlyDistributedValidLocations(Random random, int totalResults, List<ITile> usedLocations, List<ITile> possibleLocations, UltimaData ultimaData, bool requirePath)
         {
+            // Using Mitchell's best-candidate algorithm - https://bost.ocks.org/mike/algorithms/
             var numCandidates = 10;
             var results = new List<ITile>();
 

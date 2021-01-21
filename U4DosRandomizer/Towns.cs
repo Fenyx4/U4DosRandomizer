@@ -11,6 +11,13 @@ namespace U4DosRandomizer
     {
         public Dictionary<string, Town> towns = new Dictionary<string, Town>();
 
+        public Towns(SpoilerLog spoilerLog)
+        {
+            SpoilerLog = spoilerLog;
+        }
+
+        private SpoilerLog SpoilerLog { get; }
+
         public void Load(string path, UltimaData data)
         {
             var files = Directory.GetFiles(path, "*.ULT");
@@ -46,6 +53,7 @@ namespace U4DosRandomizer
             {
                 towns["SERPENT"].npcConversationIdx[28] = 02;
                 towns["SERPENT"].npcConversationIdx[29] = 02;
+                SpoilerLog.Add(SpoilerCategory.Fix, $"Serpent's Hold gate guard fix");
             }
         }
 
