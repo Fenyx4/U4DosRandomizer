@@ -37,7 +37,7 @@ namespace U4DosRandomizer
                 CommandOptionType.NoValue);
             CommandOption overworldArg = commandLineApplication.Option(
                 "-o |--overworld",
-                "Sets randomization level for Overworld map. ",
+                "Sets randomization level for Overworld map. 1 for no change. 2 for shuffle overworld locations. 5 for randomize the entire map.",
                 CommandOptionType.SingleValue);
             CommandOption spellRemoveArg = commandLineApplication.Option(
                 "--spellRemove",

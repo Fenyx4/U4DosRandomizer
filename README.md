@@ -15,14 +15,21 @@ Options:
   -p |--p <path>     Path to Ultima 4 installation.  Leaving blank will assume it is the working directory.
   -r |--r            Restore original Ultima 4 files.
   --miniMap          Output a minimap of the overworld.
-  -o |--overworld    Sets randomization level for Overworld map.
+  -o |--overworld    Sets randomization level for Overworld map. 1 for no change. 2 for shuffle overworld locations. 5 for randomize the entire map.
   --spellRemove      Put in the letters of the spells you want removed. e.g. "--spellRemove zed" would remove zdown, energy field and dispel.
   --mixQuantity      Lets you input how much of a spell you want to mix.
   --dngStone         Randomize the location of stones in the dungeons
   --fixes            Collection of non-gameplay fixes.
+  --hythlothFix      Fixes an issue with Hythloth dungeon room.
+  --sleepLockAssist  Helps prevent sleeplock in battles.
+  --activePlayer     Allow selecting which characters are active in combat.
+  --appleHitChance   Change hit chance to behave like the original Apple II version.
+  --diagonalAttack   Allow diagonal attacks in combat.
+  --sacrificeFix     Adds a way to gain sacrifice which the shrine says should work.
   --questItems       Percentage chance to start with a quest item.
   --karmaValue       Value to override starting karma value for a virtue. Leave blank for random.
   --karmaPercentage  Percentage chance to override a starting karma value for a virtue. Default 0 (no override).
+  --spoilerLog       Output a spoiler log.
   -? | -h | --help   Show help information
 ```
   
