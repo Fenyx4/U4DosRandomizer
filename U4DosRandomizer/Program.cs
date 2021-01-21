@@ -229,7 +229,7 @@ namespace U4DosRandomizer
 
             StreamWriter spoilerWriter = new StreamWriter("spoiler.txt");
             SpoilerLog spoilerLog = new SpoilerLog(spoilerWriter);
-            System.IO.File.AppendAllText(@"seed.txt", seed.ToString() + " " + "encoded" + Environment.NewLine);
+            System.IO.File.AppendAllText(@"seed.txt", seed.ToString() + " " + encoded + Environment.NewLine);
             spoilerLog.WriteFlags(flags);
             //flags.DecodeAndSet(encoded);
             //json = JsonConvert.SerializeObject(flags);
