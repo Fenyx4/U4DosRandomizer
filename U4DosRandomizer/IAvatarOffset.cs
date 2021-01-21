@@ -70,6 +70,7 @@ namespace U4DosRandomizer
         int BLINK_DESTINATION2_EXCLUSION_Y2_OFFSET { get; }
 
         int ENCODED_FLAGS_OFFSET { get; }
+        int SEED_OFFSET { get; }
         int SHOP_LOCATION_OFFSET { get; }
     }
 }

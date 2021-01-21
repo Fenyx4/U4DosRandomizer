@@ -412,6 +412,12 @@ namespace U4DosRandomizer
             {
                 avatarBytes[AvatarOffset.ENCODED_FLAGS_OFFSET + encodeIdx] = encodeBytes[encodeIdx];
             }
+
+            var seedBytes = Encoding.ASCII.GetBytes(flags.Seed.ToString());
+            for (int seedIdx = 0; seedIdx < seedBytes.Length; seedIdx++)
+            {
+                avatarBytes[AvatarOffset.SEED_OFFSET + seedIdx] = seedBytes[seedIdx];
+            }
         }
 
         public void Save(string path)
