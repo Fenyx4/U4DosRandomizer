@@ -784,7 +784,8 @@ C_2E04()
 	}
 	
 	/*Set Karma*/
-	if(U4_RND1(7) > 8) {
+	/*This should always evaluate to false. Leaving it functioning like regular. Randomizer will have option to turn it on by changing the 8 to a 0.*/
+	if(U4_RND1(7) >= 8) {
 		for(loc_A = 7; loc_A >= 0; loc_A --) {
 			if(karma_starts[loc_A] != 0xFF)	{
 				*(pKarmas[loc_A]) = karma_starts[loc_A];

@@ -63,11 +63,19 @@ C_61D1();*/
 
 	u_kbflush();
 	bp_04 = 0;
+	operativeChara = -1;
 	D_96EE = D_96F4 = 0;
+	sleepBackOff = 3;
 	do {
 		for(activeChara = 0; /*C_5A88:*/activeChara < Party.f_1d8 && !IsCombatEnded(); activeChara++) {
 /*C_5A9E*/
-			if(Fighters._chtile[activeChara] && isCharaConscious(activeChara)) {
+			/*If they operative character is not around or unconcious then make the next character the operative character*/
+			if(operativeChara >= 0 && !(Fighters._chtile[operativeChara] && isCharaConscious(operativeChara)))
+			{
+				operativeChara = (operativeChara + 1)%8;
+			}
+
+			if(Fighters._chtile[activeChara] && isCharaConscious(activeChara) && (operativeChara == activeChara || operativeChara < 0)) {
 				D_95C8 = 4;
 				Gra_11(activeChara);
 				activeCharaX = Combat._charaX[activeChara];
@@ -123,6 +131,32 @@ C_61D1();*/
 						if(bp_04 == KBD_ALT_Z) {
 							C_1C21();
 							break;
+						}
+					case KBD_0:
+					case KBD_1:
+					case KBD_2:
+					case KBD_3:
+					case KBD_4:
+					case KBD_5:
+					case KBD_6:
+					case KBD_7:
+					case KBD_8:
+						/*This should always evaluate to false. Leaving it functioning like regular. Randomizer will have option to turn it on by changing the 8 to a 0.*/
+						if(U4_RND1(7) >= 9) {
+							if((si&0xf) <= Party.f_1d8)
+							{
+								operativeChara = (si&0xf) - 1;
+								u4_puts("Set Active Plr:");
+								Gra_CR();
+								if(operativeChara >= 0) {
+									u4_puts(Party.chara[operativeChara]._name);
+								}
+								else {
+									u4_puts("None!");
+								}
+								Gra_CR();
+								break;
+							}
 						}
 					default:
 						u4_puts(/*D_1FED*/"Bad command\n");
@@ -287,9 +321,18 @@ int /*bp04*/_range;
 	}
 	hit_tile = (loc_C->_weapon == 14)?TIL_4E:TIL_4F;
 	/*dexterity test*/
-	if(loc_C->_dex < 40 && U4_RND1(0xff) > loc_C->_dex + 0x80) {
-		w_missed(_range);
-		return;
+	/*This should always evaluate to false. Leaving it functioning like regular. Randomizer will have option to turn it on by changing the 8 to a 0.*/
+	if(U4_RND1(7) >= 8) {
+		if(U4_RND1(0xff) > loc_C->_dex * 2 + 0x80) {
+			w_missed(_range);
+			return;
+		}
+	}
+	else {
+		if(loc_C->_dex < 40 && U4_RND1(0xff) > loc_C->_dex + 0x80) {
+			w_missed(_range);
+			return;
+		}
 	}
 	/*success*/
 	loc_B = &(Combat_MAP(Combat._npcY[_npcId], Combat._npcX[_npcId]));
@@ -361,7 +404,12 @@ C_61D1()
 	int loc_A, loc_B, loc_D;
 
 	loc_C = &(Party.chara[activeChara]);
-	AskDir(/*D_2060*/"Dir: ", &loc_A, &loc_B);
+	/*This should always evaluate to false. Leaving it functioning like regular. Randomizer will have option to turn it on by changing the 8 to a 0.*/
+	if(U4_RND1(7) >= 8) {
+		AskDirWithDiagonal(/*D_2060*/"Dir: ", &loc_A, &loc_B);
+	} else {
+		AskDir(/*D_2060*/"Dir: ", &loc_A, &loc_B);
+	}
 	if(!(loc_A | loc_B))
 		return;
 	hit_x = Combat._charaX[activeChara];

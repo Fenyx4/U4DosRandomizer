@@ -86,5 +86,10 @@ namespace U4DosRandomizer
 		{
 			return !_current.Equals(_original);
 		}
-	}
+
+        internal TileDirtyWrapper Copy(IWorldMap worldMap)
+        {
+			return new TileDirtyWrapper(worldMap.GetCoordinate(X, Y), worldMap);
+        }
+    }
 }

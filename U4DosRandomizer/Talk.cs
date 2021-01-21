@@ -12,6 +12,13 @@ namespace U4DosRandomizer
     {
         private Dictionary<string, List<Person>> towns = new Dictionary<string, List<Person>>();
 
+        public Talk(SpoilerLog spoilerLog)
+        {
+            SpoilerLog = spoilerLog;
+        }
+
+        private SpoilerLog SpoilerLog { get; }
+
         public void Load(string path)
         {
             var files = Directory.GetFiles(path, "*.TLK");
@@ -75,10 +82,10 @@ namespace U4DosRandomizer
                 person.KeywordResponse2 = ReplaceSextantText(person.KeywordResponse2, GetSextantText(ultimaData.Items[ultimaData.ITEM_NIGHTSHADE]));
             }
 
-            if (ultimaData.Towns[avatar.AvatarOffset.LOC_MAGINCIA - avatar.AvatarOffset.LOC_TOWNS].IsDirty())
+            if (ultimaData.Towns[ultimaData.LOC_MAGINCIA - ultimaData.LOC_TOWNS].IsDirty())
             {
                 person = FindPerson("Shawn");
-                person.No = ReplaceSextantText(person.No, GetSextantText(ultimaData.Towns[avatar.AvatarOffset.LOC_MAGINCIA - avatar.AvatarOffset.LOC_TOWNS]));
+                person.No = ReplaceSextantText(person.No, GetSextantText(ultimaData.Towns[ultimaData.LOC_MAGINCIA - ultimaData.LOC_TOWNS]));
             }
 
             // Mandrake
@@ -124,52 +131,52 @@ namespace U4DosRandomizer
             // --- Shrines ---
             // Humility
             // TODO make response descriptive
-            if (ultimaData.Shrines[avatar.AvatarOffset.LOC_HUMILITY - avatar.AvatarOffset.LOC_SHRINES].IsDirty())
+            if (ultimaData.Shrines[ultimaData.LOC_HUMILITY - ultimaData.LOC_SHRINES].IsDirty())
             {
                 person = FindPerson("Simple");
-                person.KeywordResponse2 = $"The shrine lies\nnear\n{GetSextantText(ultimaData.Shrines[avatar.AvatarOffset.LOC_HUMILITY - avatar.AvatarOffset.LOC_SHRINES])} and\nis guarded by\nendless hoards\nof daemons!";
+                person.KeywordResponse2 = $"The shrine lies\nnear\n{GetSextantText(ultimaData.Shrines[ultimaData.LOC_HUMILITY - ultimaData.LOC_SHRINES])} and\nis guarded by\nendless hoards\nof daemons!";
                 person = FindPerson("Wierdrum");
-                person.KeywordResponse2 = $"Yes, I have been\nto the shrine,\nit lies near\n{GetSextantText(ultimaData.Shrines[avatar.AvatarOffset.LOC_HUMILITY - avatar.AvatarOffset.LOC_SHRINES])}!";
+                person.KeywordResponse2 = $"Yes, I have been\nto the shrine,\nit lies near\n{GetSextantText(ultimaData.Shrines[ultimaData.LOC_HUMILITY - ultimaData.LOC_SHRINES])}!";
             }
 
             // Compassion
             // TODO make response descriptive
-            if (ultimaData.Shrines[avatar.AvatarOffset.LOC_COMPASSION - avatar.AvatarOffset.LOC_SHRINES].IsDirty())
+            if (ultimaData.Shrines[ultimaData.LOC_COMPASSION - ultimaData.LOC_SHRINES].IsDirty())
             {
                 person = FindPerson("Shapero");
-                person.Yes = $"Find the shrine\nof compassion\nat\n{GetSextantText(ultimaData.Shrines[avatar.AvatarOffset.LOC_COMPASSION - avatar.AvatarOffset.LOC_SHRINES])}!";
+                person.Yes = $"Find the shrine\nof compassion\nat\n{GetSextantText(ultimaData.Shrines[ultimaData.LOC_COMPASSION - ultimaData.LOC_SHRINES])}!";
             }
 
             // Sacrifice
             // TODO make response descriptive
-            if (ultimaData.Shrines[avatar.AvatarOffset.LOC_SACRIFICE - avatar.AvatarOffset.LOC_SHRINES].IsDirty())
+            if (ultimaData.Shrines[ultimaData.LOC_SACRIFICE - ultimaData.LOC_SHRINES].IsDirty())
             {
                 person = FindPerson("Merida");
-                person.No = $"The shrine is at\n{GetSextantText(ultimaData.Shrines[avatar.AvatarOffset.LOC_SACRIFICE - avatar.AvatarOffset.LOC_SHRINES])}!";
+                person.No = $"The shrine is at\n{GetSextantText(ultimaData.Shrines[ultimaData.LOC_SACRIFICE - ultimaData.LOC_SHRINES])}!";
             }
 
             // Justice
             // TODO make response descriptive
-            if (ultimaData.Shrines[avatar.AvatarOffset.LOC_JUSTICE - avatar.AvatarOffset.LOC_SHRINES].IsDirty())
+            if (ultimaData.Shrines[ultimaData.LOC_JUSTICE - ultimaData.LOC_SHRINES].IsDirty())
             {
                 person = FindPerson("Druid");
-                person.KeywordResponse2 = $"The shrine is at\n{GetSextantText(ultimaData.Shrines[avatar.AvatarOffset.LOC_JUSTICE - avatar.AvatarOffset.LOC_SHRINES])}!";
+                person.KeywordResponse2 = $"The shrine is at\n{GetSextantText(ultimaData.Shrines[ultimaData.LOC_JUSTICE - ultimaData.LOC_SHRINES])}!";
             }
 
             // Honesty
             // TODO make response descriptive
-            if (ultimaData.Shrines[avatar.AvatarOffset.LOC_HONESTY - avatar.AvatarOffset.LOC_SHRINES].IsDirty())
+            if (ultimaData.Shrines[ultimaData.LOC_HONESTY - ultimaData.LOC_SHRINES].IsDirty())
             {
                 person = FindPerson("Calabrini");
-                person.No = $"Perhaps, the\nshrine which\nlies at\n{GetSextantText(ultimaData.Shrines[avatar.AvatarOffset.LOC_HONESTY - avatar.AvatarOffset.LOC_SHRINES])}!";
+                person.No = $"Perhaps, the\nshrine which\nlies at\n{GetSextantText(ultimaData.Shrines[ultimaData.LOC_HONESTY - ultimaData.LOC_SHRINES])}!";
             }
 
             // Honor
             // TODO make response descriptive
-            if (ultimaData.Shrines[avatar.AvatarOffset.LOC_HONOR - avatar.AvatarOffset.LOC_SHRINES].IsDirty())
+            if (ultimaData.Shrines[ultimaData.LOC_HONOR - ultimaData.LOC_SHRINES].IsDirty())
             {
                 person = FindPerson("Dergin");
-                person.No = $"The shrine lies at\n{GetSextantText(ultimaData.Shrines[avatar.AvatarOffset.LOC_HONOR - avatar.AvatarOffset.LOC_SHRINES])}!";
+                person.No = $"The shrine lies at\n{GetSextantText(ultimaData.Shrines[ultimaData.LOC_HONOR - ultimaData.LOC_SHRINES])}!";
             }
 
             // TODO Spirituality - Do I move this one?
@@ -178,10 +185,10 @@ namespace U4DosRandomizer
             // Valor
             // No on gives the directions to Valor so I grabbed his reponse that talked about the shrine and usurped it
             // TODO make response descriptive
-            if (ultimaData.Shrines[avatar.AvatarOffset.LOC_VALOR - avatar.AvatarOffset.LOC_SHRINES].IsDirty())
+            if (ultimaData.Shrines[ultimaData.LOC_VALOR - ultimaData.LOC_SHRINES].IsDirty())
             {
                 person = FindPerson("Sir Hrothgar");
-                person.No = $"Thou should seek\nthe shrine of\nvalor at\n{GetSextantText(ultimaData.Shrines[avatar.AvatarOffset.LOC_VALOR - avatar.AvatarOffset.LOC_SHRINES])}!";
+                person.No = $"Thou should seek\nthe shrine of\nvalor at\n{GetSextantText(ultimaData.Shrines[ultimaData.LOC_VALOR - ultimaData.LOC_SHRINES])}!";
             }
 
             // --- End Shrines ---
@@ -200,37 +207,37 @@ namespace U4DosRandomizer
             {
                 ultimaData.LBText[5] = $"\n\nHe says:\nSerpent's Castle\nto the {CoordinateToCardinal(ultimaData.LCB[0], ultimaData.Castles[2])}\nis where\nCourage should\nbe sought!\n";
             }
-            if (ultimaData.Towns[avatar.AvatarOffset.LOC_MOONGLOW - avatar.AvatarOffset.LOC_TOWNS].IsDirty())
+            if (ultimaData.Towns[ultimaData.LOC_MOONGLOW - ultimaData.LOC_TOWNS].IsDirty())
             {
-                ultimaData.LBText[6] = $"\nHe says:\nThe towne\nof Moonglow to\nthe {CoordinateToCardinal(ultimaData.LCB[0], ultimaData.Towns[avatar.AvatarOffset.LOC_MOONGLOW - avatar.AvatarOffset.LOC_TOWNS])} is\nwhere the virtue\nof Honesty\nthrives!\n";
+                ultimaData.LBText[6] = $"\nHe says:\nThe towne\nof Moonglow to\nthe {CoordinateToCardinal(ultimaData.LCB[0], ultimaData.Towns[ultimaData.LOC_MOONGLOW - ultimaData.LOC_TOWNS])} is\nwhere the virtue\nof Honesty\nthrives!\n";
             }
-            if (ultimaData.Towns[avatar.AvatarOffset.LOC_BRITAIN - avatar.AvatarOffset.LOC_TOWNS].IsDirty())
+            if (ultimaData.Towns[ultimaData.LOC_BRITAIN - ultimaData.LOC_TOWNS].IsDirty())
             {
-                ultimaData.LBText[7] = $"\n\nHe says:\nThe bards in\nBritain to the\n{CoordinateToCardinal(ultimaData.LCB[0], ultimaData.Towns[avatar.AvatarOffset.LOC_BRITAIN - avatar.AvatarOffset.LOC_TOWNS])}\nare well versed\nin\nCompassion!\n";
+                ultimaData.LBText[7] = $"\n\nHe says:\nThe bards in\nBritain to the\n{CoordinateToCardinal(ultimaData.LCB[0], ultimaData.Towns[ultimaData.LOC_BRITAIN - ultimaData.LOC_TOWNS])}\nare well versed\nin\nCompassion!\n";
             }
-            if (ultimaData.Towns[avatar.AvatarOffset.LOC_JHELOM - avatar.AvatarOffset.LOC_TOWNS].IsDirty())
+            if (ultimaData.Towns[ultimaData.LOC_JHELOM - ultimaData.LOC_TOWNS].IsDirty())
             {
-                ultimaData.LBText[8] = $"\n\nHe says:\nMany valiant\nfighters come\nfrom Jhelom\nto the \n{CoordinateToCardinal(ultimaData.LCB[0], ultimaData.Towns[avatar.AvatarOffset.LOC_JHELOM - avatar.AvatarOffset.LOC_TOWNS])}!\n";
+                ultimaData.LBText[8] = $"\n\nHe says:\nMany valiant\nfighters come\nfrom Jhelom\nto the \n{CoordinateToCardinal(ultimaData.LCB[0], ultimaData.Towns[ultimaData.LOC_JHELOM - ultimaData.LOC_TOWNS])}!\n";
             }
-            if (ultimaData.Towns[avatar.AvatarOffset.LOC_YEW - avatar.AvatarOffset.LOC_TOWNS].IsDirty())
+            if (ultimaData.Towns[ultimaData.LOC_YEW - ultimaData.LOC_TOWNS].IsDirty())
             {
-                ultimaData.LBText[9] = $"\n\n\nHe says:\nIn the city of\nYew, to the\n{CoordinateToCardinal(ultimaData.LCB[0], ultimaData.Towns[avatar.AvatarOffset.LOC_YEW - avatar.AvatarOffset.LOC_TOWNS])}, \nJustice is\nserved!\n";
+                ultimaData.LBText[9] = $"\n\n\nHe says:\nIn the city of\nYew, to the\n{CoordinateToCardinal(ultimaData.LCB[0], ultimaData.Towns[ultimaData.LOC_YEW - ultimaData.LOC_TOWNS])}, \nJustice is\nserved!\n";
             }
-            if (ultimaData.Towns[avatar.AvatarOffset.LOC_MINOC - avatar.AvatarOffset.LOC_TOWNS].IsDirty())
+            if (ultimaData.Towns[ultimaData.LOC_MINOC - ultimaData.LOC_TOWNS].IsDirty())
             {
-                ultimaData.LBText[10] = $"\nHe says:\nMinoc, towne of\nself-sacrifice,\nlies {CoordinateToCardinal(ultimaData.LCB[0], ultimaData.Towns[avatar.AvatarOffset.LOC_MINOC - avatar.AvatarOffset.LOC_TOWNS])}!\n";
+                ultimaData.LBText[10] = $"\nHe says:\nMinoc, towne of\nself-sacrifice,\nlies {CoordinateToCardinal(ultimaData.LCB[0], ultimaData.Towns[ultimaData.LOC_MINOC - ultimaData.LOC_TOWNS])}!\n";
             }
-            if (ultimaData.Towns[avatar.AvatarOffset.LOC_TRINSIC - avatar.AvatarOffset.LOC_TOWNS].IsDirty())
+            if (ultimaData.Towns[ultimaData.LOC_TRINSIC - ultimaData.LOC_TOWNS].IsDirty())
             {
-                ultimaData.LBText[11] = $"\nHe says:\nThe Paladins who\nstrive for Honor\nare oft seen in\nTrinsic, to the {CoordinateToCardinal(ultimaData.LCB[0], ultimaData.Towns[avatar.AvatarOffset.LOC_TRINSIC - avatar.AvatarOffset.LOC_TOWNS])}!\n";
+                ultimaData.LBText[11] = $"\nHe says:\nThe Paladins who\nstrive for Honor\nare oft seen in\nTrinsic, to the {CoordinateToCardinal(ultimaData.LCB[0], ultimaData.Towns[ultimaData.LOC_TRINSIC - ultimaData.LOC_TOWNS])}!\n";
             }
-            if (ultimaData.Towns[avatar.AvatarOffset.LOC_SKARA - avatar.AvatarOffset.LOC_TOWNS].IsDirty())
+            if (ultimaData.Towns[ultimaData.LOC_SKARA - ultimaData.LOC_TOWNS].IsDirty())
             {
-                ultimaData.LBText[12] = $"\nHe says:\nIn Skara Brae\nthe Spiritual\npath is taught.\nFind it to the\n{CoordinateToCardinal(ultimaData.LCB[0], ultimaData.Towns[avatar.AvatarOffset.LOC_SKARA - avatar.AvatarOffset.LOC_TOWNS])}!\n";
+                ultimaData.LBText[12] = $"\nHe says:\nIn Skara Brae\nthe Spiritual\npath is taught.\nFind it to the\n{CoordinateToCardinal(ultimaData.LCB[0], ultimaData.Towns[ultimaData.LOC_SKARA - ultimaData.LOC_TOWNS])}!\n";
             }
-            if (ultimaData.Towns[avatar.AvatarOffset.LOC_MAGINCIA - avatar.AvatarOffset.LOC_TOWNS].IsDirty())
+            if (ultimaData.Towns[ultimaData.LOC_MAGINCIA - ultimaData.LOC_TOWNS].IsDirty())
             {
-                ultimaData.LBText[13] = $"\n\n\nHe says:\nHumility is the\nfoundation of\nVirtue!  The\nruins of proud\nMagincia are a\ntestimony unto\nthe Virtue of\nHumility!\n\nFind the Ruins\nof Magincia to\nthe {CoordinateToCardinal(ultimaData.LCB[0], ultimaData.Towns[avatar.AvatarOffset.LOC_MAGINCIA - avatar.AvatarOffset.LOC_TOWNS])}!\n";
+                ultimaData.LBText[13] = $"\n\n\nHe says:\nHumility is the\nfoundation of\nVirtue!  The\nruins of proud\nMagincia are a\ntestimony unto\nthe Virtue of\nHumility!\n\nFind the Ruins\nof Magincia to\nthe {CoordinateToCardinal(ultimaData.LCB[0], ultimaData.Towns[ultimaData.LOC_MAGINCIA - ultimaData.LOC_TOWNS])}!\n";
             }
 
             // --- End Towns and Castles ---
@@ -244,55 +251,70 @@ namespace U4DosRandomizer
             {
                 person = FindPerson("Water");
                 person.QuestionFlag = 6;
+                SpoilerLog.Add(SpoilerCategory.Fix, $"Water asks question");
 
                 person = FindPerson("Estro");
                 person.Keyword1 = "RESE";
+                SpoilerLog.Add(SpoilerCategory.Fix, $"Estro keyword fix");
 
                 person = FindPerson("a truth\nseeker.");
                 person.KeywordResponse2 = person.KeywordResponse2.Replace("minutes", "cycles");
+                SpoilerLog.Add(SpoilerCategory.Fix, $"a truth seeker word usage");
 
                 person = FindPerson("Catriona");
                 person.Yes = person.Yes + ".";
+                SpoilerLog.Add(SpoilerCategory.Fix, $"Catriona punctuation");
 
                 person = FindPerson("a ranger.");
                 person.Yes = person.Yes.Replace("knowns", "knows");
+                SpoilerLog.Add(SpoilerCategory.Fix, $"Ranger typo");
 
                 person = FindPerson("Calabrini");
                 person.Keyword2 = "INJU";
                 person.Question = "Dost thou seek\nan inn or art\nthou injured?";
+                SpoilerLog.Add(SpoilerCategory.Fix, $"Calabrini heal keyword");
 
                 person = FindPerson("Michelle");
                 person.No = "Then thou should\nvisit our\nphysician!";
                 person.Keyword2 = "PHYS";
                 person.KeywordResponse1 = person.KeywordResponse1.Replace("west", "north");
                 person.KeywordResponse2 = "Got north and take\nthe western door.";
+                SpoilerLog.Add(SpoilerCategory.Fix, $"Michelle heal keyword");
 
                 person = FindPerson("Tracie");
                 person.Look = "A starving journalist";
+                SpoilerLog.Add(SpoilerCategory.Fix, $"Tracie corrected look");
 
                 person = FindPerson("Iolo");
                 person.Look = "A charming bard";
+                SpoilerLog.Add(SpoilerCategory.Fix, $"Iolo corrected look");
 
                 person = FindPerson("Sir William");
                 person.KeywordResponse2 = person.KeywordResponse2.Replace("never", "Never");
+                SpoilerLog.Add(SpoilerCategory.Fix, $"Sir William capitalization");
 
                 person = FindPerson("Alkerion");
                 person.QuestionFlag = 6;
+                SpoilerLog.Add(SpoilerCategory.Fix, $"Alkerion asks question");
 
                 person = FindPerson("Dupre");
                 person.Look = "A handsome fighter";
+                SpoilerLog.Add(SpoilerCategory.Fix, $"Dupre corrected look");
 
                 person = FindPerson("Virgil");
                 person.Question = "Is it thine?";
+                SpoilerLog.Add(SpoilerCategory.Fix, $"Virgil question grammar");
 
                 person = FindPerson("Shamino");
                 person.QuestionFlag = 6;
 
                 person = FindPerson("Traveling Dan");
                 person.Look = "A short, rotund\nman with a hat\nand vest.";
+                SpoilerLog.Add(SpoilerCategory.Fix, $"Traveling Dan corrected look");
 
                 person = FindPerson("Charm");
                 person.QuestionFlag = 6;
+                SpoilerLog.Add(SpoilerCategory.Fix, $"Charm asks question");
             }
 
         }
@@ -308,10 +330,10 @@ namespace U4DosRandomizer
         }
 
         // https://github.com/ergonomy-joe/u4-decompiled/blob/c2c2108fa3bb346bcd1d8c207c526f33a4c8f5ef/SRC/U4_LOCAT.C#L20
-        public static string GetSextantText(ICoordinate item)
+        public static string GetSextantText(ICoordinate item, char seperator = '\n')
         {
             //lat-N'A" long-L'A"
-            return $"lat-{(char)((item.Y >> 4) +'A')}'{(char)((item.Y & 0xF) + 'A')}\"\nlong-{(char)((item.X >> 4) + 'A')}'{(char)((item.X & 0xF) + 'A')}\"";
+            return $"lat-{(char)((item.Y >> 4) +'A')}'{(char)((item.Y & 0xF) + 'A')}\"{seperator}long -{(char)((item.X >> 4) + 'A')}'{(char)((item.X & 0xF) + 'A')}\"";
         }
 
         private string ReplaceSextantText(string text, string latLong)

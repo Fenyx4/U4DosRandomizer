@@ -5,6 +5,8 @@ namespace U4DosRandomizer
 {
     public class UltimaData
     {
+        public ReadOnlyCollection<string> LocationNames { get; private set; }
+        public ReadOnlyCollection<string> ItemNames { get; private set; }
         public ReadOnlyCollection<Tile> LCB { get; private set; }
         bool lcbSet = false;
         public void SetLCB(List<Tile> value)
@@ -124,14 +126,18 @@ namespace U4DosRandomizer
                 Items = value.AsReadOnly();
             }
         }
-        public byte BlinkExclusionX1 { get; internal set; }
-        public byte BlinkExclusionX2 { get; internal set; }
-        public byte BlinkExclusionY1 { get; internal set; }
-        public byte BlinkExclusionY2 { get; internal set; }
-        public byte BlinkExclusion2X1 { get; internal set; }
-        public byte BlinkExclusion2X2 { get; internal set; }
-        public byte BlinkExclusion2Y1 { get; internal set; }
-        public byte BlinkExclusion2Y2 { get; internal set; }
+        public byte BlinkCastExclusionX1 { get; internal set; }
+        public byte BlinkCastExclusionX2 { get; internal set; }
+        public byte BlinkCastExclusionY1 { get; internal set; }
+        public byte BlinkCastExclusionY2 { get; internal set; }
+        public byte BlinkDestinationExclusionX1 { get; internal set; }
+        public byte BlinkDestinationExclusionX2 { get; internal set; }
+        public byte BlinkDestinationExclusionY1 { get; internal set; }
+        public byte BlinkDestinationExclusionY2 { get; internal set; }
+        public byte BlinkDestinationExclusion2X1 { get; internal set; }
+        public byte BlinkDestinationExclusion2X2 { get; internal set; }
+        public byte BlinkDestinationExclusion2Y1 { get; internal set; }
+        public byte BlinkDestinationExclusion2Y2 { get; internal set; }
         public List<Coordinate> AbyssEjectionLocations { get; internal set; }
         public List<List<byte>> ShopLocations { get; set; }
 
@@ -163,6 +169,92 @@ namespace U4DosRandomizer
             StartingReagents = new List<ushort>();
             StartingMixtures = new List<ushort>();
 
+            LocationNames = (new List<string>
+            {
+                 "Britannia",
+                 "Lycaeum",
+                 "Empath Abbey",
+                 "Serpents Hold",
+                 "Moonglow",
+                 "Britain",
+                 "Jhelom",
+                 "Yew",
+                 "Minoc",
+                 "Trinsic",
+                 "Skara Brae",
+                 "Magincia",
+                 "Paws",
+                 "Buccaneer's Den",
+                 "Vesper",
+                 "Cove",
+                 "Deciet",
+                 "Despise",
+                 "Destard",
+                 "Wrong",
+                 "Covetous",
+                 "Shame",
+                 "Hythloth",
+                 "The Great Stygian Abyss",
+                 "Honesty",
+                 "Compassion",
+                 "Valor",
+                 "Justice",
+                 "Sacrifice",
+                 "Honor",
+                 "Spirituality",
+                 "Humility"
+            }).AsReadOnly();
+
+            ItemNames = (new List<string>
+            {
+                "MANDRAKE",
+                "MANDRAKE2",
+                "NIGHTSHADE",
+                "NIGHTSHADE2",
+                "BELL",
+                "HORN",
+                "WHEEL",
+                "SKULL",
+                "BLACK_STONE",
+                "WHITE_STONE",
+                "BOOK",
+                "CANDLE",
+                "TELESCOPE",
+                "ARMOR",
+                "WEAPON",
+                "RUNE_HONESTY",
+                "RUNE_COMPASSION",
+                "RUNE_VALOR",
+                "RUNE_JUSTICE",
+                "RUNE_SACRIFICE",
+                "RUNE_HONOR",
+                "RUNE_SPIRITUALITY",
+                "RUNE_HUMILITY"
+            }).AsReadOnly();
+
+        }
+        public ICoordinate GetLocation(int i)
+        {
+            if(i == 0)
+            {
+                return LCB[1];
+            }
+            if(i < LOC_TOWNS-1)
+            {
+                return Castles[i-1];
+            }
+            else if (i < LOC_DUNGEONS-1)
+            {
+                return Towns[i - LOC_TOWNS+1];
+            }
+            else if(i < LOC_SHRINES-1)
+            {
+                return Dungeons[i - LOC_DUNGEONS+1];
+            }
+            else
+            {
+                return Shrines[i - LOC_SHRINES+1];
+            }
         }
 
         public int ITEM_MANDRAKE { get; } = 0;
@@ -216,5 +308,82 @@ namespace U4DosRandomizer
 * 23 - ??
 * All runes on the surface are bugged to be Great Stygian Abyss. I'll figure out which are which later although it doesn't really matter. They just have to be located in the right town.
 */
+
+        public int LOC_BUILDINGS { get; } = 0x01;
+
+        public int LOC_CASTLES { get; } = 0x01;
+        public int LOC_LCB { get; } = 0x01;
+        public int LOC_LYCAEUM { get; } = 0x02;
+        public int LOC_EMPATH { get; } = 0x03;
+        public int LOC_SERPENT { get; } = 0x04;
+
+        public int LOC_TOWNS { get; } = 0x05;
+        public int LOC_MOONGLOW { get; } = 0x05;
+        public int LOC_BRITAIN { get; } = 0x06;
+        public int LOC_JHELOM { get; } = 0x07;
+        public int LOC_YEW { get; } = 0x08;
+        public int LOC_MINOC { get; } = 0x09;
+        public int LOC_TRINSIC { get; } = 0x0a;
+        public int LOC_SKARA { get; } = 0x0b;
+        public int LOC_MAGINCIA { get; } = 0x0c;
+        public int LOC_PAWS { get; } = 0x0d;
+        public int LOC_DEN { get; } = 0x0e;
+        public int LOC_VESPER { get; } = 0x0f;
+        public int LOC_COVE { get; } = 0x10;
+
+        public int LOC_DUNGEONS { get; } = 0x11;
+        public int LOC_DECEIT { get; } = 0x11;
+        public int LOC_DESPISE { get; } = 0x12;
+        public int LOC_DESTARD { get; } = 0x13;
+        public int LOC_WRONG { get; } = 0x14;
+        public int LOC_COVETOUS { get; } = 0x15;
+        public int LOC_SHAME { get; } = 0x16;
+        public int LOC_HYTHLOTH { get; } = 0x17;
+        public int LOC_ABYSS { get; } = 0x18;
+
+        public int LOC_SHRINES { get; } = 0x19;
+        public int LOC_HONESTY { get; } = 0x19;
+        public int LOC_COMPASSION { get; } = 0x1a;
+        public int LOC_VALOR { get; } = 0x1b;
+        public int LOC_JUSTICE { get; } = 0x1c;
+        public int LOC_SACRIFICE { get; } = 0x1d;
+        public int LOC_HONOR { get; } = 0x1e;
+        public int LOC_SPIRITUALITY { get; } = 0x1f;
+        public int LOC_HUMILITY { get; } = 0x20;
+        /*
+         * https://github.com/ergonomy-joe/u4-decompiled/blob/master/SRC/U4_LOC.H
+         * 0 - Britannia
+         * 1 - Lycaeum
+         * 2 - Empath Abbey
+         * 3 - Serpents Hold
+         * 4 - Moonglow
+         * 5 - Britain
+         * 6 - Jhelom
+         * 7 - Yew
+         * 8 - Minoc
+         * 9 - Trinsic
+         * 10 - Skara Brae
+         * 11 - Magincia
+         * 12 - Paws
+         * 13 - Buccaneer's Den
+         * 14 - Vesper
+         * 15 - Cove
+         * 16 - Deciet
+         * 17 - Despise
+         * 18 - Destard
+         * 19 - Wrong
+         * 20 - Covetous
+         * 21 - Shame
+         * 22 - Hythloth
+         * 23 - The Great Stygian Abyss
+         * 24 - Honesty
+         * 25 - Compassion
+         * 26 - Valor
+         * 27 - Justice
+         * 28 - Sacrifice
+         * 29 - Honor
+         * 30 - Spirituality
+         * 31 - Humility
+         */
     }
 }

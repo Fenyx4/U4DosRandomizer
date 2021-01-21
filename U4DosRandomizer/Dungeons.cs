@@ -11,6 +11,14 @@ namespace U4DosRandomizer
     public class Dungeons
     {
         public Dictionary<string, Dungeon> dungeons = new Dictionary<string, Dungeon>();
+
+        public Dungeons(SpoilerLog spoilerLog)
+        {
+            SpoilerLog = spoilerLog;
+        }
+
+        private SpoilerLog SpoilerLog { get; }
+
         //private static Dictionary<string, int> dungeonIdx = new Dictionary<string, int>()
         //{
         //    { "deceit", 0 },
@@ -40,6 +48,8 @@ namespace U4DosRandomizer
 
                             dungeons.Add(Path.GetFileNameWithoutExtension(file), dungeon);
                         }
+
+                        SpoilerLog.Add(SpoilerCategory.Fix, "Hythloth lvl 6 fixed.");
                     }
                     else
                     {
@@ -85,6 +95,7 @@ namespace U4DosRandomizer
                         var possibleDungeonLocations = dungeon.GetTiles(DungeonTileInfo.Nothing);
                         var dungeonLoc = possibleDungeonLocations[random.Next(0, possibleDungeonLocations.Count - 1)];
                         dungeonLoc.SetTile(DungeonTileInfo.AltarOrStone);
+                        SpoilerLog.Add(SpoilerCategory.Dungeon, $"{dungeonName} stone at Level {dungeonLoc.L} - {dungeonLoc.X},{dungeonLoc.Y}");
                     }
                 }
             }

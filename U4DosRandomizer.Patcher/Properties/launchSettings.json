@@ -2,7 +2,7 @@
   "profiles": {
     "U4DosRandomizer.Patcher": {
       "commandName": "Project",
-      "commandLineArgs": "-b \"E:\\Projects\\U4DosRandomizer\\u4_decompile\\SRC-TITLE\\ORIGINAL\\TITLE.EXE.orig\" -s \"E:\\Projects\\U4DosRandomizer\\u4_decompile\\SRC-TITLE\\ORIGINAL\\TITLE.EXE.sig\" -n \"E:\\Projects\\U4DosRandomizer\\u4_decompile\\SRC-TITLE\\ORIGINAL\\TITLE_0.EXE\" -d \"E:\\Projects\\U4DosRandomizer\\u4_decompile\\SRC-TITLE\\ORIGINAL\\TITLE.EXE.octodiff\""
+      "commandLineArgs": "-b \"E:\\Projects\\U4DosRandomizer\\u4_decompile\\SRC\\ORIGINAL\\AVATAR.EXE\" -s \"E:\\Projects\\U4DosRandomizer\\u4_decompile\\SRC\\ORIGINAL\\AVATAR.EXE.sig\" -n \"E:\\Projects\\U4DosRandomizer\\u4_decompile\\SRC\\ORIGINAL\\U4_MAIN.EXE\" -d \"E:\\Projects\\U4DosRandomizer\\u4_decompile\\SRC\\ORIGINAL\\AVATAR.EXE.octodiff\""
     }
   }
 }

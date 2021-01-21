@@ -2,6 +2,7 @@
 using Octodiff.Diagnostics;
 using System;
 using System.IO;
+using System.Text;
 using U4DosRandomizer.Helpers;
 using U4DosRandomizer.Resources;
 
@@ -40,6 +41,31 @@ namespace U4DosRandomizer
                 titleBytes = titleStream.ReadAllBytes();
             }
 
+            if (titleBytes[START_X_OFFSET] != 0xE7)
+            {
+                throw new Exception($"Offset START_X_OFFSET appears to be wrong.");
+            }
+
+            if (titleBytes[START_Y_OFFSET] != 0x88)
+            {
+                throw new Exception($"Offset START_Y_OFFSET appears to be wrong.");
+            }
+
+            if (titleBytes[FLAG_ENCODE_OFFSET] != 0x43)
+            {
+                throw new Exception($"Offset FLAG_ENCODE_OFFSET appears to be wrong.");
+            }
+
+            if (titleBytes[ENABLE_KARMA_OVERRIDE_OFFSET] != 0x09)
+            {
+                throw new Exception($"Offset ENABLE_KARMA_OVERRIDE_OFFSET appears to be wrong.");
+            }
+
+            if (titleBytes[KARMA_OVERRIDE_VALUES_OFFSET] != 0xFF)
+            {
+                throw new Exception($"Offset KARMA_OVERRIDE_VALUES_OFFSET appears to be wrong.");
+            }
+
             for (int offset = 0; offset < 8; offset++)
             {
                 data.StartingPositions.Add(new Coordinate(titleBytes[START_X_OFFSET + offset], titleBytes[START_Y_OFFSET + offset]));
@@ -76,7 +102,7 @@ namespace U4DosRandomizer
         //    System.IO.File.WriteAllText(@"title_hash.json", json);
         //}
 
-        public void Update(UltimaData data, Flags flags)
+        public void Update(UltimaData data, Flags flags, string encode)
         {
             for (int offset = 0; offset < 8; offset++)
             {
@@ -90,6 +116,12 @@ namespace U4DosRandomizer
             {
                 titleBytes[KARMA_OVERRIDE_VALUES_OFFSET + offset] = (data.StartingKarma[offset] == 100 ? (byte)0 : data.StartingKarma[offset]);
             }
+
+            var encodeBytes = Encoding.ASCII.GetBytes(encode);
+            for (int i = 0; i < encodeBytes.Length; i++)
+            {
+                titleBytes[FLAG_ENCODE_OFFSET + i] = encodeBytes[i];
+            }
         }
 
         public void Save(string path)
@@ -101,11 +133,18 @@ namespace U4DosRandomizer
             }
         }
 
-        public static int START_X_OFFSET = 0x710C; //0x70dc;
-        public static int START_Y_OFFSET = 0x7114; //0x70e4;
+        public static int FLAG_ENCODE_OFFSET = 0x41D1; // N/A
+        public static int START_X_OFFSET = 0x7140; //0x70dc;
+        public static int START_Y_OFFSET = 0x7148; //0x70e4;
 
-        public static int ENABLE_KARMA_OVERRIDE_OFFSET = 0x2E99;
-        public static int KARMA_OVERRIDE_VALUES_OFFSET = 0x711C;
+        public static int ENABLE_KARMA_OVERRIDE_OFFSET = 0x2EA8;
+        public static int KARMA_OVERRIDE_VALUES_OFFSET = 0x7150;
+        private SpoilerLog spoilerLog;
+
+        public Title(SpoilerLog spoilerLog)
+        {
+            this.spoilerLog = spoilerLog;
+        }
 
         internal static void Restore(string path)
         {
