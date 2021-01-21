@@ -124,6 +124,8 @@ namespace U4DosRandomizer
 
         public int ENABLE_SACRIFICE_FIX_OFFSET => throw new NotImplementedException();
 
+        public int ENCODED_FLAGS_OFFSET => throw new NotImplementedException();
+
         public const byte Reagent_ash = (0x80 >> 0);
         public const byte Reagent_ginseng = (0x80 >> 1);
         public const byte Reagent_garlic = (0x80 >> 2);

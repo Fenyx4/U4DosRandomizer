@@ -22,7 +22,7 @@ namespace U4DosRandomizer
             PropertyInfo[] properties = this.GetType().GetInterface("IAvatarOffset").GetProperties();
             foreach (PropertyInfo pi in properties)
             {
-                if(pi.Name.ToLower().Contains("offset") && !pi.Name.ToLower().Contains("blink") && !pi.Name.ToLower().Contains("enable"))
+                if(pi.Name.ToLower().Contains("offset") && !pi.Name.ToLower().Contains("blink") && !pi.Name.ToLower().Contains("enable") && !pi.Name.ToLower().Contains("encoded"))
                 {
                     var newValue = avatarBytes[(int)pi.GetValue(this, null)];
                     var oldValue = originalAvatarBytes[(int)pi.GetValue(originalOffsets, null)];
@@ -171,6 +171,8 @@ namespace U4DosRandomizer
         public int ENABLE_DIAGONAL_ATTACK_OFFSET { get; } = 0x6491; // New
 
         public int ENABLE_SACRIFICE_FIX_OFFSET { get; } = 0xA7FB; // New
+
+        public int ENCODED_FLAGS_OFFSET { get; } = 0xFBA7; // New
 
         public const byte Reagent_ash = (0x80 >> 0);
         public const byte Reagent_ginseng = (0x80 >> 1);

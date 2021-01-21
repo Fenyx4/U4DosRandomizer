@@ -406,6 +406,12 @@ namespace U4DosRandomizer
                     avatarBytes[townIdx * 8 + shopIdx + AvatarOffset.SHOP_LOCATION_OFFSET] = data.ShopLocations[townIdx][shopIdx];
                 }
             }
+
+            var encodeBytes = Encoding.ASCII.GetBytes(flags.GetEncoded());
+            for (int encodeIdx = 0; encodeIdx < encodeBytes.Length; encodeIdx++)
+            {
+                avatarBytes[AvatarOffset.ENCODED_FLAGS_OFFSET + encodeIdx] = encodeBytes[encodeIdx];
+            }
         }
 
         public void Save(string path)
