@@ -52,7 +52,7 @@ namespace U4DosRandomizer
 
             // Items
             var items = new List<Item>();
-            for (int offset = 0; offset < 24; offset++)
+            for (int offset = 0; offset < 23; offset++)
             {
                 items.Add(new Item(avatarBytes[AvatarOffset.ITEM_LOCATIONS_OFFSET + offset * 5],
                                     avatarBytes[AvatarOffset.ITEM_LOCATIONS_OFFSET + offset * 5 + 1],
@@ -216,7 +216,7 @@ namespace U4DosRandomizer
         public void Update(UltimaData data, Flags flags)
         {
             // Items
-            for (var offset = 0; offset < 24; offset++)
+            for (var offset = 0; offset < data.Items.Count; offset++)
             {
                 avatarBytes[AvatarOffset.ITEM_LOCATIONS_OFFSET + offset * 5] = data.Items[offset].Location;
                 avatarBytes[AvatarOffset.ITEM_LOCATIONS_OFFSET + offset * 5 + 1] = data.Items[offset].X;
