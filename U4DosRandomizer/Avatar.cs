@@ -248,6 +248,9 @@ namespace U4DosRandomizer
             avatarBytes[AvatarOffset.AREA_X_OFFSET + data.LOC_LCB - 1] = data.LCB[0].X;
             avatarBytes[AvatarOffset.AREA_Y_OFFSET + data.LOC_LCB - 1] = data.LCB[0].Y;
 
+            avatarBytes[AvatarOffset.DEATH_EXIT_X_OFFSET] = data.LCB[0].X;
+            avatarBytes[AvatarOffset.DEATH_EXIT_Y_OFFSET] = data.LCB[0].Y;
+
             for (var offset = 0; offset < data.Castles.Count; offset++)
             {
                 avatarBytes[AvatarOffset.AREA_X_OFFSET + data.LOC_CASTLES + offset] = data.Castles[offset].X;

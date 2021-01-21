@@ -12,7 +12,10 @@ namespace U4DosRandomizer
         public int MOONGATE_Y_OFFSET { get; } = 0x0fad9;
         public int AREA_X_OFFSET { get; } = 0x0fb01; // towns, cities, castles, dungeons, shrines
         public int AREA_Y_OFFSET { get; } = 0x0fb21;
-        public int LOC_BUILDINGS { get; } = 0x01;
+
+
+        public int DEATH_EXIT_X_OFFSET { get; } = 0x011ac;
+        public int DEATH_EXIT_Y_OFFSET { get; } = 0x011b1;
 
         
         public int PIRATE_COVE_X_OFFSET { get; } = 0x0fba9; // length 8

@@ -6,6 +6,8 @@ namespace U4DosRandomizer
         int MOONGATE_Y_OFFSET { get; }
         int AREA_X_OFFSET { get; }
         int AREA_Y_OFFSET { get; }
+        int DEATH_EXIT_X_OFFSET { get; }
+        int DEATH_EXIT_Y_OFFSET { get; }
         int PIRATE_COVE_X_OFFSET { get; }
         int PIRATE_COVE_Y_OFFSET { get; }
         int PIRATE_COVE_SHIP_TILES { get; }

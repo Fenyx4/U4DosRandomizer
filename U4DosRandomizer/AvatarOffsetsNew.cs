@@ -62,7 +62,10 @@ namespace U4DosRandomizer
         public int MOONGATE_Y_OFFSET { get; } = 0x0fd66; //fad9
         public int AREA_X_OFFSET { get; } = 0x0fd8e; //fb01 // towns, cities, castles, dungeons, shrines
         public int AREA_Y_OFFSET { get; } = 0x0fdae; //fb21
-        
+
+        public int DEATH_EXIT_X_OFFSET { get; } = 0x0fea; //11ac
+        public int DEATH_EXIT_Y_OFFSET { get; } = 0x0fef; //11b1
+
         public int PIRATE_COVE_X_OFFSET { get; } = 0x0fe36; //fba9 // length 8
         public int PIRATE_COVE_Y_OFFSET { get; } = 0x0fe3e; //fbb1 // length 8
         public int PIRATE_COVE_SHIP_TILES { get; } = 0x0fe46; //fbb9 // length 8 (Direction pirates are facing)
