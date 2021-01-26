@@ -455,6 +455,7 @@ namespace U4DosRandomizer
                         possibleLocations.Remove(loc);
                         ultimaData.Moongates[i].X = loc.X;
                         ultimaData.Moongates[i].Y = loc.Y;
+                        excludeLocations.Add(ultimaData.Moongates[i]);
                     }
                 }
                 if (distance == 0)
@@ -479,7 +480,7 @@ namespace U4DosRandomizer
                 Tile lcbEastSide = GetCoordinate(lcb.X + 1, lcb.Y);
 
                 path = new List<ITile>();
-                if (IsWalkableGround(lcb) && IsWalkableGround(lcbEntrance) && !excludeLocations.Contains(lcb))
+                if (IsWalkableGround(lcb) && IsWalkableGround(lcbEntrance) && !excludeLocations.Contains(lcb) && !excludeLocations.Contains(lcbWestSide) && !excludeLocations.Contains(lcbEastSide))
                 {
                     path = Search.GetPath(SIZE, SIZE, lcbEntrance,
                         // Gotta be able to walk to a Moongate from LCB
