@@ -247,9 +247,12 @@ namespace U4DosRandomizer
 
             IWorldMap worldMap = null;
 
+            //WorldMapGenerateMap.PrintWorldMapInfo(path);
+
             if (flags.Overworld == 5)
             {
                 worldMap = new WorldMapGenerateMap(spoilerLog);
+                
             }
             else if (flags.Overworld == 1)
             {
@@ -488,38 +491,6 @@ namespace U4DosRandomizer
                 }
             }
 
-        }
-
-        private static void PrintWorldMapInfo()
-        {
-            var world = new byte[256 * 256];
-            using (FileStream stream = new FileStream("ULT\\WORLD.MAP", FileMode.Open))
-            { 
-                stream.Read(world, 0, 256 * 256);
-            }
-            var worldList = world.ToList();
-
-            worldList.Sort();
-
-            var worldTileCount = new Dictionary<byte, int>();
-            for (int i = 0; i < worldList.Count(); i++)
-            {
-                if (worldTileCount.ContainsKey(worldList[i]))
-                {
-                    worldTileCount[worldList[i]] = worldTileCount[worldList[i]] + 1;
-                }
-                else
-                {
-                    worldTileCount[worldList[i]] = 1;
-                }
-            }
-
-            foreach (var key in worldTileCount.Keys)
-            {
-                //var output = $"{shapes[key]}:".PadRight(31) + $" {worldTileCount[key]/(256.0*256.0)}";
-                var output = $"{{{key},{worldTileCount[key] / (256.0 * 256.0)}}}";
-                Console.WriteLine(output);
-            }
         }
 
         static public double Linear(double x, double x0, double x1, double y0, double y1)

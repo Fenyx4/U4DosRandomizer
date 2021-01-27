@@ -40,13 +40,19 @@ namespace U4DosRandomizer
             percentInMap.Remove(TileInfo.Scrubland);
             percentInMap[TileInfo.Grasslands] += percentInMap[TileInfo.Forest];
             percentInMap.Remove(TileInfo.Forest);
+            // Kill Mountains and hills too! We are special placing that later. (Maybe change the name of this function...)
+            percentInMap[TileInfo.Grasslands] += percentInMap[TileInfo.Mountains];
+            percentInMap.Remove(TileInfo.Mountains);
+            percentInMap[TileInfo.Grasslands] += percentInMap[TileInfo.Hills];
+            percentInMap.Remove(TileInfo.Hills);
+
 
             _worldMapTiles = ClampToValuesInSetRatios(mapGenerated, percentInMap, SIZE);
 
             // Kill swamps after generation so we can use their placements for later
-            for(int x = 0; x < SIZE; x++)
+            for (int x = 0; x < SIZE; x++)
             {
-                for(int y = 0; y < SIZE; y++)
+                for (int y = 0; y < SIZE; y++)
                 {
                     if (_worldMapTiles[x, y] == TileInfo.Swamp)
                     {
@@ -84,7 +90,7 @@ namespace U4DosRandomizer
             foreach (var key in percentInMap)
             {
                 percentSum += key.Value;
-                var index = Convert.ToInt32(Math.Floor((worldMapFlattenedList.Count-1) * percentSum));
+                var index = Convert.ToInt32(Math.Floor((worldMapFlattenedList.Count - 1) * percentSum));
                 upperBound = worldMapFlattenedList[index];
                 rangeList.Add(new Tuple<byte, double, double>(key.Key, lowerBound, upperBound));
                 lowerBound = upperBound;
@@ -126,6 +132,54 @@ namespace U4DosRandomizer
             FileHelper.Restore(file);
         }
 
+        private Tuple<byte[,], double[,]>  MountainMap(Random random)
+        {
+            SimplexNoise.Noise.Seed = random.Next();
+            var scrubNoiseFloatLayerOne = SimplexNoise.Noise.Calc2D(SIZE, SIZE, 0.01f);
+            var scrubNoiseFloatLayerTwo = SimplexNoise.Noise.Calc2D(SIZE, SIZE, 0.025f);
+
+            var avgOne = scrubNoiseFloatLayerOne.Cast<float>().Average();
+            var avgTwo = scrubNoiseFloatLayerOne.Cast<float>().Average();
+
+
+            var scrubNoiseLayerOne = Float2dToDouble2d(scrubNoiseFloatLayerOne, SIZE);
+            var scrubNoiseLayerTwo = Float2dToDouble2d(scrubNoiseFloatLayerTwo, SIZE);
+            // 1 - abs of noise
+            var scrubNoise = new double[SIZE, SIZE];
+            for (int x = 0; x < SIZE; x++)
+            {
+                for (int y = 0; y < SIZE; y++)
+                {
+                    //scrubNoise[x, y] = scrubNoiseLayerOne[x, y] + (scrubNoiseLayerTwo[x, y] * 0.5);
+                    scrubNoise[x, y] = (1 - Math.Abs(scrubNoiseLayerOne[x, y] - avgOne)) + ((1 - Math.Abs(scrubNoiseLayerTwo[x, y] - avgTwo)) * 0.3);
+                }
+            }
+
+            //var avg = scrubNoise.Cast<double>().Average();
+
+            //for(int x = 0; x < SIZE; x++)
+            //{
+            //    for (int y = 0; y < SIZE; y++)
+            //    {
+            //        scrubNoise[x, y] = 1 - Math.Abs(scrubNoise[x, y] - avg);
+            //    }
+            //}
+
+
+            var totalGrass = _percentInMap[TileInfo.Mountains] + _percentInMap[TileInfo.Hills] + _percentInMap[TileInfo.Scrubland] + _percentInMap[TileInfo.Forest] + _percentInMap[TileInfo.Swamp] + _percentInMap[TileInfo.Shallow_Water] + _percentInMap[TileInfo.Grasslands];
+            // As we will be overlaying it on the grass, scrubland and forest so bump up the percentage so the ratio stays correct
+            var hillsPercent = _percentInMap[TileInfo.Hills] / totalGrass;
+            var mountainsPercent = _percentInMap[TileInfo.Mountains] / totalGrass;
+            var percentInMap = new Dictionary<byte, double>()
+            {
+                {TileInfo.Grasslands,(1.0-hillsPercent)-mountainsPercent},
+                {TileInfo.Hills,hillsPercent},
+                {TileInfo.Mountains,mountainsPercent }
+            };
+
+            return new Tuple<byte[,], double[,]>(ClampToValuesInSetRatios(scrubNoise, percentInMap, SIZE), scrubNoise);
+        }
+
         private byte[,] ScrubMap(Random random)
         {
             //var scrubNoise = new DiamondSquare(WorldMap.SIZE, 184643518.256878*128, 82759876).getData(random);
@@ -142,7 +196,7 @@ namespace U4DosRandomizer
             {
                 for (int y = 0; y < SIZE; y++)
                 {
-                    scrubNoise[x, y] = scrubNoiseLayerOne[x, y] + (scrubNoiseLayerTwo[x,y] * 0.5);
+                    scrubNoise[x, y] = scrubNoiseLayerOne[x, y] + (scrubNoiseLayerTwo[x, y] * 0.5);
                 }
             }
 
@@ -165,7 +219,7 @@ namespace U4DosRandomizer
             byte[] D_0BF0 = { 0xE7, 0x53, 0x23, 0x3B, 0x9E, 0x69, 0x17, 0xBA, 0xD8, 0x1D, 0x91, 0x59, 0xE9 };
             byte[] D_0BFE = { 0x88, 0x69, 0xDD, 0x2C, 0x15, 0xB7, 0x81, 0xAC, 0x6A, 0x30, 0xF3, 0x6A, 0xE9 };
 
-            for(int i = 0; i < 13; i++)
+            for (int i = 0; i < 13; i++)
             {
                 _worldMapTiles[D_0BF0[i], D_0BFE[i]] = (byte)(TileInfo.A + i);
             }
@@ -266,11 +320,11 @@ namespace U4DosRandomizer
         private void WriteSpoilerLog(UltimaData data)
         {
             SpoilerLog.Add(SpoilerCategory.MiscWorldLocation, $"Pirate Cove at {Talk.GetSextantText(data.PirateCoveSpawnTrigger, ' ')}");
-            for(int i = 0; i < data.LOC_HUMILITY - 1; i++)
+            for (int i = 0; i < data.LOC_HUMILITY - 1; i++)
             {
                 SpoilerLog.Add(SpoilerCategory.Location, $"{data.LocationNames[i]} at {Talk.GetSextantText(data.GetLocation(i), ' ')}");
             }
-            for(int i = 0; i < 8; i++)
+            for (int i = 0; i < 8; i++)
             {
                 SpoilerLog.Add(SpoilerCategory.Location, $"Moongate at {Talk.GetSextantText(data.Moongates[i])}");
             }
@@ -381,8 +435,8 @@ namespace U4DosRandomizer
             for (int i = 0; i < 4; i++)
             {
                 loc = RandomSelectFromListCheckPathChangeAndRemove(random, evenlyDistributedLocations, TileInfo.Village);
-                ultimaData.Towns[i+8].X = loc.X;
-                ultimaData.Towns[i+8].Y = loc.Y;
+                ultimaData.Towns[i + 8].X = loc.X;
+                ultimaData.Towns[i + 8].Y = loc.Y;
             }
 
             // Shrines
@@ -680,6 +734,9 @@ namespace U4DosRandomizer
         {
             // Original game only had single tiles in very special circumstances
             RemoveSingleTiles();
+
+            AddMountainsAndHills(random);
+
             var rivers = AddRivers(random);
             Dictionary<ITile, List<River>> collectionOfRiversWithSameMouth = new Dictionary<ITile, List<River>>();
 
@@ -722,7 +779,7 @@ namespace U4DosRandomizer
             for (int x = 0; x < SIZE; x++)
             {
                 for (int y = 0; y < SIZE; y++)
-                {   
+                {
                     var adjacentTiles = new byte[] { _worldMapTiles[Wrap(x + 1), y], _worldMapTiles[Wrap(x - 1), y], _worldMapTiles[x, Wrap(y + 1)], _worldMapTiles[x, Wrap(y - 1)] };
                     if (!adjacentTiles.Contains(_worldMapTiles[x, y]))
                     {
@@ -743,7 +800,7 @@ namespace U4DosRandomizer
             // 23
             int totalNumOfSwamps = 19 + random.Next(1, 3) + random.Next(1, 3);
 
-            for(int i = 0; i < totalNumOfSwamps; i++)
+            for (int i = 0; i < totalNumOfSwamps; i++)
             {
                 var swampSize = 16;
                 var chosenSwampTile = _potentialSwamps[random.Next(0, _potentialSwamps.Count() - 1)];
@@ -780,7 +837,7 @@ namespace U4DosRandomizer
                     {TileInfo.Swamp,0.3}
                 };
 
-            double halfSwampSize = Convert.ToDouble(swampSize)/2;
+            double halfSwampSize = Convert.ToDouble(swampSize) / 2;
             for (int x = 0; x < swampSize; x++)
             {
                 for (int y = 0; y < swampSize; y++)
@@ -806,7 +863,7 @@ namespace U4DosRandomizer
                 for (int y = 0; y < SIZE; y++)
                 {
                     ITile tile = GetCoordinate(x, y);
-                    if (!closedSet.Contains(tile) && (tile.GetTile() == TileInfo.Deep_Water || tile.GetTile() == TileInfo.Medium_Water) )
+                    if (!closedSet.Contains(tile) && (tile.GetTile() == TileInfo.Deep_Water || tile.GetTile() == TileInfo.Medium_Water))
                     {
                         var bodyOfWater = new List<ITile>();
                         var queue = new Queue<ITile>();
@@ -818,7 +875,7 @@ namespace U4DosRandomizer
                             {
                                 bodyOfWater.Add(tile);
 
-                                foreach(var n in tile.NeighborAndAdjacentCoordinates())
+                                foreach (var n in tile.NeighborAndAdjacentCoordinates())
                                 {
                                     queue.Enqueue(n);
                                 }
@@ -844,10 +901,41 @@ namespace U4DosRandomizer
             return;
         }
 
+        private void AddMountainsAndHills(Random random)
+        {
+            // Add other blobs
+            var mountains = MountainMap(random);
+
+            // Map the mountain noise to the same number range as the generated world maps so we can put them together
+            var mountainMin = mountains.Item2.Cast<double>().Min();
+            var mountainMax = mountains.Item2.Cast<double>().Max();
+            for (int x = 0; x < SIZE; x++)
+            {
+                for (int y = 0; y < SIZE; y++)
+                {
+                    //https://math.stackexchange.com/questions/914823/shift-numbers-into-a-different-range/914843
+                    mountains.Item2[x, y] = _generatedMin + (((_generatedMax - _generatedMin) / (mountainMax - mountainMin)) * (mountains.Item2[x, y] - mountainMin));
+                }
+            }
+
+            for (int x = 0; x < SIZE; x++)
+            {
+                for (int y = 0; y < SIZE; y++)
+                {
+                    if (_worldMapTiles[x, y] == TileInfo.Grasslands)
+                    {
+                        _worldMapTiles[x, y] = mountains.Item1[x, y];
+                        // Add the mountain height to the map. (This fixes rivers slicing through mountains.)
+                        _worldMapGenerated[x, y] = _worldMapGenerated[x, y] + (mountains.Item2[x, y] * 0.5);
+                    }
+                }
+            }
+        }
+
         private void AddScrubAndForest(Random random, List<List<River>> rivers)
         {
             // Add to Rivers
-            foreach(var riverCollection in rivers)
+            foreach (var riverCollection in rivers)
             {
                 var openSet = new HashSet<ITile>();
                 var queue = new Queue<Tuple<ITile, int>>();
@@ -859,7 +947,7 @@ namespace U4DosRandomizer
                         if (!openSet.Contains(river.Path[i]))
                         {
                             openSet.Add(river.Path[i]);
-                            queue.Enqueue(new Tuple<ITile,int>(river.Path[i], 0));
+                            queue.Enqueue(new Tuple<ITile, int>(river.Path[i], 0));
                         }
                     }
                 }
@@ -867,7 +955,7 @@ namespace U4DosRandomizer
                 var finalSet = new HashSet<ITile>();
                 var closedSet = new HashSet<ITile>();
 
-                while(openSet.Count > 0)
+                while (openSet.Count > 0)
                 {
                     var current = queue.Dequeue();
                     openSet.Remove(current.Item1);
@@ -893,7 +981,7 @@ namespace U4DosRandomizer
                     }
                 }
 
-                foreach(var tile in finalSet)
+                foreach (var tile in finalSet)
                 {
                     tile.SetTile(TileInfo.Scrubland);
                 }
@@ -920,8 +1008,8 @@ namespace U4DosRandomizer
 
             var riverCollections = rivers.ToList();
 
-            var bridgeCount = 0;            
-            foreach(var riverCollection in riverCollections.ToList())
+            var bridgeCount = 0;
+            foreach (var riverCollection in riverCollections.ToList())
             {
                 var headInMountains = false;
                 foreach (var river in riverCollection)
@@ -934,7 +1022,7 @@ namespace U4DosRandomizer
                         }
                     }
                 }
-                if(headInMountains)
+                if (headInMountains)
                 {
                     AddBridge(random, riverCollection, true);
                     riverCollections.Remove(riverCollection);
@@ -983,7 +1071,7 @@ namespace U4DosRandomizer
                     }
                 }
 
-                if(!bridgeAdded && tryHarder)
+                if (!bridgeAdded && tryHarder)
                 {
                     for (int i = river.Path.Count() - 1; i > correctedMinBridgeDepth; i--)
                     {
@@ -1073,7 +1161,11 @@ namespace U4DosRandomizer
                 // That is weighted towards the start of the path
                 var max = river.Path.Count - 10;
                 var min = 10;
-                var start = Convert.ToInt32(Math.Floor(Math.Abs(random.NextDouble() - random.NextDouble()) * (1 + max - min) + min));
+                var start = 0;
+                if (max >= min)
+                {
+                    start = Convert.ToInt32(Math.Floor(Math.Abs(random.NextDouble() - random.NextDouble()) * (1 + max - min) + min));
+                }
                 //for( int i = 1; i < start; i++)
                 //{
                 //    _worldMapTiles[path[i].X, path[i].Y] = 0x70;
@@ -1098,7 +1190,7 @@ namespace U4DosRandomizer
         public List<Tile> FindAllByPattern(int[,] pattern)
         {
             var validCoordinates = new List<Tile>();
-            for(int map_x = 0; map_x < SIZE; map_x++)
+            for (int map_x = 0; map_x < SIZE; map_x++)
             {
                 for (int map_y = 0; map_y < SIZE; map_y++)
                 {
@@ -1108,14 +1200,14 @@ namespace U4DosRandomizer
                         for (int pat_y = 0; pat_y < pattern.GetLength(1); pat_y++)
                         {
                             var tile = _worldMapTiles[Wrap(map_x + pat_x), Wrap(map_y + pat_y)];
-                            if (_worldMapTiles[Wrap(map_x+pat_x), Wrap(map_y+pat_y)] != pattern[pat_x, pat_y] && pattern[pat_x, pat_y] != -1)
+                            if (_worldMapTiles[Wrap(map_x + pat_x), Wrap(map_y + pat_y)] != pattern[pat_x, pat_y] && pattern[pat_x, pat_y] != -1)
                             {
                                 matchesAll = false;
                             }
                         }
                     }
 
-                    if(matchesAll)
+                    if (matchesAll)
                     {
                         validCoordinates.Add(new Tile(map_x, map_y, _worldMapTiles, v => Wrap(v)));
                     }
@@ -1128,9 +1220,9 @@ namespace U4DosRandomizer
         //public delegate float NodeHuersticValue(Coordinate coord, IsNodeValid matchesGoal);
         public float GoDownhillHueristic(ITile coord, IsNodeValid matchesGoal)
         {
-            if( matchesGoal(coord))
-            { 
-                return 1.0f; 
+            if (matchesGoal(coord))
+            {
+                return 1.0f;
             }
 
             var range = _generatedMax - _generatedMin;
@@ -1229,9 +1321,9 @@ namespace U4DosRandomizer
                 {
                     randomIdx = random.Next(0, possibleLocations.Count);
                     ITile selection = null; // possibleLocations[randomIdx];
-                    if(requirePath)
+                    if (requirePath)
                     {
-                        while(selection == null)
+                        while (selection == null)
                         {
                             selection = possibleLocations[randomIdx];
                             var path = Search.GetPath(WorldMapGenerateMap.SIZE, WorldMapGenerateMap.SIZE, selection,
@@ -1358,18 +1450,77 @@ namespace U4DosRandomizer
             return result;
         }
 
+        public static void PrintWorldMapInfo(string path)
+        {
+            var world = new byte[256 * 256];
+
+            var file = Path.Combine(path, filename);
+            using (FileStream stream = new FileStream(file, FileMode.Open))
+            {
+                stream.Read(world, 0, 256 * 256);
+            }
+            var worldList = world.ToList();
+
+            worldList.Sort();
+
+            var worldTileCount = new Dictionary<byte, int>();
+            for (int i = 0; i < worldList.Count(); i++)
+            {
+                if (worldTileCount.ContainsKey(worldList[i]))
+                {
+                    worldTileCount[worldList[i]] = worldTileCount[worldList[i]] + 1;
+                }
+                else
+                {
+                    worldTileCount[worldList[i]] = 1;
+                }
+            }
+
+            foreach (var key in worldTileCount.Keys)
+            {
+                //var output = $"{shapes[key]}:".PadRight(31) + $" {worldTileCount[key]/(256.0*256.0)}";
+                var output = $"{{{key},{worldTileCount[key] / (256.0 * 256.0)}}}";
+                Console.WriteLine(output);
+            }
+        }
+
         static private Dictionary<byte, double> _percentInMap = new Dictionary<byte, double>()
         {
-            {TileInfo.Deep_Water,0.519012451171875},
-            {TileInfo.Medium_Water,0.15771484375},
-            {TileInfo.Shallow_Water,0.0294952392578125},
-            {TileInfo.Swamp,0.010162353515625},
-            {TileInfo.Grasslands,0.1092376708984375},
-            {TileInfo.Scrubland,0.07513427734375},
-            {TileInfo.Forest,0.03515625},
-            {TileInfo.Hills,0.0355224609375},
-            {TileInfo.Mountains,0.0266265869140625},
-            //{9,0.0001068115234375},
+            // With Avatar Isle
+            //{TileInfo.Deep_Water,   0.519012451171875},
+            //{TileInfo.Medium_Water, 0.15771484375},
+            //{TileInfo.Shallow_Water,0.0294952392578125},
+            //{TileInfo.Swamp,        0.010162353515625},
+            //{TileInfo.Grasslands,   0.1092376708984375},
+            //{TileInfo.Scrubland,    0.07513427734375},
+            //{TileInfo.Forest,       0.03515625},
+            //{TileInfo.Hills,        0.0355224609375},
+            //{TileInfo.Mountains,    0.0266265869140625},
+            ////{9,0.0001068115234375},
+            ////{10,0.0001068115234375},
+            ////{11,4.57763671875E-05},
+            ////{12,6.103515625E-05},
+            ////{13,1.52587890625E-05},
+            ////{14,1.52587890625E-05},
+            ////{15,1.52587890625E-05},
+            ////{23,0.0002593994140625},
+            ////{29,1.52587890625E-05},
+            ////{30,0.0001068115234375},
+            ////{61,1.52587890625E-05},
+            ////{70,0.0001068115234375},
+            ////Lava{76,0.001068115234375}
+
+            // Without Avatar Isle
+            {TileInfo.Deep_Water,   0.54730224609375},
+            {TileInfo.Medium_Water, 0.146514892578125},
+            {TileInfo.Shallow_Water,0.026275634765625},
+            {TileInfo.Swamp,        0.0097198486328125},
+            {TileInfo.Grasslands,   0.1090240478515625},
+            {TileInfo.Scrubland,    0.07513427734375},
+            {TileInfo.Forest,       0.03515625},
+            {TileInfo.Hills,        0.03271484375},
+            {TileInfo.Mountains,    0.0171966552734375},
+            //{9,9.1552734375E-05},
             //{10,0.0001068115234375},
             //{11,4.57763671875E-05},
             //{12,6.103515625E-05},
@@ -1378,10 +1529,10 @@ namespace U4DosRandomizer
             //{15,1.52587890625E-05},
             //{23,0.0002593994140625},
             //{29,1.52587890625E-05},
-            //{30,0.0001068115234375},
+            //{30,9.1552734375E-05},
             //{61,1.52587890625E-05},
-            //{70,0.0001068115234375},
-            //Lava{76,0.001068115234375}
+            //{70,4.57763671875E-05},
+            //{76,0.00018310546875}
         };
 
     }
