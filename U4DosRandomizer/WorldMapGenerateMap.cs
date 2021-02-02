@@ -15,9 +15,13 @@ namespace U4DosRandomizer
 
         private double _generatedMin;
         private double _generatedMax;
-
+        private double _mountainMin;
+        private double _mountainMax;
+        private double[,] _mountHeightMap;
         private List<ITile> excludeLocations = new List<ITile>();
         private List<ITile> usedLocations = new List<ITile>();
+
+        private Random randomDownhill;
 
         private SpoilerLog SpoilerLog { get; }
 
@@ -134,9 +138,10 @@ namespace U4DosRandomizer
 
         private Tuple<byte[,], double[,]>  MountainMap(Random random)
         {
-            SimplexNoise.Noise.Seed = random.Next();
-            var scrubNoiseFloatLayerOne = SimplexNoise.Noise.Calc2D(SIZE, SIZE, 0.01f);
-            var scrubNoiseFloatLayerTwo = SimplexNoise.Noise.Calc2D(SIZE, SIZE, 0.025f);
+            var seed = random.Next();
+            var scrubNoiseFloatLayerOne = SeamlessSimplexNoise.simplexnoise(seed, SIZE, SIZE, 0.0f, 0.8f);
+            seed = random.Next();
+            var scrubNoiseFloatLayerTwo = SeamlessSimplexNoise.simplexnoise(seed, SIZE, SIZE, 0.2f, 1.6f);
 
             var avgOne = scrubNoiseFloatLayerOne.Cast<float>().Average();
             var avgTwo = scrubNoiseFloatLayerOne.Cast<float>().Average();
@@ -152,6 +157,7 @@ namespace U4DosRandomizer
                 {
                     //scrubNoise[x, y] = scrubNoiseLayerOne[x, y] + (scrubNoiseLayerTwo[x, y] * 0.5);
                     scrubNoise[x, y] = (1 - Math.Abs(scrubNoiseLayerOne[x, y] - avgOne)) + ((1 - Math.Abs(scrubNoiseLayerTwo[x, y] - avgTwo)) * 0.3);
+                    //scrubNoise[x, y] = (1 - Math.Abs(scrubNoiseLayerTwo[x, y] - avgTwo));
                 }
             }
 
@@ -286,6 +292,7 @@ namespace U4DosRandomizer
 
         public override void Load(string path, int mapSeed, Random mapGeneratorSeed, Random randomMap)
         {
+            randomDownhill = new Random(randomMap.Next());
             var file = Path.Combine(path, filename);
 
             FileHelper.TryBackupOriginalFile(file);
@@ -293,24 +300,15 @@ namespace U4DosRandomizer
             _worldMapGenerated = new DiamondSquare(SIZE, 184643518.256878, mapSeed).getData(mapGeneratorSeed);
             MapGeneratedMapToUltimaTiles();
 
-            var worldMapFlattened = new double[SIZE * SIZE];
-
-            for (int x = 0; x < SIZE; x++)
-            {
-                for (int y = 0; y < SIZE; y++)
-                {
-                    worldMapFlattened[x + y * SIZE] = _worldMapGenerated[x, y];
-                }
-            }
-
-            _generatedMin = worldMapFlattened.Min();
-            _generatedMax = worldMapFlattened.Max();
+            _generatedMin = _worldMapGenerated.Cast<double>().Min();
+            _generatedMax = _worldMapGenerated.Cast<double>().Max();
 
             CleanupAndAddFeatures(randomMap);
         }
 
         public override void Randomize(UltimaData ultimaData, Random randomLocations, Random randomItems)
         {
+            
             RandomizeLocations(ultimaData, randomLocations);
 
             RandomizeItems(ultimaData, randomItems);
@@ -349,8 +347,10 @@ namespace U4DosRandomizer
             var shapeLoc = new Coordinate(stygian.X - 2, stygian.Y - 7);
             ApplyShape(shapeLoc, "abyss");
 
+            var ocean = FindOcean();
+
             var entrancePathToWater = Search.GetPath(SIZE, SIZE, entranceToStygian,
-                c => { return c.GetTile() == TileInfo.Deep_Water; }, // Find deep water to help make sure a boat can reach here. TODO: Make sure it reaches the ocean.
+                c => { return ocean.Contains(c); }, // Find deep water to help make sure a boat can reach here. TODO: Make sure it reaches the ocean.
                 c => { return !(Between(c.X, Wrap(shapeLoc.X - 12), Wrap(shapeLoc.X + 12)) && Between(c.Y, Wrap(shapeLoc.Y - 12), Wrap(shapeLoc.Y + 12))); },
                 GoDownhillHueristic);
 
@@ -489,7 +489,7 @@ namespace U4DosRandomizer
                         c => { return distance * distance <= DistanceSquared(c, ultimaData.Towns[i]) && IsWalkable(c); },
                         // Only valid if all neighbors all also mountains
                         c => { return IsMatchingTile(c, validTiles); },
-                        (c, b) => { return (float)random.NextDouble(); });
+                        (c, cf, b) => { return (float)random.NextDouble(); });
                     if (path.Count == 0)
                     {
                         Console.WriteLine($"Failed Moongate placement of {i} placement. Retrying.");
@@ -541,7 +541,7 @@ namespace U4DosRandomizer
                         c => { return ultimaData.Moongates.Contains(c); },
                         // Only valid if all neighbors all also mountains
                         c => { return IsWalkable(c) && c != lcbEastSide && c != lcbWestSide && c != lcbEastSide; },
-                        (c, b) => { return (float)random.NextDouble(); });
+                        (c, cf, b) => { return (float)random.NextDouble(); });
                     if (path.Count > 0)
                     {
                         lcb.SetTile(TileInfo.Lord_British_s_Castle_Entrance);
@@ -732,10 +732,9 @@ namespace U4DosRandomizer
 
         public void CleanupAndAddFeatures(Random random)
         {
+            AddMountainsAndHills(random);
             // Original game only had single tiles in very special circumstances
             RemoveSingleTiles();
-
-            AddMountainsAndHills(random);
 
             var rivers = AddRivers(random);
             Dictionary<ITile, List<River>> collectionOfRiversWithSameMouth = new Dictionary<ITile, List<River>>();
@@ -754,6 +753,9 @@ namespace U4DosRandomizer
                 }
             }
             var riverCollections = collectionOfRiversWithSameMouth.Values.ToList();
+            // Original game only had single tiles in very special circumstances
+            RemoveSingleTiles();
+
             AddBridges(random, riverCollections);
             AddScrubAndForest(random, riverCollections);
             AddSwamp(random);
@@ -853,7 +855,7 @@ namespace U4DosRandomizer
             return swamp;
         }
 
-        private void FindOcean()
+        private List<ITile> FindOcean()
         {
             // Find Ocean
             var bodiesOfWater = new List<List<ITile>>();
@@ -898,7 +900,7 @@ namespace U4DosRandomizer
 
             var ocean = bodiesOfWater.OrderByDescending(b => b.Count()).FirstOrDefault();
 
-            return;
+            return ocean;
         }
 
         private void AddMountainsAndHills(Random random)
@@ -915,6 +917,7 @@ namespace U4DosRandomizer
                 {
                     //https://math.stackexchange.com/questions/914823/shift-numbers-into-a-different-range/914843
                     mountains.Item2[x, y] = _generatedMin + (((_generatedMax - _generatedMin) / (mountainMax - mountainMin)) * (mountains.Item2[x, y] - mountainMin));
+                    //mountains.Item2[x, y] = mountains.Item2[x, y] * mountains.Item2[x, y];
                 }
             }
 
@@ -925,11 +928,16 @@ namespace U4DosRandomizer
                     if (_worldMapTiles[x, y] == TileInfo.Grasslands)
                     {
                         _worldMapTiles[x, y] = mountains.Item1[x, y];
-                        // Add the mountain height to the map. (This fixes rivers slicing through mountains.)
-                        _worldMapGenerated[x, y] = _worldMapGenerated[x, y] + (mountains.Item2[x, y] * 0.5);
                     }
                 }
             }
+
+            _generatedMin = _worldMapGenerated.Cast<double>().Min();
+            _generatedMax = _worldMapGenerated.Cast<double>().Max();
+
+            _mountHeightMap = mountains.Item2;
+            _mountainMin = _mountHeightMap.Cast<double>().Min();
+            _mountainMax = _mountHeightMap.Cast<double>().Max();
         }
 
         private void AddScrubAndForest(Random random, List<List<River>> rivers)
@@ -1147,12 +1155,46 @@ namespace U4DosRandomizer
             foreach (var highPoint in highPoints)
             {
                 // find shortest path
-                List<ITile> path = GetRiverPath(highPoint, IsCoordinateWater);
-                path.RemoveAt(path.Count() - 1);
-                var river = new River();
-                river.Path = path;
-                rivers.Add(river);
+                List<ITile> path = GetRiverPath(highPoint,
+                    //(n) => { return IsCoordinateWater(n) || allRiveCoords.Contains(n); }
+                    IsCoordinateWater
+                    );
+                if(IsCoordinateWater(path[path.Count() - 1]))
+                {
+                    path.RemoveAt(path.Count() - 1);
+                }
+                else
+                {
+                    foreach (var r in rivers)
+                    {
+                        int index = r.Path.IndexOf(path[path.Count() - 1]);
+                        if (index != -1)
+                        {
+                            for(int i = index+1; i < r.Path.Count; i++ )
+                            {
+                                path.Add(r.Path[i]);
+                            }
+                        }
+                    }
+                }
+
+                foreach(var tile in path)
+                {
+                    _mountHeightMap[tile.X, tile.Y] = _mountHeightMap[tile.X, tile.Y] * 0.99f;
+                }
+
+                if (path.Count > 0)
+                {
+                    var river = new River();
+                    river.Path = path;
+                    rivers.Add(river);
+                }
             }
+
+            _generatedMin = _worldMapGenerated.Cast<double>().Min();
+            _generatedMax = _worldMapGenerated.Cast<double>().Max();
+            _mountainMin = _mountHeightMap.Cast<double>().Min();
+            _mountainMax = _mountHeightMap.Cast<double>().Max();
 
             foreach (var river in rivers)
             {
@@ -1218,17 +1260,17 @@ namespace U4DosRandomizer
         }
 
         //public delegate float NodeHuersticValue(Coordinate coord, IsNodeValid matchesGoal);
-        public float GoDownhillHueristic(ITile coord, IsNodeValid matchesGoal)
+        public float GoDownhillHueristic(ITile coord, ITile cameFrom, IsNodeValid matchesGoal)
         {
             if (matchesGoal(coord))
             {
                 return 1.0f;
             }
 
-            var range = _generatedMax - _generatedMin;
-            var value = _worldMapGenerated[coord.X, coord.Y] - _generatedMin;
+            // Map to 0 - 1
+            var value = ((0.0 + (((1.0 - 0.0) / (_mountainMax - _mountainMin)) * (_mountHeightMap[coord.X, coord.Y] - _mountainMin))));
 
-            return Convert.ToSingle(value / range);
+            return Convert.ToSingle(value - (randomDownhill.NextDouble()/25));
         }
 
         public static bool IsWalkableGround(ITile coord)
@@ -1448,6 +1490,50 @@ namespace U4DosRandomizer
             }
 
             return result;
+        }
+
+
+        public new SixLabors.ImageSharp.Image ToHeightMapImage()
+        {
+            var image = new SixLabors.ImageSharp.Image<Rgba32>(WorldMapGenerateMap.SIZE*2, WorldMapGenerateMap.SIZE*2);
+            for (int y = 0; y < WorldMapGenerateMap.SIZE; y++)
+            {
+                Span<Rgba32> pixelRowSpan = image.GetPixelRowSpan(y);
+                for (int x = 0; x < WorldMapGenerateMap.SIZE; x++)
+                {
+                    var val = (byte)((0 + (((Byte.MaxValue - 0) / (_generatedMax - _generatedMin)) * (_worldMapGenerated[x, y] - _generatedMin))));
+
+                    //SixLabors.ImageSharp.Color.FromRgb(0, 0, 112)
+                    pixelRowSpan[x] = SixLabors.ImageSharp.Color.FromRgb(val, val, val);
+                }
+
+                for (int x = 0; x < WorldMapGenerateMap.SIZE; x++)
+                {
+                    var val = (byte)((0 + (((Byte.MaxValue - 0) / (_mountainMax - _mountainMin)) * (_mountHeightMap[x, y] - _mountainMin))));
+
+                    //SixLabors.ImageSharp.Color.FromRgb(0, 0, 112)
+                    pixelRowSpan[SIZE+x] = SixLabors.ImageSharp.Color.FromRgb(val, val, val);
+                }
+            }
+
+            for (int y = 0; y < WorldMapGenerateMap.SIZE; y++)
+            {
+                Span<Rgba32> pixelRowSpan = image.GetPixelRowSpan(y+SIZE);
+                for (int x = 0; x < WorldMapGenerateMap.SIZE; x++)
+                {
+                    if (colorMap.ContainsKey(_worldMapTiles[x, y]))
+                    {
+                        pixelRowSpan[x] = colorMap[_worldMapTiles[x, y]];
+                    }
+                    else
+                    {
+                        pixelRowSpan[x] = SixLabors.ImageSharp.Color.White;
+                    }
+
+                }
+            }
+
+            return image;
         }
 
         public static void PrintWorldMapInfo(string path)

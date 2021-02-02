@@ -416,6 +416,11 @@ namespace U4DosRandomizer
             {
                 var image = worldMap.ToImage();
                 image.SaveAsPng($"worldMap-{seed}.png");
+                //image = worldMap.ToHeightMapImage();
+                //if (image != null)
+                //{
+                //    image.SaveAsPng($"worldMap-hm-{seed}.png");
+                //}
             }
 
             spoilerWriter.Close();
