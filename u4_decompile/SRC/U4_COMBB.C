@@ -137,7 +137,7 @@ unsigned char bp06;
 unsigned char bp04;
 {
 	register int /*si*/loc_A;
-	int loc_B, loc_C/*bp_04, bp_06*/;
+	int loc_B, loc_C, loc_D, loc_E/*bp_04, bp_06*/;
 
 	for(loc_A = 3; loc_A >= 0; loc_A --) {
 		if(D_95B2[(loc_A << 2)]) {
@@ -149,12 +149,49 @@ unsigned char bp04;
 				if(
 					loc_B |
 					(loc_C = (*(unsigned *)(D_95B2+(loc_A << 2)+2) >> 4) & 0xf)
-				) Combat_MAP(loc_B, loc_C) = D_95B2[(loc_A << 2)];
+				)
+				{
+					if( D_95B2[(loc_A << 2)] < TIL_80 ) {
+						Combat_MAP(loc_B, loc_C) = D_95B2[(loc_A << 2)];
+					}
+					else {
+						for(loc_D = 15; loc_D >= 0 && Fighters._tile[loc_D]; loc_D--) {
+						}
+						if(loc_D != -1) {
+							Fighters._tile[loc_D] = Fighters._gtile[loc_D] = D_95B2[(loc_A << 2)];
+							loc_E = D_23D2[C_7C25(D_95B2[(loc_A << 2)])];
+							Fighters._HP[loc_D] = (loc_E >> 1) | U4_RND4(loc_E);
+							
+							Combat._npcX[loc_D] = loc_C;
+							Combat._npcY[loc_D] = loc_B;
+						}
+					}
+						
+				}
+				
 				loc_B = (*(unsigned *)(D_95B2+(loc_A << 2)+2) >> 8) & 0xf;
 				if(
 					loc_B |
 					(loc_C = (*(unsigned *)(D_95B2+(loc_A << 2)+2) >> 12) & 0xf)
-				) Combat_MAP(loc_B, loc_C) = D_95B2[(loc_A << 2)] & 0xff;
+				) 
+				{
+					if( D_95B2[(loc_A << 2)] < TIL_80 ) {
+						Combat_MAP(loc_B, loc_C) = D_95B2[(loc_A << 2)];
+					}
+					else {
+						for(loc_D = 15; loc_D >= 0 && Fighters._tile[loc_D]; loc_D--) {
+						}
+						if(loc_D != -1) {
+							Fighters._tile[loc_D] = Fighters._gtile[loc_D] = D_95B2[(loc_A << 2)];
+							loc_E = D_23D2[C_7C25(D_95B2[(loc_A << 2)])];
+							Fighters._HP[loc_D] = (loc_E >> 1) | U4_RND4(loc_E);
+							
+							Combat._npcX[loc_D] = loc_C;
+							Combat._npcY[loc_D] = loc_B;
+						}
+					}
+						
+				}
 			}
 		}
 	}/* while(--loc_A >= 0);*/
