@@ -305,7 +305,7 @@ extern C_7D50();
 extern C_7D92();
 extern C_7DBC();
 extern C_7DFE(int);
-extern PrepFighters(int,unsigned);
+extern PrepFighters(int,unsigned,int,int);
 extern C_7FD7();
 extern C_7FFD();
 extern C_837A();
