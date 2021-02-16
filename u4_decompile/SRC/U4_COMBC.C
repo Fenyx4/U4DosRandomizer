@@ -221,10 +221,7 @@ C_7E7E()
 				loc_E = D_2406[C_7C25(D_9452)];
 			}
 		}
-		/*Fighters._tile[loc_D] = Fighters._gtile[loc_D] = loc_E;
-		loc_C = D_23D2[C_7C25(loc_E)];
-		Fighters._HP[loc_D] = (loc_C >> 1) | U4_RND4(loc_C);*/
-		PrepFighters(loc_D,loc_E,-1, -1);
+		PrepFighters(loc_D,loc_E);
 	}
 	for(loc_D = Party.f_1d8 - 1; loc_D >= 0; loc_D --) {
 		if(!isCharaAlive(loc_D))
@@ -234,10 +231,8 @@ C_7E7E()
 	}
 }
 
-PrepFighters(loc_A, loc_D, loc_C, loc_E)
+PrepFighters(loc_A, loc_D)
 register int loc_A;
-int loc_C;
-int loc_E;
 unsigned loc_D;
 {
 	int loc_B;
@@ -245,11 +240,6 @@ unsigned loc_D;
 	Fighters._tile[loc_A] = Fighters._gtile[loc_A] = loc_D;
 	loc_B = D_23D2[C_7C25(loc_D)];
 	Fighters._HP[loc_A] = (loc_B >> 1) | U4_RND4(loc_B);
-	
-	if(loc_C != -1) {
-		Combat._npcX[loc_A] = loc_C;
-		Combat._npcY[loc_A] = loc_E;
-	}
 }
 
 C_7FD7()
@@ -341,9 +331,9 @@ C_7FFD()
 /*C_817D*/
 		if(loc_A._010/*bug?*/) {
 		/*shouldn't be "if(loc_A._010[loc_B]) {" ?*/
-			/*Combat._npcX[loc_B] = loc_A._020[loc_B];
-			Combat._npcY[loc_B] = loc_A._030[loc_B];*/
-			PrepFighters(loc_B, loc_A._010[loc_B], loc_A._020[loc_B], loc_A._030[loc_B]);
+			Combat._npcX[loc_B] = loc_A._020[loc_B];
+			Combat._npcY[loc_B] = loc_A._030[loc_B];
+			PrepFighters(loc_B, loc_A._010[loc_B]);
 			/*Fighters._tile[loc_B] = Fighters._gtile[loc_B] = loc_A._010[loc_B];
 			loc_C = D_23D2[C_7C25(loc_A._010[loc_B])];
 			Fighters._HP[loc_B] = (loc_C >> 1) | U4_RND4(loc_C);*/

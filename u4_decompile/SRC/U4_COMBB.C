@@ -137,7 +137,7 @@ unsigned char bp06;
 unsigned char bp04;
 {
 	register int /*si*/loc_A;
-	int loc_B, loc_C, loc_D, loc_AShift/*bp_04, bp_06*/;
+	int loc_B, loc_C, loc_D, loc_E, loc_AShift/*bp_04, bp_06*/;
 
 	for(loc_A = 12; loc_A >= 0; loc_A=loc_A-4) {
 		if(D_95B2[loc_A]) {
@@ -165,13 +165,13 @@ unsigned char bp04;
 							}
 							if(loc_D != -1) {
 								
-								PrepFighters(loc_D,D_95B2[loc_A], loc_C, loc_B);
+								PrepFighters(loc_D,D_95B2[loc_A]);
 								/*Fighters._tile[loc_D] = Fighters._gtile[loc_D] = D_95B2[loc_A];
 								loc_E = D_23D2[C_7C25(D_95B2[loc_A])];
-								Fighters._HP[loc_D] = (loc_E >> 1) | U4_RND4(loc_E);
+								Fighters._HP[loc_D] = (loc_E >> 1) | U4_RND4(loc_E);*/
 								
 								Combat._npcX[loc_D] = loc_C;
-								Combat._npcY[loc_D] = loc_B;*/
+								Combat._npcY[loc_D] = loc_B;
 							}
 						}
 							
