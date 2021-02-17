@@ -6,6 +6,9 @@
 
 #include "u4.h"
 
+/*#include <stdio.h>
+#include <stdlib.h>*/
+
 /*----------------------------------------
 Whirlpool and Twister management?
 ----------------------------------------*/
@@ -140,11 +143,19 @@ unsigned char bp04;
 	int loc_B, loc_C, loc_D, loc_E, loc_AShift/*bp_04, bp_06*/;
 
 	for(loc_A = 12; loc_A >= 0; loc_A=loc_A-4) {
-		if(D_95B2[loc_A]) {
+		loc_E = D_95B2[loc_A];
+		if(loc_E) {
 			
+			/*itoa(loc_E, Party.chara[7]._name, 16);
+			u4_puts(Party.chara[7]._name);
+			u4_puts(" ");
+			itoa(*(unsigned *)(D_95B2+loc_A), Party.chara[7]._name, 16);
+			u4_puts(Party.chara[7]._name);
+			u4_puts("\n");*/
+						
 			if(
-				(bp06 << 12) == (*(unsigned *)(D_95B2+loc_A) & 0xf000) &&
-				(bp04 <<  8) == (*(unsigned *)(D_95B2+loc_A) & 0x0f00)
+				(bp06 << 12) == (loc_E & 0xf000) &&
+				(bp04 <<  8) == (loc_E & 0x0f00)
 			) {
 				loc_AShift = 0;
 				while(loc_AShift <= 8) {
@@ -155,8 +166,8 @@ unsigned char bp04;
 						(loc_C = (*(unsigned *)(D_95B2+loc_A+2) >> (loc_AShift+4)) & 0xf)
 					) 
 					{
-						if( D_95B2[loc_A] < TIL_80 ) {
-							Combat_MAP(loc_B, loc_C) = D_95B2[loc_A];
+						if( loc_E < TIL_80 ) {
+							Combat_MAP(loc_B, loc_C) = loc_E;
 						}
 						else {
 							loc_D = 15;
@@ -165,7 +176,7 @@ unsigned char bp04;
 							}
 							if(loc_D != -1) {
 								
-								PrepFighters(loc_D,D_95B2[loc_A]);
+								PrepFighters(loc_D,loc_E);
 								/*Fighters._tile[loc_D] = Fighters._gtile[loc_D] = D_95B2[loc_A];
 								loc_E = D_23D2[C_7C25(D_95B2[loc_A])];
 								Fighters._HP[loc_D] = (loc_E >> 1) | U4_RND4(loc_E);*/
