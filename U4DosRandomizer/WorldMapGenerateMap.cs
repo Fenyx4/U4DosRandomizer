@@ -338,32 +338,37 @@ namespace U4DosRandomizer
             // Lay down Stygian Abyss first so it doesn't stomp on other things
             // TODO: Make the entrance to the Abyss more random instead of laying down what is in the base game
             // Find a reasonable mountainous area
-            var possibleLocations = GetAllMatchingTiles(c => AreaIsAll(TileInfo.Mountains, 3, c));
-            var stygian = possibleLocations[random.Next(0, possibleLocations.Count)];
+            var avatarIsleSizeX = 40 + 12;
+            var avatarIsleSizeY = 80 + 12;
+            var possibleLocations = GetAllMatchingTiles(c => AreaIsAll(TileInfo.Deep_Water, avatarIsleSizeX, avatarIsleSizeY, c, false));
+            var stygianUpperLeft = possibleLocations[random.Next(0, possibleLocations.Count)];
+
+            var stygian = GetCoordinate(stygianUpperLeft.X + 20 + 5, stygianUpperLeft.Y + 60 + 4);
+            
             // Get a path from the entrance to water
-            var entranceToStygian = GetCoordinate(stygian.X - 14, stygian.Y - 9);
+            //var entranceToStygian = GetCoordinate(stygian.X - 14, stygian.Y - 9);
             //var entrancePathToWater = worldMap.GetRiverPath(entranceToStygian, c => { return c.GetTile() == TileInfo.Deep_Water; } );
 
-            var shapeLoc = new Coordinate(stygian.X - 2, stygian.Y - 7);
-            ApplyShape(shapeLoc, "abyss");
+            var shapeLoc = new Coordinate(stygianUpperLeft.X + 6, stygianUpperLeft.Y + 6);
+            ApplyShape(shapeLoc, "abyss", false);
 
             var ocean = FindOcean();
 
-            var entrancePathToWater = Search.GetPath(SIZE, SIZE, entranceToStygian,
-                c => { return ocean.Contains(c); }, // Find deep water to help make sure a boat can reach here. TODO: Make sure it reaches the ocean.
-                c => { return !(Between(c.X, Wrap(shapeLoc.X - 12), Wrap(shapeLoc.X + 12)) && Between(c.Y, Wrap(shapeLoc.Y - 12), Wrap(shapeLoc.Y + 12))); },
-                GoDownhillHueristic);
+            //var entrancePathToWater = Search.GetPath(SIZE, SIZE, entranceToStygian,
+            //    c => { return ocean.Contains(c); }, // Find deep water to help make sure a boat can reach here. TODO: Make sure it reaches the ocean.
+            //    c => { return !(Between(c.X, Wrap(shapeLoc.X - 12), Wrap(shapeLoc.X + 12)) && Between(c.Y, Wrap(shapeLoc.Y - 12), Wrap(shapeLoc.Y + 12))); },
+            //    GoDownhillHueristic);
 
-            for (int i = 0; i < entrancePathToWater.Count; i++)
-            {
-                GetCoordinate(entrancePathToWater[i].X, entrancePathToWater[i].Y).SetTile(TileInfo.Medium_Water);
-            }
+            //for (int i = 0; i < entrancePathToWater.Count; i++)
+            //{
+            //    GetCoordinate(entrancePathToWater[i].X, entrancePathToWater[i].Y).SetTile(TileInfo.Medium_Water);
+            //}
 
-            for (int x = -12; x <= 12; x++)
+            for (int x = 0; x <= avatarIsleSizeX; x++)
             {
-                for (int y = -12; y <= 12; y++)
+                for (int y = 0; y <= avatarIsleSizeY; y++)
                 {
-                    excludeLocations.Add(GetCoordinate(shapeLoc.X + x, shapeLoc.Y + y));
+                    excludeLocations.Add(GetCoordinate(stygianUpperLeft.X + x, stygianUpperLeft.Y + y));
                 }
             }
 
@@ -384,10 +389,10 @@ namespace U4DosRandomizer
             ultimaData.BlinkCastExclusionX2 = 0x01;
             ultimaData.BlinkCastExclusionY1 = 0x01;
             ultimaData.BlinkCastExclusionY2 = 0x01;
-            ultimaData.BlinkDestinationExclusionX1 = Convert.ToByte(Wrap(stygian.X - 5));
-            ultimaData.BlinkDestinationExclusionY1 = Convert.ToByte(Wrap(stygian.Y - 18));
-            ultimaData.BlinkDestinationExclusionX2 = Convert.ToByte(Wrap(stygian.X + 9));
-            ultimaData.BlinkDestinationExclusionY2 = Convert.ToByte(Wrap(stygian.Y + 5));
+            ultimaData.BlinkDestinationExclusionX1 = Convert.ToByte(Wrap(stygianUpperLeft.X));
+            ultimaData.BlinkDestinationExclusionY1 = Convert.ToByte(Wrap(stygianUpperLeft.Y));
+            ultimaData.BlinkDestinationExclusionX2 = Convert.ToByte(Wrap(stygianUpperLeft.X+avatarIsleSizeX));
+            ultimaData.BlinkDestinationExclusionY2 = Convert.ToByte(Wrap(stygianUpperLeft.Y+avatarIsleSizeY));
 
             //for (int x = 0; x < WorldMap.SIZE; x++)
             //{
@@ -455,25 +460,26 @@ namespace U4DosRandomizer
             }
             // Humility
             // TODO: Shrine prettier
-            possibleLocations = GetAllMatchingTiles(c => GoodForHumility(c));
-            possibleLocations.RemoveAll(c => excludeLocations.Contains(c));
-            loc = possibleLocations[random.Next(0, possibleLocations.Count)];
+            //possibleLocations = GetAllMatchingTiles(c => GoodForHumility(c));
+            //possibleLocations.RemoveAll(c => excludeLocations.Contains(c));
+            //loc = possibleLocations[random.Next(0, possibleLocations.Count)];
+            loc = GetCoordinate(stygianUpperLeft.X + 23, stygianUpperLeft.Y + 47);
             loc.SetTile(TileInfo.Shrine);
             ultimaData.Shrines[7].X = loc.X;
             ultimaData.Shrines[7].Y = loc.Y;
-            for (int y = -4; y < 0; y++)
-            {
-                GetCoordinate(loc.X, loc.Y + y).SetTile(TileInfo.Hills);
-            }
+            //for (int y = -4; y < 0; y++)
+            //{
+            //    GetCoordinate(loc.X, loc.Y + y).SetTile(TileInfo.Hills);
+            //}
             ultimaData.DaemonSpawnLocationX = loc.X;
             ultimaData.DaemonSpawnX1 = Wrap(loc.X - 1);
             ultimaData.DaemonSpawnX2 = Wrap(loc.X + 1);
             ultimaData.DaemonSpawnY1 = Wrap(loc.Y - 4);
             ultimaData.DaemonSpawnY2 = Wrap(loc.Y + 1);
-            ultimaData.BlinkDestinationExclusion2X1 = ultimaData.DaemonSpawnX1;
-            ultimaData.BlinkDestinationExclusion2X2 = ultimaData.DaemonSpawnX2;
-            ultimaData.BlinkDestinationExclusion2Y1 = ultimaData.DaemonSpawnY1;
-            ultimaData.BlinkDestinationExclusion2Y2 = ultimaData.DaemonSpawnY2;
+            //ultimaData.BlinkDestinationExclusion2X1 = ultimaData.DaemonSpawnX1;
+            //ultimaData.BlinkDestinationExclusion2X2 = ultimaData.DaemonSpawnX2;
+            //ultimaData.BlinkDestinationExclusion2Y1 = ultimaData.DaemonSpawnY1;
+            //ultimaData.BlinkDestinationExclusion2Y2 = ultimaData.DaemonSpawnY2;
 
             // Moongates
             List<ITile> path = new List<ITile>();
@@ -1303,14 +1309,26 @@ namespace U4DosRandomizer
 
         private bool AreaIsAll(int tile, int length, ICoordinate coordinate)
         {
-            int radius = length / 2;
+            return AreaIsAll(tile, length, length, coordinate, true);
+        }
+
+        private bool AreaIsAll(int tile, int width, int height, ICoordinate coordinate, bool center)
+        {
+            int centerX = width / 2;
+            int centerY = height / 2;
+
+            if(!center)
+            {
+                centerX = 0;
+                centerY = 0;
+            }
 
             var result = true;
-            for (int x = 0; x < length; x++)
+            for (int x = 0; x < width; x++)
             {
-                for (int y = 0; y < length; y++)
+                for (int y = 0; y < height; y++)
                 {
-                    result = result && IsTile(coordinate.X - radius + x, coordinate.Y - radius + y, tile);
+                    result = result && IsTile(coordinate.X - centerX + x, coordinate.Y - centerY + y, tile);
                 }
             }
 
@@ -1318,26 +1336,33 @@ namespace U4DosRandomizer
         }
 
 
-        private void ApplyShape(ICoordinate loc, string file)
+        private void ApplyShape(ICoordinate loc, string file, bool center = true)
         {
             //var shape = new System.IO.FileStream($"{file}", System.IO.FileMode.Open);
             object obj = U4DosRandomizer.Resources.Shapes.ResourceManager.GetObject(file, U4DosRandomizer.Resources.Shapes.Culture);
             var shape = ((byte[])(obj));
 
-            var length = shape[0];
-            byte[] shapeBytes = new byte[shape.Count() - 1];
-            Array.Copy(shape, 1, shapeBytes, 0, shape.Count() - 1);
+            var width = shape[0];
+            var height = shape[1];
+            byte[] shapeBytes = new byte[shape.Count() - 2];
+            Array.Copy(shape, 2, shapeBytes, 0, shape.Count() - 2);
 
-            int radius = length / 2;
-            for (int y = 0; y < length; y++)
+            int centerX = width / 2;
+            int centerY = height / 2;
+            if(!center)
             {
-                for (int x = 0; x < length; x++)
+                centerX = 0;
+                centerY = 0;
+            }
+            for (int y = 0; y < height; y++)
+            {
+                for (int x = 0; x < width; x++)
                 {
-                    var idx = x + y * length;
+                    var idx = x + y * width;
                     var tile = shapeBytes[idx];
                     if (tile != 0xFF)
                     {
-                        GetCoordinate(loc.X - radius + x, loc.Y - radius + y).SetTile(tile);
+                        GetCoordinate(loc.X - centerX + x, loc.Y - centerY + y).SetTile(tile);
                     }
                 }
             }
