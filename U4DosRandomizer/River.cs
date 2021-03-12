@@ -7,6 +7,5 @@ namespace U4DosRandomizer
     public class River
     {
         public List<ITile> Path { get; internal set; }
-        public int Head { get; internal set; }
     }
 }
