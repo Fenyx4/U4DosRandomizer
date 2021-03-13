@@ -304,6 +304,69 @@ namespace U4DosRandomizer
             _generatedMax = _worldMapGenerated.Cast<double>().Max();
 
             CleanupAndAddFeatures(randomMap);
+
+            Center();
+        }
+
+        private void Center()
+        {
+            var bestScore = 0;
+            var bestOffsets = new List<Point>();
+
+            for(int xOffset = 0; xOffset < SIZE; xOffset++)
+            {
+                for(int yOffset = 0; yOffset < SIZE; yOffset++)
+                {
+                    var currentScore = 0;
+                    for (int x = 0; x < SIZE; x++)
+                    {
+                        if(IsWater(GetCoordinate(x+xOffset,0+yOffset)))
+                        {
+                            currentScore++;
+                        }
+
+                        if (IsWater(GetCoordinate(x + xOffset, SIZE-1 + yOffset)))
+                        {
+                            currentScore++;
+                        }
+                    }
+
+                    for (int y = 0; y < SIZE; y++)
+                    {
+                        if (IsWater(GetCoordinate(0 + xOffset, y + yOffset)))
+                        {
+                            currentScore++;
+                        }
+
+                        if (IsWater(GetCoordinate(SIZE - 1 + xOffset, y + yOffset)))
+                        {
+                            currentScore++;
+                        }
+                    }
+                    if (currentScore > bestScore)
+                    {
+                        bestScore = currentScore;
+                        bestOffsets.Clear();
+                        bestOffsets.Add(new Point(xOffset, yOffset));
+                    }
+                    else if (currentScore == bestScore)
+                    {
+                        bestOffsets.Add(new Point(xOffset, yOffset));
+                    }
+                }
+            }
+
+            var bestOffset = bestOffsets[bestOffsets.Count / 2];
+            var newWorldMap = new byte[SIZE, SIZE];
+
+            for(int x = 0; x < SIZE; x++)
+            {
+                for(int y = 0; y < SIZE; y++)
+                {
+                    newWorldMap[x, y] = _worldMapTiles[Wrap(bestOffset.X + x), Wrap(bestOffset.Y + y)];
+                }
+            }
+            _worldMapTiles = newWorldMap;
         }
 
         public override void Randomize(UltimaData ultimaData, Random randomLocations, Random randomItems)
