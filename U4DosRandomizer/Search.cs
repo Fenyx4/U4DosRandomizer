@@ -4,7 +4,7 @@ using U4DosRandomizer.BlueRajaPriorityQueue;
 namespace U4DosRandomizer
 {
 	public delegate bool IsNodeValid(ITile coord);
-	public delegate float NodeHuersticValue(ITile coord, IsNodeValid matchesGoal);
+	public delegate float NodeHuersticValue(ITile coord, ITile cameFrom, IsNodeValid matchesGoal);
 
 	public class Search
     {
@@ -17,7 +17,7 @@ namespace U4DosRandomizer
 		{
 			if (heuristic == null)
 			{
-				heuristic = delegate (ITile n, IsNodeValid m) {
+				heuristic = delegate (ITile n, ITile cameFrom, IsNodeValid m) {
 					return 0;
 				};
 			}
@@ -39,7 +39,7 @@ namespace U4DosRandomizer
 			HeapPriorityQueue<PriorityQueueCoordinate<ITile>> f_score = new HeapPriorityQueue<PriorityQueueCoordinate<ITile>>(sizeX * sizeY);
 			foreach (ITile node in g_score.Keys)
 			{
-				f_score.Enqueue(new PriorityQueueCoordinate<ITile>(node), g_score[node] + heuristic(node, matchesGoal));
+				f_score.Enqueue(new PriorityQueueCoordinate<ITile>(node), g_score[node] + heuristic(node, (came_from.ContainsKey(node) ? came_from[node] : null), matchesGoal));
 			}
 
 
@@ -88,7 +88,7 @@ namespace U4DosRandomizer
 					{
 						came_from[neighbor] = current;
 						g_score[neighbor] = tentative_g_score;
-						f_score.Enqueue(new PriorityQueueCoordinate<ITile>(neighbor), g_score[neighbor] + heuristic(neighbor, matchesGoal));
+						f_score.Enqueue(new PriorityQueueCoordinate<ITile>(neighbor), g_score[neighbor] + heuristic(neighbor, current, matchesGoal));
 						if (!openset.Contains(neighbor))
 						{
 							openset.Add(neighbor);

@@ -40,6 +40,8 @@ namespace U4DosRandomizer
                     }
                 }
             }
+
+            //RemoveAvatarIsle();
         }
 
         public override void Randomize(UltimaData ultimaData, Random random1, Random random2)
@@ -199,6 +201,17 @@ namespace U4DosRandomizer
             }
 
             return;
+        }
+
+        private void RemoveAvatarIsle()
+        {
+            for (int x = 256 - 50; x < 256; x++)
+            {
+                for (int y = 256 - 100; y < 256; y++)
+                {
+                    _worldMapTiles[x, y] = TileInfo.Deep_Water;
+                }
+            }
         }
 
         private void Swap(ReadOnlyCollection<Item> locations, int a, int b)
