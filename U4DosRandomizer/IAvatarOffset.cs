@@ -6,43 +6,8 @@ namespace U4DosRandomizer
         int MOONGATE_Y_OFFSET { get; }
         int AREA_X_OFFSET { get; }
         int AREA_Y_OFFSET { get; }
-        int LOC_BUILDINGS { get; }
-        int LOC_CASTLES { get; }
-        int LOC_LCB { get; }
-        int LOC_LYCAEUM { get; }
-        int LOC_EMPATH { get; }
-        int LOC_SERPENT { get; }
-        int LOC_TOWNS { get; }
-        int LOC_MOONGLOW { get; }
-        int LOC_BRITAIN { get; }
-        int LOC_JHELOM { get; }
-        int LOC_YEW { get; }
-        int LOC_MINOC { get; }
-        int LOC_TRINSIC { get; }
-        int LOC_SKARA { get; }
-        int LOC_MAGINCIA { get; }
-        int LOC_PAWS { get; }
-        int LOC_DEN { get; }
-        int LOC_VESPER { get; }
-        int LOC_COVE { get; }
-        int LOC_DUNGEONS { get; }
-        int LOC_DECEIT { get; }
-        int LOC_DESPISE { get; }
-        int LOC_DESTARD { get; }
-        int LOC_WRONG { get; }
-        int LOC_COVETOUS { get; }
-        int LOC_SHAME { get; }
-        int LOC_HYTHLOTH { get; }
-        int LOC_ABYSS { get; }
-        int LOC_SHRINES { get; }
-        int LOC_HONESTY { get; }
-        int LOC_COMPASSION { get; }
-        int LOC_VALOR { get; }
-        int LOC_JUSTICE { get; }
-        int LOC_SACRIFICE { get; }
-        int LOC_HONOR { get; }
-        int LOC_SPIRITUALITY { get; }
-        int LOC_HUMILITY { get; }
+        int DEATH_EXIT_X_OFFSET { get; }
+        int DEATH_EXIT_Y_OFFSET { get; }
         int PIRATE_COVE_X_OFFSET { get; }
         int PIRATE_COVE_Y_OFFSET { get; }
         int PIRATE_COVE_SHIP_TILES { get; }
@@ -94,9 +59,18 @@ namespace U4DosRandomizer
         int BLINK_DESTINATION_EXCLUSION_Y1_OFFSET { get; }
         int BLINK_DESTINATION_EXCLUSION_Y2_OFFSET { get; }
         int ENABLE_MIX_QUANTITY_OFFSET { get; }
+        int ENABLE_SLEEP_BACKOFF_OFFSET { get; }
+        int ENABLE_ACTIVE_PLAYER_1_OFFSET { get; }
+        int ENABLE_HIT_CHANCE_OFFSET { get; }
+        int ENABLE_DIAGONAL_ATTACK_OFFSET { get; }
+        int ENABLE_SACRIFICE_FIX_OFFSET { get; }
         int BLINK_DESTINATION2_EXCLUSION_X1_OFFSET { get; }
         int BLINK_DESTINATION2_EXCLUSION_X2_OFFSET { get; }
         int BLINK_DESTINATION2_EXCLUSION_Y1_OFFSET { get; }
         int BLINK_DESTINATION2_EXCLUSION_Y2_OFFSET { get; }
+
+        int ENCODED_FLAGS_OFFSET { get; }
+        int SEED_OFFSET { get; }
+        int SHOP_LOCATION_OFFSET { get; }
     }
 }

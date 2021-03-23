@@ -10,6 +10,12 @@ namespace U4DosRandomizer
 {
     public class WorldMapShuffleLocations : WorldMapAbstract, IWorldMap
     {
+        private SpoilerLog SpoilerLog { get; }
+
+        public WorldMapShuffleLocations(SpoilerLog spoilerLog)
+        {
+            this.SpoilerLog = spoilerLog;
+        }
 
         public override void Load(string path, int mapSeed, Random mapGeneratorSeed, Random randomMap)
         {
@@ -35,66 +41,166 @@ namespace U4DosRandomizer
                     }
                 }
             }
+
+            //RemoveAvatarIsle();
         }
 
         public override void Randomize(UltimaData ultimaData, Random random1, Random random2)
         {
-            // Towns & Villages & starting locations
-            for (int i = 0; i < ultimaData.Towns.Count; i++)
-            {
-                var val = random1.Next(0, (ultimaData.Towns.Count - 1) - i);
-                Swap(ultimaData.Towns, val, (ultimaData.Towns.Count - 1) - i);
-            }
-            // Move starting positions and abyss ejection locations to Towns
-            for (int i = 0; i < 8; i++)
-            {
-                var validPositions = GetPathableTilesNear(ultimaData.Towns[i], 3, IsWalkable);
-                var loc = validPositions[random1.Next(0, validPositions.Count)];
-                ultimaData.StartingPositions[i].X = loc.X;
-                ultimaData.StartingPositions[i].Y = loc.Y;
-                ultimaData.AbyssEjectionLocations[i].X = loc.X;
-                ultimaData.AbyssEjectionLocations[i].Y = loc.Y;
-            }
+            var swapPool = new List<Tuple<TileDirtyWrapper, ICoordinate, int>>();
 
-            // Castles
             for (int i = 0; i < ultimaData.Castles.Count; i++)
             {
-                var val = random1.Next(0, (ultimaData.Castles.Count - 1) - i);
-                Swap(ultimaData.Castles, val, (ultimaData.Castles.Count - 1) - i);
-                Swap(ultimaData.AbyssEjectionLocations, val+8, (8 + ultimaData.Castles.Count - 1) - i);
+                //SpoilerLog.Add(SpoilerCategory.Location, $"{ultimaData.Castles[i].Y:X2}");
+                swapPool.Add(new Tuple<TileDirtyWrapper, ICoordinate, int>(ultimaData.Castles[i].Copy(this), ultimaData.AbyssEjectionLocations[8 + i], ultimaData.LOC_LYCAEUM + i));
+            }
+
+            for (int i = 0; i < ultimaData.Towns.Count; i++)
+            {
+                //SpoilerLog.Add(SpoilerCategory.Location, $"{ultimaData.Towns[i].Y:X2}");
+                if (i != 9 && i != 11)
+                {
+                    ICoordinate startingPosition = null;
+                    if (i < 8)
+                    {
+                        startingPosition = ultimaData.StartingPositions[i];
+                    }
+                    else
+                    {
+                        // No starting positions for villages. Make one.
+                        var validPositions = GetPathableTilesNear(ultimaData.Towns[i], 3, IsWalkable);
+                        startingPosition = validPositions[random1.Next(0, validPositions.Count)];
+                    }
+                    swapPool.Add(new Tuple<TileDirtyWrapper, ICoordinate, int>(ultimaData.Towns[i].Copy(this), startingPosition, ultimaData.LOC_TOWNS + i));
+                }
+            }
+
+            //for (int i = 0; i < swapPool.Count; i++)
+            //{
+            //    SpoilerLog.Add(SpoilerCategory.Location, $"{swapPool[i].Item1.Y:X2}");
+            //}
+
+            for (int i = 0; i < swapPool.Count; i++)
+            {
+                var val = random1.Next(0, (swapPool.Count - 1) - i);
+                Swap(swapPool, val, (swapPool.Count - 1) - i);
+            }
+
+            for (int i = 0; i < swapPool.Count; i++)
+            {
+                if(i < ultimaData.Castles.Count)
+                {
+                    ultimaData.Castles[i].X = swapPool[i].Item1.X;
+                    ultimaData.Castles[i].Y = swapPool[i].Item1.Y;
+                    ultimaData.Castles[i].SetTile(0x0B);
+                    ultimaData.AbyssEjectionLocations[8 + i].X = swapPool[i].Item2.X;
+                    ultimaData.AbyssEjectionLocations[8 + i].Y = swapPool[i].Item2.Y;
+
+                    SpoilerLog.Add(SpoilerCategory.Location, $"{ultimaData.LocationNames[i + ultimaData.LOC_LYCAEUM - 1]} moved to {ultimaData.LocationNames[swapPool[i].Item3-1]}");
+                }
+                else
+                {
+                    int townIdx = i-3;
+                    if(i >= 12)
+                    {
+                        townIdx++;
+                    }
+                    if (i >= 13)
+                    {
+                        townIdx++;
+                    }
+                    byte tile = (byte)(townIdx > 8 ? 0x0C : 0x0A);
+                    if(townIdx == 7)
+                    {
+                        tile = 0x1D;
+                    }
+                    ultimaData.Towns[townIdx].X = swapPool[i].Item1.X;
+                    ultimaData.Towns[townIdx].Y = swapPool[i].Item1.Y;
+                    ultimaData.Towns[townIdx].SetTile(tile);
+                    if (townIdx < 8)
+                    {
+                        ultimaData.AbyssEjectionLocations[i].X = swapPool[i].Item2.X;
+                        ultimaData.AbyssEjectionLocations[i].Y = swapPool[i].Item2.Y;
+                        ultimaData.StartingPositions[townIdx].X = swapPool[i].Item2.X;
+                        ultimaData.StartingPositions[townIdx].Y = swapPool[i].Item2.Y;
+                    }
+                    SpoilerLog.Add(SpoilerCategory.Location, $"{ultimaData.LocationNames[townIdx + ultimaData.LOC_TOWNS - 1]} moved to {ultimaData.LocationNames[swapPool[i].Item3-1]}");
+                }
+                
             }
 
             // Shrines
             // Don't move humility
+            var swapValues = new List<int>();
+            for (int i = 0; i < ultimaData.Shrines.Count; i++)
+            {
+                swapValues.Add(i);
+            }
+
             for (int i = 0; i < ultimaData.Shrines.Count - 1; i++)
             {
                 var val = random1.Next(0, (ultimaData.Shrines.Count - 2) - i);
                 Swap(ultimaData.Shrines, val, (ultimaData.Shrines.Count - 2) - i);
+                Swap(swapValues, val, (ultimaData.Shrines.Count - 2) - i);
+            }
+
+            for (int i = 0; i < ultimaData.Shrines.Count; i++)
+            {
+                SpoilerLog.Add(SpoilerCategory.Location, $"{ultimaData.LocationNames[i + ultimaData.LOC_SHRINES - 1]} shrine moved to {ultimaData.LocationNames[swapValues[i] + ultimaData.LOC_SHRINES - 1]}");
             }
 
             // Moongates
+            swapValues = new List<int>();
             var originalNewMoonX = ultimaData.Moongates[0].X;
             var originalNewMoonY = ultimaData.Moongates[0].Y;
             for (int i = 0; i < ultimaData.Moongates.Count; i++)
             {
+                swapValues.Add(i);
+            }
+            for (int i = 0; i < ultimaData.Moongates.Count; i++)
+            {
                 var val = random1.Next(0, (ultimaData.Moongates.Count - 1) - i);
                 Swap(ultimaData.Moongates, val, (ultimaData.Moongates.Count - 1) - i);
+                Swap(swapValues, val, (ultimaData.Moongates.Count - 1) - i);
+            }
+            for (int i = 0; i < ultimaData.Shrines.Count; i++)
+            {
+                SpoilerLog.Add(SpoilerCategory.Location, $"{ultimaData.LocationNames[i + ultimaData.LOC_TOWNS - 1]} moongate moved to {ultimaData.LocationNames[swapValues[i] + ultimaData.LOC_TOWNS - 1]}");
             }
 
             // Dungeons
             // Don't move Abyss
+            swapValues = new List<int>();
+            for (int i = 0; i < ultimaData.Dungeons.Count; i++)
+            {
+                swapValues.Add(i);
+            }
             for (int i = 0; i < ultimaData.Dungeons.Count - 1; i++)
             {
                 var val = random1.Next(0, (ultimaData.Dungeons.Count - 2) - i);
                 Swap(ultimaData.Dungeons, val, (ultimaData.Dungeons.Count - 2) - i);
+                Swap(swapValues, val, (ultimaData.Dungeons.Count - 2) - i);
+            }
+            for (int i = 0; i < ultimaData.Dungeons.Count; i++)
+            {
+                SpoilerLog.Add(SpoilerCategory.Location, $"{ultimaData.LocationNames[i + ultimaData.LOC_DUNGEONS - 1]} moved to {ultimaData.LocationNames[swapValues[i] + ultimaData.LOC_DUNGEONS - 1]}");
             }
 
             // Items
-            var swappableItems = new List<int>() { ultimaData.ITEM_MANDRAKE, ultimaData.ITEM_HORN, ultimaData.ITEM_MANDRAKE2, ultimaData.ITEM_NIGHTSHADE, ultimaData.ITEM_NIGHTSHADE2, ultimaData.ITEM_SKULL, ultimaData.ITEM_BELL, ultimaData.ITEM_WHEEL, ultimaData.ITEM_BLACK_STONE, ultimaData.ITEM_WHITE_STONE };
+            swapValues = new List<int>();
+            for (int i = 0; i < 10; i++)
+            {
+                swapValues.Add(i);
+            }
             for (int i = 0; i < 10; i++)
             {
                 var val = random1.Next(0, (10 - 1) - i);
                 Swap(ultimaData.Items, val, (10 - 1) - i);
+                Swap(swapValues, val, (10 - 1) - i);
+            }
+            for (int i = 0; i < 10; i++)
+            {
+                SpoilerLog.Add(SpoilerCategory.Location, $"{ultimaData.ItemNames[i]} moved to {ultimaData.ItemNames[swapValues[i]]}");
             }
 
             //Whatever is now at the original new moon moongate location gets moved to whereever the new moongate is now
@@ -103,6 +209,17 @@ namespace U4DosRandomizer
             item.Y = ultimaData.Moongates[0].Y;
 
             return;
+        }
+
+        private void RemoveAvatarIsle()
+        {
+            for (int x = 256 - 50; x < 256; x++)
+            {
+                for (int y = 256 - 100; y < 256; y++)
+                {
+                    _worldMapTiles[x, y] = TileInfo.Deep_Water;
+                }
+            }
         }
 
         private void Swap(ReadOnlyCollection<Item> locations, int a, int b)
@@ -160,6 +277,13 @@ namespace U4DosRandomizer
 
             locations[b].X = x;
             locations[b].Y = y;
+        }
+
+        public static void Swap<T>(IList<T> list, int indexA, int indexB)
+        {
+            T tmp = list[indexA];
+            list[indexA] = list[indexB];
+            list[indexB] = tmp;
         }
     }
 }

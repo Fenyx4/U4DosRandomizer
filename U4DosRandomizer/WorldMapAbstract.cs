@@ -162,7 +162,12 @@ namespace U4DosRandomizer
             return image;
         }
 
-        static private Dictionary<byte, SixLabors.ImageSharp.Color> colorMap = new Dictionary<byte, SixLabors.ImageSharp.Color>()
+        public SixLabors.ImageSharp.Image ToHeightMapImage()
+        {
+            return null;
+        }
+
+        static public Dictionary<byte, SixLabors.ImageSharp.Color> colorMap = new Dictionary<byte, SixLabors.ImageSharp.Color>()
         {
             {TileInfo.Deep_Water, SixLabors.ImageSharp.Color.FromRgb(0, 0, 112) },
             {TileInfo.Medium_Water, SixLabors.ImageSharp.Color.FromRgb(20,20,112) },

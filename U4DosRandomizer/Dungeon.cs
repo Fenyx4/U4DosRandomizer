@@ -10,7 +10,7 @@ namespace U4DosRandomizer
         private byte[,,] map = new byte[8, 8, 8];
         private List<byte[]> rooms = new List<byte[]>();
 
-        public Dungeon(FileStream dngStream, UltimaData data)
+        public Dungeon(Stream dngStream, UltimaData data)
         {
             BinaryReader readBinary = new BinaryReader(dngStream);
 

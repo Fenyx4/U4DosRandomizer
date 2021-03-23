@@ -14,6 +14,11 @@ namespace U4DosRandomizer
         private const string filename = "AVATAR.EXE";
         private byte[] avatarBytes;
 
+        public Avatar(SpoilerLog spoilerLog)
+        {
+            SpoilerLog = spoilerLog;
+        }
+
         public void Load(string path, UltimaData data, IWorldMap worldMap)
         {
             var file = Path.Combine(path, filename);
@@ -47,7 +52,7 @@ namespace U4DosRandomizer
 
             // Items
             var items = new List<Item>();
-            for (int offset = 0; offset < 24; offset++)
+            for (int offset = 0; offset < 23; offset++)
             {
                 items.Add(new Item(avatarBytes[AvatarOffset.ITEM_LOCATIONS_OFFSET + offset * 5],
                                     avatarBytes[AvatarOffset.ITEM_LOCATIONS_OFFSET + offset * 5 + 1],
@@ -65,7 +70,7 @@ namespace U4DosRandomizer
 
             // LCB
             var lcb = new List<Tile>();
-            var lcbLoc = worldMap.GetCoordinate(avatarBytes[AvatarOffset.AREA_X_OFFSET + AvatarOffset.LOC_LCB - 1], avatarBytes[AvatarOffset.AREA_Y_OFFSET + AvatarOffset.LOC_LCB - 1]);
+            var lcbLoc = worldMap.GetCoordinate(avatarBytes[AvatarOffset.AREA_X_OFFSET + data.LOC_LCB - 1], avatarBytes[AvatarOffset.AREA_Y_OFFSET + data.LOC_LCB - 1]);
             lcb.Add(lcbLoc);
             lcb.Add(worldMap.GetCoordinate(lcbLoc.X - 1, lcbLoc.Y));
             lcb.Add(worldMap.GetCoordinate(lcbLoc.X + 1, lcbLoc.Y));
@@ -75,7 +80,7 @@ namespace U4DosRandomizer
             var castles = new List<TileDirtyWrapper>();
             for (byte offset = 0; offset < 3; offset++)
             {
-                castles.Add(new TileDirtyWrapper(worldMap.GetCoordinate(avatarBytes[AvatarOffset.AREA_X_OFFSET + AvatarOffset.LOC_CASTLES + offset], avatarBytes[AvatarOffset.AREA_Y_OFFSET + AvatarOffset.LOC_CASTLES + offset]), worldMap));
+                castles.Add(new TileDirtyWrapper(worldMap.GetCoordinate(avatarBytes[AvatarOffset.AREA_X_OFFSET + data.LOC_CASTLES + offset], avatarBytes[AvatarOffset.AREA_Y_OFFSET + data.LOC_CASTLES + offset]), worldMap));
             }
             data.SetCastles(castles);
 
@@ -83,7 +88,7 @@ namespace U4DosRandomizer
             var towns = new List<TileDirtyWrapper>();
             for (byte offset = 0; offset < 8+4; offset++)
             {
-                towns.Add(new TileDirtyWrapper(worldMap.GetCoordinate(avatarBytes[AvatarOffset.AREA_X_OFFSET + AvatarOffset.LOC_TOWNS + offset - 1], avatarBytes[AvatarOffset.AREA_Y_OFFSET + AvatarOffset.LOC_TOWNS + offset - 1]), worldMap));
+                towns.Add(new TileDirtyWrapper(worldMap.GetCoordinate(avatarBytes[AvatarOffset.AREA_X_OFFSET + data.LOC_TOWNS + offset - 1], avatarBytes[AvatarOffset.AREA_Y_OFFSET + data.LOC_TOWNS + offset - 1]), worldMap));
             }
             data.SetTowns(towns);
 
@@ -91,7 +96,7 @@ namespace U4DosRandomizer
             var shrines = new List<TileDirtyWrapper>();
             for (byte offset = 0; offset < 8; offset++)
             {
-                shrines.Add(new TileDirtyWrapper(worldMap.GetCoordinate(avatarBytes[AvatarOffset.AREA_X_OFFSET + AvatarOffset.LOC_SHRINES + offset - 1], avatarBytes[AvatarOffset.AREA_Y_OFFSET + AvatarOffset.LOC_SHRINES + offset - 1]), worldMap));
+                shrines.Add(new TileDirtyWrapper(worldMap.GetCoordinate(avatarBytes[AvatarOffset.AREA_X_OFFSET + data.LOC_SHRINES + offset - 1], avatarBytes[AvatarOffset.AREA_Y_OFFSET + data.LOC_SHRINES + offset - 1]), worldMap));
             }
             data.SetShrines(shrines);
 
@@ -99,7 +104,7 @@ namespace U4DosRandomizer
             var dungeons = new List<Tile>();
             for (byte offset = 0; offset < 8; offset++)
             {
-                dungeons.Add(worldMap.GetCoordinate(avatarBytes[AvatarOffset.AREA_X_OFFSET + AvatarOffset.LOC_DUNGEONS + offset - 1], avatarBytes[AvatarOffset.AREA_Y_OFFSET + AvatarOffset.LOC_DUNGEONS + offset - 1]));
+                dungeons.Add(worldMap.GetCoordinate(avatarBytes[AvatarOffset.AREA_X_OFFSET + data.LOC_DUNGEONS + offset - 1], avatarBytes[AvatarOffset.AREA_Y_OFFSET + data.LOC_DUNGEONS + offset - 1]));
             }
             data.SetDungeons(dungeons);
 
@@ -172,19 +177,33 @@ namespace U4DosRandomizer
                 data.SpellsRecipes.Add(new ByteDirtyWrapper(avatarBytes[AvatarOffset.SPELL_RECIPE_OFFSET + i]));
             }
 
-            data.BlinkExclusionX1 = avatarBytes[AvatarOffset.BLINK_DESTINATION_EXCLUSION_X1_OFFSET];
-            data.BlinkExclusionX2 = avatarBytes[AvatarOffset.BLINK_DESTINATION_EXCLUSION_X2_OFFSET];
-            data.BlinkExclusionY1 = avatarBytes[AvatarOffset.BLINK_DESTINATION_EXCLUSION_Y1_OFFSET];
-            data.BlinkExclusionY2 = avatarBytes[AvatarOffset.BLINK_DESTINATION_EXCLUSION_Y2_OFFSET];
+            data.BlinkCastExclusionX1 = avatarBytes[AvatarOffset.BLINK_CAST_EXCLUSION_X1_OFFSET];
+            data.BlinkCastExclusionX2 = avatarBytes[AvatarOffset.BLINK_CAST_EXCLUSION_X2_OFFSET];
+            data.BlinkCastExclusionY1 = avatarBytes[AvatarOffset.BLINK_CAST_EXCLUSION_Y1_OFFSET];
+            data.BlinkCastExclusionY2 = avatarBytes[AvatarOffset.BLINK_CAST_EXCLUSION_Y2_OFFSET];
 
-            data.BlinkExclusion2X1 = avatarBytes[AvatarOffset.BLINK_DESTINATION2_EXCLUSION_X1_OFFSET];
-            data.BlinkExclusion2X2 = avatarBytes[AvatarOffset.BLINK_DESTINATION2_EXCLUSION_X2_OFFSET];
-            data.BlinkExclusion2Y1 = avatarBytes[AvatarOffset.BLINK_DESTINATION2_EXCLUSION_Y1_OFFSET];
-            data.BlinkExclusion2Y2 = avatarBytes[AvatarOffset.BLINK_DESTINATION2_EXCLUSION_Y2_OFFSET];
+            data.BlinkDestinationExclusionX1 = avatarBytes[AvatarOffset.BLINK_DESTINATION_EXCLUSION_X1_OFFSET];
+            data.BlinkDestinationExclusionX2 = avatarBytes[AvatarOffset.BLINK_DESTINATION_EXCLUSION_X2_OFFSET];
+            data.BlinkDestinationExclusionY1 = avatarBytes[AvatarOffset.BLINK_DESTINATION_EXCLUSION_Y1_OFFSET];
+            data.BlinkDestinationExclusionY2 = avatarBytes[AvatarOffset.BLINK_DESTINATION_EXCLUSION_Y2_OFFSET];
+                      
+            data.BlinkDestinationExclusion2X1 = avatarBytes[AvatarOffset.BLINK_DESTINATION2_EXCLUSION_X1_OFFSET];
+            data.BlinkDestinationExclusion2X2 = avatarBytes[AvatarOffset.BLINK_DESTINATION2_EXCLUSION_X2_OFFSET];
+            data.BlinkDestinationExclusion2Y1 = avatarBytes[AvatarOffset.BLINK_DESTINATION2_EXCLUSION_Y1_OFFSET];
+            data.BlinkDestinationExclusion2Y2 = avatarBytes[AvatarOffset.BLINK_DESTINATION2_EXCLUSION_Y2_OFFSET];
 
             for (int i = 0; i < 13; i++)
             {
                 data.AbyssEjectionLocations.Add(new Coordinate(avatarBytes[i + AvatarOffset.ABYSS_EJECTION_LOCATIONS_X], avatarBytes[i + AvatarOffset.ABYSS_EJECTION_LOCATIONS_Y]));
+            }
+
+            for (int townIdx = 0; townIdx < 16; townIdx++)
+            {
+                data.ShopLocations.Add(new List<byte>());
+                for(int shopIdx = 0; shopIdx < 8; shopIdx++)
+                {
+                    data.ShopLocations[townIdx].Add(avatarBytes[townIdx * 8 + shopIdx + AvatarOffset.SHOP_LOCATION_OFFSET]);
+                }
             }
         }
 
@@ -197,7 +216,7 @@ namespace U4DosRandomizer
         public void Update(UltimaData data, Flags flags)
         {
             // Items
-            for (var offset = 0; offset < 24; offset++)
+            for (var offset = 0; offset < data.Items.Count; offset++)
             {
                 avatarBytes[AvatarOffset.ITEM_LOCATIONS_OFFSET + offset * 5] = data.Items[offset].Location;
                 avatarBytes[AvatarOffset.ITEM_LOCATIONS_OFFSET + offset * 5 + 1] = data.Items[offset].X;
@@ -226,19 +245,22 @@ namespace U4DosRandomizer
                 avatarBytes[AvatarOffset.MOONGATE_Y_OFFSET + offset] = data.Moongates[offset].Y;
             }
 
-            avatarBytes[AvatarOffset.AREA_X_OFFSET + AvatarOffset.LOC_LCB - 1] = data.LCB[0].X;
-            avatarBytes[AvatarOffset.AREA_Y_OFFSET + AvatarOffset.LOC_LCB - 1] = data.LCB[0].Y;
+            avatarBytes[AvatarOffset.AREA_X_OFFSET + data.LOC_LCB - 1] = data.LCB[0].X;
+            avatarBytes[AvatarOffset.AREA_Y_OFFSET + data.LOC_LCB - 1] = data.LCB[0].Y;
+
+            avatarBytes[AvatarOffset.DEATH_EXIT_X_OFFSET] = data.LCB[0].X;
+            avatarBytes[AvatarOffset.DEATH_EXIT_Y_OFFSET] = data.LCB[0].Y;
 
             for (var offset = 0; offset < data.Castles.Count; offset++)
             {
-                avatarBytes[AvatarOffset.AREA_X_OFFSET + AvatarOffset.LOC_CASTLES + offset] = data.Castles[offset].X;
-                avatarBytes[AvatarOffset.AREA_Y_OFFSET + AvatarOffset.LOC_CASTLES + offset] = data.Castles[offset].Y;
+                avatarBytes[AvatarOffset.AREA_X_OFFSET + data.LOC_CASTLES + offset] = data.Castles[offset].X;
+                avatarBytes[AvatarOffset.AREA_Y_OFFSET + data.LOC_CASTLES + offset] = data.Castles[offset].Y;
             }
 
             for (var offset = 0; offset < data.Towns.Count; offset++)
             {
-                avatarBytes[AvatarOffset.AREA_X_OFFSET + AvatarOffset.LOC_TOWNS + offset - 1] = data.Towns[offset].X;
-                avatarBytes[AvatarOffset.AREA_Y_OFFSET + AvatarOffset.LOC_TOWNS + offset - 1] = data.Towns[offset].Y;
+                avatarBytes[AvatarOffset.AREA_X_OFFSET + data.LOC_TOWNS + offset - 1] = data.Towns[offset].X;
+                avatarBytes[AvatarOffset.AREA_Y_OFFSET + data.LOC_TOWNS + offset - 1] = data.Towns[offset].Y;
             }
 
             for (var offset = 0; offset < data.Shrines.Count; offset++)
@@ -246,15 +268,15 @@ namespace U4DosRandomizer
                 // Skip Spirituality
                 if (data.Shrines[offset] != null)
                 {
-                    avatarBytes[AvatarOffset.AREA_X_OFFSET + AvatarOffset.LOC_SHRINES + offset - 1] = data.Shrines[offset].X;
-                    avatarBytes[AvatarOffset.AREA_Y_OFFSET + AvatarOffset.LOC_SHRINES + offset - 1] = data.Shrines[offset].Y;
+                    avatarBytes[AvatarOffset.AREA_X_OFFSET + data.LOC_SHRINES + offset - 1] = data.Shrines[offset].X;
+                    avatarBytes[AvatarOffset.AREA_Y_OFFSET + data.LOC_SHRINES + offset - 1] = data.Shrines[offset].Y;
                 }
             }
 
             for (var offset = 0; offset < data.Dungeons.Count; offset++)
             {
-                avatarBytes[AvatarOffset.AREA_X_OFFSET + AvatarOffset.LOC_DUNGEONS + offset - 1] = data.Dungeons[offset].X;
-                avatarBytes[AvatarOffset.AREA_Y_OFFSET + AvatarOffset.LOC_DUNGEONS + offset - 1] = data.Dungeons[offset].Y;
+                avatarBytes[AvatarOffset.AREA_X_OFFSET + data.LOC_DUNGEONS + offset - 1] = data.Dungeons[offset].X;
+                avatarBytes[AvatarOffset.AREA_Y_OFFSET + data.LOC_DUNGEONS + offset - 1] = data.Dungeons[offset].Y;
             }
 
             avatarBytes[AvatarOffset.BALLOON_SPAWN_TRIGGER_X_OFFSET] = data.Dungeons[data.Dungeons.Count - 2].X;
@@ -319,28 +341,82 @@ namespace U4DosRandomizer
             }
 
             // Cast exclusion isn't precise enough so allow them to cast anywhere and exclude the destination
-            avatarBytes[AvatarOffset.BLINK_CAST_EXCLUSION_X1_OFFSET] = 0x01;
-            avatarBytes[AvatarOffset.BLINK_CAST_EXCLUSION_X2_OFFSET] = 0x01;
-            avatarBytes[AvatarOffset.BLINK_CAST_EXCLUSION_Y1_OFFSET] = 0x01;
-            avatarBytes[AvatarOffset.BLINK_CAST_EXCLUSION_Y2_OFFSET] = 0x01;
+            avatarBytes[AvatarOffset.BLINK_CAST_EXCLUSION_X1_OFFSET] = data.BlinkCastExclusionX1;
+            avatarBytes[AvatarOffset.BLINK_CAST_EXCLUSION_X2_OFFSET] = data.BlinkCastExclusionX2;
+            avatarBytes[AvatarOffset.BLINK_CAST_EXCLUSION_Y1_OFFSET] = data.BlinkCastExclusionY1;
+            avatarBytes[AvatarOffset.BLINK_CAST_EXCLUSION_Y2_OFFSET] = data.BlinkCastExclusionY2;
 
-            avatarBytes[AvatarOffset.BLINK_DESTINATION_EXCLUSION_X1_OFFSET] = data.BlinkExclusionX1;
-            avatarBytes[AvatarOffset.BLINK_DESTINATION_EXCLUSION_X2_OFFSET] = data.BlinkExclusionX2;
-            avatarBytes[AvatarOffset.BLINK_DESTINATION_EXCLUSION_Y1_OFFSET] = data.BlinkExclusionY1;
-            avatarBytes[AvatarOffset.BLINK_DESTINATION_EXCLUSION_Y2_OFFSET] = data.BlinkExclusionY2;
+            avatarBytes[AvatarOffset.BLINK_DESTINATION_EXCLUSION_X1_OFFSET] = data.BlinkDestinationExclusionX1;
+            avatarBytes[AvatarOffset.BLINK_DESTINATION_EXCLUSION_X2_OFFSET] = data.BlinkDestinationExclusionX2;
+            avatarBytes[AvatarOffset.BLINK_DESTINATION_EXCLUSION_Y1_OFFSET] = data.BlinkDestinationExclusionY1;
+            avatarBytes[AvatarOffset.BLINK_DESTINATION_EXCLUSION_Y2_OFFSET] = data.BlinkDestinationExclusionY2;
 
-            avatarBytes[AvatarOffset.BLINK_DESTINATION2_EXCLUSION_X1_OFFSET] = data.BlinkExclusion2X1;
-            avatarBytes[AvatarOffset.BLINK_DESTINATION2_EXCLUSION_X2_OFFSET] = data.BlinkExclusion2X2;
-            avatarBytes[AvatarOffset.BLINK_DESTINATION2_EXCLUSION_Y1_OFFSET] = data.BlinkExclusion2Y1;
-            avatarBytes[AvatarOffset.BLINK_DESTINATION2_EXCLUSION_Y2_OFFSET] = data.BlinkExclusion2Y2;
+            avatarBytes[AvatarOffset.BLINK_DESTINATION2_EXCLUSION_X1_OFFSET] = data.BlinkDestinationExclusion2X1;
+            avatarBytes[AvatarOffset.BLINK_DESTINATION2_EXCLUSION_X2_OFFSET] = data.BlinkDestinationExclusion2X2;
+            avatarBytes[AvatarOffset.BLINK_DESTINATION2_EXCLUSION_Y1_OFFSET] = data.BlinkDestinationExclusion2Y1;
+            avatarBytes[AvatarOffset.BLINK_DESTINATION2_EXCLUSION_Y2_OFFSET] = data.BlinkDestinationExclusion2Y2;
 
             avatarBytes[AvatarOffset.ENABLE_MIX_QUANTITY_OFFSET] = flags.MixQuantity ? (byte)0x0 : (byte)0x9;
+            if (flags.MixQuantity)
+            {
+                SpoilerLog.Add(SpoilerCategory.Feature, $"Mix Quantity Enabled");
+            }
+
+            avatarBytes[AvatarOffset.ENABLE_SLEEP_BACKOFF_OFFSET] = flags.SleepLockAssist ? (byte)0x0 : (byte)0x9;
+            if (flags.SleepLockAssist)
+            {
+                SpoilerLog.Add(SpoilerCategory.Feature, $"Sleep Lock Assist Enabled");
+            }
+
+            avatarBytes[AvatarOffset.ENABLE_ACTIVE_PLAYER_1_OFFSET] = flags.ActivePlayer ? (byte)0x0 : (byte)0x9;
+            if (flags.ActivePlayer)
+            {
+                SpoilerLog.Add(SpoilerCategory.Feature, $"Active Player Enabled");
+            }
+
+            avatarBytes[AvatarOffset.ENABLE_HIT_CHANCE_OFFSET] = flags.HitChance ? (byte)0x0 : (byte)0x9;
+            if (flags.HitChance)
+            {
+                SpoilerLog.Add(SpoilerCategory.Feature, $"Apple II Hit Chance Enabled");
+            }
+
+            avatarBytes[AvatarOffset.ENABLE_DIAGONAL_ATTACK_OFFSET] = flags.DiagonalAttack ? (byte)0x0 : (byte)0x9;
+            if (flags.DiagonalAttack)
+            {
+                SpoilerLog.Add(SpoilerCategory.Feature, $"Diagonal Attack Enabled");
+            }
+
+            avatarBytes[AvatarOffset.ENABLE_SACRIFICE_FIX_OFFSET] = flags.SacrificeFix ? (byte)0x0 : (byte)0x9;
+            if (flags.SacrificeFix)
+            {
+                SpoilerLog.Add(SpoilerCategory.Fix, $"Sacrifice Fix Enabled");
+            }
 
             for (int i = 0; i < data.AbyssEjectionLocations.Count; i++)
             {
                 //Console.WriteLine(Talk.GetSextantText(data.AbyssEjectionLocations[i]));
                 avatarBytes[AvatarOffset.ABYSS_EJECTION_LOCATIONS_X + i] = data.AbyssEjectionLocations[i].X;
                 avatarBytes[AvatarOffset.ABYSS_EJECTION_LOCATIONS_Y + i] = data.AbyssEjectionLocations[i].Y;
+            }
+
+            for (int townIdx = 0; townIdx < 16; townIdx++)
+            {
+                for (int shopIdx = 0; shopIdx < 8; shopIdx++)
+                {
+                    avatarBytes[townIdx * 8 + shopIdx + AvatarOffset.SHOP_LOCATION_OFFSET] = data.ShopLocations[townIdx][shopIdx];
+                }
+            }
+
+            var encodeBytes = Encoding.ASCII.GetBytes(flags.GetEncoded());
+            for (int encodeIdx = 0; encodeIdx < encodeBytes.Length; encodeIdx++)
+            {
+                avatarBytes[AvatarOffset.ENCODED_FLAGS_OFFSET + encodeIdx] = encodeBytes[encodeIdx];
+            }
+
+            var seedBytes = Encoding.ASCII.GetBytes(flags.Seed.ToString());
+            for (int seedIdx = 0; seedIdx < seedBytes.Length; seedIdx++)
+            {
+                avatarBytes[AvatarOffset.SEED_OFFSET + seedIdx] = seedBytes[seedIdx];
             }
         }
 
@@ -358,6 +434,7 @@ namespace U4DosRandomizer
         public List<string> OriginalLBText { get; private set; }
         public List<int> OriginalLBTextStartOffset { get; private set; }
         public IAvatarOffset AvatarOffset { get; private set; }
+        private SpoilerLog SpoilerLog { get; }
     }
 }
 

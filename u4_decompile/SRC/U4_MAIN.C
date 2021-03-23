@@ -80,6 +80,12 @@ void cdecl /*C_191E*/main()
 						C_1C21();
 						break;
 					}
+					else {
+						u4_puts("Seed:           \n");
+						u4_puts("Ver: 0.2.3\n");
+						u4_puts("Encode:                                    \n");
+						break;
+					}
 				default:
 					u4_puts("Bad command!\n");
 					sound(2);

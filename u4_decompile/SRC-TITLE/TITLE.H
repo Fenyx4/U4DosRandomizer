@@ -20,6 +20,8 @@
 #define u4_toupper2(c) if(u4_islower(c)) (c) += 'A' - 'a'
 #define u4_tolower(c) if(u4_isupper(c)) (c) += 'a' - 'A'
 
+#define U4_RND1(a) (u_rand_a()&(a))
+
 extern unsigned D_0036;
 extern unsigned D_0038;
 
