@@ -196,6 +196,59 @@ namespace U4DosRandomizer
 
                 // --- End Shrines ---
 
+                // --- Runes ---
+                if (flags.Runes)
+                {
+                    for (int i = 0; i < 8; i++)
+                    {
+                        var itemOption = ultimaData.ItemOptions[UltimaData.ITEM_RUNE_HONESTY + i];
+                        foreach(var newPerson in itemOption.People)
+                        {
+                            person = FindPerson(newPerson.Name, newPerson.Town);
+                            if(newPerson.Health != null)
+                            {
+                                person.Health = newPerson.Health;
+                            }
+                            if (newPerson.Job != null)
+                            {
+                                person.Job = newPerson.Job;
+                            }
+                            if (newPerson.Keyword1 != null)
+                            {
+                                person.Keyword1 = newPerson.Keyword1;
+                            }
+                            if (newPerson.Keyword2 != null)
+                            {
+                                person.Keyword2 = newPerson.Keyword2;
+                            }
+                            if (newPerson.Yes != null)
+                            {
+                                person.Yes = newPerson.Yes;
+                            }
+                            if (newPerson.No != null)
+                            {
+                                person.No = newPerson.No;
+                            }
+                            if (newPerson.Question != null)
+                            {
+                                person.Question = newPerson.Question;
+                            }
+                            if (newPerson.KeywordResponse1 != null)
+                            {
+                                person.KeywordResponse1 = newPerson.KeywordResponse1;
+                            }
+                            if (newPerson.KeywordResponse2 != null)
+                            {
+                                person.KeywordResponse2 = newPerson.KeywordResponse2;
+                            }
+                        }
+                    }
+                }
+
+
+
+                // --- End Runes ---
+
                 // --- Towns and Castles ---
                 // TODO make response descriptive
                 if (ultimaData.Castles[0].IsDirty())
@@ -431,9 +484,18 @@ namespace U4DosRandomizer
             return cardinals[(int)Math.Round(((double)degrees % 360) / 45)];
         }
 
-        private Person FindPerson(string name)
+        private Person FindPerson(string name, string town = null)
         {
-            var person = towns.Values.SelectMany(l => l).Where(p => p.Name.ToLower() == name.ToLower()).SingleOrDefault();
+            Person person = null;
+
+            if (town == null)
+            {
+                person = towns.Values.SelectMany(l => l).Where(p => p.Name.ToLower() == name.ToLower()).SingleOrDefault();
+            }
+            else
+            {
+                person = towns[town].Where(p => p.Name.ToLower() == name.ToLower()).SingleOrDefault();
+            }
 
             if(person == null)
             {

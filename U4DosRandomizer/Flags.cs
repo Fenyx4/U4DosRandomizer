@@ -28,6 +28,7 @@ namespace U4DosRandomizer
         public bool HitChance { get; internal set; }
         public bool DiagonalAttack { get; internal set; }
         public bool SacrificeFix { get; internal set; }
+        public bool Runes { get; internal set; }
 
         public List<int> SupportedVersions = new List<int>() { 9 };
 

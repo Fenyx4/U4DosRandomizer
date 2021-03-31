@@ -27,6 +27,7 @@ Options:
   --diagonalAttack   Allow diagonal attacks in combat.
   --sacrificeFix     Adds a way to gain sacrifice which the shrine says should work.
   --questItems       Percentage chance to start with a quest item.
+  --runes			 Randomize the location of the runes.
   --karmaValue       Value to override starting karma value for a virtue. Leave blank for random.
   --karmaPercentage  Percentage chance to override a starting karma value for a virtue. Default 0 (no override).
   --spoilerLog       Output a spoiler log.

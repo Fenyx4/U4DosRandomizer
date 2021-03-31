@@ -101,6 +101,8 @@ namespace U4DosRandomizer
             }
         }
 
+        public Dictionary<int, ItemOption> ItemOptions { get; private set; }
+
         public List<string> ShrineText { get; set; }
         public List<Coordinate> StartingPositions { get; set; }
         public List<string> LBText { get; internal set; }
@@ -168,6 +170,7 @@ namespace U4DosRandomizer
             StartingWeapons = new List<ushort>();
             StartingReagents = new List<ushort>();
             StartingMixtures = new List<ushort>();
+            ItemOptions = new Dictionary<int, ItemOption>();
 
             LocationNames = (new List<string>
             {

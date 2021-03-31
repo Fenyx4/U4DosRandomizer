@@ -79,6 +79,10 @@ namespace U4DosRandomizer
                 "--sacrificeFix",
                 "Adds a way to gain sacrifice which the shrine says should work.",
                 CommandOptionType.NoValue);
+            CommandOption runesArg = commandLineApplication.Option(
+                "--runes",
+                "Randomize the location of the runes.",
+                CommandOptionType.NoValue);
             CommandOption questItemsArg = commandLineApplication.Option(
                 "--questItems",
                 "Percentage chance to start with a quest item.",
@@ -190,6 +194,7 @@ namespace U4DosRandomizer
                     flags.HitChance = appleHitChanceArg.HasValue();
                     flags.DiagonalAttack = diagonalAttackArg.HasValue();
                     flags.SacrificeFix = sacrificeFixArg.HasValue();
+                    flags.Runes = runesArg.HasValue();
                     flags.QuestItemPercentage = questItems;
                     flags.KarmaSetPercentage = karmaPercentage;
                     flags.KarmaValue = karmaValue;
@@ -390,6 +395,20 @@ namespace U4DosRandomizer
                     {
                         spoilerLog.Add(SpoilerCategory.Start, $"{ultimaData.ItemNames[virtue + 15]} karma unchanged.");
                     }
+                }
+            }
+
+            if(flags.Runes)
+            {
+                spoilerLog.Add(SpoilerCategory.Feature, $"Rune locations randomized");
+                for (int i = UltimaData.ITEM_RUNE_HONESTY; i < 8 + UltimaData.ITEM_RUNE_HONESTY; i++)
+                {
+                    var selectedItemOption = ItemOptions.ItemToItemOptions[i][random.Next(0, ItemOptions.ItemToItemOptions[i].Count)];
+                    ultimaData.Items[i].X = selectedItemOption.Item.X;
+                    ultimaData.Items[i].Y = selectedItemOption.Item.Y;
+                    ultimaData.Items[i].Location = selectedItemOption.Item.Location;
+
+                    ultimaData.ItemOptions.Add(i, selectedItemOption);
                 }
             }
 
