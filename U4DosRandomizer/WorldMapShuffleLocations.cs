@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
+using System.Linq;
 using System.Text;
 using U4DosRandomizer.Helpers;
 
@@ -150,6 +151,8 @@ namespace U4DosRandomizer
 
             // Moongates
             swapValues = new List<int>();
+            var originalNewMoonX = ultimaData.Moongates[0].X;
+            var originalNewMoonY = ultimaData.Moongates[0].Y;
             for (int i = 0; i < ultimaData.Moongates.Count; i++)
             {
                 swapValues.Add(i);
@@ -199,6 +202,11 @@ namespace U4DosRandomizer
             {
                 SpoilerLog.Add(SpoilerCategory.Location, $"{ultimaData.ItemNames[i]} moved to {ultimaData.ItemNames[swapValues[i]]}");
             }
+
+            //Whatever is now at the original new moon moongate location gets moved to whereever the new moongate is now
+            var item = ultimaData.Items.Single(x => x.X == originalNewMoonX && x.Y == originalNewMoonY && x.Location == 0x00);
+            item.X = ultimaData.Moongates[0].X;
+            item.Y = ultimaData.Moongates[0].Y;
 
             return;
         }

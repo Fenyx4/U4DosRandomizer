@@ -21,5 +21,6 @@ namespace U4DosRandomizer
         public string Question { get; internal set; }
         public string KeywordResponse1 { get; internal set; }
         public string KeywordResponse2 { get; internal set; }
+        public string Town { get; internal set; }
     }
 }

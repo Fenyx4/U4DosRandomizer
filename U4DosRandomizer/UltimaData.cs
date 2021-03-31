@@ -101,6 +101,8 @@ namespace U4DosRandomizer
             }
         }
 
+        public Dictionary<int, ItemOption> ItemOptions { get; private set; }
+
         public List<string> ShrineText { get; set; }
         public List<Coordinate> StartingPositions { get; set; }
         public List<string> LBText { get; internal set; }
@@ -168,6 +170,7 @@ namespace U4DosRandomizer
             StartingWeapons = new List<ushort>();
             StartingReagents = new List<ushort>();
             StartingMixtures = new List<ushort>();
+            ItemOptions = new Dictionary<int, ItemOption>();
 
             LocationNames = (new List<string>
             {
@@ -272,14 +275,14 @@ namespace U4DosRandomizer
         public int ITEM_TELESCOPE { get; } = 12; // telescope (Crashes if moved (probably fine in any other town))
         public int ITEM_ARMOR { get; } = 13; // Mystic Armor
         public int ITEM_WEAPON { get; } = 14; // Mystic Weapon
-        public int ITEM_RUNE_HONESTY { get; } = 15;
-        public int ITEM_RUNE_COMPASSION { get; } = 16;
-        public int ITEM_RUNE_VALOR { get; } = 17;
-        public int ITEM_RUNE_JUSTICE { get; } = 18;
-        public int ITEM_RUNE_SACRIFICE { get; } = 19;
-        public int ITEM_RUNE_HONOR { get; } = 20;
-        public int ITEM_RUNE_SPIRITUALITY { get; } = 21;
-        public int ITEM_RUNE_HUMILITY { get; } = 22;
+        public static int ITEM_RUNE_HONESTY { get; } = 15;
+        public static int ITEM_RUNE_COMPASSION { get; } = 16;
+        public static int ITEM_RUNE_VALOR { get; } = 17;
+        public static int ITEM_RUNE_JUSTICE { get; } = 18;
+        public static int ITEM_RUNE_SACRIFICE { get; } = 19;
+        public static int ITEM_RUNE_HONOR { get; } = 20;
+        public static int ITEM_RUNE_SPIRITUALITY { get; } = 21;
+        public static int ITEM_RUNE_HUMILITY { get; } = 22;
         /*
 * https://github.com/ergonomy-joe/u4-decompiled/blob/master/SRC/U4_SRCH.C#L246
 * 0 - Mandrake

@@ -418,6 +418,14 @@ namespace U4DosRandomizer
             {
                 avatarBytes[AvatarOffset.SEED_OFFSET + seedIdx] = seedBytes[seedIdx];
             }
+
+            if (flags.Runes)
+            {
+                for (int i = 0; i < 8; i++)
+                {
+                    avatarBytes[AvatarOffset.CITY_RUNE_MASK_PAIRS_OFFSET + i * 2] = data.Items[i + UltimaData.ITEM_RUNE_HONESTY].Location;
+                }
+            }
         }
 
         public void Save(string path)

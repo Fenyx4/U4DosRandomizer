@@ -20,7 +20,7 @@ namespace U4DosRandomizer
             CommandOption seedArg = commandLineApplication.Option(
                 "-s |--s <seed>",
                 "The seed for the randomizer. "
-                + " Same seed will produce the same map.",
+                + " Same seed will produce the same map. Defaults to random value.",
                 CommandOptionType.SingleValue);
             CommandOption pathArg = commandLineApplication.Option(
                 "-p |--p <path>",
@@ -37,7 +37,7 @@ namespace U4DosRandomizer
                 CommandOptionType.NoValue);
             CommandOption overworldArg = commandLineApplication.Option(
                 "-o |--overworld",
-                "Sets randomization level for Overworld map. 1 for no change. 2 for shuffle overworld locations. 5 for randomize the entire map.",
+                "Sets randomization level for Overworld map. 1 for no change. 2 for shuffle overworld locations. 5 for randomize the entire map. Defaults to 5.",
                 CommandOptionType.SingleValue);
             CommandOption spellRemoveArg = commandLineApplication.Option(
                 "--spellRemove",
@@ -78,6 +78,10 @@ namespace U4DosRandomizer
             CommandOption sacrificeFixArg = commandLineApplication.Option(
                 "--sacrificeFix",
                 "Adds a way to gain sacrifice which the shrine says should work.",
+                CommandOptionType.NoValue);
+            CommandOption runesArg = commandLineApplication.Option(
+                "--runes",
+                "Randomize the location of the runes.",
                 CommandOptionType.NoValue);
             CommandOption questItemsArg = commandLineApplication.Option(
                 "--questItems",
@@ -190,6 +194,7 @@ namespace U4DosRandomizer
                     flags.HitChance = appleHitChanceArg.HasValue();
                     flags.DiagonalAttack = diagonalAttackArg.HasValue();
                     flags.SacrificeFix = sacrificeFixArg.HasValue();
+                    flags.Runes = runesArg.HasValue();
                     flags.QuestItemPercentage = questItems;
                     flags.KarmaSetPercentage = karmaPercentage;
                     flags.KarmaValue = karmaValue;
@@ -390,6 +395,23 @@ namespace U4DosRandomizer
                     {
                         spoilerLog.Add(SpoilerCategory.Start, $"{ultimaData.ItemNames[virtue + 15]} karma unchanged.");
                     }
+                }
+            }
+
+            if(flags.Runes)
+            {
+                spoilerLog.Add(SpoilerCategory.Feature, $"Rune locations randomized");
+                var usedLocations = new List<byte>();
+                for (int i = UltimaData.ITEM_RUNE_HONESTY; i < 8 + UltimaData.ITEM_RUNE_HONESTY; i++)
+                {
+                    var possibleOptions = ItemOptions.ItemToItemOptions[i].Where(x => !usedLocations.Contains(x.Item.Location)).ToList();
+                    var selectedItemOption = possibleOptions[random.Next(0, possibleOptions.Count)];
+                    ultimaData.Items[i].X = selectedItemOption.Item.X;
+                    ultimaData.Items[i].Y = selectedItemOption.Item.Y;
+                    ultimaData.Items[i].Location = selectedItemOption.Item.Location;
+
+                    ultimaData.ItemOptions.Add(i, selectedItemOption);
+                    usedLocations.Add(selectedItemOption.Item.Location);
                 }
             }
 

@@ -11,11 +11,11 @@ Requires Ultima IV which is available for free at https://www.gog.com/game/ultim
 
 ```
 Options:
-  -s |--s <seed>     The seed for the randomizer.  Same seed will produce the same map.
+  -s |--s <seed>     The seed for the randomizer. Same seed will produce the same map. Defaults to random value.
   -p |--p <path>     Path to Ultima 4 installation.  Leaving blank will assume it is the working directory.
   -r |--r            Restore original Ultima 4 files.
   --miniMap          Output a minimap of the overworld.
-  -o |--overworld    Sets randomization level for Overworld map. 1 for no change. 2 for shuffle overworld locations. 5 for randomize the entire map.
+  -o |--overworld    Sets randomization level for Overworld map. 1 for no change. 2 for shuffle overworld locations. 5 for randomize the entire map. Defaults to 5.
   --spellRemove      Put in the letters of the spells you want removed. e.g. "--spellRemove zed" would remove zdown, energy field and dispel.
   --mixQuantity      Lets you input how much of a spell you want to mix.
   --dngStone         Randomize the location of stones in the dungeons
@@ -27,6 +27,7 @@ Options:
   --diagonalAttack   Allow diagonal attacks in combat.
   --sacrificeFix     Adds a way to gain sacrifice which the shrine says should work.
   --questItems       Percentage chance to start with a quest item.
+  --runes			 Randomize the location of the runes.
   --karmaValue       Value to override starting karma value for a virtue. Leave blank for random.
   --karmaPercentage  Percentage chance to override a starting karma value for a virtue. Default 0 (no override).
   --spoilerLog       Output a spoiler log.
