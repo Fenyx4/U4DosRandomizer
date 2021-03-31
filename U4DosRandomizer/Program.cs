@@ -401,14 +401,17 @@ namespace U4DosRandomizer
             if(flags.Runes)
             {
                 spoilerLog.Add(SpoilerCategory.Feature, $"Rune locations randomized");
+                var usedLocations = new List<byte>();
                 for (int i = UltimaData.ITEM_RUNE_HONESTY; i < 8 + UltimaData.ITEM_RUNE_HONESTY; i++)
                 {
-                    var selectedItemOption = ItemOptions.ItemToItemOptions[i][random.Next(0, ItemOptions.ItemToItemOptions[i].Count)];
+                    var possibleOptions = ItemOptions.ItemToItemOptions[i].Where(x => !usedLocations.Contains(x.Item.Location)).ToList();
+                    var selectedItemOption = possibleOptions[random.Next(0, possibleOptions.Count)];
                     ultimaData.Items[i].X = selectedItemOption.Item.X;
                     ultimaData.Items[i].Y = selectedItemOption.Item.Y;
                     ultimaData.Items[i].Location = selectedItemOption.Item.Location;
 
                     ultimaData.ItemOptions.Add(i, selectedItemOption);
+                    usedLocations.Add(selectedItemOption.Item.Location);
                 }
             }
 
