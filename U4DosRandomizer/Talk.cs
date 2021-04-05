@@ -245,6 +245,38 @@ namespace U4DosRandomizer
                     }
                 }
 
+                if (flags.Mantras)
+                {
+                    person = FindPerson("Cromwell");
+                    person.KeywordResponse2 = $"The mantra of the shrine of honesty is {Mantras[0].Text.ToUpper()}.";
+
+                    person = FindPerson("Cricket");
+                    person.KeywordResponse2 = $"The mantra of the shrine of compassion is {Mantras[1].Text.ToUpper()}!";
+
+                    person = FindPerson("Aesop");
+                    person.KeywordResponse2 = $"The mantra of valor is '{Mantras[2].Text.ToUpper()}'. Use it in the shrine on the next isle!";
+
+                    person = FindPerson("Silent");
+                    person.Job = $"{Mantras[3].Text}... {Mantras[3].Text}...";
+                    person.Health = $"{Mantras[3].Text}... {Mantras[3].Text}...";
+                    person.Keyword1 = $"{Mantras[3].Text.ToUpper()}...";
+                    person.KeywordResponse1 = $"{Mantras[3].Text}... {Mantras[3].Text}...";
+                    person.Keyword2 = $"{Mantras[3].Text.ToUpper()}";
+                    person.KeywordResponse2 = $"{Mantras[3].Text}... {Mantras[3].Text}...";
+
+                    person = FindPerson("Singsong");
+                    person.KeywordResponse2 = Mantras[4].Limerick;
+
+                    person = FindPerson("Kline");
+                    person.KeywordResponse1 = $"The mantra is '{Mantras[5].Text}'.";
+
+                    person = FindPerson("Barren", "Skara");
+                    person.KeywordResponse1 = $"I know it well, it is '{Mantras[6].Text.ToUpper()}'.";
+
+                    person = FindPerson("Faultless");
+                    person.KeywordResponse2 = $"The mantra for pride, being the antithesis of humility, is '{new string(Mantras[7].Text.ToString().ToUpper().Reverse().ToArray())}'.";
+                }
+
 
 
                 // --- End Runes ---
@@ -494,7 +526,7 @@ namespace U4DosRandomizer
             }
             else
             {
-                person = towns[town].Where(p => p.Name.ToLower() == name.ToLower()).SingleOrDefault();
+                person = towns[town.ToUpper()].Where(p => p.Name.ToLower() == name.ToLower()).SingleOrDefault();
             }
 
             if(person == null)
@@ -560,5 +592,50 @@ namespace U4DosRandomizer
             }
         }
 
+        public List<Mantra> Mantras = new List<Mantra>()
+        {
+            new Mantra("Ra",""),
+            new Mantra("Cah","Very well,\nthe raven sings,\nthe raven saw\nand in the corn\nhe sayeth 'CAH'."),
+            new Mantra("Om",""),
+            new Mantra("Mu",""),
+            new Mantra("Ahm",""),
+            new Mantra("Lum","Very well, he is quite mad, his text is plumb, and all will call him 'LUM'"),
+            new Mantra("Ra",""),
+            new Mantra("Summ","Very well, the number adds, the numbers come, and in the end it hath a 'SUMM'"),
+            new Mantra("Udu",""),
+            new Mantra("Te",""),
+            new Mantra("Rel",""),
+            new Mantra("Gis",""),
+            new Mantra("Cran","Very well, the best of all, our lord's fan, and all know her as 'CRAN'"),
+            new Mantra("Tem",""),
+            new Mantra("Pah",""),
+            new Mantra("Fum",""),
+            new Mantra("Akk",""),
+            new Mantra("Kra",""),
+            new Mantra("Det",""),
+            new Mantra("Ras",""),
+            new Mantra("Ano",""),
+            new Mantra("Ami",""),
+            new Mantra("Xio",""),
+            new Mantra("Yam",""),
+            new Mantra("Vil",""),
+            new Mantra("Wez",""),
+            new Mantra("Sem",""),
+            new Mantra("Od",""),
+            new Mantra("Fes",""),
+            new Mantra("Mar",""),
+            new Mantra("Sak",""),
+            new Mantra("Swu",""),
+            new Mantra("Yu",""),
+            new Mantra("Lo",""),
+            new Mantra("Ga",""),
+            new Mantra("La",""),
+            new Mantra("Re",""),
+            new Mantra("Fa",""),
+            new Mantra("Ti",""),
+            new Mantra("Ut",""),
+            new Mantra("Ka","Very well,\nthe raven sings,\nthe raven saw\nand in the corn\nhe sayeth 'KA'."),
+            new Mantra("Wah","Very well, the baby cries, his voice is raw and all night long he doth scream 'WAH'")
+        };
     }
 }

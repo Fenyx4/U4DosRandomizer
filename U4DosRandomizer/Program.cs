@@ -7,6 +7,7 @@ using System.IO;
 using System.Linq;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.Text;
+using U4DosRandomizer.Helpers;
 
 namespace U4DosRandomizer
 {
@@ -82,6 +83,10 @@ namespace U4DosRandomizer
             CommandOption runesArg = commandLineApplication.Option(
                 "--runes",
                 "Randomize the location of the runes.",
+                CommandOptionType.NoValue);
+            CommandOption mantrasArg = commandLineApplication.Option(
+                "--mantras",
+                "Randomize the location of the mantras.",
                 CommandOptionType.NoValue);
             CommandOption questItemsArg = commandLineApplication.Option(
                 "--questItems",
@@ -195,6 +200,7 @@ namespace U4DosRandomizer
                     flags.DiagonalAttack = diagonalAttackArg.HasValue();
                     flags.SacrificeFix = sacrificeFixArg.HasValue();
                     flags.Runes = runesArg.HasValue();
+                    flags.Mantras = mantrasArg.HasValue();
                     flags.QuestItemPercentage = questItems;
                     flags.KarmaSetPercentage = karmaPercentage;
                     flags.KarmaValue = karmaValue;
@@ -415,6 +421,60 @@ namespace U4DosRandomizer
                 }
             }
 
+            if (flags.Mantras)
+            {
+                int numberOfTwos = 3;
+                int numberOfThrees = 4;
+                int numberOfFours = 1;
+                // Grab Sacrifice first since it is special
+                var mantrasWithLimericks = talk.Mantras.Where(x => x.Limerick.Length > 0).ToList();
+                var sacrificeMantra = mantrasWithLimericks[random.Next(0, mantrasWithLimericks.Count)];
+
+                talk.Mantras.Remove(sacrificeMantra);
+
+                if(sacrificeMantra.Text.Length == 2)
+                {
+                    numberOfTwos--;
+                }
+                else if(sacrificeMantra.Text.Length == 3)
+                {
+                    numberOfThrees--;
+                }
+                else if (sacrificeMantra.Text.Length == 4)
+                {
+                    numberOfFours--;
+                }
+
+                var possibleTwos = talk.Mantras.Where(x => x.Text.Length == 2).ToList();
+                var possibleThrees = talk.Mantras.Where(x => x.Text.Length == 3).ToList();
+                var possibleFours = talk.Mantras.Where(x => x.Text.Length == 4).ToList();
+
+                var possibleMantras = new List<Mantra>();
+
+                for(int i = 0; i < numberOfTwos; i++)
+                {
+                    possibleMantras.Add(possibleTwos[random.Next(0, possibleTwos.Count)]);
+                }
+
+                for (int i = 0; i < numberOfThrees; i++)
+                {
+                    possibleMantras.Add(possibleThrees[random.Next(0, possibleThrees.Count)]);
+                }
+
+                for (int i = 0; i < numberOfFours; i++)
+                {
+                    possibleMantras.Add(possibleFours[random.Next(0, possibleFours.Count)]);
+                }
+
+                possibleMantras.Shuffle(random);
+                possibleMantras.Insert(4, sacrificeMantra);
+                talk.Mantras = possibleMantras;
+
+                for (int i = 0; i < 8; i++)
+                {
+                    ultimaData.Mantras[i] = talk.Mantras[i].Text.ToLower();
+                }
+            }
             
             //ultimaData.StartingStones = 0XFF;
             //ultimaData.StartingRunes = 0XFF;
@@ -532,4 +592,5 @@ namespace U4DosRandomizer
         
     }
 }
+
 

@@ -23,6 +23,8 @@ namespace U4DosRandomizer
         int CITY_RUNE_MASK_PAIRS_OFFSET { get; }
         int ITEM_LOCATIONS_OFFSET { get; }
         int LB_TEXT_OFFSET { get; }
+        int MANTRA_OFFSET { get; }
+        int MANTRA_POINTERS_OFFSET { get; }
         int SHRINE_TEXT_OFFSET { get; }
         int WHITE_STONE_LOCATION_TEXT { get; }
         int BLACK_STONE_LOCATION_TEXT { get; }
