@@ -22,7 +22,7 @@ namespace U4DosRandomizer
             PropertyInfo[] properties = this.GetType().GetInterface("IAvatarOffset").GetProperties();
             foreach (PropertyInfo pi in properties)
             {
-                if(pi.Name.ToLower().Contains("offset") && !pi.Name.ToLower().Contains("blink") && !pi.Name.ToLower().Contains("enable") && !pi.Name.ToLower().Contains("encoded") && !pi.Name.ToLower().Contains("seed"))
+                if(pi.Name.ToLower().Contains("offset") && !pi.Name.ToLower().Contains("blink") && !pi.Name.ToLower().Contains("enable") && !pi.Name.ToLower().Contains("encoded") && !pi.Name.ToLower().Contains("seed") && !pi.Name.ToLower().Contains("pointer"))
                 {
                     var newValue = avatarBytes[(int)pi.GetValue(this, null)];
                     var oldValue = originalAvatarBytes[(int)pi.GetValue(originalOffsets, null)];
@@ -96,6 +96,8 @@ namespace U4DosRandomizer
          */
         
         public int LB_TEXT_OFFSET { get; } = 0x159CB; //156ca
+        public int MANTRA_OFFSET { get; } = 0x170D6; //16DD4
+        public int MANTRA_POINTERS_OFFSET { get; } = 0x17896; // 17594
         public int SHRINE_TEXT_OFFSET { get; } = 0x170F4; //16df2
 
         public int WHITE_STONE_LOCATION_TEXT { get; } = 0x17736; //17434

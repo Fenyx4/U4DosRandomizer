@@ -48,6 +48,8 @@ namespace U4DosRandomizer
          */
 
         public int LB_TEXT_OFFSET { get; } = 0x156ca;
+        public int MANTRA_OFFSET { get; } = 0x16DD4;
+        public int MANTRA_POINTERS_OFFSET { get; } = 0x17594;
         public int SHRINE_TEXT_OFFSET { get; } = 0x16df2;
 
         public int WHITE_STONE_LOCATION_TEXT { get; } = 0x17434;

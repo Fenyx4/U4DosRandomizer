@@ -156,6 +156,22 @@ namespace U4DosRandomizer
             data.LBText.Clear();
             data.LBText.AddRange(OriginalLBText);
 
+            var mantraTextBytes = new List<byte>();
+            textOffset = AvatarOffset.MANTRA_OFFSET;
+            MantraMaxSize = 0;
+            for (int i = 0; i < 8; i++)
+            {
+                for (; avatarBytes[textOffset] != 0x00; textOffset++)
+                {
+                    mantraTextBytes.Add(avatarBytes[textOffset]);
+                }
+                data.Mantras.Add(System.Text.Encoding.Default.GetString(mantraTextBytes.ToArray()));
+                MantraMaxSize += data.Mantras[i].Length + 1;
+                mantraTextBytes.Clear();
+
+                textOffset++;
+            }
+
             data.DaemonSpawnX1 = avatarBytes[AvatarOffset.DEMON_SPAWN_TRIGGER_X1_OFFSET];
             data.DaemonSpawnX2 = avatarBytes[AvatarOffset.DEMON_SPAWN_TRIGGER_X2_OFFSET];
             data.DaemonSpawnY1 = avatarBytes[AvatarOffset.DEMON_SPAWN_TRIGGER_Y1_OFFSET];
@@ -315,6 +331,28 @@ namespace U4DosRandomizer
             }
             avatarBytes = avatarBytesList.ToArray();
 
+            var currentMantraOffset = 0;
+            var mantraSize = 0;
+            for(int i = 0; i < data.Mantras.Count; i++)
+            {
+                avatarBytes[AvatarOffset.MANTRA_POINTERS_OFFSET+i*2] = (byte)(avatarBytes[AvatarOffset.MANTRA_POINTERS_OFFSET] + mantraSize);
+                mantraSize += data.Mantras[i].Length + 1;
+
+                var textBytes = Encoding.ASCII.GetBytes(data.Mantras[i]);
+                for(int j = 0; j < textBytes.Length; j++)
+                {
+                    avatarBytes[AvatarOffset.MANTRA_OFFSET + currentMantraOffset] = textBytes[j];
+                    currentMantraOffset++;
+                }
+                avatarBytes[AvatarOffset.MANTRA_OFFSET + currentMantraOffset] = 0x00;
+                currentMantraOffset++;
+
+                if (currentMantraOffset > MantraMaxSize)
+                {
+                    throw new Exception($"Mantra text is too long.");
+                }
+            }
+
             avatarBytes[AvatarOffset.DEMON_SPAWN_TRIGGER_X1_OFFSET] = data.DaemonSpawnX1;
             avatarBytes[AvatarOffset.DEMON_SPAWN_TRIGGER_X2_OFFSET] = data.DaemonSpawnX2;
             avatarBytes[AvatarOffset.DEMON_SPAWN_TRIGGER_Y1_OFFSET] = data.DaemonSpawnY1;
@@ -441,6 +479,7 @@ namespace U4DosRandomizer
         private List<int> OriginalShrineTextStartOffset { get; set; }
         public List<string> OriginalLBText { get; private set; }
         public List<int> OriginalLBTextStartOffset { get; private set; }
+        public int MantraMaxSize { get; private set; }
         public IAvatarOffset AvatarOffset { get; private set; }
         private SpoilerLog SpoilerLog { get; }
     }

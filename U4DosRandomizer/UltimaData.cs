@@ -106,6 +106,7 @@ namespace U4DosRandomizer
         public List<string> ShrineText { get; set; }
         public List<Coordinate> StartingPositions { get; set; }
         public List<string> LBText { get; internal set; }
+        public List<string> Mantras { get; internal set; }
         public byte DaemonSpawnX1 { get; internal set; }
         public byte DaemonSpawnX2 { get; internal set; }
         public byte DaemonSpawnY1 { get; internal set; }
@@ -161,6 +162,7 @@ namespace U4DosRandomizer
             ShrineText = new List<string>();
             StartingPositions = new List<Coordinate>();
             LBText = new List<string>();
+            Mantras = new List<string>();
             PirateCove = new List<Coordinate>();
             AbyssEjectionLocations = new List<Coordinate>();
             ShopLocations = new List<List<byte>>();
@@ -354,39 +356,39 @@ namespace U4DosRandomizer
         public int LOC_SPIRITUALITY { get; } = 0x1f;
         public int LOC_HUMILITY { get; } = 0x20;
         /*
-         * https://github.com/ergonomy-joe/u4-decompiled/blob/master/SRC/U4_LOC.H
-         * 0 - Britannia
-         * 1 - Lycaeum
-         * 2 - Empath Abbey
-         * 3 - Serpents Hold
-         * 4 - Moonglow
-         * 5 - Britain
-         * 6 - Jhelom
-         * 7 - Yew
-         * 8 - Minoc
-         * 9 - Trinsic
-         * 10 - Skara Brae
-         * 11 - Magincia
-         * 12 - Paws
-         * 13 - Buccaneer's Den
-         * 14 - Vesper
-         * 15 - Cove
-         * 16 - Deciet
-         * 17 - Despise
-         * 18 - Destard
-         * 19 - Wrong
-         * 20 - Covetous
-         * 21 - Shame
-         * 22 - Hythloth
-         * 23 - The Great Stygian Abyss
-         * 24 - Honesty
-         * 25 - Compassion
-         * 26 - Valor
-         * 27 - Justice
-         * 28 - Sacrifice
-         * 29 - Honor
-         * 30 - Spirituality
-         * 31 - Humility
-         */
+* https://github.com/ergonomy-joe/u4-decompiled/blob/master/SRC/U4_LOC.H
+* 0 - Britannia
+* 1 - Lycaeum
+* 2 - Empath Abbey
+* 3 - Serpents Hold
+* 4 - Moonglow
+* 5 - Britain
+* 6 - Jhelom
+* 7 - Yew
+* 8 - Minoc
+* 9 - Trinsic
+* 10 - Skara Brae
+* 11 - Magincia
+* 12 - Paws
+* 13 - Buccaneer's Den
+* 14 - Vesper
+* 15 - Cove
+* 16 - Deciet
+* 17 - Despise
+* 18 - Destard
+* 19 - Wrong
+* 20 - Covetous
+* 21 - Shame
+* 22 - Hythloth
+* 23 - The Great Stygian Abyss
+* 24 - Honesty
+* 25 - Compassion
+* 26 - Valor
+* 27 - Justice
+* 28 - Sacrifice
+* 29 - Honor
+* 30 - Spirituality
+* 31 - Humility
+*/
     }
 }
