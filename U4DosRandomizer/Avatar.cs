@@ -464,6 +464,13 @@ namespace U4DosRandomizer
                     avatarBytes[AvatarOffset.CITY_RUNE_MASK_PAIRS_OFFSET + i * 2] = data.Items[i + UltimaData.ITEM_RUNE_HONESTY].Location;
                 }
             }
+
+            if (flags.MonsterDivisor != 2)
+            {
+                avatarBytes[AvatarOffset.MONSTER_DAMAGE_BITSHIFT_OFFSET] = 0xB1;
+                avatarBytes[AvatarOffset.MONSTER_DAMAGE_BITSHIFT_OFFSET+1] = (byte)flags.MonsterDivisor;
+                avatarBytes[AvatarOffset.MONSTER_DAMAGE_BITSHIFT_OFFSET+2] = 0xD3;
+            }
         }
 
         public void Save(string path)

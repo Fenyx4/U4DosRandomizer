@@ -96,6 +96,10 @@ namespace U4DosRandomizer
                 "--karmaValue",
                 "Value to override starting karma value for a virtue. Leave blank for random.",
                 CommandOptionType.SingleValue);
+            CommandOption monsterDivisorArg = commandLineApplication.Option(
+                "--monsterDivisor",
+                "Value to change how much damage monsters do. Allowed values 0-3. 0 is quad damage. 1 is more damge. 2 is default. 3 is less damage.",
+                CommandOptionType.SingleValue);
             CommandOption karmaPercentageArg = commandLineApplication.Option(
                 "--karmaPercentage",
                 "Percentage chance to override a starting karma value for a virtue. Default 0 (no override).",
@@ -157,6 +161,18 @@ namespace U4DosRandomizer
                     karmaValue = karmaValueTmp;
                 }
 
+                int monsterDivisor = 2;
+                var monsterDivisorTmp = 2;
+                if (monsterDivisorArg.HasValue())
+                {
+                    if (!int.TryParse(monsterDivisorArg.Value(), out monsterDivisorTmp) && monsterDivisorTmp >= 0 && monsterDivisorTmp <= 3)
+                    {
+                        throw new InvalidCastException("KarmaValue argument must be a number between 0 and 3 inclusive");
+                    }
+
+                    monsterDivisor = monsterDivisorTmp;
+                }
+
                 var path = Directory.GetCurrentDirectory();
                 if (pathArg.HasValue())
                 {
@@ -204,6 +220,7 @@ namespace U4DosRandomizer
                     flags.QuestItemPercentage = questItems;
                     flags.KarmaSetPercentage = karmaPercentage;
                     flags.KarmaValue = karmaValue;
+                    flags.MonsterDivisor = monsterDivisor;
                     Randomize(seed, path, flags);
                     //Console.WriteLine("Seed: " + seed);
                     //var random = new Random(seed);
