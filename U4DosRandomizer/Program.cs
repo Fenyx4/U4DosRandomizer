@@ -96,9 +96,13 @@ namespace U4DosRandomizer
                 "--karmaValue",
                 "Value to override starting karma value for a virtue. Leave blank for random.",
                 CommandOptionType.SingleValue);
-            CommandOption monsterDivisorArg = commandLineApplication.Option(
-                "--monsterDivisor",
+            CommandOption monsterDamageArg = commandLineApplication.Option(
+                "--monsterDamage",
                 "Value to change how much damage monsters do. Allowed values 0-3. 0 is quad damage. 1 is more damge. 2 is default. 3 is less damage.",
+                CommandOptionType.SingleValue);
+            CommandOption weaponDamageArg = commandLineApplication.Option(
+                "--weaponDamage",
+                "Value to change how much damage weapons do. Allowed values 1-3. 1 is more damge. 2 is default. 3 is less damage.",
                 CommandOptionType.SingleValue);
             CommandOption karmaPercentageArg = commandLineApplication.Option(
                 "--karmaPercentage",
@@ -161,16 +165,28 @@ namespace U4DosRandomizer
                     karmaValue = karmaValueTmp;
                 }
 
-                int monsterDivisor = 2;
-                var monsterDivisorTmp = 2;
-                if (monsterDivisorArg.HasValue())
+                int monsterDamage = 2;
+                var monsterDamageTmp = 2;
+                if (monsterDamageArg.HasValue())
                 {
-                    if (!int.TryParse(monsterDivisorArg.Value(), out monsterDivisorTmp) && monsterDivisorTmp >= 0 && monsterDivisorTmp <= 3)
+                    if (!int.TryParse(monsterDamageArg.Value(), out monsterDamageTmp) && monsterDamageTmp >= 0 && monsterDamageTmp <= 3)
                     {
-                        throw new InvalidCastException("KarmaValue argument must be a number between 0 and 3 inclusive");
+                        throw new InvalidCastException("MonsterDamage argument must be a number between 0 and 3 inclusive");
                     }
 
-                    monsterDivisor = monsterDivisorTmp;
+                    monsterDamage = monsterDamageTmp;
+                }
+
+                int weaponDamage = 2;
+                var weaponDamageTmp = 2;
+                if (weaponDamageArg.HasValue())
+                {
+                    if (!int.TryParse(weaponDamageArg.Value(), out weaponDamageTmp) && weaponDamageTmp >= 1 && weaponDamageTmp <= 3)
+                    {
+                        throw new InvalidCastException("WeaponDamage argument must be a number between 1 and 3 inclusive");
+                    }
+
+                    weaponDamage = weaponDamageTmp;
                 }
 
                 var path = Directory.GetCurrentDirectory();
@@ -220,7 +236,8 @@ namespace U4DosRandomizer
                     flags.QuestItemPercentage = questItems;
                     flags.KarmaSetPercentage = karmaPercentage;
                     flags.KarmaValue = karmaValue;
-                    flags.MonsterDivisor = monsterDivisor;
+                    flags.MonsterDamage = monsterDamage;
+                    flags.WeaponDamage = weaponDamage;
                     Randomize(seed, path, flags);
                     //Console.WriteLine("Seed: " + seed);
                     //var random = new Random(seed);

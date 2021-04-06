@@ -465,11 +465,32 @@ namespace U4DosRandomizer
                 }
             }
 
-            if (flags.MonsterDivisor != 2)
+            if (flags.MonsterDamage != 2)
             {
                 avatarBytes[AvatarOffset.MONSTER_DAMAGE_BITSHIFT_OFFSET] = 0xB1;
-                avatarBytes[AvatarOffset.MONSTER_DAMAGE_BITSHIFT_OFFSET+1] = (byte)flags.MonsterDivisor;
+                avatarBytes[AvatarOffset.MONSTER_DAMAGE_BITSHIFT_OFFSET+1] = (byte)flags.MonsterDamage;
                 avatarBytes[AvatarOffset.MONSTER_DAMAGE_BITSHIFT_OFFSET+2] = 0xD3;
+            }
+
+            if(flags.WeaponDamage != 2)
+            {
+                var multiplier = 1.0f;
+                switch (flags.WeaponDamage)
+                {
+                    case 1:
+                        multiplier = 1.5f;
+                        break;
+                    case 3:
+                        multiplier = 0.5f;
+                        break;
+                }
+
+                for (int i = 0; i < 16; i++)
+                {
+                    var originalDamage = avatarBytes[AvatarOffset.WEAPON_DAMAGE_OFFSET + i];
+                    var newDamage = avatarBytes[AvatarOffset.WEAPON_DAMAGE_OFFSET + i] * multiplier;
+                    avatarBytes[AvatarOffset.WEAPON_DAMAGE_OFFSET + i] = (byte)Math.Max(0x01, Math.Min(0xFF, avatarBytes[AvatarOffset.WEAPON_DAMAGE_OFFSET + i] * multiplier));
+                }
             }
         }
 
