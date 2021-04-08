@@ -453,17 +453,23 @@ namespace U4DosRandomizer
 
                 for(int i = 0; i < numberOfTwos; i++)
                 {
-                    possibleMantras.Add(possibleTwos[random.Next(0, possibleTwos.Count)]);
+                    var nextIdx = random.Next(0, possibleTwos.Count);
+                    possibleMantras.Add(possibleTwos[nextIdx]);
+                    possibleTwos.RemoveAt(nextIdx);
                 }
 
                 for (int i = 0; i < numberOfThrees; i++)
                 {
-                    possibleMantras.Add(possibleThrees[random.Next(0, possibleThrees.Count)]);
+                    var nextIdx = random.Next(0, possibleThrees.Count);
+                    possibleMantras.Add(possibleThrees[nextIdx]);
+                    possibleThrees.RemoveAt(nextIdx);
                 }
 
                 for (int i = 0; i < numberOfFours; i++)
                 {
-                    possibleMantras.Add(possibleFours[random.Next(0, possibleFours.Count)]);
+                    var nextIdx = random.Next(0, possibleFours.Count);
+                    possibleMantras.Add(possibleFours[nextIdx]);
+                    possibleFours.RemoveAt(nextIdx);
                 }
 
                 possibleMantras.Shuffle(random);
