@@ -273,6 +273,9 @@ namespace U4DosRandomizer
                     person = FindPerson("Barren", "Skara");
                     person.KeywordResponse1 = $"I know it well, it is '{Mantras[6].Text.ToUpper()}'.";
 
+                    person = FindPerson("the Ankh of\nSpirituality");
+                    person.Keyword2 = Mantras[6].Text.ToUpper();
+
                     person = FindPerson("Faultless");
                     person.KeywordResponse2 = $"The mantra for pride, being the antithesis of humility, is '{new string(Mantras[7].Text.ToString().ToUpper().Reverse().ToArray())}'.";
                 }
