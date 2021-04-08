@@ -104,6 +104,10 @@ namespace U4DosRandomizer
                 "--weaponDamage",
                 "Value to change how much damage weapons do. Allowed values 1-3. 1 is more damge. 2 is default. 3 is less damage.",
                 CommandOptionType.SingleValue);
+            CommandOption earlierMonstersArg = commandLineApplication.Option(
+                "--earlierMonsters",
+                "Make more difficult monsters appear earlier.",
+                CommandOptionType.NoValue);
             CommandOption karmaPercentageArg = commandLineApplication.Option(
                 "--karmaPercentage",
                 "Percentage chance to override a starting karma value for a virtue. Default 0 (no override).",
@@ -238,6 +242,7 @@ namespace U4DosRandomizer
                     flags.KarmaValue = karmaValue;
                     flags.MonsterDamage = monsterDamage;
                     flags.WeaponDamage = weaponDamage;
+                    flags.EarlierMonsters = earlierMonstersArg.HasValue();
                     Randomize(seed, path, flags);
                     //Console.WriteLine("Seed: " + seed);
                     //var random = new Random(seed);
