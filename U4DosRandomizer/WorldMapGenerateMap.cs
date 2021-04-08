@@ -510,7 +510,7 @@ namespace U4DosRandomizer
             // Shrines
             for (int i = 0; i < 7; i++)
             {
-                if (i == 5)
+                if (i == 6)
                 {
                     // Unchanged spot for spirit
                 }
@@ -530,6 +530,9 @@ namespace U4DosRandomizer
             loc.SetTile(TileInfo.Shrine);
             ultimaData.Shrines[7].X = loc.X;
             ultimaData.Shrines[7].Y = loc.Y;
+            // Base game has spirit in same spot as humility
+            ultimaData.Shrines[6].X = loc.X;
+            ultimaData.Shrines[6].Y = loc.Y;
             //for (int y = -4; y < 0; y++)
             //{
             //    GetCoordinate(loc.X, loc.Y + y).SetTile(TileInfo.Hills);
@@ -1608,7 +1611,7 @@ namespace U4DosRandomizer
             for (int i = 0; i < locations.Count(); i++)
             {
                 var distance = DistanceSquared(selection, locations[i]);
-                if (distance > 0 && distance < closestDistance)
+                if (distance >= 0 && distance < closestDistance)
                 {
                     closest = locations[i];
                     closestDistance = distance;
