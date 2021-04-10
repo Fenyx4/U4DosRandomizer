@@ -22,6 +22,11 @@ namespace U4DosRandomizer
         int AMBUSH_MONSTER_TYPES { get; }
         int CITY_RUNE_MASK_PAIRS_OFFSET { get; }
         int ITEM_LOCATIONS_OFFSET { get; }
+        int MONSTER_DAMAGE_BITSHIFT_OFFSET { get; }
+        int WEAPON_DAMAGE_OFFSET { get; }
+        int MONSTER_SPAWN_TIER_ONE { get; }
+        int MONSTER_SPAWN_TIER_TWO { get; }
+        int MONSTER_SPAWN_TIER_THREE { get; }
         int LB_TEXT_OFFSET { get; }
         int MANTRA_OFFSET { get; }
         int MANTRA_POINTERS_OFFSET { get; }

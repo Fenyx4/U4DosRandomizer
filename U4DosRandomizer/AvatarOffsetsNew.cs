@@ -94,7 +94,12 @@ namespace U4DosRandomizer
             0x2	1	Y Coordinate of Item
             0x3	2	 ??? (a pointer?)
          */
-        
+
+        public int MONSTER_DAMAGE_BITSHIFT_OFFSET { get; } = 0x9AA1; // 0x98E6
+        public int WEAPON_DAMAGE_OFFSET { get; } = 0x119B6; // 0x11703
+        public int MONSTER_SPAWN_TIER_ONE { get; } = 0x5B12; // 0x5B68
+        public int MONSTER_SPAWN_TIER_TWO { get; } = 0x5B2A; // 0x5B83
+        public int MONSTER_SPAWN_TIER_THREE { get; } = 0x5B62; // 0x5BBB
         public int LB_TEXT_OFFSET { get; } = 0x159CB; //156ca
         public int MANTRA_OFFSET { get; } = 0x170D6; //16DD4
         public int MANTRA_POINTERS_OFFSET { get; } = 0x17896; // 17594

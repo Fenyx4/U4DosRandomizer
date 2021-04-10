@@ -30,6 +30,9 @@ namespace U4DosRandomizer
         public bool SacrificeFix { get; internal set; }
         public bool Runes { get; internal set; }
         public bool Mantras { get; internal set; }
+        public int MonsterDamage { get; internal set; }
+        public int WeaponDamage { get; internal set; }
+        public bool EarlierMonsters { get; internal set; }
 
         public List<int> SupportedVersions = new List<int>() { 9 };
 

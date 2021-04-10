@@ -464,6 +464,58 @@ namespace U4DosRandomizer
                     avatarBytes[AvatarOffset.CITY_RUNE_MASK_PAIRS_OFFSET + i * 2] = data.Items[i + UltimaData.ITEM_RUNE_HONESTY].Location;
                 }
             }
+
+            if (flags.MonsterDamage != 2)
+            {
+                avatarBytes[AvatarOffset.MONSTER_DAMAGE_BITSHIFT_OFFSET] = 0xB1;
+                avatarBytes[AvatarOffset.MONSTER_DAMAGE_BITSHIFT_OFFSET+1] = (byte)flags.MonsterDamage;
+                avatarBytes[AvatarOffset.MONSTER_DAMAGE_BITSHIFT_OFFSET+2] = 0xD3;
+            }
+
+            if(flags.WeaponDamage != 2)
+            {
+                var multiplier = 1.0f;
+                switch (flags.WeaponDamage)
+                {
+                    case 1:
+                        multiplier = 1.5f;
+                        break;
+                    case 3:
+                        multiplier = 0.5f;
+                        break;
+                }
+
+                for (int i = 0; i < 16; i++)
+                {
+                    var originalDamage = avatarBytes[AvatarOffset.WEAPON_DAMAGE_OFFSET + i];
+                    var newDamage = avatarBytes[AvatarOffset.WEAPON_DAMAGE_OFFSET + i] * multiplier;
+                    avatarBytes[AvatarOffset.WEAPON_DAMAGE_OFFSET + i] = (byte)Math.Max(0x01, Math.Min(0xFF, avatarBytes[AvatarOffset.WEAPON_DAMAGE_OFFSET + i] * multiplier));
+                }
+            }
+
+            if (flags.EarlierMonsters)
+            {
+                ushort tierCutover = 1000;
+                var tierCutoverBytes = BitConverter.GetBytes(tierCutover);
+                for (int offset = 0; offset < tierCutoverBytes.Length; offset++)
+                {
+                    avatarBytes[AvatarOffset.MONSTER_SPAWN_TIER_ONE + offset] = tierCutoverBytes[offset];
+                }
+
+                tierCutover = 2000;
+                tierCutoverBytes = BitConverter.GetBytes(tierCutover);
+                for (int offset = 0; offset < tierCutoverBytes.Length; offset++)
+                {
+                    avatarBytes[AvatarOffset.MONSTER_SPAWN_TIER_TWO + offset] = tierCutoverBytes[offset];
+                }
+
+                tierCutover = 3000;
+                tierCutoverBytes = BitConverter.GetBytes(tierCutover);
+                for (int offset = 0; offset < tierCutoverBytes.Length; offset++)
+                {
+                    avatarBytes[AvatarOffset.MONSTER_SPAWN_TIER_THREE + offset] = tierCutoverBytes[offset];
+                }
+            }
         }
 
         public void Save(string path)
