@@ -312,7 +312,10 @@ namespace U4DosRandomizer
             {
                 worldMap = new WorldMapShuffleLocations(spoilerLog);
             }
-            worldMap.Load(path, randomValues[0], new Random(randomValues[1]), new Random(randomValues[2]));
+            worldMap.Load(path, randomValues[0], randomValues[1], randomValues[2]);
+
+            var clothMap = worldMap.ToClothMap();
+            clothMap.SaveAsPng($"clothMap-{seed}.png");
 
             var avatar = new Avatar(spoilerLog);
             avatar.Load(path, ultimaData, worldMap);

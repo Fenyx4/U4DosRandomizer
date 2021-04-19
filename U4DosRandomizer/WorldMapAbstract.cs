@@ -1,9 +1,9 @@
-﻿using SixLabors.ImageSharp.PixelFormats;
+﻿using SixLabors.ImageSharp;
+using SixLabors.ImageSharp.PixelFormats;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text;
 
 namespace U4DosRandomizer
 {
@@ -12,8 +12,9 @@ namespace U4DosRandomizer
         protected const string filename = "WORLD.MAP";
         public const int SIZE = 256;
         protected byte[,] _worldMapTiles;
+        protected byte[,] _clothMapTiles;
 
-        public abstract void Load(string path, int v, Random random1, Random random2);
+        public abstract void Load(string path, int v, int mapGeneratorSeed, int otherRandomSeed);
 
         public abstract void Randomize(UltimaData ultimaData, Random random1, Random random2);
 
@@ -125,6 +126,11 @@ namespace U4DosRandomizer
             return Convert.ToByte((input % divisor + divisor) % divisor);
         }
 
+        public static int WrapInt(int input, int divisor)
+        {
+            return (input % divisor + divisor) % divisor;
+        }
+
         public static bool Between(byte x, int v1, int v2)
         {
             if (v1 <= v2)
@@ -160,6 +166,44 @@ namespace U4DosRandomizer
             }
 
             return image;
+        }
+
+        public Image ToClothMap()
+        {
+            using (Image<Rgba32> deep_water = Image.Load<Rgba32>("E:\\Projects\\U4DosRandomizer\\Assets\\deep_water.png"))
+            {
+                using (Image<Rgba32> grass = Image.Load<Rgba32>("E:\\Projects\\U4DosRandomizer\\Assets\\grass.png"))
+                {
+                    var image = new Image<Rgba32>(WorldMapGenerateMap.SIZE*4, WorldMapGenerateMap.SIZE*4);
+                    for (int y = 0; y < WorldMapGenerateMap.SIZE*4; y++)
+                    {
+                        Span<Rgba32> deepWaterRowSpan = deep_water.GetPixelRowSpan(y);
+                        Span<Rgba32> grassRowSpan = grass.GetPixelRowSpan(y);
+                        Span<Rgba32> pixelRowSpan = image.GetPixelRowSpan(y);
+                        for (int x = 0; x < WorldMapGenerateMap.SIZE*4; x++)
+                        {
+                            //if (colorMap.ContainsKey(_worldMapTiles[x, y]))
+                            //{
+                            //    pixelRowSpan[x] = colorMap[_worldMapTiles[x, y]];
+                            //}
+                            //else
+                            //{
+                            //    pixelRowSpan[x] = SixLabors.ImageSharp.Color.White;
+                            //}
+                            if(_worldMapTiles[x/4, y/4] == TileInfo.Deep_Water)
+                            {
+                                pixelRowSpan[x] = deepWaterRowSpan[x];
+                            }
+                            else
+                            {
+                                pixelRowSpan[x] = grassRowSpan[x];
+                            }
+
+                        }
+                    }
+                    return image;
+                }
+            }
         }
 
         public SixLabors.ImageSharp.Image ToHeightMapImage()
