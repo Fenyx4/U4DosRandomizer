@@ -188,21 +188,21 @@ namespace U4DosRandomizer
             return new Tuple<byte[,], double[,]>(ClampToValuesInSetRatios(scrubNoise, percentInMap, SIZE), scrubNoise);
         }
 
-        private byte[,] ScrubMap(Random random)
+        private Tuple<byte[,],byte[,]> ScrubMap(Random random)
         {
             var seed = random.Next();
-            var scrubNoiseFloatLayerOne = SeamlessSimplexNoise.simplexnoise(seed, SIZE, SIZE, 0.0f, 3.2f);
+            var scrubNoiseFloatLayerOne = SeamlessSimplexNoise.simplexnoise(seed, SIZE * 4, SIZE * 4, 0.0f, 3.2f);
             seed = random.Next();
-            var scrubNoiseFloatLayerTwo = SeamlessSimplexNoise.simplexnoise(seed, SIZE, SIZE, 0.2f, 6.4f);
+            var scrubNoiseFloatLayerTwo = SeamlessSimplexNoise.simplexnoise(seed, SIZE * 4, SIZE * 4, 0.2f, 6.4f);
 
 
-            var scrubNoiseLayerOne = Float2dToDouble2d(scrubNoiseFloatLayerOne, SIZE);
-            var scrubNoiseLayerTwo = Float2dToDouble2d(scrubNoiseFloatLayerTwo, SIZE);
+            var scrubNoiseLayerOne = Float2dToDouble2d(scrubNoiseFloatLayerOne, SIZE * 4);
+            var scrubNoiseLayerTwo = Float2dToDouble2d(scrubNoiseFloatLayerTwo, SIZE * 4);
 
-            var scrubNoise = new double[SIZE, SIZE];
-            for (int x = 0; x < SIZE; x++)
+            var scrubNoise = new double[SIZE * 4, SIZE * 4];
+            for (int x = 0; x < SIZE * 4; x++)
             {
-                for (int y = 0; y < SIZE; y++)
+                for (int y = 0; y < SIZE * 4; y++)
                 {
                     scrubNoise[x, y] = scrubNoiseLayerOne[x, y] + (scrubNoiseLayerTwo[x, y] * 0.5);
                 }
@@ -219,18 +219,17 @@ namespace U4DosRandomizer
                 {TileInfo.Forest,forestPercent }
             };
 
-            return ClampToValuesInSetRatios(scrubNoise, percentInMap, SIZE);
-        }
-
-        public void TestAbyssEjection()
-        {
-            byte[] D_0BF0 = { 0xE7, 0x53, 0x23, 0x3B, 0x9E, 0x69, 0x17, 0xBA, 0xD8, 0x1D, 0x91, 0x59, 0xE9 };
-            byte[] D_0BFE = { 0x88, 0x69, 0xDD, 0x2C, 0x15, 0xB7, 0x81, 0xAC, 0x6A, 0x30, 0xF3, 0x6A, 0xE9 };
-
-            for (int i = 0; i < 13; i++)
+            var clothMapSized = ClampToValuesInSetRatios(scrubNoise, percentInMap, SIZE*4);
+            var mapSized = new byte[SIZE, SIZE];
+            for (int x = 0; x < SIZE; x++)
             {
-                _worldMapTiles[D_0BF0[i], D_0BFE[i]] = (byte)(TileInfo.A + i);
+                for(int y = 0; y < SIZE; y++)
+                {
+                    mapSized[x, y] = clothMapSized[x * 4, y * 4];
+                }
             }
+
+            return new Tuple<byte[,], byte[,]>(mapSized, clothMapSized);
         }
 
         private static double[,] Float2dToDouble2d(float[,] floatArray, int size)
@@ -252,40 +251,40 @@ namespace U4DosRandomizer
             //_worldMapTiles = ScrubMap(random);
         }
 
-        public void SwampTest(Random random)
-        {
-            _worldMapTiles = new byte[SIZE, SIZE];
-            for (int x = 0; x < SIZE; x++)
-            {
-                for (int y = 0; y < SIZE; y++)
-                {
-                    _worldMapTiles[x, y] = TileInfo.Grasslands;
-                }
-            }
+        //public void SwampTest(Random random)
+        //{
+        //    _worldMapTiles = new byte[SIZE, SIZE];
+        //    for (int x = 0; x < SIZE; x++)
+        //    {
+        //        for (int y = 0; y < SIZE; y++)
+        //        {
+        //            _worldMapTiles[x, y] = TileInfo.Grasslands;
+        //        }
+        //    }
 
-            for (int i = 0; i < 23; i++)
-            {
-                _potentialSwamps.Add(GetCoordinate(random.Next(0, SIZE), random.Next(0, SIZE)));
-            }
+        //    for (int i = 0; i < 23; i++)
+        //    {
+        //        _potentialSwamps.Add(GetCoordinate(random.Next(0, SIZE), random.Next(0, SIZE)));
+        //    }
 
-            AddSwamp(random);
+        //    AddSwamp(random);
 
-            //var swampSize = 16;
-            //var chosenSwampTile = GetCoordinate(SIZE/2, SIZE/2);
-            //var swamp = SwampMap(random, swampSize);
+        //    //var swampSize = 16;
+        //    //var chosenSwampTile = GetCoordinate(SIZE/2, SIZE/2);
+        //    //var swamp = SwampMap(random, swampSize);
 
-            //for (int x = 0; x < swampSize; x++)
-            //{
-            //    for (int y = 0; y < swampSize; y++)
-            //    {
-            //        var tile = GetCoordinate(chosenSwampTile.X - swampSize / 2 + x, chosenSwampTile.Y - swampSize / 2 + y);
-            //        if (tile.GetTile() == TileInfo.Grasslands)
-            //        {
-            //            tile.SetTile(swamp[x, y]);
-            //        }
-            //    }
-            //}
-        }
+        //    //for (int x = 0; x < swampSize; x++)
+        //    //{
+        //    //    for (int y = 0; y < swampSize; y++)
+        //    //    {
+        //    //        var tile = GetCoordinate(chosenSwampTile.X - swampSize / 2 + x, chosenSwampTile.Y - swampSize / 2 + y);
+        //    //        if (tile.GetTile() == TileInfo.Grasslands)
+        //    //        {
+        //    //            tile.SetTile(swamp[x, y]);
+        //    //        }
+        //    //    }
+        //    //}
+        //}
 
         internal bool IsTile(int x, int y, int tile)
         {
@@ -1073,7 +1072,18 @@ namespace U4DosRandomizer
                 {
                     if (_worldMapTiles[x, y] == TileInfo.Grasslands)
                     {
-                        _worldMapTiles[x, y] = scrub[x, y];
+                        _worldMapTiles[x, y] = scrub.Item1[x, y];
+                    }
+                }
+            }
+
+            for (int x = 0; x < SIZE*4; x++)
+            {
+                for (int y = 0; y < SIZE*4; y++)
+                {
+                    if (_clothMapTiles[x, y] == TileInfo.Grasslands)
+                    {
+                        _clothMapTiles[x, y] = scrub.Item2[x, y];
                     }
                 }
             }
@@ -1258,7 +1268,10 @@ namespace U4DosRandomizer
                     };
                     rivers.Add(river);
 
-                    river.LevelOrderTraversal(n => { n.Coordinate.SetTile(TileInfo.Shallow_Water); });
+                    river.LevelOrderTraversal(n => { 
+                        n.Coordinate.SetTile(TileInfo.Shallow_Water);
+                        //n.Coordinate.SetClothTile(TileInfo.Shallow_Water);
+                    });
                 }
                 else
                 {
@@ -1718,34 +1731,50 @@ namespace U4DosRandomizer
             {
                 using (SixLabors.ImageSharp.Image<Rgba32> grass = SixLabors.ImageSharp.Image.Load<Rgba32>("E:\\Projects\\U4DosRandomizer\\Assets\\grass.png"))
                 {
-                    var image = new SixLabors.ImageSharp.Image<Rgba32>(WorldMapGenerateMap.SIZE * 4, WorldMapGenerateMap.SIZE * 4);
-                    for (int y = 0; y < WorldMapGenerateMap.SIZE * 4; y++)
+                    using (SixLabors.ImageSharp.Image<Rgba32> scrub = SixLabors.ImageSharp.Image.Load<Rgba32>("E:\\Projects\\U4DosRandomizer\\Assets\\scrub.png"))
                     {
-                        Span<Rgba32> deepWaterRowSpan = deep_water.GetPixelRowSpan(y);
-                        Span<Rgba32> grassRowSpan = grass.GetPixelRowSpan(y);
-                        Span<Rgba32> pixelRowSpan = image.GetPixelRowSpan(y);
-                        for (int x = 0; x < WorldMapGenerateMap.SIZE * 4; x++)
+                        using (SixLabors.ImageSharp.Image<Rgba32> forest = SixLabors.ImageSharp.Image.Load<Rgba32>("E:\\Projects\\U4DosRandomizer\\Assets\\forest.png"))
                         {
-                            //if (colorMap.ContainsKey(_worldMapTiles[x, y]))
-                            //{
-                            //    pixelRowSpan[x] = colorMap[_worldMapTiles[x, y]];
-                            //}
-                            //else
-                            //{
-                            //    pixelRowSpan[x] = SixLabors.ImageSharp.Color.White;
-                            //}
-                            if (_clothMapTiles[x, y] == TileInfo.Deep_Water || _clothMapTiles[x, y] == TileInfo.Medium_Water)
+                            var image = new SixLabors.ImageSharp.Image<Rgba32>(WorldMapGenerateMap.SIZE * 4, WorldMapGenerateMap.SIZE * 4);
+                            for (int y = 0; y < WorldMapGenerateMap.SIZE * 4; y++)
                             {
-                                pixelRowSpan[x] = deepWaterRowSpan[x];
-                            }
-                            else
-                            {
-                                pixelRowSpan[x] = grassRowSpan[x];
-                            }
+                                Span<Rgba32> deepWaterRowSpan = deep_water.GetPixelRowSpan(y);
+                                Span<Rgba32> grassRowSpan = grass.GetPixelRowSpan(y);
+                                Span<Rgba32> scrubRowSpan = scrub.GetPixelRowSpan(y);
+                                Span<Rgba32> forestRowSpan = forest.GetPixelRowSpan(y);
+                                Span<Rgba32> pixelRowSpan = image.GetPixelRowSpan(y);
+                                for (int x = 0; x < WorldMapGenerateMap.SIZE * 4; x++)
+                                {
+                                    //if (colorMap.ContainsKey(_worldMapTiles[x, y]))
+                                    //{
+                                    //    pixelRowSpan[x] = colorMap[_worldMapTiles[x, y]];
+                                    //}
+                                    //else
+                                    //{
+                                    //    pixelRowSpan[x] = SixLabors.ImageSharp.Color.White;
+                                    //}
+                                    if (_clothMapTiles[x, y] == TileInfo.Deep_Water || _clothMapTiles[x, y] == TileInfo.Medium_Water || _clothMapTiles[x, y] == TileInfo.Shallow_Water)
+                                    {
+                                        pixelRowSpan[x] = deepWaterRowSpan[x];
+                                    }
+                                    else if (_clothMapTiles[x, y] == TileInfo.Scrubland)
+                                    {
+                                        pixelRowSpan[x] = scrubRowSpan[x];
+                                    }
+                                    else if(_clothMapTiles[x,y] == TileInfo.Forest)
+                                    {
+                                        pixelRowSpan[x] = forestRowSpan[x];
+                                    }
+                                    else
+                                    {
+                                        pixelRowSpan[x] = grassRowSpan[x];
+                                    }
 
+                                }
+                            }
+                            return image;
                         }
                     }
-                    return image;
                 }
             }
         }

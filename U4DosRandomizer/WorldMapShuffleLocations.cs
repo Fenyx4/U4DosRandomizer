@@ -217,7 +217,7 @@ namespace U4DosRandomizer
             {
                 for (int y = 256 - 100; y < 256; y++)
                 {
-                    _worldMapTiles[x, y] = TileInfo.Deep_Water;
+                    _worldMapTiles[x,y] = TileInfo.Deep_Water;
                 }
             }
         }
