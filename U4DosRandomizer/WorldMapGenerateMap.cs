@@ -12,6 +12,7 @@ namespace U4DosRandomizer
     public class WorldMapGenerateMap : WorldMapAbstract, IWorldMap
     {
         private double[,] _worldMapGenerated;
+        private double[,] _clothMapGenerated;
 
         private double _generatedMin;
         private double _generatedMax;
@@ -52,6 +53,7 @@ namespace U4DosRandomizer
 
 
             _worldMapTiles = ClampToValuesInSetRatios(mapGenerated, percentInMap, SIZE);
+            _clothMapTiles = ClampToValuesInSetRatios(_clothMapGenerated, percentInMap, SIZE*4);
 
             // Kill swamps after generation so we can use their placements for later
             for (int x = 0; x < SIZE; x++)
@@ -290,14 +292,18 @@ namespace U4DosRandomizer
             return _worldMapTiles[Wrap(x), Wrap(y)] == tile;
         }
 
-        public override void Load(string path, int mapSeed, Random mapGeneratorSeed, Random randomMap)
+        public override void Load(string path, int mapSeed, int mapGeneratorSeed, int otherRandomSeed)
         {
+            var mapGeneratorRandom = new Random(mapGeneratorSeed);
+            var clothMapGeneratorRandom = new Random(mapGeneratorSeed);
+            var randomMap = new Random(otherRandomSeed);
             randomDownhill = new Random(randomMap.Next());
             var file = Path.Combine(path, filename);
 
             FileHelper.TryBackupOriginalFile(file);
 
-            _worldMapGenerated = new DiamondSquare(SIZE, 184643518.256878, mapSeed).getData(mapGeneratorSeed);
+            _worldMapGenerated = new DiamondSquare(SIZE, 184643518.256878, mapSeed).getData(mapGeneratorRandom);
+            _clothMapGenerated = new DiamondSquare(SIZE*4, 184643518.256878, mapSeed).getData(clothMapGeneratorRandom);
             MapGeneratedMapToUltimaTiles();
 
             _generatedMin = _worldMapGenerated.Cast<double>().Min();
@@ -367,6 +373,16 @@ namespace U4DosRandomizer
                 }
             }
             _worldMapTiles = newWorldMap;
+
+            var newClothMap = new byte[SIZE*4, SIZE*4];
+            for (int x = 0; x < SIZE*4; x++)
+            {
+                for (int y = 0; y < SIZE*4; y++)
+                {
+                    newClothMap[x, y] = _clothMapTiles[WrapInt(bestOffset.X*4 + x, SIZE*4), WrapInt(bestOffset.Y*4 + y, SIZE*4)];
+                }
+            }
+            _clothMapTiles = newClothMap;
         }
 
         public override void Randomize(UltimaData ultimaData, Random randomLocations, Random randomItems)
@@ -1696,6 +1712,43 @@ namespace U4DosRandomizer
             return result;
         }
 
+        public new SixLabors.ImageSharp.Image ToClothMap()
+        {
+            using (SixLabors.ImageSharp.Image<Rgba32> deep_water = SixLabors.ImageSharp.Image.Load<Rgba32>("E:\\Projects\\U4DosRandomizer\\Assets\\deep_water.png"))
+            {
+                using (SixLabors.ImageSharp.Image<Rgba32> grass = SixLabors.ImageSharp.Image.Load<Rgba32>("E:\\Projects\\U4DosRandomizer\\Assets\\grass.png"))
+                {
+                    var image = new SixLabors.ImageSharp.Image<Rgba32>(WorldMapGenerateMap.SIZE * 4, WorldMapGenerateMap.SIZE * 4);
+                    for (int y = 0; y < WorldMapGenerateMap.SIZE * 4; y++)
+                    {
+                        Span<Rgba32> deepWaterRowSpan = deep_water.GetPixelRowSpan(y);
+                        Span<Rgba32> grassRowSpan = grass.GetPixelRowSpan(y);
+                        Span<Rgba32> pixelRowSpan = image.GetPixelRowSpan(y);
+                        for (int x = 0; x < WorldMapGenerateMap.SIZE * 4; x++)
+                        {
+                            //if (colorMap.ContainsKey(_worldMapTiles[x, y]))
+                            //{
+                            //    pixelRowSpan[x] = colorMap[_worldMapTiles[x, y]];
+                            //}
+                            //else
+                            //{
+                            //    pixelRowSpan[x] = SixLabors.ImageSharp.Color.White;
+                            //}
+                            if (_clothMapTiles[x, y] == TileInfo.Deep_Water || _clothMapTiles[x, y] == TileInfo.Medium_Water)
+                            {
+                                pixelRowSpan[x] = deepWaterRowSpan[x];
+                            }
+                            else
+                            {
+                                pixelRowSpan[x] = grassRowSpan[x];
+                            }
+
+                        }
+                    }
+                    return image;
+                }
+            }
+        }
 
         public new SixLabors.ImageSharp.Image ToHeightMapImage()
         {
