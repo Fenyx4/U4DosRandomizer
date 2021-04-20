@@ -143,12 +143,15 @@ namespace U4DosRandomizer
             new int[] {-1,1,1,0}, new int[] {-1,1,-1,0}, new int[] {-1,-1,1,0}, new int[] {-1,-1,-1,0}
         };
 
+        private static float F4 = (MathF.Sqrt(5.0F) - 1.0F) / 4.0F;
+        private static float G4 = (5.0F - MathF.Sqrt(5.0F)) / 20.0F;
+
         // 4D raw Simplex noise
         private static float raw_noise_4d( float x, float y, float z, float w ) 
         {
             // The skewing and unskewing factors are hairy again for the 4D case
-            float F4 = (MathF.Sqrt(5.0F) - 1.0F) / 4.0F;
-            float G4 = (5.0F - MathF.Sqrt(5.0F)) / 20.0F;
+            //float F4 = (MathF.Sqrt(5.0F) - 1.0F) / 4.0F;
+            //float G4 = (5.0F - MathF.Sqrt(5.0F)) / 20.0F;
             float n0, n1, n2, n3, n4; // Noise contributions from the five corners
 
             // Skew the (x,y,z,w) space to determine which cell of 24 simplices we're in

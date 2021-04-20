@@ -19,7 +19,7 @@ namespace U4DosRandomizer
         private double _mountainMin;
         private double _mountainMax;
         private double[,] _mountHeightMap;
-        private List<ITile> excludeLocations = new List<ITile>();
+        private HashSet<ITile> excludeLocations = new HashSet<ITile>();
         private List<ITile> usedLocations = new List<ITile>();
 
         private Random randomDownhill;
@@ -325,12 +325,12 @@ namespace U4DosRandomizer
                     var currentScore = 0;
                     for (int x = 0; x < SIZE; x++)
                     {
-                        if(IsWater(GetCoordinate(x+xOffset,0+yOffset)))
+                        if(IsWater(_worldMapTiles[Wrap(x+xOffset),Wrap(0+yOffset)]))
                         {
                             currentScore++;
                         }
 
-                        if (IsWater(GetCoordinate(x + xOffset, SIZE-1 + yOffset)))
+                        if (IsWater(_worldMapTiles[Wrap(x + xOffset), Wrap(SIZE - 1 + yOffset)]))
                         {
                             currentScore++;
                         }
@@ -338,12 +338,12 @@ namespace U4DosRandomizer
 
                     for (int y = 0; y < SIZE; y++)
                     {
-                        if (IsWater(GetCoordinate(0 + xOffset, y + yOffset)))
+                        if (IsWater(_worldMapTiles[Wrap(0 + xOffset), Wrap(y + yOffset)]))
                         {
                             currentScore++;
                         }
 
-                        if (IsWater(GetCoordinate(SIZE - 1 + xOffset, y + yOffset)))
+                        if (IsWater(_worldMapTiles[Wrap(SIZE - 1 + xOffset), Wrap(y + yOffset)]))
                         {
                             currentScore++;
                         }
@@ -1490,7 +1490,12 @@ namespace U4DosRandomizer
         }
         private static bool IsWater(ITile coordinate)
         {
-            return (coordinate.GetTile() == TileInfo.Deep_Water || coordinate.GetTile() == TileInfo.Medium_Water || coordinate.GetTile() == TileInfo.Shallow_Water || (coordinate.GetTile() >= TileInfo.A && coordinate.GetTile() <= TileInfo.Z));
+            return IsWater(coordinate.GetTile());
+        }
+
+        private static bool IsWater(byte tile)
+        {
+            return (tile == TileInfo.Deep_Water || tile == TileInfo.Medium_Water || tile == TileInfo.Shallow_Water || (tile >= TileInfo.A && tile <= TileInfo.Z));
         }
 
         private static bool IsSailableWater(ITile coordinate)
@@ -1687,7 +1692,7 @@ namespace U4DosRandomizer
             return loc;
         }
 
-        private Tile GetRandomCoordinate(Random random, Func<Tile, bool> criteria, List<ITile> excludes)
+        private Tile GetRandomCoordinate(Random random, Func<Tile, bool> criteria, HashSet<ITile> excludes)
         {
             while (true)
             {
