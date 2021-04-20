@@ -138,24 +138,24 @@ namespace U4DosRandomizer
             FileHelper.Restore(file);
         }
 
-        private Tuple<byte[,], double[,]>  MountainMap(Random random)
+        private Tuple<byte[,], byte[,], double[,]>  MountainMap(Random random)
         {
             var seed = random.Next();
-            var scrubNoiseFloatLayerOne = SeamlessSimplexNoise.simplexnoise(seed, SIZE, SIZE, 0.0f, 0.8f);
+            var scrubNoiseFloatLayerOne = SeamlessSimplexNoise.simplexnoise(seed, SIZE*4, SIZE*4, 0.0f, 0.8f);
             seed = random.Next();
-            var scrubNoiseFloatLayerTwo = SeamlessSimplexNoise.simplexnoise(seed, SIZE, SIZE, 0.2f, 1.6f);
+            var scrubNoiseFloatLayerTwo = SeamlessSimplexNoise.simplexnoise(seed, SIZE*4, SIZE*4, 0.2f, 1.6f);
 
             var avgOne = scrubNoiseFloatLayerOne.Cast<float>().Average();
             var avgTwo = scrubNoiseFloatLayerOne.Cast<float>().Average();
 
 
-            var scrubNoiseLayerOne = Float2dToDouble2d(scrubNoiseFloatLayerOne, SIZE);
-            var scrubNoiseLayerTwo = Float2dToDouble2d(scrubNoiseFloatLayerTwo, SIZE);
+            var scrubNoiseLayerOne = Float2dToDouble2d(scrubNoiseFloatLayerOne, SIZE*4);
+            var scrubNoiseLayerTwo = Float2dToDouble2d(scrubNoiseFloatLayerTwo, SIZE*4);
             // 1 - abs of noise
-            var scrubNoise = new double[SIZE, SIZE];
-            for (int x = 0; x < SIZE; x++)
+            var scrubNoise = new double[SIZE*4, SIZE*4];
+            for (int x = 0; x < SIZE*4; x++)
             {
-                for (int y = 0; y < SIZE; y++)
+                for (int y = 0; y < SIZE*4; y++)
                 {
                     //scrubNoise[x, y] = scrubNoiseLayerOne[x, y] + (scrubNoiseLayerTwo[x, y] * 0.5);
                     scrubNoise[x, y] = (1 - Math.Abs(scrubNoiseLayerOne[x, y] - avgOne)) + ((1 - Math.Abs(scrubNoiseLayerTwo[x, y] - avgTwo)) * 0.3);
@@ -185,7 +185,26 @@ namespace U4DosRandomizer
                 {TileInfo.Mountains,mountainsPercent }
             };
 
-            return new Tuple<byte[,], double[,]>(ClampToValuesInSetRatios(scrubNoise, percentInMap, SIZE), scrubNoise);
+            var clothMapSized = ClampToValuesInSetRatios(scrubNoise, percentInMap, SIZE * 4);
+            var mapSized = new byte[SIZE, SIZE];
+            for (int x = 0; x < SIZE; x++)
+            {
+                for (int y = 0; y < SIZE; y++)
+                {
+                    mapSized[x, y] = clothMapSized[x * 4, y * 4];
+                }
+            }
+
+            var mapSizedScrub = new double[SIZE, SIZE];
+            for (int x = 0; x < SIZE; x++)
+            {
+                for (int y = 0; y < SIZE; y++)
+                {
+                    mapSizedScrub[x, y] = scrubNoise[x * 4, y * 4];
+                }
+            }
+
+            return new Tuple<byte[,], byte[,], double[,]>(mapSized, clothMapSized, mapSizedScrub);
         }
 
         private Tuple<byte[,],byte[,]> ScrubMap(Random random)
@@ -981,14 +1000,14 @@ namespace U4DosRandomizer
             var mountains = MountainMap(random);
 
             // Map the mountain noise to the same number range as the generated world maps so we can put them together
-            var mountainMin = mountains.Item2.Cast<double>().Min();
-            var mountainMax = mountains.Item2.Cast<double>().Max();
+            var mountainMin = mountains.Item3.Cast<double>().Min();
+            var mountainMax = mountains.Item3.Cast<double>().Max();
             for (int x = 0; x < SIZE; x++)
             {
                 for (int y = 0; y < SIZE; y++)
                 {
                     //https://math.stackexchange.com/questions/914823/shift-numbers-into-a-different-range/914843
-                    mountains.Item2[x, y] = _generatedMin + (((_generatedMax - _generatedMin) / (mountainMax - mountainMin)) * (mountains.Item2[x, y] - mountainMin));
+                    mountains.Item3[x, y] = _generatedMin + (((_generatedMax - _generatedMin) / (mountainMax - mountainMin)) * (mountains.Item3[x, y] - mountainMin));
                     //mountains.Item2[x, y] = mountains.Item2[x, y] * mountains.Item2[x, y];
                 }
             }
@@ -1004,10 +1023,21 @@ namespace U4DosRandomizer
                 }
             }
 
+            for (int x = 0; x < SIZE * 4; x++)
+            {
+                for (int y = 0; y < SIZE * 4; y++)
+                {
+                    if (_clothMapTiles[x, y] == TileInfo.Grasslands)
+                    {
+                        _clothMapTiles[x, y] = mountains.Item2[x, y];
+                    }
+                }
+            }
+
             _generatedMin = _worldMapGenerated.Cast<double>().Min();
             _generatedMax = _worldMapGenerated.Cast<double>().Max();
 
-            _mountHeightMap = mountains.Item2;
+            _mountHeightMap = mountains.Item3;
             _mountainMin = _mountHeightMap.Cast<double>().Min();
             _mountainMax = _mountHeightMap.Cast<double>().Max();
         }
@@ -1740,44 +1770,52 @@ namespace U4DosRandomizer
                     {
                         using (SixLabors.ImageSharp.Image<Rgba32> forest = SixLabors.ImageSharp.Image.Load<Rgba32>("E:\\Projects\\U4DosRandomizer\\Assets\\forest.png"))
                         {
-                            var image = new SixLabors.ImageSharp.Image<Rgba32>(WorldMapGenerateMap.SIZE * 4, WorldMapGenerateMap.SIZE * 4);
-                            for (int y = 0; y < WorldMapGenerateMap.SIZE * 4; y++)
+                            using (SixLabors.ImageSharp.Image<Rgba32> hills = SixLabors.ImageSharp.Image.Load<Rgba32>("E:\\Projects\\U4DosRandomizer\\Assets\\hills.png"))
                             {
-                                Span<Rgba32> deepWaterRowSpan = deep_water.GetPixelRowSpan(y);
-                                Span<Rgba32> grassRowSpan = grass.GetPixelRowSpan(y);
-                                Span<Rgba32> scrubRowSpan = scrub.GetPixelRowSpan(y);
-                                Span<Rgba32> forestRowSpan = forest.GetPixelRowSpan(y);
-                                Span<Rgba32> pixelRowSpan = image.GetPixelRowSpan(y);
-                                for (int x = 0; x < WorldMapGenerateMap.SIZE * 4; x++)
+                                var image = new SixLabors.ImageSharp.Image<Rgba32>(WorldMapGenerateMap.SIZE * 4, WorldMapGenerateMap.SIZE * 4);
+                                for (int y = 0; y < WorldMapGenerateMap.SIZE * 4; y++)
                                 {
-                                    //if (colorMap.ContainsKey(_worldMapTiles[x, y]))
-                                    //{
-                                    //    pixelRowSpan[x] = colorMap[_worldMapTiles[x, y]];
-                                    //}
-                                    //else
-                                    //{
-                                    //    pixelRowSpan[x] = SixLabors.ImageSharp.Color.White;
-                                    //}
-                                    if (_clothMapTiles[x, y] == TileInfo.Deep_Water || _clothMapTiles[x, y] == TileInfo.Medium_Water || _clothMapTiles[x, y] == TileInfo.Shallow_Water)
+                                    Span<Rgba32> deepWaterRowSpan = deep_water.GetPixelRowSpan(y);
+                                    Span<Rgba32> grassRowSpan = grass.GetPixelRowSpan(y);
+                                    Span<Rgba32> scrubRowSpan = scrub.GetPixelRowSpan(y);
+                                    Span<Rgba32> forestRowSpan = forest.GetPixelRowSpan(y);
+                                    Span<Rgba32> hillsRowSpan = hills.GetPixelRowSpan(y);
+                                    Span<Rgba32> pixelRowSpan = image.GetPixelRowSpan(y);
+                                    for (int x = 0; x < WorldMapGenerateMap.SIZE * 4; x++)
                                     {
-                                        pixelRowSpan[x] = deepWaterRowSpan[x];
-                                    }
-                                    else if (_clothMapTiles[x, y] == TileInfo.Scrubland)
-                                    {
-                                        pixelRowSpan[x] = scrubRowSpan[x];
-                                    }
-                                    else if(_clothMapTiles[x,y] == TileInfo.Forest)
-                                    {
-                                        pixelRowSpan[x] = forestRowSpan[x];
-                                    }
-                                    else
-                                    {
-                                        pixelRowSpan[x] = grassRowSpan[x];
-                                    }
+                                        //if (colorMap.ContainsKey(_worldMapTiles[x, y]))
+                                        //{
+                                        //    pixelRowSpan[x] = colorMap[_worldMapTiles[x, y]];
+                                        //}
+                                        //else
+                                        //{
+                                        //    pixelRowSpan[x] = SixLabors.ImageSharp.Color.White;
+                                        //}
+                                        if (_clothMapTiles[x, y] == TileInfo.Deep_Water || _clothMapTiles[x, y] == TileInfo.Medium_Water || _clothMapTiles[x, y] == TileInfo.Shallow_Water)
+                                        {
+                                            pixelRowSpan[x] = deepWaterRowSpan[x];
+                                        }
+                                        else if (_clothMapTiles[x, y] == TileInfo.Scrubland)
+                                        {
+                                            pixelRowSpan[x] = scrubRowSpan[x];
+                                        }
+                                        else if (_clothMapTiles[x, y] == TileInfo.Forest)
+                                        {
+                                            pixelRowSpan[x] = forestRowSpan[x];
+                                        }
+                                        else if (_clothMapTiles[x, y] == TileInfo.Hills || _clothMapTiles[x,y] == TileInfo.Mountains)
+                                        {
+                                            pixelRowSpan[x] = hillsRowSpan[x];
+                                        }
+                                        else
+                                        {
+                                            pixelRowSpan[x] = grassRowSpan[x];
+                                        }
 
+                                    }
                                 }
+                                return image;
                             }
-                            return image;
                         }
                     }
                 }
