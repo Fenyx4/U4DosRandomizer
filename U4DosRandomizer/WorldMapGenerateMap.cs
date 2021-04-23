@@ -1800,6 +1800,11 @@ namespace U4DosRandomizer
                                 using (SixLabors.ImageSharp.Image<Rgba32> hillsOverlay = SixLabors.ImageSharp.Image.Load<Rgba32>("E:\\Projects\\U4DosRandomizer\\Assets\\hills_overlay.png"))
                                 {
                                     var image = new SixLabors.ImageSharp.Image<Rgba32>(WorldMapGenerateMap.SIZE * 4, WorldMapGenerateMap.SIZE * 4);
+                                    var outlineOverlay = new SixLabors.ImageSharp.Image<Rgba32>(WorldMapGenerateMap.SIZE * 4, WorldMapGenerateMap.SIZE * 4);
+
+                                    var erosionMap = ErosionMap(_clothMapTiles, new byte[] { TileInfo.Deep_Water, TileInfo.Medium_Water, TileInfo.Shallow_Water }, new byte[] { });
+                                    var erosionMap2 = ErosionMap(_clothMapTiles, new byte[] { }, new byte[] { TileInfo.Deep_Water, TileInfo.Medium_Water, TileInfo.Shallow_Water });
+
                                     for (int y = 0; y < WorldMapGenerateMap.SIZE * 4; y++)
                                     {
                                         Span<Rgba32> deepWaterRowSpan = deep_water.GetPixelRowSpan(y);
@@ -1809,6 +1814,7 @@ namespace U4DosRandomizer
                                         Span<Rgba32> hillsRowSpan = hills.GetPixelRowSpan(y);
                                         Span<Rgba32> hillsOverlayRowSpan = hillsOverlay.GetPixelRowSpan(y);
                                         Span<Rgba32> pixelRowSpan = image.GetPixelRowSpan(y);
+                                        Span<Rgba32> outlineOverlayRowSpan = outlineOverlay.GetPixelRowSpan(y);
                                         for (int x = 0; x < WorldMapGenerateMap.SIZE * 4; x++)
                                         {
                                             //if (colorMap.ContainsKey(_worldMapTiles[x, y]))
@@ -1841,14 +1847,25 @@ namespace U4DosRandomizer
                                             }
 
                                             if(!(_mountainOverlay[x,y] == TileInfo.Hills || _mountainOverlay[x,y] == TileInfo.Mountains) || 
-                                                IsWater(_clothMapTiles[x, y]))
+                                                IsWater(_clothMapTiles[x, y]) || erosionMap[x, y] == 1 || erosionMap2[x, y] == 1)
                                             {
                                                 hillsOverlayRowSpan[x] = new Rgba32(0, 0, 0, 0);
+                                            }
+
+                                            if(erosionMap[x,y] == 1 || erosionMap2[x,y] == 1)
+                                            {
+                                                outlineOverlayRowSpan[x] = new Rgba32(0, 0, 0);
+                                            }
+                                            else
+                                            {
+                                                outlineOverlayRowSpan[x] = new Rgba32(0, 0, 0, 0);
                                             }
 
                                         }
                                     }
                                     var img2 = image.Clone(ctx => ctx.DrawImage(hillsOverlay, PixelColorBlendingMode.Normal, PixelAlphaCompositionMode.SrcOver, 1));
+                                    outlineOverlay.Mutate(ctx => ctx.GaussianBlur(0.8f));
+                                    img2 = img2.Clone(ctx => ctx.DrawImage(outlineOverlay, PixelColorBlendingMode.Normal, PixelAlphaCompositionMode.SrcOver, 1));
                                     return img2;
                                 }
                             }
@@ -1856,6 +1873,71 @@ namespace U4DosRandomizer
                     }
                 }
             }
+        }
+
+        //https://stackoverflow.com/questions/14340083/image-processing-task-erosion-c-sharp
+        public byte[,] ErosionMap(byte[,] map, byte[] tilesToNotToErode, byte[] tilesToErode)
+        {
+            int height = SIZE * 4;
+            int width = SIZE * 4;
+            byte[,] result = new byte[height,width];
+            byte[,] src = new byte[height, width];
+            for(int y = 0; y < height; y++)
+            {
+                for(int x = 0; x < width; x++)
+                {
+                    if(tilesToNotToErode.Contains(map[x,y]))
+                    {
+                        src[x, y] = 0;
+                    }
+                    else
+                    {
+                        src[x, y] = 1; 
+                    }
+
+                    if(tilesToErode.Contains(map[x,y]))
+                    {
+                        src[x, y] = 1;
+                    }
+                    else
+                    {
+                        src[x, y] = 0;
+                    }
+                }
+            }
+
+            for (int y = 0; y < height; y++)
+            {
+                for (int x = 0; x < width; x++)
+                {
+                    var val = src[x, y];
+                    //Erosion
+                    for (int a = -1; a < 3; a++)
+                    {
+                        for (int b = -2; b < 2; b++)
+                        {
+                            try
+                            {
+                                var val2 = src[WrapInt(x + a,width), WrapInt(y + b,height)];
+                                val = Math.Min(val, val2);
+                            }
+                            catch
+                            {
+                            }
+                        }
+                    }
+                    if (src[x, y] != val)
+                    {
+                        result[x, y] = 1;
+                    }
+                    else
+                    {
+                        result[x, y] = 0;
+                    }
+                }
+            }
+
+            return result;
         }
 
         public new SixLabors.ImageSharp.Image ToHeightMapImage()
