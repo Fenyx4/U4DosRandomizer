@@ -1,4 +1,6 @@
 using SixLabors.ImageSharp.PixelFormats;
+//using SixLabors.ImageSharp.Drawing.Processing;
+using SixLabors.ImageSharp.Processing;
 using SimplexNoise;
 using System;
 using System.Collections.Generic;
@@ -13,6 +15,8 @@ namespace U4DosRandomizer
     {
         private double[,] _worldMapGenerated;
         private double[,] _clothMapGenerated;
+
+        private byte[,] _mountainOverlay;
 
         private double _generatedMin;
         private double _generatedMax;
@@ -138,7 +142,7 @@ namespace U4DosRandomizer
             FileHelper.Restore(file);
         }
 
-        private Tuple<byte[,], byte[,], double[,]>  MountainMap(Random random)
+        private Tuple<byte[,], byte[,], double[,], byte[,]>  MountainMap(Random random)
         {
             var seed = random.Next();
             var scrubNoiseFloatLayerOne = SeamlessSimplexNoise.simplexnoise(seed, SIZE*4, SIZE*4, 0.0f, 0.8f);
@@ -152,13 +156,13 @@ namespace U4DosRandomizer
             var scrubNoiseLayerOne = Float2dToDouble2d(scrubNoiseFloatLayerOne, SIZE*4);
             var scrubNoiseLayerTwo = Float2dToDouble2d(scrubNoiseFloatLayerTwo, SIZE*4);
             // 1 - abs of noise
-            var scrubNoise = new double[SIZE*4, SIZE*4];
+            var mountainNoise = new double[SIZE*4, SIZE*4];
             for (int x = 0; x < SIZE*4; x++)
             {
                 for (int y = 0; y < SIZE*4; y++)
                 {
                     //scrubNoise[x, y] = scrubNoiseLayerOne[x, y] + (scrubNoiseLayerTwo[x, y] * 0.5);
-                    scrubNoise[x, y] = (1 - Math.Abs(scrubNoiseLayerOne[x, y] - avgOne)) + ((1 - Math.Abs(scrubNoiseLayerTwo[x, y] - avgTwo)) * 0.3);
+                    mountainNoise[x, y] = (1 - Math.Abs(scrubNoiseLayerOne[x, y] - avgOne)) + ((1 - Math.Abs(scrubNoiseLayerTwo[x, y] - avgTwo)) * 0.3);
                     //scrubNoise[x, y] = (1 - Math.Abs(scrubNoiseLayerTwo[x, y] - avgTwo));
                 }
             }
@@ -185,7 +189,16 @@ namespace U4DosRandomizer
                 {TileInfo.Mountains,mountainsPercent }
             };
 
-            var clothMapSized = ClampToValuesInSetRatios(scrubNoise, percentInMap, SIZE * 4);
+            var clothMapSized = ClampToValuesInSetRatios(mountainNoise, percentInMap, SIZE * 4);
+            mountainsPercent = mountainsPercent * 1.05;
+            hillsPercent = hillsPercent * 1.8;
+            percentInMap = new Dictionary<byte, double>()
+            {
+                {TileInfo.Grasslands,(1.0-hillsPercent)-mountainsPercent},
+                {TileInfo.Hills,hillsPercent},
+                {TileInfo.Mountains,mountainsPercent }
+            };
+            var mountainOverlay = ClampToValuesInSetRatios(mountainNoise, percentInMap, SIZE * 4);
             var mapSized = new byte[SIZE, SIZE];
             for (int x = 0; x < SIZE; x++)
             {
@@ -195,16 +208,16 @@ namespace U4DosRandomizer
                 }
             }
 
-            var mapSizedScrub = new double[SIZE, SIZE];
+            var mapSizedMountains = new double[SIZE, SIZE];
             for (int x = 0; x < SIZE; x++)
             {
                 for (int y = 0; y < SIZE; y++)
                 {
-                    mapSizedScrub[x, y] = scrubNoise[x * 4, y * 4];
+                    mapSizedMountains[x, y] = mountainNoise[x * 4, y * 4];
                 }
             }
 
-            return new Tuple<byte[,], byte[,], double[,]>(mapSized, clothMapSized, mapSizedScrub);
+            return new Tuple<byte[,], byte[,], double[,], byte[,]>(mapSized, clothMapSized, mapSizedMountains, mountainOverlay);
         }
 
         private Tuple<byte[,],byte[,]> ScrubMap(Random random)
@@ -401,6 +414,16 @@ namespace U4DosRandomizer
                 }
             }
             _clothMapTiles = newClothMap;
+
+            var newMountainOverlay = new byte[SIZE * 4, SIZE * 4];
+            for (int x = 0; x < SIZE * 4; x++)
+            {
+                for (int y = 0; y < SIZE * 4; y++)
+                {
+                    newMountainOverlay[x, y] = _mountainOverlay[WrapInt(bestOffset.X * 4 + x, SIZE * 4), WrapInt(bestOffset.Y * 4 + y, SIZE * 4)];
+                }
+            }
+            _mountainOverlay = newMountainOverlay;
         }
 
         public override void Randomize(UltimaData ultimaData, Random randomLocations, Random randomItems)
@@ -1033,6 +1056,8 @@ namespace U4DosRandomizer
                     }
                 }
             }
+
+            _mountainOverlay = mountains.Item4;
 
             _generatedMin = _worldMapGenerated.Cast<double>().Min();
             _generatedMax = _worldMapGenerated.Cast<double>().Max();
@@ -1772,49 +1797,60 @@ namespace U4DosRandomizer
                         {
                             using (SixLabors.ImageSharp.Image<Rgba32> hills = SixLabors.ImageSharp.Image.Load<Rgba32>("E:\\Projects\\U4DosRandomizer\\Assets\\hills.png"))
                             {
-                                var image = new SixLabors.ImageSharp.Image<Rgba32>(WorldMapGenerateMap.SIZE * 4, WorldMapGenerateMap.SIZE * 4);
-                                for (int y = 0; y < WorldMapGenerateMap.SIZE * 4; y++)
+                                using (SixLabors.ImageSharp.Image<Rgba32> hillsOverlay = SixLabors.ImageSharp.Image.Load<Rgba32>("E:\\Projects\\U4DosRandomizer\\Assets\\hills_overlay.png"))
                                 {
-                                    Span<Rgba32> deepWaterRowSpan = deep_water.GetPixelRowSpan(y);
-                                    Span<Rgba32> grassRowSpan = grass.GetPixelRowSpan(y);
-                                    Span<Rgba32> scrubRowSpan = scrub.GetPixelRowSpan(y);
-                                    Span<Rgba32> forestRowSpan = forest.GetPixelRowSpan(y);
-                                    Span<Rgba32> hillsRowSpan = hills.GetPixelRowSpan(y);
-                                    Span<Rgba32> pixelRowSpan = image.GetPixelRowSpan(y);
-                                    for (int x = 0; x < WorldMapGenerateMap.SIZE * 4; x++)
+                                    var image = new SixLabors.ImageSharp.Image<Rgba32>(WorldMapGenerateMap.SIZE * 4, WorldMapGenerateMap.SIZE * 4);
+                                    for (int y = 0; y < WorldMapGenerateMap.SIZE * 4; y++)
                                     {
-                                        //if (colorMap.ContainsKey(_worldMapTiles[x, y]))
-                                        //{
-                                        //    pixelRowSpan[x] = colorMap[_worldMapTiles[x, y]];
-                                        //}
-                                        //else
-                                        //{
-                                        //    pixelRowSpan[x] = SixLabors.ImageSharp.Color.White;
-                                        //}
-                                        if (_clothMapTiles[x, y] == TileInfo.Deep_Water || _clothMapTiles[x, y] == TileInfo.Medium_Water || _clothMapTiles[x, y] == TileInfo.Shallow_Water)
+                                        Span<Rgba32> deepWaterRowSpan = deep_water.GetPixelRowSpan(y);
+                                        Span<Rgba32> grassRowSpan = grass.GetPixelRowSpan(y);
+                                        Span<Rgba32> scrubRowSpan = scrub.GetPixelRowSpan(y);
+                                        Span<Rgba32> forestRowSpan = forest.GetPixelRowSpan(y);
+                                        Span<Rgba32> hillsRowSpan = hills.GetPixelRowSpan(y);
+                                        Span<Rgba32> hillsOverlayRowSpan = hillsOverlay.GetPixelRowSpan(y);
+                                        Span<Rgba32> pixelRowSpan = image.GetPixelRowSpan(y);
+                                        for (int x = 0; x < WorldMapGenerateMap.SIZE * 4; x++)
                                         {
-                                            pixelRowSpan[x] = deepWaterRowSpan[x];
-                                        }
-                                        else if (_clothMapTiles[x, y] == TileInfo.Scrubland)
-                                        {
-                                            pixelRowSpan[x] = scrubRowSpan[x];
-                                        }
-                                        else if (_clothMapTiles[x, y] == TileInfo.Forest)
-                                        {
-                                            pixelRowSpan[x] = forestRowSpan[x];
-                                        }
-                                        else if (_clothMapTiles[x, y] == TileInfo.Hills || _clothMapTiles[x,y] == TileInfo.Mountains)
-                                        {
-                                            pixelRowSpan[x] = hillsRowSpan[x];
-                                        }
-                                        else
-                                        {
-                                            pixelRowSpan[x] = grassRowSpan[x];
-                                        }
+                                            //if (colorMap.ContainsKey(_worldMapTiles[x, y]))
+                                            //{
+                                            //    pixelRowSpan[x] = colorMap[_worldMapTiles[x, y]];
+                                            //}
+                                            //else
+                                            //{
+                                            //    pixelRowSpan[x] = SixLabors.ImageSharp.Color.White;
+                                            //}
+                                            if (_clothMapTiles[x, y] == TileInfo.Deep_Water || _clothMapTiles[x, y] == TileInfo.Medium_Water || _clothMapTiles[x, y] == TileInfo.Shallow_Water)
+                                            {
+                                                pixelRowSpan[x] = deepWaterRowSpan[x];
+                                            }
+                                            else if (_clothMapTiles[x, y] == TileInfo.Scrubland)
+                                            {
+                                                pixelRowSpan[x] = scrubRowSpan[x];
+                                            }
+                                            else if (_clothMapTiles[x, y] == TileInfo.Forest)
+                                            {
+                                                pixelRowSpan[x] = forestRowSpan[x];
+                                            }
+                                            else if (_clothMapTiles[x, y] == TileInfo.Hills || _clothMapTiles[x, y] == TileInfo.Mountains)
+                                            {
+                                                pixelRowSpan[x] = hillsRowSpan[x];
+                                            }
+                                            else
+                                            {
+                                                pixelRowSpan[x] = grassRowSpan[x];
+                                            }
 
+                                            if(!(_mountainOverlay[x,y] == TileInfo.Hills || _mountainOverlay[x,y] == TileInfo.Mountains) || 
+                                                IsWater(_clothMapTiles[x, y]))
+                                            {
+                                                hillsOverlayRowSpan[x] = new Rgba32(0, 0, 0, 0);
+                                            }
+
+                                        }
                                     }
+                                    var img2 = image.Clone(ctx => ctx.DrawImage(hillsOverlay, PixelColorBlendingMode.Normal, PixelAlphaCompositionMode.SrcOver, 1));
+                                    return img2;
                                 }
-                                return image;
                             }
                         }
                     }
