@@ -30,6 +30,8 @@ namespace U4DosRandomizer
 
         private Random randomDownhill;
 
+        private List<Region> Regions;
+
         private SpoilerLog SpoilerLog { get; }
 
         public WorldMapGenerateMap(SpoilerLog spoilerLog)
@@ -413,6 +415,69 @@ namespace U4DosRandomizer
             CleanupAndAddFeatures(randomMap);
 
             Center();
+
+            ApplyRegions();
+        }
+
+
+        private void ApplyRegions()
+        {
+            Regions = new List<Region>();
+
+            var forests = FindBodies(tile => tile.GetTile() == TileInfo.Forest).OrderByDescending(b => b.Count());
+
+            var forestEnumerator = forests.GetEnumerator();
+
+            // See font here to get the unique characters https://www.dafont.com/ultima-runes.font
+            if (forestEnumerator.MoveNext())
+            {
+                Regions.Add(new Region
+                {
+                    Name = "The Deep Forest",
+                    RunicName = "The DÁp Forest",
+                    Tiles = forestEnumerator.Current,
+                    Center = GetCenterOfRegion(forestEnumerator.Current)
+                });
+            }
+
+            if (forestEnumerator.MoveNext())
+            {
+                Regions.Add(new Region
+                {
+                    Name = "Spiritwood",
+                    RunicName = "Spiritwood",
+                    Tiles = forestEnumerator.Current,
+                    Center = GetCenterOfRegion(forestEnumerator.Current)
+                });
+            }
+
+            var bodiesOfWater = FindBodies(tile => tile.GetTile() == TileInfo.Deep_Water || tile.GetTile() == TileInfo.Medium_Water).OrderByDescending(b => b.Count());
+
+            var waterEnumerator = bodiesOfWater.GetEnumerator();
+            if (waterEnumerator.MoveNext() && waterEnumerator.MoveNext())
+            {
+                Regions.Add(new Region
+                {
+                    Name = "Lock Lake",
+                    RunicName = "Lock Lake",
+                    Tiles = waterEnumerator.Current,
+                    Center = GetCenterOfRegion(waterEnumerator.Current)
+                });
+            }
+        }
+
+        private static Point GetCenterOfRegion(List<ITile> deepForest)
+        {
+            var centerOfDeepForest = new Point(0, 0);
+
+            for (int i = 0; i < deepForest.Count; i++)
+            {
+                centerOfDeepForest.X += deepForest[i].X;
+                centerOfDeepForest.Y += deepForest[i].Y;
+            }
+            centerOfDeepForest.X = centerOfDeepForest.X / deepForest.Count;
+            centerOfDeepForest.Y = centerOfDeepForest.Y / deepForest.Count;
+            return centerOfDeepForest;
         }
 
         private void Center()
@@ -1847,17 +1912,6 @@ namespace U4DosRandomizer
 
         public new SixLabors.ImageSharp.Image ToClothMap()
         {
-            var deepForest = FindBodies(tile => tile.GetTile() == TileInfo.Forest).OrderByDescending(b => b.Count()).FirstOrDefault();
-            var centerOfDeepForest = new Point(0, 0);
-
-            for(int i = 0; i < deepForest.Count; i++)
-            {
-                centerOfDeepForest.X += deepForest[i].X;
-                centerOfDeepForest.Y += deepForest[i].Y;
-            }
-            centerOfDeepForest.X = centerOfDeepForest.X / deepForest.Count;
-            centerOfDeepForest.Y = centerOfDeepForest.Y / deepForest.Count;
-
             using (SixLabors.ImageSharp.Image<Rgba32> deep_water = SixLabors.ImageSharp.Image.Load<Rgba32>(ClothMap.deep_water))
             {
                 using (SixLabors.ImageSharp.Image<Rgba32> grass = SixLabors.ImageSharp.Image.Load<Rgba32>(ClothMap.grass))
@@ -1944,7 +1998,21 @@ namespace U4DosRandomizer
                                         FontFamily family = collection.Install(fontStream);
                                         Font font = family.CreateFont(22, FontStyle.Regular);
 
-                                        img2.Mutate(x => x.DrawText("THE DEEP FOREST", font, SixLabors.ImageSharp.Color.Black, new SixLabors.ImageSharp.PointF(centerOfDeepForest.X*4, centerOfDeepForest.Y*4)));
+                                        TextGraphicsOptions options = new TextGraphicsOptions(new SixLabors.ImageSharp.GraphicsOptions()
+                                        {
+                                        },
+                                        new TextOptions 
+                                        {
+                                            ApplyKerning = true,
+                                            TabWidth = 8, // a tab renders as 8 spaces wide
+                                            //WrapTextWidth = 100, // greater than zero so we will word wrap at 100 pixels wide
+                                            HorizontalAlignment = HorizontalAlignment.Center // right align
+                                        });
+
+                                        foreach (var region in Regions)
+                                        {
+                                            img2.Mutate(x => x.DrawText(options, region.RunicName.ToUpper(), font, SixLabors.ImageSharp.Color.Black, new SixLabors.ImageSharp.PointF(region.Center.X * 4, region.Center.Y * 4)));
+                                        }
                                     }
                                     return img2;
                                 }
