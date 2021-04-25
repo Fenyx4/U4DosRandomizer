@@ -8,6 +8,7 @@ using System.Drawing;
 using System.IO;
 using System.Linq;
 using U4DosRandomizer.Helpers;
+using U4DosRandomizer.Resources;
 
 namespace U4DosRandomizer
 {
@@ -145,37 +146,42 @@ namespace U4DosRandomizer
         private Tuple<byte[,], byte[,], double[,], byte[,]>  MountainMap(Random random)
         {
             var seed = random.Next();
-            var scrubNoiseFloatLayerOne = SeamlessSimplexNoise.simplexnoise(seed, SIZE*4, SIZE*4, 0.0f, 0.8f);
+            var mountainNoiseFloatLayerOne = SeamlessSimplexNoise.simplexnoise(seed, SIZE*4, SIZE*4, 0.0f, 0.8f);
             seed = random.Next();
-            var scrubNoiseFloatLayerTwo = SeamlessSimplexNoise.simplexnoise(seed, SIZE*4, SIZE*4, 0.2f, 1.6f);
+            var mountainNoiseFloatLayerTwo = SeamlessSimplexNoise.simplexnoise(seed, SIZE*4, SIZE*4, 0.2f, 1.6f);
+            //seed = random.Next();
+            //var mountainNoiseFloatLayerThree = SeamlessSimplexNoise.simplexnoise(seed, SIZE, SIZE, 0.2f, 51.2f/4);
 
-            var avgOne = scrubNoiseFloatLayerOne.Cast<float>().Average();
-            var avgTwo = scrubNoiseFloatLayerOne.Cast<float>().Average();
+            var avgOne = mountainNoiseFloatLayerOne.Cast<float>().Average();
+            var avgTwo = mountainNoiseFloatLayerOne.Cast<float>().Average();
 
 
-            var scrubNoiseLayerOne = Float2dToDouble2d(scrubNoiseFloatLayerOne, SIZE*4);
-            var scrubNoiseLayerTwo = Float2dToDouble2d(scrubNoiseFloatLayerTwo, SIZE*4);
+            var mountainNoiseLayerOne = Float2dToDouble2d(mountainNoiseFloatLayerOne, SIZE*4);
+            var mountainNoiseLayerTwo = Float2dToDouble2d(mountainNoiseFloatLayerTwo, SIZE*4);
+            //var mountainNoiseLayerThree = Float2dToDouble2d(mountainNoiseFloatLayerThree, SIZE);
+            //WriteNoiseToFile("mountainnoise", mountainNoiseLayerThree);
+            var mountainNoiseLayerThree = ReadNoiseFromFile(ClothMap.mountainnoise, SIZE);
+
+            //for(int x = 0; x < SIZE; x++)
+            //{
+            //    for(int y = 0; y < SIZE; y++)
+            //    {
+            //        if(mountainNoiseLayerThree[x,y] != readNoise[x,y])
+            //        {
+            //            throw new Exception("Ya dun messed up.");
+            //        }
+            //    }
+            //}
+
             // 1 - abs of noise
             var mountainNoise = new double[SIZE*4, SIZE*4];
             for (int x = 0; x < SIZE*4; x++)
             {
                 for (int y = 0; y < SIZE*4; y++)
                 {
-                    //scrubNoise[x, y] = scrubNoiseLayerOne[x, y] + (scrubNoiseLayerTwo[x, y] * 0.5);
-                    mountainNoise[x, y] = (1 - Math.Abs(scrubNoiseLayerOne[x, y] - avgOne)) + ((1 - Math.Abs(scrubNoiseLayerTwo[x, y] - avgTwo)) * 0.3);
-                    //scrubNoise[x, y] = (1 - Math.Abs(scrubNoiseLayerTwo[x, y] - avgTwo));
+                    mountainNoise[x, y] = (1 - Math.Abs(mountainNoiseLayerOne[x, y] - avgOne)) + ((1 - Math.Abs(mountainNoiseLayerTwo[x, y] - avgTwo)) * 0.3);
                 }
             }
-
-            //var avg = scrubNoise.Cast<double>().Average();
-
-            //for(int x = 0; x < SIZE; x++)
-            //{
-            //    for (int y = 0; y < SIZE; y++)
-            //    {
-            //        scrubNoise[x, y] = 1 - Math.Abs(scrubNoise[x, y] - avg);
-            //    }
-            //}
 
 
             var totalGrass = _percentInMap[TileInfo.Mountains] + _percentInMap[TileInfo.Hills] + _percentInMap[TileInfo.Scrubland] + _percentInMap[TileInfo.Forest] + _percentInMap[TileInfo.Swamp] + _percentInMap[TileInfo.Shallow_Water] + _percentInMap[TileInfo.Grasslands];
@@ -190,15 +196,19 @@ namespace U4DosRandomizer
             };
 
             var clothMapSized = ClampToValuesInSetRatios(mountainNoise, percentInMap, SIZE * 4);
+
+            // Get something with slightly larger hills and mountains so the hill overlay doesn't line up exactly with the hills
             mountainsPercent = mountainsPercent * 1.05;
             hillsPercent = hillsPercent * 1.8;
-            percentInMap = new Dictionary<byte, double>()
+            var percentInMapWithLargerMountainsForOverlay = new Dictionary<byte, double>()
             {
                 {TileInfo.Grasslands,(1.0-hillsPercent)-mountainsPercent},
                 {TileInfo.Hills,hillsPercent},
                 {TileInfo.Mountains,mountainsPercent }
             };
-            var mountainOverlay = ClampToValuesInSetRatios(mountainNoise, percentInMap, SIZE * 4);
+            var mountainOverlay = ClampToValuesInSetRatios(mountainNoise, percentInMapWithLargerMountainsForOverlay, SIZE * 4);
+
+            // Shrink down to the size of the in game map
             var mapSized = new byte[SIZE, SIZE];
             for (int x = 0; x < SIZE; x++)
             {
@@ -217,7 +227,52 @@ namespace U4DosRandomizer
                 }
             }
 
+            // Now that we're done making the other stuff rough up the edges of the hills in the cloth map
+            for (int x = 0; x < SIZE * 4; x++)
+            {
+                for (int y = 0; y < SIZE * 4; y++)
+                {
+                    mountainNoise[x, y] = mountainNoise[x, y] + (mountainNoiseLayerThree[x%SIZE, y%SIZE] * 0.025);
+                }
+            }
+            clothMapSized = ClampToValuesInSetRatios(mountainNoise, percentInMap, SIZE * 4);
+
             return new Tuple<byte[,], byte[,], double[,], byte[,]>(mapSized, clothMapSized, mapSizedMountains, mountainOverlay);
+        }
+
+        private void WriteNoiseToFile(string path, double[,] output)
+        {
+            using (FileStream file = File.Create(path))
+            {
+                using (BinaryWriter writer = new BinaryWriter(file))
+                {
+                    foreach (double value in output)
+                    {
+                        writer.Write(value);
+                    }
+                }
+            }
+        }
+
+        private double[,] ReadNoiseFromFile(byte[] data, int size)
+        {
+            var result = new double[size, size];
+
+            var idx = 0;
+            using (var file = new MemoryStream(data))
+            {
+                using (BinaryReader reader = new BinaryReader(file))
+                {
+                    while (idx < size * size)
+                    {
+                        var read = reader.ReadDouble();
+                        result[idx / size, idx % size] = read;
+                        idx++;
+                    }
+                }
+            }
+
+            return result;
         }
 
         private Tuple<byte[,],byte[,]> ScrubMap(Random random)
@@ -226,10 +281,15 @@ namespace U4DosRandomizer
             var scrubNoiseFloatLayerOne = SeamlessSimplexNoise.simplexnoise(seed, SIZE * 4, SIZE * 4, 0.0f, 3.2f);
             seed = random.Next();
             var scrubNoiseFloatLayerTwo = SeamlessSimplexNoise.simplexnoise(seed, SIZE * 4, SIZE * 4, 0.2f, 6.4f);
+            //seed = random.Next();
+            //var scrubNoiseFloatLayerThree = SeamlessSimplexNoise.simplexnoise(seed, SIZE, SIZE, 0.0f, 51.2f/4);
 
 
             var scrubNoiseLayerOne = Float2dToDouble2d(scrubNoiseFloatLayerOne, SIZE * 4);
             var scrubNoiseLayerTwo = Float2dToDouble2d(scrubNoiseFloatLayerTwo, SIZE * 4);
+            //var scrubNoiseLayerThree = Float2dToDouble2d(scrubNoiseFloatLayerThree, SIZE);
+            //WriteNoiseToFile("scrubnoise", scrubNoiseLayerThree);
+            var scrubNoiseLayerThree = ReadNoiseFromFile(ClothMap.scrubnoise, SIZE);
 
             var scrubNoise = new double[SIZE * 4, SIZE * 4];
             for (int x = 0; x < SIZE * 4; x++)
@@ -260,6 +320,15 @@ namespace U4DosRandomizer
                     mapSized[x, y] = clothMapSized[x * 4, y * 4];
                 }
             }
+
+            for (int x = 0; x < SIZE * 4; x++)
+            {
+                for (int y = 0; y < SIZE * 4; y++)
+                {
+                    scrubNoise[x, y] = scrubNoise[x, y] + (scrubNoiseLayerThree[x%SIZE, y%SIZE] * 0.2);
+                }
+            }
+            clothMapSized = ClampToValuesInSetRatios(scrubNoise, percentInMap, SIZE * 4);
 
             return new Tuple<byte[,], byte[,]>(mapSized, clothMapSized);
         }
