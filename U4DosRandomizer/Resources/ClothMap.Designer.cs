@@ -123,6 +123,16 @@ namespace U4DosRandomizer.Resources {
         /// <summary>
         ///   Looks up a localized resource of type System.Byte[].
         /// </summary>
+        internal static byte[] runes {
+            get {
+                object obj = ResourceManager.GetObject("runes", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Byte[].
+        /// </summary>
         internal static byte[] scrub {
             get {
                 object obj = ResourceManager.GetObject("scrub", resourceCulture);

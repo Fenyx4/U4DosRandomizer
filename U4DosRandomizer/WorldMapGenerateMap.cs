@@ -1,6 +1,7 @@
 using SixLabors.ImageSharp.PixelFormats;
-//using SixLabors.ImageSharp.Drawing.Processing;
+using SixLabors.ImageSharp.Drawing.Processing;
 using SixLabors.ImageSharp.Processing;
+using SixLabors.Fonts;
 using SimplexNoise;
 using System;
 using System.Collections.Generic;
@@ -541,7 +542,7 @@ namespace U4DosRandomizer
             var shapeLoc = new Coordinate(stygianUpperLeft.X + 6, stygianUpperLeft.Y + 6);
             ApplyShape(shapeLoc, "abyss", false);
 
-            var ocean = FindOcean();
+            var ocean = FindBodies(tile => tile.GetTile() == TileInfo.Deep_Water || tile.GetTile() == TileInfo.Medium_Water).OrderByDescending(b => b.Count()).FirstOrDefault();
 
             //var entrancePathToWater = Search.GetPath(SIZE, SIZE, entranceToStygian,
             //    c => { return ocean.Contains(c); }, // Find deep water to help make sure a boat can reach here. TODO: Make sure it reaches the ocean.
@@ -1038,27 +1039,27 @@ namespace U4DosRandomizer
             return swamp;
         }
 
-        private List<ITile> FindOcean()
+        private List<List<ITile>> FindBodies(Func<ITile, bool> bodyMatcher)
         {
             // Find Ocean
-            var bodiesOfWater = new List<List<ITile>>();
+            var bodies = new List<List<ITile>>();
             var closedSet = new HashSet<ITile>();
             for (int x = 0; x < SIZE; x++)
             {
                 for (int y = 0; y < SIZE; y++)
                 {
                     ITile tile = GetCoordinate(x, y);
-                    if (!closedSet.Contains(tile) && (tile.GetTile() == TileInfo.Deep_Water || tile.GetTile() == TileInfo.Medium_Water))
+                    if (!closedSet.Contains(tile) && bodyMatcher(tile))
                     {
-                        var bodyOfWater = new List<ITile>();
+                        var body = new List<ITile>();
                         var queue = new Queue<ITile>();
                         queue.Enqueue(tile);
                         while (queue.Count() > 0)
                         {
                             tile = queue.Dequeue();
-                            if (!closedSet.Contains(tile) && (tile.GetTile() == TileInfo.Deep_Water || tile.GetTile() == TileInfo.Medium_Water))
+                            if (!closedSet.Contains(tile) && bodyMatcher(tile))
                             {
-                                bodyOfWater.Add(tile);
+                                body.Add(tile);
 
                                 foreach (var n in tile.NeighborAndAdjacentCoordinates())
                                 {
@@ -1068,22 +1069,12 @@ namespace U4DosRandomizer
 
                             closedSet.Add(tile);
                         }
-                        bodiesOfWater.Add(bodyOfWater);
+                        bodies.Add(body);
                     }
                 }
-            }
+            }           
 
-            //for (int i = 0; i < bodiesOfWater.Count(); i++)
-            //{
-            //    foreach (var tile in bodiesOfWater[i])
-            //    {
-            //        tile.SetTile(Convert.ToByte(TileInfo.A + (i % 26)));
-            //    }
-            //}
-
-            var ocean = bodiesOfWater.OrderByDescending(b => b.Count()).FirstOrDefault();
-
-            return ocean;
+            return bodies;
         }
 
         private void AddMountainsAndHills(Random random)
@@ -1856,6 +1847,17 @@ namespace U4DosRandomizer
 
         public new SixLabors.ImageSharp.Image ToClothMap()
         {
+            var deepForest = FindBodies(tile => tile.GetTile() == TileInfo.Forest).OrderByDescending(b => b.Count()).FirstOrDefault();
+            var centerOfDeepForest = new Point(0, 0);
+
+            for(int i = 0; i < deepForest.Count; i++)
+            {
+                centerOfDeepForest.X += deepForest[i].X;
+                centerOfDeepForest.Y += deepForest[i].Y;
+            }
+            centerOfDeepForest.X = centerOfDeepForest.X / deepForest.Count;
+            centerOfDeepForest.Y = centerOfDeepForest.Y / deepForest.Count;
+
             using (SixLabors.ImageSharp.Image<Rgba32> deep_water = SixLabors.ImageSharp.Image.Load<Rgba32>(ClothMap.deep_water))
             {
                 using (SixLabors.ImageSharp.Image<Rgba32> grass = SixLabors.ImageSharp.Image.Load<Rgba32>(ClothMap.grass))
@@ -1935,6 +1937,15 @@ namespace U4DosRandomizer
                                     var img2 = image.Clone(ctx => ctx.DrawImage(hillsOverlay, PixelColorBlendingMode.Normal, PixelAlphaCompositionMode.SrcOver, 1));
                                     outlineOverlay.Mutate(ctx => ctx.GaussianBlur(0.8f));
                                     img2 = img2.Clone(ctx => ctx.DrawImage(outlineOverlay, PixelColorBlendingMode.Normal, PixelAlphaCompositionMode.SrcOver, 1));
+
+                                    FontCollection collection = new FontCollection();
+                                    using (var fontStream = new MemoryStream(ClothMap.runes))
+                                    {
+                                        FontFamily family = collection.Install(fontStream);
+                                        Font font = family.CreateFont(22, FontStyle.Regular);
+
+                                        img2.Mutate(x => x.DrawText("THE DEEP FOREST", font, SixLabors.ImageSharp.Color.Black, new SixLabors.ImageSharp.PointF(centerOfDeepForest.X*4, centerOfDeepForest.Y*4)));
+                                    }
                                     return img2;
                                 }
                             }
