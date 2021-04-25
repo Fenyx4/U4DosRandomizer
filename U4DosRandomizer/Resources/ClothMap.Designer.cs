@@ -63,9 +63,69 @@ namespace U4DosRandomizer.Resources {
         /// <summary>
         ///   Looks up a localized resource of type System.Byte[].
         /// </summary>
+        internal static byte[] deep_water {
+            get {
+                object obj = ResourceManager.GetObject("deep_water", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Byte[].
+        /// </summary>
+        internal static byte[] forest {
+            get {
+                object obj = ResourceManager.GetObject("forest", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Byte[].
+        /// </summary>
+        internal static byte[] grass {
+            get {
+                object obj = ResourceManager.GetObject("grass", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Byte[].
+        /// </summary>
+        internal static byte[] hills {
+            get {
+                object obj = ResourceManager.GetObject("hills", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Byte[].
+        /// </summary>
+        internal static byte[] hills_overlay {
+            get {
+                object obj = ResourceManager.GetObject("hills_overlay", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Byte[].
+        /// </summary>
         internal static byte[] mountainnoise {
             get {
                 object obj = ResourceManager.GetObject("mountainnoise", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Byte[].
+        /// </summary>
+        internal static byte[] scrub {
+            get {
+                object obj = ResourceManager.GetObject("scrub", resourceCulture);
                 return ((byte[])(obj));
             }
         }
