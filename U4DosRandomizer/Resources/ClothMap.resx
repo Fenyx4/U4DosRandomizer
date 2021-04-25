@@ -145,4 +145,25 @@
   <data name="scrubnoise" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\bin\Debug\netcoreapp3.1\scrubnoise;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
+  <data name="_1_new_moon" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>1_new_moon.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="_2_crescent_waxing" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>2_crescent_waxing.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="_3_first_quarter" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>3_first_quarter.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="_4_gibbous_waxing" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>4_gibbous_waxing.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="_5_full_moon" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>5_full_moon.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="_6_gibbous_waning" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>6_gibbous_waning.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="_7_last_quarter" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>7_last_quarter.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
 </root>

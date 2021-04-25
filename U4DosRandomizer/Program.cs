@@ -314,9 +314,6 @@ namespace U4DosRandomizer
             }
             worldMap.Load(path, randomValues[0], randomValues[1], randomValues[2]);
 
-            var clothMap = worldMap.ToClothMap();
-            clothMap.SaveAsPng($"clothMap-{seed}.png");
-
             var avatar = new Avatar(spoilerLog);
             avatar.Load(path, ultimaData, worldMap);
 
@@ -342,6 +339,9 @@ namespace U4DosRandomizer
             }
 
             worldMap.Randomize(ultimaData, new Random(randomValues[3]), new Random(randomValues[4]));
+
+            var clothMap = worldMap.ToClothMap(ultimaData);
+            clothMap.SaveAsPng($"clothMap-{seed}.png");
 
             if (!String.IsNullOrWhiteSpace(flags.SpellRemove))
             {

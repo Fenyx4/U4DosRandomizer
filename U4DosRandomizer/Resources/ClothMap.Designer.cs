@@ -63,6 +63,76 @@ namespace U4DosRandomizer.Resources {
         /// <summary>
         ///   Looks up a localized resource of type System.Byte[].
         /// </summary>
+        internal static byte[] _1_new_moon {
+            get {
+                object obj = ResourceManager.GetObject("_1_new_moon", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Byte[].
+        /// </summary>
+        internal static byte[] _2_crescent_waxing {
+            get {
+                object obj = ResourceManager.GetObject("_2_crescent_waxing", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Byte[].
+        /// </summary>
+        internal static byte[] _3_first_quarter {
+            get {
+                object obj = ResourceManager.GetObject("_3_first_quarter", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Byte[].
+        /// </summary>
+        internal static byte[] _4_gibbous_waxing {
+            get {
+                object obj = ResourceManager.GetObject("_4_gibbous_waxing", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Byte[].
+        /// </summary>
+        internal static byte[] _5_full_moon {
+            get {
+                object obj = ResourceManager.GetObject("_5_full_moon", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Byte[].
+        /// </summary>
+        internal static byte[] _6_gibbous_waning {
+            get {
+                object obj = ResourceManager.GetObject("_6_gibbous_waning", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Byte[].
+        /// </summary>
+        internal static byte[] _7_last_quarter {
+            get {
+                object obj = ResourceManager.GetObject("_7_last_quarter", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Byte[].
+        /// </summary>
         internal static byte[] deep_water {
             get {
                 object obj = ResourceManager.GetObject("deep_water", resourceCulture);

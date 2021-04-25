@@ -1910,7 +1910,7 @@ namespace U4DosRandomizer
             return result;
         }
 
-        public new SixLabors.ImageSharp.Image ToClothMap()
+        public new SixLabors.ImageSharp.Image ToClothMap(UltimaData data)
         {
             using (SixLabors.ImageSharp.Image<Rgba32> deep_water = SixLabors.ImageSharp.Image.Load<Rgba32>(ClothMap.deep_water))
             {
@@ -2014,6 +2014,9 @@ namespace U4DosRandomizer
                                             img2.Mutate(x => x.DrawText(options, region.RunicName.ToUpper(), font, SixLabors.ImageSharp.Color.Black, new SixLabors.ImageSharp.PointF(region.Center.X * 4, region.Center.Y * 4)));
                                         }
                                     }
+
+                                    img2 = PlaceMoons(img2, data);
+
                                     return img2;
                                 }
                             }
@@ -2021,6 +2024,24 @@ namespace U4DosRandomizer
                     }
                 }
             }
+        }
+
+        private SixLabors.ImageSharp.Image<Rgba32> PlaceMoons(SixLabors.ImageSharp.Image<Rgba32> img2, UltimaData data)
+        {
+            var moonImages = new List<SixLabors.ImageSharp.Image<Rgba32>>();
+            moonImages.Add(SixLabors.ImageSharp.Image.Load<Rgba32>(ClothMap._1_new_moon));
+            moonImages.Add(SixLabors.ImageSharp.Image.Load<Rgba32>(ClothMap._2_crescent_waxing));
+            moonImages.Add(SixLabors.ImageSharp.Image.Load<Rgba32>(ClothMap._3_first_quarter));
+            moonImages.Add(SixLabors.ImageSharp.Image.Load<Rgba32>(ClothMap._4_gibbous_waxing));
+            moonImages.Add(SixLabors.ImageSharp.Image.Load<Rgba32>(ClothMap._5_full_moon));
+            moonImages.Add(SixLabors.ImageSharp.Image.Load<Rgba32>(ClothMap._6_gibbous_waning));
+            moonImages.Add(SixLabors.ImageSharp.Image.Load<Rgba32>(ClothMap._7_last_quarter));
+            for(int i = 0; i < 7; i++)
+            {
+                img2 = img2.Clone(ctx => ctx.DrawImage(moonImages[i], new SixLabors.ImageSharp.Point(data.Moongates[i].X*4, data.Moongates[i].Y*4), PixelColorBlendingMode.Normal, PixelAlphaCompositionMode.SrcOver, 1));
+            }
+
+            return img2;
         }
 
         //https://stackoverflow.com/questions/14340083/image-processing-task-erosion-c-sharp

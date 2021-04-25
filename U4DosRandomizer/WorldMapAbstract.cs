@@ -168,7 +168,7 @@ namespace U4DosRandomizer
             return image;
         }
 
-        public Image ToClothMap()
+        public Image ToClothMap(UltimaData data)
         {
             using (Image<Rgba32> deep_water = Image.Load<Rgba32>("E:\\Projects\\U4DosRandomizer\\Assets\\deep_water.png"))
             {
