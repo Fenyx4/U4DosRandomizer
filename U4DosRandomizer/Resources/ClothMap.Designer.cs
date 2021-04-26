@@ -183,6 +183,126 @@ namespace U4DosRandomizer.Resources {
         /// <summary>
         ///   Looks up a localized resource of type System.Byte[].
         /// </summary>
+        internal static byte[] loc_1_castle_britannia {
+            get {
+                object obj = ResourceManager.GetObject("loc_1_castle_britannia", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Byte[].
+        /// </summary>
+        internal static byte[] loc_10_trinsic {
+            get {
+                object obj = ResourceManager.GetObject("loc_10_trinsic", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Byte[].
+        /// </summary>
+        internal static byte[] loc_11_skara_brae {
+            get {
+                object obj = ResourceManager.GetObject("loc_11_skara_brae", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Byte[].
+        /// </summary>
+        internal static byte[] loc_2_lycaeum {
+            get {
+                object obj = ResourceManager.GetObject("loc_2_lycaeum", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Byte[].
+        /// </summary>
+        internal static byte[] loc_3_empath_abbey {
+            get {
+                object obj = ResourceManager.GetObject("loc_3_empath_abbey", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Byte[].
+        /// </summary>
+        internal static byte[] loc_4_serpents_hold {
+            get {
+                object obj = ResourceManager.GetObject("loc_4_serpents_hold", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Byte[].
+        /// </summary>
+        internal static byte[] loc_5_moonglow {
+            get {
+                object obj = ResourceManager.GetObject("loc_5_moonglow", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Byte[].
+        /// </summary>
+        internal static byte[] loc_6_britain {
+            get {
+                object obj = ResourceManager.GetObject("loc_6_britain", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Byte[].
+        /// </summary>
+        internal static byte[] loc_7_jhelom {
+            get {
+                object obj = ResourceManager.GetObject("loc_7_jhelom", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Byte[].
+        /// </summary>
+        internal static byte[] loc_8_yew {
+            get {
+                object obj = ResourceManager.GetObject("loc_8_yew", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Byte[].
+        /// </summary>
+        internal static byte[] loc_9_minoc {
+            get {
+                object obj = ResourceManager.GetObject("loc_9_minoc", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Byte[].
+        /// </summary>
+        internal static byte[] medium_water {
+            get {
+                object obj = ResourceManager.GetObject("medium_water", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Byte[].
+        /// </summary>
         internal static byte[] mountainnoise {
             get {
                 object obj = ResourceManager.GetObject("mountainnoise", resourceCulture);

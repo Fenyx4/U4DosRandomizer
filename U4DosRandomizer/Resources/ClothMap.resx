@@ -133,6 +133,42 @@
   <data name="hills_overlay" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>hills_overlay.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
+  <data name="loc_10_trinsic" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>loc_10_trinsic.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="loc_11_skara_brae" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>loc_11_skara_brae.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="loc_1_castle_britannia" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>loc_1_castle_britannia.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="loc_2_lycaeum" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>loc_2_lycaeum.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="loc_3_empath_abbey" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>loc_3_empath_abbey.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="loc_4_serpents_hold" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>loc_4_serpents_hold.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="loc_5_moonglow" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>loc_5_moonglow.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="loc_6_britain" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>loc_6_britain.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="loc_7_jhelom" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>loc_7_jhelom.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="loc_8_yew" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>loc_8_yew.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="loc_9_minoc" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>loc_9_minoc.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="medium_water" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>medium_water.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
   <data name="mountainnoise" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>mountainnoise;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
