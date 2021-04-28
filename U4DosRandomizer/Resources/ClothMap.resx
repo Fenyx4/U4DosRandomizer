@@ -172,6 +172,9 @@
   <data name="mountainnoise" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>mountainnoise;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
+  <data name="mountains_overlay" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>mountains_overlay.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
   <data name="runes" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>runes.ttf;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
@@ -180,6 +183,9 @@
   </data>
   <data name="scrubnoise" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\bin\Debug\netcoreapp3.1\scrubnoise;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="swamp" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>swamp.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="_1_new_moon" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>1_new_moon.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>

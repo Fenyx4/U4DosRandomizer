@@ -313,6 +313,16 @@ namespace U4DosRandomizer.Resources {
         /// <summary>
         ///   Looks up a localized resource of type System.Byte[].
         /// </summary>
+        internal static byte[] mountains_overlay {
+            get {
+                object obj = ResourceManager.GetObject("mountains_overlay", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Byte[].
+        /// </summary>
         internal static byte[] runes {
             get {
                 object obj = ResourceManager.GetObject("runes", resourceCulture);
@@ -336,6 +346,16 @@ namespace U4DosRandomizer.Resources {
         internal static byte[] scrubnoise {
             get {
                 object obj = ResourceManager.GetObject("scrubnoise", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Byte[].
+        /// </summary>
+        internal static byte[] swamp {
+            get {
+                object obj = ResourceManager.GetObject("swamp", resourceCulture);
                 return ((byte[])(obj));
             }
         }
