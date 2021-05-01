@@ -14,7 +14,7 @@ namespace U4DosRandomizer
         protected byte[,] _worldMapTiles;
         protected byte[,] _clothMapTiles;
 
-        public abstract void Load(string path, int v, int mapGeneratorSeed, int otherRandomSeed);
+        public abstract void Load(string path, int v, int mapGeneratorSeed, int otherRandomSeed, UltimaData ultimaData);
 
         public abstract void Randomize(UltimaData ultimaData, Random random1, Random random2);
 

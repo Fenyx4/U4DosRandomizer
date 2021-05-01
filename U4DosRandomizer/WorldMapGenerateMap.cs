@@ -451,7 +451,7 @@ namespace U4DosRandomizer
             return _worldMapTiles[Wrap(x), Wrap(y)] == tile;
         }
 
-        public override void Load(string path, int mapSeed, int mapGeneratorSeed, int otherRandomSeed)
+        public override void Load(string path, int mapSeed, int mapGeneratorSeed, int otherRandomSeed, UltimaData ultimaData)
         {
             var mapGeneratorRandom = new Random(mapGeneratorSeed);
             var clothMapGeneratorRandom = new Random(mapGeneratorSeed);
@@ -471,11 +471,11 @@ namespace U4DosRandomizer
 
             Center();
 
-            ApplyRegions();
+            ApplyRegions(ultimaData, randomMap);
         }
 
 
-        private void ApplyRegions()
+        private void ApplyRegions(UltimaData ultimaData, Random random)
         {
             Regions = new List<Region>();
 
@@ -519,6 +519,32 @@ namespace U4DosRandomizer
                     Center = GetCenterOfRegion(waterEnumerator.Current)
                 });
             }
+
+            var plains = FindPlains(random, ultimaData).OrderByDescending(b => b.Count());
+            var plainsEnumerator = plains.GetEnumerator();
+            if (plainsEnumerator.MoveNext())
+            {
+                Regions.Add(new Region
+                {
+                    Name = "The High Stepes",
+                    RunicName = "Äe High Stepes",
+                    Tiles = plainsEnumerator.Current,
+                    Center = GetCenterOfRegion(plainsEnumerator.Current)
+                });
+            }
+
+            if (plainsEnumerator.MoveNext())
+            {
+                Regions.Add(new Region
+                {
+                    Name = "Bloody Plains",
+                    RunicName = "Bloody Plains",
+                    Tiles = plainsEnumerator.Current,
+                    Center = GetCenterOfRegion(plainsEnumerator.Current)
+                });
+            }
+
+
         }
 
         private static Point GetCenterOfRegion(List<ITile> deepForest)
@@ -622,6 +648,18 @@ namespace U4DosRandomizer
             RandomizeLocations(ultimaData, randomLocations);
 
             RandomizeItems(ultimaData, randomItems);
+            
+            //var plains = FindPlains(randomLocations, ultimaData);
+
+            //for(int i = 0; i < plains.Count; i++)
+            //{
+            //    var plain = plains[i];
+            //    foreach(var tile in plain)
+            //    {
+            //        tile.SetTile((byte)(TileInfo.A + i));
+            //    }
+            //}
+
             WriteSpoilerLog(ultimaData);
         }
 
@@ -964,7 +1002,15 @@ namespace U4DosRandomizer
             // Whirlpool normally exits in Lock Lake
             // TODO: Put it somewhere more thematic
             // For now stick it in the middle of some deep water somewhere
-            loc = GetRandomCoordinate(random, c => c.GetTile() == TileInfo.Deep_Water, excludeLocations);
+            var lockLake = Regions.Where(r => r.Name == "Lock Lake").FirstOrDefault();
+            if (lockLake != null)
+            {
+                loc = lockLake.Tiles[random.Next(0, lockLake.Tiles.Count - 1)];
+            }
+            else
+            {
+                loc = GetRandomCoordinate(random, c => c.GetTile() == TileInfo.Deep_Water, excludeLocations);
+            }
             ultimaData.WhirlpoolExit = new Coordinate(loc.X, loc.Y);
 
             return;
@@ -1181,6 +1227,52 @@ namespace U4DosRandomizer
             }
 
             return new Tuple<byte[,], byte[,]>(mapSized, clothMapSizedSwamp);
+        }
+
+        private List<List<ITile>> FindPlains(Random random, UltimaData ultimaData)
+        {
+            var plains = new List<List<ITile>>();
+
+            var possiblePlainsStartingPoints = GetAllMatchingTiles(c => c.GetTile() == TileInfo.Grasslands);
+            var plainsStartingPoints = GetEvenlyDistributedValidLocations(random, 6, null, possiblePlainsStartingPoints, ultimaData, false);
+
+            var closedSet = new HashSet<ITile>();
+            foreach(var startPoint in plainsStartingPoints)
+            {
+                var tile = startPoint;
+                if (!closedSet.Contains(tile))
+                {
+                    var body = new List<ITile>();
+                    Queue<ITile> queue = null;
+                    var nextQueue = new Queue<ITile>();
+                    nextQueue.Enqueue(tile);
+                    var queueLayerCount = 0;
+                    while (nextQueue.Count() > 0 && queueLayerCount < 31)
+                    {
+                        queue = nextQueue;
+                        nextQueue = new Queue<ITile>();
+                        while (queue.Count() > 0)
+                        {
+                            tile = queue.Dequeue();
+                            if (!closedSet.Contains(tile) && tile.GetTile() == TileInfo.Grasslands)
+                            {
+                                body.Add(tile);
+
+                                foreach (var n in tile.NeighborCoordinates())
+                                {
+                                    nextQueue.Enqueue(n);
+                                }
+                            }
+
+                            closedSet.Add(tile);
+                        }
+                        queueLayerCount++;
+                    }
+                    plains.Add(body);
+                }
+            }
+
+            return plains;
         }
 
         private List<List<ITile>> FindBodies(Func<ITile, bool> bodyMatcher)
@@ -1849,6 +1941,10 @@ namespace U4DosRandomizer
             var randomIdx = random.Next(0, possibleLocations.Count);
             var original = possibleLocations[randomIdx];
 
+            if(usedLocations == null)
+            {
+                usedLocations = new List<ITile>();
+            }
             results.Add(original);
             usedLocations.Add(original);
 

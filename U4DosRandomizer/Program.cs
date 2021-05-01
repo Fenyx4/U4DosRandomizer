@@ -312,7 +312,7 @@ namespace U4DosRandomizer
             {
                 worldMap = new WorldMapShuffleLocations(spoilerLog);
             }
-            worldMap.Load(path, randomValues[0], randomValues[1], randomValues[2]);
+            worldMap.Load(path, randomValues[0], randomValues[1], randomValues[2], ultimaData);
 
             var avatar = new Avatar(spoilerLog);
             avatar.Load(path, ultimaData, worldMap);

@@ -17,7 +17,7 @@ namespace U4DosRandomizer
             this.SpoilerLog = spoilerLog;
         }
 
-        public override void Load(string path, int mapSeed, int mapGeneratorSeed, int otherRandomSeed)
+        public override void Load(string path, int mapSeed, int mapGeneratorSeed, int otherRandomSeed, UltimaData ultimaData)
         {
             var file = Path.Combine(path, filename);
 
