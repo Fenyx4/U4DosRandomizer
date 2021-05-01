@@ -77,6 +77,17 @@ namespace U4DosRandomizer
                 }
             }
 
+            for (int x = 0; x < SIZE * 4; x++)
+            {
+                for (int y = 0; y < SIZE * 4; y++)
+                {
+                    if (_clothMapTiles[x, y] == TileInfo.Swamp)
+                    {
+                        _clothMapTiles[x, y] = TileInfo.Grasslands;
+                    }
+                }
+            }
+
             var scrubNoiseLayerThree = ReadNoiseFromFile(ClothMap.scrubnoise, SIZE);
 
             // Map the noise to the same number range as the generated world maps so we can put them together
