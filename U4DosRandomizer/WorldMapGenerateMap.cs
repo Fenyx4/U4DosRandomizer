@@ -520,6 +520,55 @@ namespace U4DosRandomizer
                 });
             }
 
+
+            var islandsAndContinents = FindBodies(tile => tile.GetTile() != TileInfo.Deep_Water && tile.GetTile() != TileInfo.Medium_Water && tile.GetTile() != TileInfo.Shallow_Water).OrderByDescending(b => b.Count());
+
+            var islandEnumerator = islandsAndContinents.GetEnumerator();
+            while (islandEnumerator.MoveNext() && islandEnumerator.Current.Count > 800) ;
+            if (islandEnumerator.Current != null)
+            {
+                Regions.Add(new Region
+                {
+                    Name = "Verity Isle",
+                    RunicName = "Verity Isle",
+                    Tiles = islandEnumerator.Current,
+                    Center = GetCenterOfRegion(islandEnumerator.Current)
+                });
+            }
+
+            if (islandEnumerator.MoveNext())
+            {
+                Regions.Add(new Region
+                {
+                    Name = "Dagger Isle",
+                    RunicName = "Dagger Isle",
+                    Tiles = islandEnumerator.Current,
+                    Center = GetCenterOfRegion(islandEnumerator.Current)
+                });
+            }
+
+            if (islandEnumerator.MoveNext())
+            {
+                Regions.Add(new Region
+                {
+                    Name = "Isle of Deeds",
+                    RunicName = "Isle of DÁds",
+                    Tiles = islandEnumerator.Current,
+                    Center = GetCenterOfRegion(islandEnumerator.Current)
+                });
+            }
+
+            if (islandEnumerator.MoveNext())
+            {
+                Regions.Add(new Region
+                {
+                    Name = "Valarian Isle",
+                    RunicName = "Valarian Isle",
+                    Tiles = islandEnumerator.Current,
+                    Center = GetCenterOfRegion(islandEnumerator.Current)
+                });
+            }
+
             var plains = FindPlains(random, ultimaData).OrderByDescending(b => b.Count());
             var plainsEnumerator = plains.GetEnumerator();
             if (plainsEnumerator.MoveNext())
@@ -2213,8 +2262,9 @@ namespace U4DosRandomizer
                                                     }
                                                 }
 
-                                                img2 = ClothMapPlaceMoons(img2, data);
+
                                                 img2 = ClothMapPlaceLocations(img2, data);
+                                                img2 = ClothMapPlaceMoons(img2, data);
 
                                                 return img2;
                                             }
