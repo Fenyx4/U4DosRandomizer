@@ -40,6 +40,7 @@ namespace U4DosRandomizer
         }
 
         private List<Tile> _potentialSwamps = new List<Tile>();
+        private List<List<ITile>> _swamps = new List<List<ITile>>();
         private void MapGeneratedMapToUltimaTiles()
         {
             var mapGenerated = _worldMapGenerated;
@@ -604,6 +605,17 @@ namespace U4DosRandomizer
                 });
             }
 
+            var swampsEnumerator = _swamps.OrderByDescending(b => b.Count()).GetEnumerator();
+            if (swampsEnumerator.MoveNext())
+            {
+                Regions.Add(new Region
+                {
+                    Name = "Fens of the Dead",
+                    RunicName = "Fens of the DÀd",
+                    Tiles = swampsEnumerator.Current,
+                    Center = GetCenterOfRegion(swampsEnumerator.Current)
+                });
+            }
 
         }
 
@@ -700,6 +712,14 @@ namespace U4DosRandomizer
                 }
             }
             _mountainOverlay = newMountainOverlay;
+
+            foreach(var swamp in _swamps)
+            {
+                for(int i = 0; i < swamp.Count(); i++)
+                {
+                    swamp[i] = GetCoordinate(swamp[i].X - bestOffset.X, swamp[i].Y - bestOffset.Y);
+                }
+            }
         }
 
         public override void Randomize(UltimaData ultimaData, Random randomLocations, Random randomItems)
@@ -708,13 +728,23 @@ namespace U4DosRandomizer
             RandomizeLocations(ultimaData, randomLocations);
 
             RandomizeItems(ultimaData, randomItems);
-            
+
             //var plains = FindPlains(randomLocations, ultimaData);
 
             //for(int i = 0; i < plains.Count; i++)
             //{
             //    var plain = plains[i];
             //    foreach(var tile in plain)
+            //    {
+            //        tile.SetTile((byte)(TileInfo.A + i));
+            //    }
+            //}
+
+            //var plains = _swamps;
+            //for (int i = 0; i < plains.Count; i++)
+            //{
+            //    var plain = plains[i];
+            //    foreach (var tile in plain)
             //    {
             //        tile.SetTile((byte)(TileInfo.A + i));
             //    }
@@ -1218,6 +1248,7 @@ namespace U4DosRandomizer
                 var chosenSwampTile = _potentialSwamps[random.Next(0, _potentialSwamps.Count() - 1)];
                 var swamp = SwampMap(random, swampSize);
 
+                var swampList = new List<ITile>();
                 for (int x = 0; x < swampSize; x++)
                 {
                     for (int y = 0; y < swampSize; y++)
@@ -1228,10 +1259,12 @@ namespace U4DosRandomizer
                             if (swamp.Item1[x, y] == TileInfo.Swamp)
                             {
                                 tile.SetTile(swamp.Item1[x, y]);
+                                swampList.Add(tile);
                             }
                         }
                     }
                 }
+                _swamps.Add(swampList);
 
                 for (int x = 0; x < swampSize*4; x++)
                 {
@@ -1256,7 +1289,7 @@ namespace U4DosRandomizer
         private static Tuple<byte[,], byte[,]> SwampMap(Random random, int swampSize)
         {
             SimplexNoise.Noise.Seed = random.Next();
-            var swampNoiseFloat = SimplexNoise.Noise.Calc2D(swampSize*4, swampSize*4, 0.1f);
+            var swampNoiseFloat = SimplexNoise.Noise.Calc2D(swampSize*4, swampSize*4, 0.1f / 4f);
             var swampNoise = Float2dToDouble2d(swampNoiseFloat, swampSize*4);
 
             var percentInMap = new Dictionary<byte, double>()
