@@ -323,6 +323,26 @@ namespace U4DosRandomizer.Resources {
         /// <summary>
         ///   Looks up a localized resource of type System.Byte[].
         /// </summary>
+        internal static byte[] ne_wind {
+            get {
+                object obj = ResourceManager.GetObject("ne_wind", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Byte[].
+        /// </summary>
+        internal static byte[] nw_wind {
+            get {
+                object obj = ResourceManager.GetObject("nw_wind", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Byte[].
+        /// </summary>
         internal static byte[] runes {
             get {
                 object obj = ResourceManager.GetObject("runes", resourceCulture);

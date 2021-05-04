@@ -2180,6 +2180,8 @@ namespace U4DosRandomizer
 
         public new SixLabors.ImageSharp.Image ToClothMap(UltimaData data)
         {
+            var image = new SixLabors.ImageSharp.Image<Rgba32>(WorldMapGenerateMap.SIZE * 4, WorldMapGenerateMap.SIZE * 4);
+
             using (SixLabors.ImageSharp.Image<Rgba32> deep_water = SixLabors.ImageSharp.Image.Load<Rgba32>(ClothMap.deep_water))
             {
                 using (SixLabors.ImageSharp.Image<Rgba32> medium_water = SixLabors.ImageSharp.Image.Load<Rgba32>(ClothMap.medium_water))
@@ -2198,7 +2200,6 @@ namespace U4DosRandomizer
                                         {
                                             using (SixLabors.ImageSharp.Image<Rgba32> swamp = SixLabors.ImageSharp.Image.Load<Rgba32>(ClothMap.swamp))
                                             {
-                                                var image = new SixLabors.ImageSharp.Image<Rgba32>(WorldMapGenerateMap.SIZE * 4, WorldMapGenerateMap.SIZE * 4);
                                                 var outlineOverlay = new SixLabors.ImageSharp.Image<Rgba32>(WorldMapGenerateMap.SIZE * 4, WorldMapGenerateMap.SIZE * 4);
 
                                                 var erosionMap = ErosionMap(_clothMapTiles, new byte[] { TileInfo.Deep_Water, TileInfo.Medium_Water, TileInfo.Shallow_Water }, new byte[] { });
@@ -2278,10 +2279,10 @@ namespace U4DosRandomizer
 
                                                     }
                                                 }
-                                                var img2 = image.Clone(ctx => ctx.DrawImage(hillsOverlay, PixelColorBlendingMode.Normal, PixelAlphaCompositionMode.SrcOver, 1));
-                                                img2 = img2.Clone(ctx => ctx.DrawImage(mountainsOverlay, PixelColorBlendingMode.Normal, PixelAlphaCompositionMode.SrcOver, 1));
+                                                image = image.Clone(ctx => ctx.DrawImage(hillsOverlay, PixelColorBlendingMode.Normal, PixelAlphaCompositionMode.SrcOver, 1));
+                                                image = image.Clone(ctx => ctx.DrawImage(mountainsOverlay, PixelColorBlendingMode.Normal, PixelAlphaCompositionMode.SrcOver, 1));
                                                 outlineOverlay.Mutate(ctx => ctx.GaussianBlur(0.8f));
-                                                img2 = img2.Clone(ctx => ctx.DrawImage(outlineOverlay, PixelColorBlendingMode.Normal, PixelAlphaCompositionMode.SrcOver, 1));
+                                                image = image.Clone(ctx => ctx.DrawImage(outlineOverlay, PixelColorBlendingMode.Normal, PixelAlphaCompositionMode.SrcOver, 1));
 
                                                 FontCollection collection = new FontCollection();
                                                 using (var fontStream = new MemoryStream(ClothMap.runes))
@@ -2302,15 +2303,14 @@ namespace U4DosRandomizer
 
                                                     foreach (var region in Regions)
                                                     {
-                                                        img2.Mutate(x => x.DrawText(options, region.RunicName.ToUpper(), font, SixLabors.ImageSharp.Color.Black, new SixLabors.ImageSharp.PointF(region.Center.X * 4, region.Center.Y * 4)));
+                                                        image.Mutate(x => x.DrawText(options, region.RunicName.ToUpper(), font, SixLabors.ImageSharp.Color.Black, new SixLabors.ImageSharp.PointF(region.Center.X * 4, region.Center.Y * 4)));
                                                     }
                                                 }
 
 
-                                                img2 = ClothMapPlaceLocations(img2, data);
-                                                img2 = ClothMapPlaceMoons(img2, data);
+                                                image = ClothMapPlaceLocations(image, data);
+                                                image = ClothMapPlaceMoons(image, data);
 
-                                                return img2;
                                             }
                                         }
                                     }
@@ -2320,6 +2320,42 @@ namespace U4DosRandomizer
                     }
                 }
             }
+
+            image = ClothMapPlaceTags(image);
+
+            return image;
+        }
+
+        private SixLabors.ImageSharp.Image<Rgba32> ClothMapPlaceTags(SixLabors.ImageSharp.Image<Rgba32> image)
+        {
+            var tagImages = new List<Tuple<SixLabors.ImageSharp.Image<Rgba32>, int, int>>();
+            tagImages.Add(new Tuple<SixLabors.ImageSharp.Image<Rgba32>,int,int>(SixLabors.ImageSharp.Image.Load<Rgba32>(ClothMap.nw_wind),0,0));
+            var tagImage = SixLabors.ImageSharp.Image.Load<Rgba32>(ClothMap.ne_wind);
+            tagImages.Add(new Tuple<SixLabors.ImageSharp.Image<Rgba32>, int, int>(tagImage, (256*4 - 1) - tagImage.Width, 0));
+
+            foreach(var tag in tagImages)
+            {
+                var allWater = true;
+
+                for (int x = tag.Item2; x < tag.Item2 + tag.Item1.Width && allWater; x++)
+                {
+                    for (int y = tag.Item3; y < tag.Item3 + tag.Item1.Height && allWater; y++)
+                    {
+                        if (!IsWater(_clothMapTiles[x, y]))
+                        {
+                            allWater = false;
+                        }
+                    }
+                }
+                if(allWater)
+                {
+                    var point = new SixLabors.ImageSharp.Point(tag.Item2, tag.Item3);
+                    image = image.Clone(ctx => ctx.DrawImage(tag.Item1, point, PixelColorBlendingMode.Normal, PixelAlphaCompositionMode.SrcOver, 1));
+                }
+            }
+
+
+            return image;
         }
 
         private SixLabors.ImageSharp.Image<Rgba32> ClothMapPlaceLocations(SixLabors.ImageSharp.Image<Rgba32> img2, UltimaData data)
@@ -2364,9 +2400,9 @@ namespace U4DosRandomizer
                 for (int yOffset = 0; yOffset < image.Height && minWater != 0; yOffset++)
                 {
                     var waterCount = 0;
-                    for (int x = (tile.X * 4) - xOffset; x < (tile.X * 4) - xOffset + image.Width && minWater != 0; x++)
+                    for (int x = Math.Max((tile.X * 4) - xOffset, 0); x < (tile.X * 4) - xOffset + image.Width  && x < image.Width && minWater != 0; x++)
                     {
-                        for (int y = (tile.Y * 4) - yOffset; y < (tile.Y * 4) - yOffset + image.Height && minWater != 0; y++)
+                        for (int y = Math.Max((tile.Y * 4) - yOffset, 0); y < (tile.Y * 4) - yOffset + image.Height && y < image.Height && minWater != 0; y++)
                         {
                             if (IsWater(_clothMapTiles[x, y]))
                             {

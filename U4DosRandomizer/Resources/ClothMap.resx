@@ -175,6 +175,12 @@
   <data name="mountains_overlay" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>mountains_overlay.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
+  <data name="ne_wind" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>ne-wind.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="nw_wind" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>nw-wind.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
   <data name="runes" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>runes.ttf;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
