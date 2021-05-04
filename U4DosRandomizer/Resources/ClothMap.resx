@@ -118,6 +118,12 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
+  <data name="banner" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>banner.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="big_boat" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>big-boat.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
   <data name="deep_water" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>deep_water.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
@@ -190,8 +196,23 @@
   <data name="scrubnoise" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\bin\Debug\netcoreapp3.1\scrubnoise;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
+  <data name="se_serpent" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>se-serpent.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="se_wind" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>se-wind.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="small_boat" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>small-boat.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
   <data name="swamp" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>swamp.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="sw_serpent" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>sw-serpent.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="sw_wind" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>sw-wind.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="_1_new_moon" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>1_new_moon.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>

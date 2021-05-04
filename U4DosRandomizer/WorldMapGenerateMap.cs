@@ -2178,7 +2178,7 @@ namespace U4DosRandomizer
             return result;
         }
 
-        public new SixLabors.ImageSharp.Image ToClothMap(UltimaData data)
+        public new SixLabors.ImageSharp.Image ToClothMap(UltimaData data, Random random)
         {
             var image = new SixLabors.ImageSharp.Image<Rgba32>(WorldMapGenerateMap.SIZE * 4, WorldMapGenerateMap.SIZE * 4);
 
@@ -2284,6 +2284,8 @@ namespace U4DosRandomizer
                                                 outlineOverlay.Mutate(ctx => ctx.GaussianBlur(0.8f));
                                                 image = image.Clone(ctx => ctx.DrawImage(outlineOverlay, PixelColorBlendingMode.Normal, PixelAlphaCompositionMode.SrcOver, 1));
 
+                                                image = ClothMapPlaceTags(image, random);
+
                                                 FontCollection collection = new FontCollection();
                                                 using (var fontStream = new MemoryStream(ClothMap.runes))
                                                 {
@@ -2321,41 +2323,125 @@ namespace U4DosRandomizer
                 }
             }
 
-            image = ClothMapPlaceTags(image);
+            return image;
+        }
+
+        private SixLabors.ImageSharp.Image<Rgba32> ClothMapPlaceTags(SixLabors.ImageSharp.Image<Rgba32> image, Random random)
+        {
+            var usedPixels = new int[SIZE * 4, SIZE * 4];
+            for(int x = 0; x < SIZE*4; x++)
+            {
+                for (int y = 0; y < SIZE * 4; y++)
+                {
+                    usedPixels[x,y] = 0;
+                }
+            }
+            var tagImages = new List<Tuple<SixLabors.ImageSharp.Image<Rgba32>, int, int>>();
+            tagImages.Add(new Tuple<SixLabors.ImageSharp.Image<Rgba32>, int, int>(SixLabors.ImageSharp.Image.Load<Rgba32>(ClothMap.banner), 0, 0));
+
+            // Try to place the banner first. It is huge but most important.
+            var possibleLocations = GetAllMatchingTiles(c => IsWater(c));
+            List<ITile> evenlyDistributedLocations = GetEvenlyDistributedValidLocations(random, 32, usedLocations, possibleLocations, null, false);
+
+            foreach(var tile in evenlyDistributedLocations)
+            {
+                if (ImageOnlyOverlapsWater(tagImages[0].Item1, tile.Y * 4, tile.X * 4, usedPixels))
+                {
+                    var point = new SixLabors.ImageSharp.Point(tile.X * 4, tile.Y * 4);
+                    image = image.Clone(ctx => ctx.DrawImage(tagImages[0].Item1, point, PixelColorBlendingMode.Normal, PixelAlphaCompositionMode.SrcOver, 1));
+                    MarkUsedPixels(point, usedPixels, tagImages[0].Item1);
+
+                    evenlyDistributedLocations.Remove(tile);
+                    break;
+                }
+            }
+
+            tagImages = new List<Tuple<SixLabors.ImageSharp.Image<Rgba32>, int, int>>();
+            tagImages.Add(new Tuple<SixLabors.ImageSharp.Image<Rgba32>,int,int>(SixLabors.ImageSharp.Image.Load<Rgba32>(ClothMap.nw_wind),0,0));
+            var tagImage = SixLabors.ImageSharp.Image.Load<Rgba32>(ClothMap.ne_wind);
+            tagImages.Add(new Tuple<SixLabors.ImageSharp.Image<Rgba32>, int, int>(tagImage, (256*4 - 1) - tagImage.Width, 0));
+            tagImage = SixLabors.ImageSharp.Image.Load<Rgba32>(ClothMap.sw_wind);
+            tagImages.Add(new Tuple<SixLabors.ImageSharp.Image<Rgba32>, int, int>(tagImage, 0, (256 * 4 - 1) - tagImage.Height));
+            tagImage = SixLabors.ImageSharp.Image.Load<Rgba32>(ClothMap.se_wind);
+            tagImages.Add(new Tuple<SixLabors.ImageSharp.Image<Rgba32>, int, int>(tagImage, (256 * 4 - 1) - tagImage.Width, (256 * 4 - 1) - tagImage.Height));
+            tagImage = SixLabors.ImageSharp.Image.Load<Rgba32>(ClothMap.sw_serpent);
+            tagImages.Add(new Tuple<SixLabors.ImageSharp.Image<Rgba32>, int, int>(tagImage, 16*4, (256 * 4 - 1) - tagImage.Height));
+            tagImage = SixLabors.ImageSharp.Image.Load<Rgba32>(ClothMap.se_serpent);
+            tagImages.Add(new Tuple<SixLabors.ImageSharp.Image<Rgba32>, int, int>(tagImage, (256 * 4 - 1) - tagImage.Width - (10*4), (256 * 4 - 1) - tagImage.Height));
+
+            foreach (var tag in tagImages)
+            {
+                var imageToPlace = tag.Item1;
+                var yOffset = tag.Item3;
+                var xOffset = tag.Item2;
+                
+                if (ImageOnlyOverlapsWater(tag.Item1, tag.Item3, tag.Item2, usedPixels))
+                {
+                    var point = new SixLabors.ImageSharp.Point(xOffset, yOffset);
+                    image = image.Clone(ctx => ctx.DrawImage(tag.Item1, point, PixelColorBlendingMode.Normal, PixelAlphaCompositionMode.SrcOver, 1));
+                    MarkUsedPixels(point, usedPixels, tag.Item1);
+                }
+            }
+
+            tagImages = new List<Tuple<SixLabors.ImageSharp.Image<Rgba32>, int, int>>();
+            tagImages.Add(new Tuple<SixLabors.ImageSharp.Image<Rgba32>, int, int>(SixLabors.ImageSharp.Image.Load<Rgba32>(ClothMap.small_boat), 0, 0));
+            tagImages.Add(new Tuple<SixLabors.ImageSharp.Image<Rgba32>, int, int>(SixLabors.ImageSharp.Image.Load<Rgba32>(ClothMap.big_boat), 0, 0));
+
+            foreach (var tag in tagImages)
+            {
+                var evenlyDistributedLocationsCopy = evenlyDistributedLocations.ToList();
+                foreach (var tile in evenlyDistributedLocationsCopy)
+                {
+                    if (ImageOnlyOverlapsWater(tag.Item1, tile.Y * 4, tile.X * 4, usedPixels))
+                    {
+                        var point = new SixLabors.ImageSharp.Point(tile.X * 4, tile.Y * 4);
+                        image = image.Clone(ctx => ctx.DrawImage(tag.Item1, point, PixelColorBlendingMode.Normal, PixelAlphaCompositionMode.SrcOver, 1));
+                        MarkUsedPixels(point, usedPixels, tag.Item1);
+
+                        evenlyDistributedLocations.Remove(tile);
+                        evenlyDistributedLocations = evenlyDistributedLocations.OrderByDescending(t => DistanceSquared(tile, t)).ToList();
+                        break;
+                    }
+                    else
+                    {
+                        evenlyDistributedLocations.Remove(tile);
+                    }
+                }
+            }
 
             return image;
         }
 
-        private SixLabors.ImageSharp.Image<Rgba32> ClothMapPlaceTags(SixLabors.ImageSharp.Image<Rgba32> image)
+        private static void MarkUsedPixels(SixLabors.ImageSharp.Point point, int[,] usedPixels, SixLabors.ImageSharp.Image<Rgba32> image)
         {
-            var tagImages = new List<Tuple<SixLabors.ImageSharp.Image<Rgba32>, int, int>>();
-            tagImages.Add(new Tuple<SixLabors.ImageSharp.Image<Rgba32>,int,int>(SixLabors.ImageSharp.Image.Load<Rgba32>(ClothMap.nw_wind),0,0));
-            var tagImage = SixLabors.ImageSharp.Image.Load<Rgba32>(ClothMap.ne_wind);
-            tagImages.Add(new Tuple<SixLabors.ImageSharp.Image<Rgba32>, int, int>(tagImage, (256*4 - 1) - tagImage.Width, 0));
-
-            foreach(var tag in tagImages)
+            for (int x = point.X; x < image.Width + point.X; x++)
             {
-                var allWater = true;
-
-                for (int x = tag.Item2; x < tag.Item2 + tag.Item1.Width && allWater; x++)
+                for (int y = point.Y; y < image.Height + point.Y; y++)
                 {
-                    for (int y = tag.Item3; y < tag.Item3 + tag.Item1.Height && allWater; y++)
+                    if (image[x - point.X, y - point.Y].A != 0)
                     {
-                        if (!IsWater(_clothMapTiles[x, y]))
-                        {
-                            allWater = false;
-                        }
+                        usedPixels[x, y] = 1;
                     }
                 }
-                if(allWater)
+            }
+        }
+
+        private bool ImageOnlyOverlapsWater(SixLabors.ImageSharp.Image<Rgba32> imageToPlace, int yOffset, int xOffset, int[,] usedPixels)
+        {
+            var allWater = true;
+
+            for (int y = yOffset; y < yOffset + imageToPlace.Height && allWater; y++)
+            {
+                Span<Rgba32> rowSpan = imageToPlace.GetPixelRowSpan(y - yOffset);
+                for (int x = xOffset; x < xOffset + imageToPlace.Width && allWater; x++)
                 {
-                    var point = new SixLabors.ImageSharp.Point(tag.Item2, tag.Item3);
-                    image = image.Clone(ctx => ctx.DrawImage(tag.Item1, point, PixelColorBlendingMode.Normal, PixelAlphaCompositionMode.SrcOver, 1));
+                    if (x >= SIZE*4 || y >= SIZE*4 || (rowSpan[x - xOffset].A != 0 && !IsWater(_clothMapTiles[x, y])) || (rowSpan[x - xOffset].A != 0 && usedPixels[x,y] == 1))
+                    {
+                        allWater = false;
+                    }
                 }
             }
-
-
-            return image;
+            return allWater;
         }
 
         private SixLabors.ImageSharp.Image<Rgba32> ClothMapPlaceLocations(SixLabors.ImageSharp.Image<Rgba32> img2, UltimaData data)

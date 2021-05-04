@@ -133,6 +133,26 @@ namespace U4DosRandomizer.Resources {
         /// <summary>
         ///   Looks up a localized resource of type System.Byte[].
         /// </summary>
+        internal static byte[] banner {
+            get {
+                object obj = ResourceManager.GetObject("banner", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Byte[].
+        /// </summary>
+        internal static byte[] big_boat {
+            get {
+                object obj = ResourceManager.GetObject("big_boat", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Byte[].
+        /// </summary>
         internal static byte[] deep_water {
             get {
                 object obj = ResourceManager.GetObject("deep_water", resourceCulture);
@@ -366,6 +386,56 @@ namespace U4DosRandomizer.Resources {
         internal static byte[] scrubnoise {
             get {
                 object obj = ResourceManager.GetObject("scrubnoise", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Byte[].
+        /// </summary>
+        internal static byte[] se_serpent {
+            get {
+                object obj = ResourceManager.GetObject("se_serpent", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Byte[].
+        /// </summary>
+        internal static byte[] se_wind {
+            get {
+                object obj = ResourceManager.GetObject("se_wind", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Byte[].
+        /// </summary>
+        internal static byte[] small_boat {
+            get {
+                object obj = ResourceManager.GetObject("small_boat", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Byte[].
+        /// </summary>
+        internal static byte[] sw_serpent {
+            get {
+                object obj = ResourceManager.GetObject("sw_serpent", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Byte[].
+        /// </summary>
+        internal static byte[] sw_wind {
+            get {
+                object obj = ResourceManager.GetObject("sw_wind", resourceCulture);
                 return ((byte[])(obj));
             }
         }

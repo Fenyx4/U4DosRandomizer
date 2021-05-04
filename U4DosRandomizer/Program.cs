@@ -340,7 +340,7 @@ namespace U4DosRandomizer
 
             worldMap.Randomize(ultimaData, new Random(randomValues[3]), new Random(randomValues[4]));
 
-            var clothMap = worldMap.ToClothMap(ultimaData);
+            var clothMap = worldMap.ToClothMap(ultimaData, new Random(randomValues[5]));
             clothMap.SaveAsPng($"clothMap-{seed}.png");
 
             if (!String.IsNullOrWhiteSpace(flags.SpellRemove))

@@ -12,6 +12,6 @@ namespace U4DosRandomizer
         public void Save(string path);
 
         Tile GetCoordinate(int x, int y);
-        SixLabors.ImageSharp.Image ToClothMap(UltimaData data);
+        SixLabors.ImageSharp.Image ToClothMap(UltimaData data, Random random);
     }
 }
