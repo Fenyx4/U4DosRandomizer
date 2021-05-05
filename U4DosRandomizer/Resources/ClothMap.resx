@@ -194,7 +194,7 @@
     <value>scrub.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="scrubnoise" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\bin\Debug\netcoreapp3.1\scrubnoise;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>scrubnoise;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="se_serpent" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>se-serpent.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
