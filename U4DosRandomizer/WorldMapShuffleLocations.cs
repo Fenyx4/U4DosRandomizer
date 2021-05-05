@@ -17,7 +17,7 @@ namespace U4DosRandomizer
             this.SpoilerLog = spoilerLog;
         }
 
-        public override void Load(string path, int mapSeed, Random mapGeneratorSeed, Random randomMap)
+        public override void Load(string path, int mapSeed, int mapGeneratorSeed, int otherRandomSeed, UltimaData ultimaData)
         {
             var file = Path.Combine(path, filename);
 
@@ -217,7 +217,7 @@ namespace U4DosRandomizer
             {
                 for (int y = 256 - 100; y < 256; y++)
                 {
-                    _worldMapTiles[x, y] = TileInfo.Deep_Water;
+                    _worldMapTiles[x,y] = TileInfo.Deep_Water;
                 }
             }
         }

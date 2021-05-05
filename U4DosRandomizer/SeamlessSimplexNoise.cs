@@ -49,7 +49,7 @@ namespace U4DosRandomizer
         // 4D Scaled Multi-octave Simplex noise.
         //
         // Returned value will be between loBound and hiBound.
-        private static float scaled_octave_noise_4d( float octaves, float persistence, float scale, float loBound, float hiBound, float x, float y, float z, float w ) 
+        private static float scaled_octave_noise_4d(float octaves, float persistence, float scale, float loBound, float hiBound, float x, float y, float z, float w)
         {
             return octave_noise_4d(octaves, persistence, scale, x, y, z, w) * (hiBound - loBound) / 2 + (hiBound + loBound) / 2;
         }
@@ -58,7 +58,7 @@ namespace U4DosRandomizer
         //
         // For each octave, a higher frequency/lower amplitude function will be added to the original.
         // The higher the persistence [0-1], the more of each succeeding octave will be added.
-        private static float octave_noise_4d( float octaves, float persistence, float scale, float x, float y, float z, float w ) 
+        private static float octave_noise_4d(float octaves, float persistence, float scale, float x, float y, float z, float w)
         {
             float total = 0;
             float frequency = scale;
@@ -68,8 +68,9 @@ namespace U4DosRandomizer
             // because each octave adds more, and we need a value in [-1, 1].
             float maxAmplitude = 0;
 
-            for(int i=0; i<octaves; i++ ) {
-                total += raw_noise_4d(x* frequency, y* frequency, z* frequency, w* frequency) * amplitude;
+            for (int i = 0; i < octaves; i++)
+            {
+                total += raw_noise_4d(x * frequency, y * frequency, z * frequency, w * frequency) * amplitude;
 
                 frequency *= 2;
                 maxAmplitude += amplitude;
@@ -82,24 +83,24 @@ namespace U4DosRandomizer
         // 4D Scaled Simplex raw noise.
         //
         // Returned value will be between loBound and hiBound.
-        private static float scaled_raw_noise_4d( float loBound, float hiBound, float x, float y, float z, float w )
+        private static float scaled_raw_noise_4d(float loBound, float hiBound, float x, float y, float z, float w)
         {
             return raw_noise_4d(x, y, z, w) * (hiBound - loBound) / 2 + (hiBound + loBound) / 2;
         }
 
-        private static int fastfloor( float x ) { return x > 0 ? (int) x : (int) x - 1;}
-        private static float dot( int[] g, float x, float y, float z, float w ) { return g[0]*x + g[1]*y + g[2]*z + g[3]*w; }
+        private static int fastfloor(float x) { return x > 0 ? (int)x : (int)x - 1; }
+        private static float dot(int[] g, float x, float y, float z, float w) { return g[0] * x + g[1] * y + g[2] * z + g[3] * w; }
 
-    // A lookup table to traverse the simplex around a given point in 4D.
-    private static int[,] simplex = new int[64,4] {
-            {0,01,2,3},{0,1,3,2},{0,0,0,0},{0,2,3,1},{0,0,0,0},{0,0,0,0},{0,0,0,0},{1,2,3,0},
-            {0,2,1,3},{0,0,0,0},{0,3,1,2},{0,3,2,1},{0,0,0,0},{0,0,0,0},{0,0,0,0},{1,3,2,0},
-            {0,0,0,0},{0,0,0,0},{0,0,0,0},{0,0,0,0},{0,0,0,0},{0,0,0,0},{0,0,0,0},{0,0,0,0},
-            {1,2,0,3},{0,0,0,0},{1,3,0,2},{0,0,0,0},{0,0,0,0},{0,0,0,0},{2,3,0,1},{2,3,1,0},
-            {1,0,2,3},{1,0,3,2},{0,0,0,0},{0,0,0,0},{0,0,0,0},{2,0,3,1},{0,0,0,0},{2,1,3,0},
-            {0,0,0,0},{0,0,0,0},{0,0,0,0},{0,0,0,0},{0,0,0,0},{0,0,0,0},{0,0,0,0},{0,0,0,0},
-            {2,0,1,3},{0,0,0,0},{0,0,0,0},{0,0,0,0},{3,0,1,2},{3,0,2,1},{0,0,0,0},{3,1,2,0},
-            {2,1,0,3},{0,0,0,0},{0,0,0,0},{0,0,0,0},{3,1,0,2},{0,0,0,0},{3,2,0,1},{3,2,1,0}
+        // A lookup table to traverse the simplex around a given point in 4D.
+        private static int[] simplex = new int[64 * 4] {
+            0,1,2,3,0,1,3,2,0,0,0,0,0,2,3,1,0,0,0,0,0,0,0,0,0,0,0,0,1,2,3,0,
+    0,2,1,3,0,0,0,0,0,3,1,2,0,3,2,1,0,0,0,0,0,0,0,0,0,0,0,0,1,3,2,0,
+    0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+    1,2,0,3,0,0,0,0,1,3,0,2,0,0,0,0,0,0,0,0,0,0,0,0,2,3,0,1,2,3,1,0,
+    1,0,2,3,1,0,3,2,0,0,0,0,0,0,0,0,0,0,0,0,2,0,3,1,0,0,0,0,2,1,3,0,
+    0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+    2,0,1,3,0,0,0,0,0,0,0,0,0,0,0,0,3,0,1,2,3,0,2,1,0,0,0,0,3,1,2,0,
+    2,1,0,3,0,0,0,0,0,0,0,0,0,0,0,0,3,1,0,2,0,0,0,0,3,2,0,1,3,2,1,0
         };
 
         // Permutation table.The same list is repeated twice.
@@ -143,12 +144,15 @@ namespace U4DosRandomizer
             new int[] {-1,1,1,0}, new int[] {-1,1,-1,0}, new int[] {-1,-1,1,0}, new int[] {-1,-1,-1,0}
         };
 
+        private static float F4 = (MathF.Sqrt(5.0F) - 1.0F) / 4.0F;
+        private static float G4 = (5.0F - MathF.Sqrt(5.0F)) / 20.0F;
+
         // 4D raw Simplex noise
-        private static float raw_noise_4d( float x, float y, float z, float w ) 
+        private static float raw_noise_4d(float x, float y, float z, float w)
         {
             // The skewing and unskewing factors are hairy again for the 4D case
-            float F4 = (MathF.Sqrt(5.0F) - 1.0F) / 4.0F;
-            float G4 = (5.0F - MathF.Sqrt(5.0F)) / 20.0F;
+            //float F4 = (MathF.Sqrt(5.0F) - 1.0F) / 4.0F;
+            //float G4 = (5.0F - MathF.Sqrt(5.0F)) / 20.0F;
             float n0, n1, n2, n3, n4; // Noise contributions from the five corners
 
             // Skew the (x,y,z,w) space to determine which cell of 24 simplices we're in
@@ -183,6 +187,7 @@ namespace U4DosRandomizer
             int c5 = (y0 > w0) ? 2 : 0;
             int c6 = (z0 > w0) ? 1 : 0;
             int c = c1 + c2 + c3 + c4 + c5 + c6;
+            c <<= 2;
 
             int i1, j1, k1, l1; // The integer offsets for the second simplex corner
             int i2, j2, k2, l2; // The integer offsets for the third simplex corner
@@ -193,21 +198,28 @@ namespace U4DosRandomizer
             // impossible. Only the 24 indices which have non-zero entries make any sense.
             // We use a thresholding to set the coordinates in turn from the largest magnitude.
             // The number 3 in the "simplex" array is at the position of the largest coordinate.
-            i1 = simplex[c,0]>=3 ? 1 : 0;
-            j1 = simplex[c,1]>=3 ? 1 : 0;
-            k1 = simplex[c,2]>=3 ? 1 : 0;
-            l1 = simplex[c,3]>=3 ? 1 : 0;
             // The number 2 in the "simplex" array is at the second largest coordinate.
-            i2 = simplex[c,0]>=2 ? 1 : 0;
-            j2 = simplex[c,1]>=2 ? 1 : 0;
-            k2 = simplex[c,2]>=2 ? 1 : 0;
-            l2 = simplex[c,3]>=2 ? 1 : 0;
             // The number 1 in the "simplex" array is at the second smallest coordinate.
-            i3 = simplex[c,0]>=1 ? 1 : 0;
-            j3 = simplex[c,1]>=1 ? 1 : 0;
-            k3 = simplex[c,2]>=1 ? 1 : 0;
-            l3 = simplex[c,3]>=1 ? 1 : 0;
+            i1 = simplex[c] >= 3 ? 1 : 0;
+            i2 = simplex[c] >= 2 ? 1 : 0;
+            i3 = simplex[c++] >= 1 ? 1 : 0;
+
+            j1 = simplex[c] >= 3 ? 1 : 0;
+            j2 = simplex[c] >= 2 ? 1 : 0;
+            j3 = simplex[c++] >= 1 ? 1 : 0;
+
+
+            k1 = simplex[c] >= 3 ? 1 : 0;
+            k2 = simplex[c] >= 2 ? 1 : 0;
+            k3 = simplex[c++] >= 1 ? 1 : 0;
+
+
+            l1 = simplex[c] >= 3 ? 1 : 0;
+            l2 = simplex[c] >= 2 ? 1 : 0;
+            l3 = simplex[c] >= 1 ? 1 : 0;
+
             // The fifth corner has all coordinate offsets = 1, so no need to look that up.
+
 
             float x1 = x0 - i1 + G4; // Offsets for second corner in (x,y,z,w) coords
             float y1 = y0 - j1 + G4;

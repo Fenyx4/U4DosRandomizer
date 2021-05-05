@@ -312,7 +312,7 @@ namespace U4DosRandomizer
             {
                 worldMap = new WorldMapShuffleLocations(spoilerLog);
             }
-            worldMap.Load(path, randomValues[0], new Random(randomValues[1]), new Random(randomValues[2]));
+            worldMap.Load(path, randomValues[0], randomValues[1], randomValues[2], ultimaData);
 
             var avatar = new Avatar(spoilerLog);
             avatar.Load(path, ultimaData, worldMap);
@@ -339,6 +339,9 @@ namespace U4DosRandomizer
             }
 
             worldMap.Randomize(ultimaData, new Random(randomValues[3]), new Random(randomValues[4]));
+
+            var clothMap = worldMap.ToClothMap(ultimaData, new Random(randomValues[5]));
+            clothMap.SaveAsPng($"clothMap-{seed}.png");
 
             if (!String.IsNullOrWhiteSpace(flags.SpellRemove))
             {
