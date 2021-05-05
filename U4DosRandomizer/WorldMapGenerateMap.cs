@@ -864,7 +864,7 @@ namespace U4DosRandomizer
             ultimaData.Towns[7].Y = loc.Y;
 
             // Castles
-            var numLocations = 4 + ultimaData.Castles.Count + ultimaData.Shrines.Count - 1;
+            var numLocations = 4 + ultimaData.Castles.Count;
             evenlyDistributedLocations = GetEvenlyDistributedValidLocations(random, numLocations, usedLocations, possibleLocations, ultimaData, true);
             possibleLocations = possibleLocations.Except(evenlyDistributedLocations).ToList();
             for (int i = 0; i < 3; i++)
@@ -883,6 +883,13 @@ namespace U4DosRandomizer
             }
 
             // Shrines
+            numLocations = ultimaData.Shrines.Count - 1;
+            // Get a place by the water
+            var possibleShrineLocations = GetAllMatchingTiles(t => WorldMapGenerateMap.IsWalkableGround(t) && t.NeighborAndAdjacentCoordinates().Any(n => IsWater(n.GetTile())));
+            possibleShrineLocations.RemoveAll(c => excludeLocations.Contains(c));
+            // Get places far from eachother
+            evenlyDistributedLocations = GetEvenlyDistributedValidLocations(random, numLocations, usedLocations, possibleShrineLocations, ultimaData, true);
+            possibleLocations = possibleLocations.Except(evenlyDistributedLocations).ToList();
             for (int i = 0; i < 7; i++)
             {
                 if (i == 6)
@@ -891,7 +898,10 @@ namespace U4DosRandomizer
                 }
                 else
                 {
-                    loc = RandomSelectFromListCheckPathChangeAndRemove(random, evenlyDistributedLocations, TileInfo.Shrine);
+                    //Get the place closest to its town
+                    loc = evenlyDistributedLocations.OrderBy(x => DistanceSquared(x, ultimaData.Towns[i])).First();
+                    evenlyDistributedLocations.Remove(loc);
+                    loc.SetTile(TileInfo.Shrine);
                     ultimaData.Shrines[i].X = loc.X;
                     ultimaData.Shrines[i].Y = loc.Y;
                 }
