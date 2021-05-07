@@ -73,6 +73,7 @@ namespace U4DosRandomizer
         public int PIRATE_COVE_SPAWN_TRIGGER_X_OFFSET1 { get; } = 0x03032; //308B
         public int PIRATE_COVE_SPAWN_TRIGGER_Y_OFFSET2 { get; } = 0x030CA; //3123
         public int PIRATE_COVE_SPAWN_TRIGGER_X_OFFSET2 { get; } = 0x030d1; //312A
+        public int WORD_OF_PASSAGE { get; } = 0x1077D; // 104F0
         public int MONSTER_HP_OFFSET { get; } = 0x11938; //11685 // length 52
         public int MONSTER_LEADER_TYPES_OFFSET { get; } = 0x1196C; //116b9 // length 36
         public int MONSTER_ENCOUNTER_SIZE_OFFSET { get; } = 0x11990; //116dd // length 36

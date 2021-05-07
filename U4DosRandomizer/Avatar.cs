@@ -172,6 +172,14 @@ namespace U4DosRandomizer
                 textOffset++;
             }
 
+            var wordOfPassageTextBytes = new List<byte>();
+
+            for (int offSet = 0; offSet < 9; offSet++)
+            {
+                wordOfPassageTextBytes.Add(avatarBytes[AvatarOffset.WORD_OF_PASSAGE+offSet]);
+            }
+            data.WordOfPassage = System.Text.Encoding.Default.GetString(wordOfPassageTextBytes.ToArray());
+
             data.DaemonSpawnX1 = avatarBytes[AvatarOffset.DEMON_SPAWN_TRIGGER_X1_OFFSET];
             data.DaemonSpawnX2 = avatarBytes[AvatarOffset.DEMON_SPAWN_TRIGGER_X2_OFFSET];
             data.DaemonSpawnY1 = avatarBytes[AvatarOffset.DEMON_SPAWN_TRIGGER_Y1_OFFSET];
@@ -352,6 +360,13 @@ namespace U4DosRandomizer
                     throw new Exception($"Mantra text is too long.");
                 }
             }
+
+            var wordOfPassageBytes = Encoding.ASCII.GetBytes(data.WordOfPassage.ToLower());
+            for (int j = 0; j < wordOfPassageBytes.Length; j++)
+            {
+                avatarBytes[AvatarOffset.WORD_OF_PASSAGE + j] = wordOfPassageBytes[j];
+            }
+
 
             avatarBytes[AvatarOffset.DEMON_SPAWN_TRIGGER_X1_OFFSET] = data.DaemonSpawnX1;
             avatarBytes[AvatarOffset.DEMON_SPAWN_TRIGGER_X2_OFFSET] = data.DaemonSpawnX2;

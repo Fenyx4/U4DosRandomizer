@@ -280,6 +280,18 @@ namespace U4DosRandomizer
                     person.KeywordResponse2 = $"The mantra for pride, being the antithesis of humility, is '{new string(Mantras[7].Text.ToString().ToUpper().Reverse().ToArray())}'.";
                 }
 
+                if(flags.WordOfPassage)
+                {
+                    person = FindPerson("Robert Frasier");
+                    person.Yes = $"It is '{ultimaData.WordTruth.ToLower()}'! Seek ye now the other parts!";
+
+                    person = FindPerson("Lord Robert", "Empath");
+                    person.Yes = $"It is '{ultimaData.WordLove.ToLower()}'! Seek ye now the other parts!";
+
+                    person = FindPerson("Sentri");
+                    person.KeywordResponse2 = $"I know but one of three syllables - '{ultimaData.WordCourage.ToLower()}'.";
+                }
+
 
 
                 // --- End Runes ---
@@ -594,6 +606,23 @@ namespace U4DosRandomizer
                 File.WriteAllBytes(file, townBytes.ToArray());
             }
         }
+
+        public List<Tuple<string, string, string>> WordsOfPassage = new List<Tuple<string, string, string>>()
+        {
+            new Tuple<string, string, string>("Sat", "Maa", "Saa"), 
+            new Tuple<string, string, string>("Waa", "Lee", "Moe"),
+            new Tuple<string, string, string>("Cra", "Ber", "Eee"),
+            new Tuple<string, string, string>("San", "Ast", "Hug"),
+            new Tuple<string, string, string>("Ver", "Imh", "Kur"),
+            new Tuple<string, string, string>("Ver", "Amo", "Cor"),
+            new Tuple<string, string, string>("Pon", "Aro", "Ito"),
+            new Tuple<string, string, string>("Gwi", "Car", "Dew"),
+            new Tuple<string, string, string>("Gas", "Aun", "Jar"),
+            new Tuple<string, string, string>("Wou", "Lei", "Jar"),
+            new Tuple<string, string, string>("Pat", "Mil", "Dro"),
+            new Tuple<string, string, string>("Squ", "Org", "Dag"),
+            new Tuple<string, string, string>("Clo", "Dee", "Sho"),
+        };
 
         public List<Mantra> Mantras = new List<Mantra>()
         {

@@ -15,6 +15,7 @@ namespace U4DosRandomizer
         int PIRATE_COVE_SPAWN_TRIGGER_X_OFFSET1 { get; }
         int PIRATE_COVE_SPAWN_TRIGGER_Y_OFFSET2 { get; }
         int PIRATE_COVE_SPAWN_TRIGGER_X_OFFSET2 { get; }
+        int WORD_OF_PASSAGE { get; }
         int MONSTER_HP_OFFSET { get; }
         int MONSTER_LEADER_TYPES_OFFSET { get; }
         int MONSTER_ENCOUNTER_SIZE_OFFSET { get; }

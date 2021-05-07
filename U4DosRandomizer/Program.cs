@@ -86,7 +86,11 @@ namespace U4DosRandomizer
                 CommandOptionType.NoValue);
             CommandOption mantrasArg = commandLineApplication.Option(
                 "--mantras",
-                "Randomize the location of the mantras.",
+                "Randomize the mantras.",
+                CommandOptionType.NoValue);
+            CommandOption wordOfPassageArg = commandLineApplication.Option(
+                "--wordOfPassage",
+                "Randomize the Word of Passage.",
                 CommandOptionType.NoValue);
             CommandOption questItemsArg = commandLineApplication.Option(
                 "--questItems",
@@ -237,6 +241,7 @@ namespace U4DosRandomizer
                     flags.SacrificeFix = sacrificeFixArg.HasValue();
                     flags.Runes = runesArg.HasValue();
                     flags.Mantras = mantrasArg.HasValue();
+                    flags.WordOfPassage = wordOfPassageArg.HasValue();
                     flags.QuestItemPercentage = questItems;
                     flags.KarmaSetPercentage = karmaPercentage;
                     flags.KarmaValue = karmaValue;
@@ -522,6 +527,15 @@ namespace U4DosRandomizer
                 {
                     ultimaData.Mantras[i] = talk.Mantras[i].Text.ToLower();
                 }
+            }
+
+            if(flags.WordOfPassage)
+            {
+                var selection = talk.WordsOfPassage[random.Next(0, talk.WordsOfPassage.Count)];
+                ultimaData.WordTruth = selection.Item1;
+                ultimaData.WordLove = selection.Item2;
+                ultimaData.WordCourage = selection.Item3;
+                ultimaData.WordOfPassage = selection.Item1 + selection.Item2 + selection.Item3;
             }
             
             //ultimaData.StartingStones = 0XFF;

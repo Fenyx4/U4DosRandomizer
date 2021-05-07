@@ -107,6 +107,7 @@ namespace U4DosRandomizer
         public List<Coordinate> StartingPositions { get; set; }
         public List<string> LBText { get; internal set; }
         public List<string> Mantras { get; internal set; }
+        public string WordOfPassage { get; internal set; }
         public byte DaemonSpawnX1 { get; internal set; }
         public byte DaemonSpawnX2 { get; internal set; }
         public byte DaemonSpawnY1 { get; internal set; }
@@ -355,6 +356,9 @@ namespace U4DosRandomizer
         public int LOC_HONOR { get; } = 0x1e;
         public int LOC_SPIRITUALITY { get; } = 0x1f;
         public int LOC_HUMILITY { get; } = 0x20;
+        public string WordTruth { get; internal set; }
+        public string WordLove { get; internal set; }
+        public string WordCourage { get; internal set; }
         /*
 * https://github.com/ergonomy-joe/u4-decompiled/blob/master/SRC/U4_LOC.H
 * 0 - Britannia

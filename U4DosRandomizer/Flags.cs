@@ -30,6 +30,7 @@ namespace U4DosRandomizer
         public bool SacrificeFix { get; internal set; }
         public bool Runes { get; internal set; }
         public bool Mantras { get; internal set; }
+        public bool WordOfPassage { get; internal set; }
         public int MonsterDamage { get; internal set; }
         public int WeaponDamage { get; internal set; }
         public bool EarlierMonsters { get; internal set; }
