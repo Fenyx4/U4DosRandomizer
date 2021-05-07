@@ -28,6 +28,8 @@
 	}
 	if (Party._loc != 0 && Party._loc < 0x11)
 	{
+		/*Force doors to close before saving*/
+		C_431D(); C_431D(); C_431D(); C_431D(); C_431D();
 		if(Save("TOWNMAP.SAV", sizeof(struct t_500), &D_8742) == -1)
 			exit(3);
 		return;
