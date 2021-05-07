@@ -1025,7 +1025,9 @@ namespace U4DosRandomizer
             possibleLocations = possibleLocations.Except(evenlyDistributedLocations).ToList();
             for (int i = 0; i < 6; i++)
             {
-                loc = RandomSelectFromListCheckPathChangeAndRemove(random, evenlyDistributedLocations, TileInfo.Dungeon_Entrance);
+                loc = evenlyDistributedLocations.OrderBy(x => DistanceSquared(x, ultimaData.Towns[i])).First();
+                evenlyDistributedLocations.Remove(loc);
+                loc.SetTile(TileInfo.Dungeon_Entrance);
                 ultimaData.Dungeons[i].X = loc.X;
                 ultimaData.Dungeons[i].Y = loc.Y;
             }
