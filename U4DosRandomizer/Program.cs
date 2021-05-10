@@ -32,6 +32,10 @@ namespace U4DosRandomizer
                 "-r |--r",
                 "Restore original Ultima 4 files. ",
                 CommandOptionType.NoValue);
+            CommandOption encodedArg = commandLineApplication.Option(
+                "-e |--encoded>",
+                "Encoded flags. Overrides all other flags. ",
+                CommandOptionType.SingleValue);
             CommandOption minimapArg = commandLineApplication.Option(
                 "--miniMap",
                 "Output a minimap of the overworld. ",
@@ -248,7 +252,7 @@ namespace U4DosRandomizer
                     flags.MonsterDamage = monsterDamage;
                     flags.WeaponDamage = weaponDamage;
                     flags.EarlierMonsters = earlierMonstersArg.HasValue();
-                    Randomize(seed, path, flags);
+                    Randomize(seed, path, flags, encodedArg.Value());
                     //Console.WriteLine("Seed: " + seed);
                     //var random = new Random(seed);
                     //var worldMap = new WorldMap();
@@ -273,22 +277,27 @@ namespace U4DosRandomizer
             Dungeons.Restore(path);
         }
 
-        private static void Randomize(int seed, string path, Flags flags)
+        private static void Randomize(int seed, string path, Flags flags, string encoded)
         {
             //Console.WriteLine("Seed: " + seed);
 
             string json = JsonConvert.SerializeObject(flags);
+            if (string.IsNullOrWhiteSpace(encoded))
+            {
+                encoded = flags.GetEncoded();
+            }
+            else
+            {
+                flags.DecodeAndSet(encoded);
+                json = JsonConvert.SerializeObject(flags);
+            }
             Console.WriteLine("Flags JSON  : " + json);
-            var encoded = flags.GetEncoded();
             Console.WriteLine("Flags Base64: " + encoded);
 
             StreamWriter spoilerWriter = new StreamWriter("spoiler.txt");
             SpoilerLog spoilerLog = new SpoilerLog(spoilerWriter);
             System.IO.File.AppendAllText(@"seed.txt", seed.ToString() + " " + encoded + Environment.NewLine);
             spoilerLog.WriteFlags(flags);
-            //flags.DecodeAndSet(encoded);
-            //json = JsonConvert.SerializeObject(flags);
-            //Console.WriteLine("Flags JSON  : " + json);
 
             var random = new Random(seed);
 
