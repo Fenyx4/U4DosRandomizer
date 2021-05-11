@@ -50,13 +50,27 @@ namespace U4DosRandomizer
             mask = SET_MSK(mask, DngStone, 1);
             mask = SET_MSK(mask, MixQuantity, 2);
             mask = SET_MSK(mask, Fixes, 3);
+            mask = SET_MSK(mask, FixHythloth, 4);
+            mask = SET_MSK(mask, SleepLockAssist, 5);
+            mask = SET_MSK(mask, ActivePlayer, 6);
+            mask = SET_MSK(mask, HitChance, 7);
+            encoded.Add((byte)mask);
 
+            mask = 0;
+            mask = SET_MSK(mask, DiagonalAttack, 0);
+            mask = SET_MSK(mask, SacrificeFix, 1);
+            mask = SET_MSK(mask, Runes, 2);
+            mask = SET_MSK(mask, Mantras, 3);
+            mask = SET_MSK(mask, WordOfPassage, 4);
+            mask = SET_MSK(mask, EarlierMonsters, 5);
             encoded.Add((byte)mask);
 
             encoded.Add((byte)Overworld);
             encoded.Add((byte)QuestItemPercentage);
             encoded.Add((byte)KarmaSetPercentage);
             encoded.Add((byte)(KarmaValue.HasValue ? KarmaValue.Value + 1 : 0));
+            encoded.Add((byte)MonsterDamage);
+            encoded.Add((byte)WeaponDamage);
 
             var sr = (SpellRemove == null ? "" : SpellRemove).ToLower();
             var spellRemoveMask = 0;
@@ -87,11 +101,22 @@ namespace U4DosRandomizer
             DngStone = TST_MSK(mask, 1);
             MixQuantity = TST_MSK(mask, 2);
             Fixes = TST_MSK(mask, 3);
+            FixHythloth = TST_MSK(mask, 4);
+            SleepLockAssist = TST_MSK(mask, 5);
+            ActivePlayer = TST_MSK(mask, 6);
+            HitChance = TST_MSK(mask, 7);
+            mask = encoded[6];
+            DiagonalAttack = TST_MSK(mask, 0);
+            SacrificeFix = TST_MSK(mask, 1);
+            Runes = TST_MSK(mask, 2);
+            Mantras = TST_MSK(mask, 3);
+            WordOfPassage = TST_MSK(mask, 4);
+            EarlierMonsters = TST_MSK(mask, 5);
 
-            Overworld = encoded[6];
-            QuestItemPercentage = encoded[7];
-            KarmaSetPercentage = encoded[8];
-            KarmaValue = encoded[9];
+            Overworld = encoded[7];
+            QuestItemPercentage = encoded[8];
+            KarmaSetPercentage = encoded[9];
+            KarmaValue = encoded[10];
             if (KarmaValue == 0)
             {
                 KarmaValue = null;
@@ -100,8 +125,10 @@ namespace U4DosRandomizer
             {
                 KarmaValue--;
             }
+            MonsterDamage = encoded[11];
+            WeaponDamage = encoded[12];
 
-            var spellRemoveMask = BitConverter.ToInt32(encoded, 10);
+            var spellRemoveMask = BitConverter.ToInt32(encoded, 13);
             SpellRemove = "";
             for (int offset = 0; offset < 26; offset++)
             {
