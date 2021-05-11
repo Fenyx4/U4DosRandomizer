@@ -245,6 +245,8 @@ namespace U4DosRandomizer
                     }
                 }
 
+                // --- End Runes ---
+
                 if (flags.Mantras)
                 {
                     person = FindPerson("Cromwell");
@@ -292,9 +294,21 @@ namespace U4DosRandomizer
                     person.KeywordResponse2 = $"I know but one of three syllables - '{ultimaData.WordCourage.ToLower()}'.";
                 }
 
+                if(flags.RandomizeSpells)
+                {
+                    person = FindPerson("Nigel, at thy\nservice.");
+                    person.KeywordResponse2 = $"Yes, resurrection it takes: {GetRecipeText(ultimaData.SpellsRecipes['r' - 'a'].Byte)}!";
 
-
-                // --- End Runes ---
+                    person = FindPerson("Mentorian");
+                    if (ultimaData.SpellsRecipes['g' - 'a'].Byte == 0xFF)
+                    {
+                        person.KeywordResponse2 = $"As thou dost bear the ankh I shall tell thee. A gate spell needs { GetRecipeText(ultimaData.SpellsRecipes['g' - 'a'].Byte)}!";
+                    }
+                    else
+                    {
+                        person.KeywordResponse2 = $"Since thou dost bear the ankh I shall tell thee. A gate spell requires { GetRecipeText(ultimaData.SpellsRecipes['g' - 'a'].Byte)}!";
+                    }
+                }
 
                 // --- Towns and Castles ---
                 // TODO make response descriptive
@@ -507,6 +521,33 @@ namespace U4DosRandomizer
         {
             var rx = new Regex("lat-[A-Z]'[A-Z]\".long-[A-Z]'[A-Z]\"", RegexOptions.IgnoreCase | RegexOptions.Singleline);
             var result = rx.Replace(text, latLong);
+            return result;
+        }
+
+        private string[] reagents = new string[] { "ash", "ginseng", "garlic", "silk", "bloodmoss", "pearl", "mandrake", "nightshade" };
+        private string GetRecipeText(byte recipe)
+        {
+            var resultList = new List<string>();
+
+            int mask = recipe;
+            for (int i = 0; i < 8; i++)
+            {
+                if (Flags.TST_MSK(mask, i))
+                {
+                    resultList.Add(reagents[i]);
+                }
+            }
+
+            var result = string.Join(", ", resultList.Take(resultList.Count - 1));
+            if (resultList.Count > 1)
+            {
+                result = result + " and " + resultList[resultList.Count - 1];
+            }
+            else
+            {
+                result = resultList[0];
+            }
+
             return result;
         }
 

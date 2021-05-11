@@ -120,6 +120,11 @@ namespace U4DosRandomizer
                 "--karmaPercentage",
                 "Percentage chance to override a starting karma value for a virtue. Default 0 (no override).",
                 CommandOptionType.SingleValue);
+            CommandOption randomizeSpellsArg = commandLineApplication.Option(
+                "--randomizeSpells",
+                "Randomizes the gate and resurrection spells that you learn in game.",
+                CommandOptionType.NoValue);
+            
             CommandOption spoilerLogArg = commandLineApplication.Option(
                 "--spoilerLog",
                 "Output a spoiler log.",
@@ -252,6 +257,7 @@ namespace U4DosRandomizer
                     flags.MonsterDamage = monsterDamage;
                     flags.WeaponDamage = weaponDamage;
                     flags.EarlierMonsters = earlierMonstersArg.HasValue();
+                    flags.RandomizeSpells = randomizeSpellsArg.HasValue();
                     Randomize(seed, path, flags, encodedArg.Value());
                     //Console.WriteLine("Seed: " + seed);
                     //var random = new Random(seed);
@@ -357,6 +363,13 @@ namespace U4DosRandomizer
             var clothMap = worldMap.ToClothMap(ultimaData, new Random(randomValues[5]));
             clothMap.SaveAsPng($"clothMap-{seed}.png");
 
+            if(flags.RandomizeSpells)
+            {
+                var recipes = new byte[4];
+                random.NextBytes(recipes);
+                ultimaData.SpellsRecipes['r' - 'a'].Byte = (byte)(recipes[0] | recipes[1]);
+                ultimaData.SpellsRecipes['g' - 'a'].Byte = (byte)(recipes[2] | recipes[3]);
+            }
             if (!String.IsNullOrWhiteSpace(flags.SpellRemove))
             {
                 var arr = flags.SpellRemove.ToLower().ToArray();
