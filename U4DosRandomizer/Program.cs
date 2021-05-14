@@ -364,6 +364,7 @@ namespace U4DosRandomizer
             }
 
             worldMap.Randomize(ultimaData, new Random(randomValues[3]), new Random(randomValues[4]));
+            dungeons.Randomize(new Random(randomValues[6]), flags);
 
             var clothMap = worldMap.ToClothMap(ultimaData, new Random(randomValues[5]));
             clothMap.SaveAsPng($"clothMap-{seed}.png");
