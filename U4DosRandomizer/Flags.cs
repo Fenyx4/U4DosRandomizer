@@ -35,6 +35,7 @@ namespace U4DosRandomizer
         public int WeaponDamage { get; internal set; }
         public bool EarlierMonsters { get; internal set; }
         public bool RandomizeSpells { get; internal set; }
+        public bool Sextant { get; internal set; }
 
         public List<int> SupportedVersions = new List<int>() { 9 };
 
@@ -65,6 +66,7 @@ namespace U4DosRandomizer
             mask = SET_MSK(mask, WordOfPassage, 4);
             mask = SET_MSK(mask, EarlierMonsters, 5);
             mask = SET_MSK(mask, RandomizeSpells, 6);
+            mask = SET_MSK(mask, Sextant, 7);
             encoded.Add((byte)mask);
 
             encoded.Add((byte)Overworld);
@@ -115,6 +117,7 @@ namespace U4DosRandomizer
             WordOfPassage = TST_MSK(mask, 4);
             EarlierMonsters = TST_MSK(mask, 5);
             RandomizeSpells = TST_MSK(mask, 6);
+            Sextant = TST_MSK(mask, 7);
 
             Overworld = encoded[7];
             QuestItemPercentage = encoded[8];

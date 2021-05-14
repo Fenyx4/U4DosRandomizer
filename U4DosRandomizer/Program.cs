@@ -33,7 +33,7 @@ namespace U4DosRandomizer
                 "Restore original Ultima 4 files. ",
                 CommandOptionType.NoValue);
             CommandOption encodedArg = commandLineApplication.Option(
-                "-e |--encoded>",
+                "-e |--encoded",
                 "Encoded flags. Overrides all other flags. ",
                 CommandOptionType.SingleValue);
             CommandOption minimapArg = commandLineApplication.Option(
@@ -97,38 +97,42 @@ namespace U4DosRandomizer
                 "Randomize the Word of Passage.",
                 CommandOptionType.NoValue);
             CommandOption questItemsArg = commandLineApplication.Option(
-                "--questItems",
+                "--questItems <0-100>",
                 "Percentage chance to start with a quest item.",
                 CommandOptionType.SingleValue);
             CommandOption karmaValueArg = commandLineApplication.Option(
-                "--karmaValue",
+                "--karmaValue <value>",
                 "Value to override starting karma value for a virtue. Leave blank for random.",
                 CommandOptionType.SingleValue);
+            CommandOption karmaPercentageArg = commandLineApplication.Option(
+                "--karmaPercentage <0-100>",
+                "Percentage chance to override a starting karma value for a virtue. Default 0 (no override).",
+                CommandOptionType.SingleValue);
             CommandOption monsterDamageArg = commandLineApplication.Option(
-                "--monsterDamage",
+                "--monsterDamage <0-3>",
                 "Value to change how much damage monsters do. Allowed values 0-3. 0 is quad damage. 1 is more damge. 2 is default. 3 is less damage.",
                 CommandOptionType.SingleValue);
             CommandOption weaponDamageArg = commandLineApplication.Option(
-                "--weaponDamage",
+                "--weaponDamage <1-3>",
                 "Value to change how much damage weapons do. Allowed values 1-3. 1 is more damge. 2 is default. 3 is less damage.",
                 CommandOptionType.SingleValue);
             CommandOption earlierMonstersArg = commandLineApplication.Option(
                 "--earlierMonsters",
                 "Make more difficult monsters appear earlier.",
                 CommandOptionType.NoValue);
-            CommandOption karmaPercentageArg = commandLineApplication.Option(
-                "--karmaPercentage",
-                "Percentage chance to override a starting karma value for a virtue. Default 0 (no override).",
-                CommandOptionType.SingleValue);
             CommandOption randomizeSpellsArg = commandLineApplication.Option(
                 "--randomizeSpells",
                 "Randomizes the gate and resurrection spells that you learn in game.",
                 CommandOptionType.NoValue);
-            
+            CommandOption sextantArg = commandLineApplication.Option(
+                "--sextant",
+                "Start with a sextant.",
+                CommandOptionType.NoValue);
+
             CommandOption spoilerLogArg = commandLineApplication.Option(
                 "--spoilerLog",
                 "Output a spoiler log.",
-                CommandOptionType.SingleValue);
+                CommandOptionType.NoValue);
 
             commandLineApplication.HelpOption("-? | -h | --help");
 
@@ -258,6 +262,7 @@ namespace U4DosRandomizer
                     flags.WeaponDamage = weaponDamage;
                     flags.EarlierMonsters = earlierMonstersArg.HasValue();
                     flags.RandomizeSpells = randomizeSpellsArg.HasValue();
+                    flags.Sextant = sextantArg.HasValue();
                     Randomize(seed, path, flags, encodedArg.Value());
                     //Console.WriteLine("Seed: " + seed);
                     //var random = new Random(seed);
@@ -455,6 +460,11 @@ namespace U4DosRandomizer
             else
             {
                 spoilerLog.Add(SpoilerCategory.Start, "No change to starting quest items.");
+            }
+
+            if(flags.Sextant)
+            {
+                ultimaData.StartingEquipment[3] = 0x01;
             }
 
             if(flags.KarmaSetPercentage > 0)
