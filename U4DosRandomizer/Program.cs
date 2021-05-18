@@ -3,6 +3,7 @@ using Newtonsoft.Json;
 using SixLabors.ImageSharp;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Runtime.Serialization.Formatters.Binary;
@@ -127,6 +128,10 @@ namespace U4DosRandomizer
             CommandOption sextantArg = commandLineApplication.Option(
                 "--sextant",
                 "Start with a sextant.",
+                CommandOptionType.NoValue);
+            CommandOption clothMapArg = commandLineApplication.Option(
+                "--clothMap",
+                "Cloth map of the world.",
                 CommandOptionType.NoValue);
 
             CommandOption spoilerLogArg = commandLineApplication.Option(
@@ -263,6 +268,7 @@ namespace U4DosRandomizer
                     flags.EarlierMonsters = earlierMonstersArg.HasValue();
                     flags.RandomizeSpells = randomizeSpellsArg.HasValue();
                     flags.Sextant = sextantArg.HasValue();
+                    flags.ClothMap = clothMapArg.HasValue();
                     Randomize(seed, path, flags, encodedArg.Value());
                     //Console.WriteLine("Seed: " + seed);
                     //var random = new Random(seed);
@@ -366,8 +372,18 @@ namespace U4DosRandomizer
             worldMap.Randomize(ultimaData, new Random(randomValues[3]), new Random(randomValues[4]));
             dungeons.Randomize(new Random(randomValues[6]), flags);
 
-            var clothMap = worldMap.ToClothMap(ultimaData, new Random(randomValues[5]));
-            clothMap.SaveAsPng($"clothMap-{seed}.png");
+            if (flags.ClothMap)
+            {
+                var clothMap = worldMap.ToClothMap(ultimaData, new Random(randomValues[5]));
+                clothMap.SaveAsPng($"clothMap-{seed}.png");
+                new Process
+                {
+                    StartInfo = new ProcessStartInfo($"clothMap-{seed}.png")
+                    {
+                        UseShellExecute = true
+                    }
+                }.Start();
+            }
 
             if(flags.RandomizeSpells)
             {
@@ -575,7 +591,7 @@ namespace U4DosRandomizer
             //ultimaData.StartingRunes = 0XFF;
 
             title.Update(ultimaData, flags, encoded);
-            talk.Update(ultimaData, avatar, flags);
+            talk.Update(ultimaData, avatar, flags, worldMap);
             avatar.Update(ultimaData, flags);
             dungeons.Update(ultimaData, flags);
             party.Update(ultimaData);

@@ -616,7 +616,25 @@ namespace U4DosRandomizer
                     Center = GetCenterOfRegion(swampsEnumerator.Current)
                 });
             }
+        }
 
+        public new Region FindNearestRegion(ICoordinate targetTile, UltimaData data, out IList<ITile> outPath)
+        {
+            Region nearestRegion = null;
+            var bestDistanceToRegion = int.MaxValue;
+            IList<ITile> bestPath = null;
+            foreach (var region in Regions)
+            {
+                var path = Search.GetPath(SIZE, SIZE, region.Tiles, c => c.Equals(targetTile), c => { return true; });
+                if(path.Count < bestDistanceToRegion)
+                {
+                    nearestRegion = region;
+                    bestDistanceToRegion = path.Count;
+                    bestPath = path;
+                }
+            }
+            outPath = bestPath;
+            return nearestRegion;
         }
 
         private static Point GetCenterOfRegion(List<ITile> deepForest)
@@ -749,6 +767,14 @@ namespace U4DosRandomizer
             //        tile.SetTile((byte)(TileInfo.A + i));
             //    }
             //}
+
+            for (int i = 0; i < Regions.Count; i++)
+            {
+                foreach (var tile in Regions[i].Tiles)
+                {
+                    //_worldMapTiles[tile.X, tile.Y] = (byte)(TileInfo.A + i);
+                }
+            }
 
             WriteSpoilerLog(ultimaData);
         }

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace U4DosRandomizer
 {
@@ -12,6 +13,7 @@ namespace U4DosRandomizer
         public void Save(string path);
 
         Tile GetCoordinate(int x, int y);
+        Region FindNearestRegion(ICoordinate targetTile, UltimaData data, out IList<ITile> outPath);
         SixLabors.ImageSharp.Image ToClothMap(UltimaData data, Random random);
     }
 }

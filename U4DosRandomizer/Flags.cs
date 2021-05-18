@@ -36,6 +36,7 @@ namespace U4DosRandomizer
         public bool EarlierMonsters { get; internal set; }
         public bool RandomizeSpells { get; internal set; }
         public bool Sextant { get; internal set; }
+        public bool ClothMap { get; internal set; }
 
         public List<int> SupportedVersions = new List<int>() { 9 };
 
@@ -67,6 +68,10 @@ namespace U4DosRandomizer
             mask = SET_MSK(mask, EarlierMonsters, 5);
             mask = SET_MSK(mask, RandomizeSpells, 6);
             mask = SET_MSK(mask, Sextant, 7);
+            encoded.Add((byte)mask);
+
+            mask = 0;
+            mask = SET_MSK(mask, ClothMap, 0);
             encoded.Add((byte)mask);
 
             encoded.Add((byte)Overworld);
@@ -109,6 +114,7 @@ namespace U4DosRandomizer
             SleepLockAssist = TST_MSK(mask, 5);
             ActivePlayer = TST_MSK(mask, 6);
             HitChance = TST_MSK(mask, 7);
+
             mask = encoded[6];
             DiagonalAttack = TST_MSK(mask, 0);
             SacrificeFix = TST_MSK(mask, 1);
@@ -119,10 +125,13 @@ namespace U4DosRandomizer
             RandomizeSpells = TST_MSK(mask, 6);
             Sextant = TST_MSK(mask, 7);
 
-            Overworld = encoded[7];
-            QuestItemPercentage = encoded[8];
-            KarmaSetPercentage = encoded[9];
-            KarmaValue = encoded[10];
+            mask = encoded[7];
+            ClothMap = TST_MSK(mask, 0);
+
+            Overworld = encoded[8];
+            QuestItemPercentage = encoded[9];
+            KarmaSetPercentage = encoded[10];
+            KarmaValue = encoded[11];
             if (KarmaValue == 0)
             {
                 KarmaValue = null;
@@ -131,10 +140,10 @@ namespace U4DosRandomizer
             {
                 KarmaValue--;
             }
-            MonsterDamage = encoded[11];
-            WeaponDamage = encoded[12];
+            MonsterDamage = encoded[12];
+            WeaponDamage = encoded[13];
 
-            var spellRemoveMask = BitConverter.ToInt32(encoded, 13);
+            var spellRemoveMask = BitConverter.ToInt32(encoded, 14);
             SpellRemove = "";
             for (int offset = 0; offset < 26; offset++)
             {

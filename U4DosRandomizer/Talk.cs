@@ -60,9 +60,9 @@ namespace U4DosRandomizer
             }
         }
 
-        public void Update(UltimaData ultimaData, Avatar avatar, Flags flags)
+        public void Update(UltimaData ultimaData, Avatar avatar, Flags flags, IWorldMap worldMap)
         {
-            if (flags.Overworld == 5 || flags.Overworld == 1)
+            if (flags.Overworld == 5)
             {
                 Person person = null;
                 // --- Items ---
@@ -91,11 +91,63 @@ namespace U4DosRandomizer
                 }
 
                 // Mandrake
-                // TODO make response descriptive
-                if (ultimaData.Items[ultimaData.ITEM_MANDRAKE].Changed)
+                if (ultimaData.Items[ultimaData.ITEM_MANDRAKE].Changed || ultimaData.Items[ultimaData.ITEM_MANDRAKE2].Changed)
                 {
                     person = FindPerson("Calumny");
-                    person.KeywordResponse2 = $"Mandrake is found near {GetSextantText(ultimaData.Items[ultimaData.ITEM_MANDRAKE])}\nand\n{GetSextantText(ultimaData.Items[ultimaData.ITEM_MANDRAKE2])} ";
+                    if (!flags.ClothMap)
+                    {
+                        person.KeywordResponse2 = $"Mandrake is found near {GetSextantText(ultimaData.Items[ultimaData.ITEM_MANDRAKE])}\nand\n{GetSextantText(ultimaData.Items[ultimaData.ITEM_MANDRAKE2])} ";
+                    }
+                    else
+                    {
+                        var mandrakeTile = worldMap.GetCoordinate(ultimaData.Items[ultimaData.ITEM_MANDRAKE].X, ultimaData.Items[ultimaData.ITEM_MANDRAKE].Y);
+                        IList<ITile> path = null;
+                        var mandrakeRegion = worldMap.FindNearestRegion(mandrakeTile, ultimaData, out path);
+                                                
+                        var mandrakeText = "Mandrake root is found only ";    
+                        if(mandrakeRegion != null && mandrakeRegion.Tiles.Any(c => c.Equals(mandrakeTile)))
+                        {
+                            mandrakeText += $"in the {mandrakeRegion.Name} ";
+                        }
+                        else if(path != null && path.Count < 11)
+                        {
+                            mandrakeText += $"near the {mandrakeRegion.Name} ";
+                        }
+                        else
+                        {
+                            mandrakeText += $"near {GetSextantText(ultimaData.Items[ultimaData.ITEM_MANDRAKE])} ";
+                        }
+
+                        mandrakeTile = worldMap.GetCoordinate(ultimaData.Items[ultimaData.ITEM_MANDRAKE2].X, ultimaData.Items[ultimaData.ITEM_MANDRAKE2].Y);
+                        IList<ITile> path2 = null;
+                        var mandrakeRegion2 = worldMap.FindNearestRegion(mandrakeTile, ultimaData, out path2);
+                        if(mandrakeRegion == mandrakeRegion2 && path.Count < 11)
+                        {
+                            path = null;
+                            mandrakeRegion = null;
+                        }
+                        else
+                        {
+                            mandrakeRegion = mandrakeRegion2;
+                            path = path2;
+                            if (mandrakeRegion != null && mandrakeRegion.Tiles.Any(c => c == mandrakeTile))
+                            {
+                                mandrakeText += $"and in the {mandrakeRegion.Name} ";
+                            }
+                            else if (path != null && path.Count < 11)
+                            {
+                                mandrakeText += $"and near the {mandrakeRegion.Name} ";
+                            }
+                            else
+                            {
+                                mandrakeText += $"and near {GetSextantText(ultimaData.Items[ultimaData.ITEM_MANDRAKE2])} ";
+                            }
+                        }
+                        
+                        mandrakeText += $"where the ground is always damp.";
+
+                        person.KeywordResponse2 = mandrakeText;
+                    }
                 }
 
                 // Horn
@@ -514,7 +566,7 @@ namespace U4DosRandomizer
         public static string GetSextantText(ICoordinate item, char seperator = '\n')
         {
             //lat-N'A" long-L'A"
-            return $"lat-{(char)((item.Y >> 4) +'A')}'{(char)((item.Y & 0xF) + 'A')}\"{seperator}long -{(char)((item.X >> 4) + 'A')}'{(char)((item.X & 0xF) + 'A')}\"";
+            return $"lat-{(char)((item.Y >> 4) +'A')}'{(char)((item.Y & 0xF) + 'A')}\"{seperator}long-{(char)((item.X >> 4) + 'A')}'{(char)((item.X & 0xF) + 'A')}\"";
         }
 
         private string ReplaceSextantText(string text, string latLong)

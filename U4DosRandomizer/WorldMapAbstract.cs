@@ -63,6 +63,12 @@ namespace U4DosRandomizer
             return distanceSquared;
         }
 
+        public Region FindNearestRegion(ICoordinate targetTile, UltimaData data, out IList<ITile> outPath)
+        {
+            outPath = null;
+            return null;
+        }
+
         public List<ITile> GetAllMatchingTiles(Func<Tile, bool> criteria, int minX = 0, int maxX = SIZE, int minY = 0, int maxY = SIZE)
         {
             var tiles = new List<ITile>();
