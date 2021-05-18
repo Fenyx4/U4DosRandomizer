@@ -576,13 +576,13 @@ namespace U4DosRandomizer
             return result;
         }
 
-        private string[] reagents = new string[] { "ash", "ginseng", "garlic", "silk", "bloodmoss", "pearl", "mandrake", "nightshade" };
+        private string[] reagents = new string[] { "nightshade", "mandrake", "pearl", "bloodmoss", "silk", "garlic", "ginseng", "ash", };
         private string GetRecipeText(byte recipe)
         {
             var resultList = new List<string>();
 
             int mask = recipe;
-            for (int i = 0; i < 8; i++)
+            for (int i = 7; i >= 0; i--)
             {
                 if (Flags.TST_MSK(mask, i))
                 {
