@@ -187,7 +187,7 @@ C_31F4()
 	u4_puts(/*D_121E*/"\nA voice rings out:\n");
 	if(!C_310F(/*D_123D*/"\"What is the Word of Passage?\"", /*D_1233*/"veramocor"))
 		C_3010();
-	if(D_8CCA != 8) {
+	if(U4_RND1(7) < 8 && D_8CCA != 8) {
 		u4_puts(/*D_125C*/"\nThou hast not proved thy leadership in all eight virtues.\n");
 		u_delay(8, 0);
 		C_3010();
