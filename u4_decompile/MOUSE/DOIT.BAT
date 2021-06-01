@@ -1,0 +1,9 @@
+
+set OLDPATH=%PATH%
+
+set MSC=D:\MSC400
+set PATH=%MSC%;%PATH%
+set INCLUDE=%MSC%\INCLUDE
+set LIB=%MSC%\LIB
+
+

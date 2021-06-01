@@ -1,0 +1,128 @@
+
+
+ Start  Stop   Length Name                   Class
+ 00000H 003DCH 003DDH _TEXT                  CODE
+ 003DDH 003DDH 00000H C_ETEXT                ENDCODE
+ 003E0H 00415H 00036H NULL                   BEGDATA
+ 00416H 004B5H 000A0H _DATA                  DATA
+ 004B6H 004C3H 0000EH CDATA                  DATA
+ 004C4H 004C4H 00000H XIB                    DATA
+ 004C4H 004C4H 00000H XI                     DATA
+ 004C4H 004C4H 00000H XIE                    DATA
+ 004C4H 004C4H 00000H XPB                    DATA
+ 004C4H 004C4H 00000H XP                     DATA
+ 004C4H 004C4H 00000H XPE                    DATA
+ 004C4H 004C4H 00000H XCB                    DATA
+ 004C4H 004C4H 00000H XC                     DATA
+ 004C4H 004C4H 00000H XCE                    DATA
+ 004C4H 004C4H 00000H CONST                  CONST
+ 004C4H 004CBH 00008H HDR                    MSG
+ 004CCH 0059CH 000D1H MSG                    MSG
+ 0059DH 0059EH 00002H PAD                    MSG
+ 0059FH 0059FH 00001H EPAD                   MSG
+ 005A0H 005A0H 00000H _BSS                   BSS
+ 005A0H 005A0H 00000H XOB                    BSS
+ 005A0H 005A0H 00000H XO                     BSS
+ 005A0H 005A0H 00000H XOE                    BSS
+ 005A0H 00D9FH 00800H STACK                  STACK
+
+ Origin   Group
+ 003E:0   DGROUP
+
+  Address         Publics by Name
+
+ 0000:0010       MAIN
+ 003E:01C0       _edata
+ 003E:01C0       _end
+ 003E:00C8       _environ
+ 003E:00A4       _errno
+ 0000:018C       _exit
+ 003E:008A       __abrkp
+ 003E:003A       __abrktb
+ 003E:008A       __abrktbe
+ 0000:9876  Abs  __acrtmsg
+ 0000:9876  Abs  __acrtused
+ 003E:0098       __aintdiv
+ 0000:00B6       __amsg_exit
+ 003E:0036       __asizds
+ 0000:0017       __astart
+ 003E:0038       __atopsp
+ 003E:00CA       __child
+ 0000:00DD       __cinit
+ 0000:00B3       __cintDIV
+ 003E:00CC       __csigtab
+ 0000:01CF       __ctermsub
+ 003E:00AE       __doserrno
+ 003E:00AC       __dosvermajor
+ 003E:00AD       __dosverminor
+ 0000:01A3       __exit
+ 003E:009C       __fac
+ 003E:00D8       __fpinit
+ 0000:039B       __myalloc
+ 0000:01F7       __NMSG_TEXT
+ 0000:0227       __NMSG_WRITE
+ 0000:00C1       __nullcheck
+ 003E:00AE       __oserr
+ 003E:00B0       __osfile
+ 003E:00AC       __osmajor
+ 003E:00AD       __osminor
+ 003E:00AA       __psp
+ 003E:00A8       __pspadr
+ 0000:0250       __setargv
+ 0000:0335       __setenvp
+ 003E:00A6       __umaskval
+ 003E:00C4       ___argc
+ 003E:00C6       ___argv
+
+  Address         Publics by Value
+
+ 0000:0010       MAIN
+ 0000:0017       __astart
+ 0000:00B3       __cintDIV
+ 0000:00B6       __amsg_exit
+ 0000:00C1       __nullcheck
+ 0000:00DD       __cinit
+ 0000:018C       _exit
+ 0000:01A3       __exit
+ 0000:01CF       __ctermsub
+ 0000:01F7       __NMSG_TEXT
+ 0000:0227       __NMSG_WRITE
+ 0000:0250       __setargv
+ 0000:0335       __setenvp
+ 0000:039B       __myalloc
+ 003E:0036       __asizds
+ 003E:0038       __atopsp
+ 003E:003A       __abrktb
+ 003E:008A       __abrkp
+ 003E:008A       __abrktbe
+ 003E:0098       __aintdiv
+ 003E:009C       __fac
+ 003E:00A4       _errno
+ 003E:00A6       __umaskval
+ 003E:00A8       __pspadr
+ 003E:00AA       __psp
+ 003E:00AC       __osmajor
+ 003E:00AC       __dosvermajor
+ 003E:00AD       __osminor
+ 003E:00AD       __dosverminor
+ 003E:00AE       __oserr
+ 003E:00AE       __doserrno
+ 003E:00B0       __osfile
+ 003E:00C4       ___argc
+ 003E:00C6       ___argv
+ 003E:00C8       _environ
+ 003E:00CA       __child
+ 003E:00CC       __csigtab
+ 003E:00D8       __fpinit
+ 003E:01C0       _end
+ 003E:01C0       _edata
+ 0000:9876  Abs  __acrtused
+ 0000:9876  Abs  __acrtmsg
+
+Program entry point at 0000:0017
+
+Unresolved externals:
+
+
+_main in file(s): 
+ D:\MSC400\LIB\SLIBC.LIB(crt0)

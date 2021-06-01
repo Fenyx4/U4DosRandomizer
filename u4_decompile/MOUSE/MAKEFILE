@@ -1,0 +1,23 @@
+CFLAGS=/Ox /Zp /Gc
+ASM=\tools\masm300\masm /Mx
+OBJS=ms.obj
+
+all: install
+
+install: mouse.exe
+
+mouse.exe: $(OBJS)
+	#----create the exe file
+	link /MAP @mouse.rsp
+	#----pack it and then unpack it
+	D:\exepack mouse.exe tmp.exe
+	D:\unp tmp.exe
+	copy tmp.exe mouse.exe
+	del tmp.exe
+
+
+#u4_var.obj: u4_var.c
+#	msc $(CFLAGS) /J u4_var;
+
+ms.obj: mouse.c
+	msc $(CFLAGS)    mouse,ms;
