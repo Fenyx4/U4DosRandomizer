@@ -2,6 +2,7 @@
 
 ### Other
 * Fixes Serpent Hold healer so you can speak to the healer
+* Capilization of 'Rabindranath tagore'
 
 ### [U4 Remastered](https://github.com/MagerValp/u4remastered/blob/master/Changelog.txt) (C64) Fixes
 * Fixed broken question trigger and added missing dialogue for Thevel in Britain.

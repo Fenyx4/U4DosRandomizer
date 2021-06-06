@@ -548,6 +548,10 @@ namespace U4DosRandomizer
                 person = FindPerson("Charm");
                 person.QuestionFlag = 6;
                 SpoilerLog.Add(SpoilerCategory.Fix, $"Charm asks question");
+
+                person = FindPerson("Rabindranath\ntagore");
+                person.Name = "Rabindranath\nTagore";
+                SpoilerLog.Add(SpoilerCategory.Fix, $"Fix 'Rabindranath tagore' capitalization");
             }
 
         }
