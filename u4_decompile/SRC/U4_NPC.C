@@ -345,10 +345,16 @@ int bp04;
 C_56D3(bp04)
 int bp04;
 {
-	return
-		(D_8742._npc._x[bp04] - D_95A5.x*16) >= 32 ||
-		(D_8742._npc._y[bp04] - D_95A5.y*16) >= 32
-	;
+	return !Between(D_8742._npc._x[bp04], D_95A5.x*16, D_95A5.x*16+31) || 
+		   !Between(D_8742._npc._y[bp04], D_95A5.y*16, D_95A5.y*16+31);
+}
+
+Between(point, lowerbound, upperbound)
+unsigned char point;
+unsigned char lowerbound;
+unsigned char upperbound;
+{
+	return (lowerbound <= upperbound && point >= lowerbound && point <= upperbound) || (lowerbound > upperbound && (point >= lowerbound || point <= upperbound));
 }
 
 /*move outside NPC*/
