@@ -202,7 +202,7 @@ register int si;
 unsigned char bp06;
 unsigned char bp04;
 {
-	if(C_4E94(si, bp06, bp04, D_8742._map.x32x32[bp04-D_95A5.y*16][bp06-D_95A5.x*16])) {
+	if(C_4E94(si, bp06, bp04, D_8742._map.x32x32[u4_wrap(bp04-D_95A5.y*16)][u4_wrap(bp06-D_95A5.x*16)])) {
 		if(C_2A5A(D_8742._npc._gtile[si] & 3)) {
 			D_8742._npc._old_x[si] = D_8742._npc._x[si];
 			D_8742._npc._x[si] = bp06;
