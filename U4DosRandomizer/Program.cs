@@ -49,6 +49,10 @@ namespace U4DosRandomizer
                 "--spellRemove",
                 "Put in the letters of the spells you want removed. e.g. \"--spellRemove zed\" would remove zdown, energy field and dispel. ",
                 CommandOptionType.SingleValue);
+            CommandOption startingWeapons = commandLineApplication.Option(
+                "--startingWeaponsArmor",
+                "Randomize the weapons and armor player and companions start with.",
+                CommandOptionType.NoValue);
             CommandOption minQuantityArg = commandLineApplication.Option(
                 "--mixQuantity",
                 "Lets you input how much of a spell you want to mix. ",
@@ -248,6 +252,7 @@ namespace U4DosRandomizer
                     flags.Overworld = overworld;
                     flags.MiniMap = minimapArg.HasValue();
                     flags.SpellRemove = spellRemoveArg.Value();
+                    flags.StartingWeapons = startingWeapons.HasValue();
                     flags.DngStone = dngStoneArg.HasValue();
                     flags.MixQuantity = minQuantityArg.HasValue();
                     flags.Fixes = fixesArg.HasValue();
@@ -414,31 +419,33 @@ namespace U4DosRandomizer
                 }
             }
 
-            ultimaData.StartingCharacters[0].XP = 9999;
-            for(int charIdx = 0; charIdx < 8; charIdx++)
+            if (flags.StartingWeapons)
             {
-                var selected = false;
-                while(!selected)
+                for (int charIdx = 0; charIdx < 8; charIdx++)
                 {
-                    // -1 so Mystic weapons and armors aren't included
-                    var weapon = random.Next(1, Party.AllowedWeaponsMask.Length -1);
-                    //If weapon is allowed
-                    if((Party.AllowedWeaponsMask[weapon] & (0x80 >> ultimaData.StartingCharacters[charIdx].Class)) != 0)
+                    var selected = false;
+                    while (!selected)
                     {
-                        ultimaData.StartingCharacters[charIdx].Weapon = (ushort)weapon;
-                        selected = true;
+                        // -1 so Mystic weapons and armors aren't included
+                        var weapon = random.Next(1, Party.AllowedWeaponsMask.Length - 1);
+                        //If weapon is allowed
+                        if ((Party.AllowedWeaponsMask[weapon] & (0x80 >> ultimaData.StartingCharacters[charIdx].Class)) != 0)
+                        {
+                            ultimaData.StartingCharacters[charIdx].Weapon = (ushort)weapon;
+                            selected = true;
+                        }
                     }
-                }
 
-                selected = false;
-                while (!selected)
-                {
-                    var armor = random.Next(1, Party.AllowedArmorMask.Length);
-                    //If weapon is allowed
-                    if ((Party.AllowedArmorMask[armor] & (0x80 >> ultimaData.StartingCharacters[charIdx].Class)) != 0)
+                    selected = false;
+                    while (!selected)
                     {
-                        ultimaData.StartingCharacters[charIdx].Armor = (ushort)armor;
-                        selected = true;
+                        var armor = random.Next(1, Party.AllowedArmorMask.Length);
+                        //If weapon is allowed
+                        if ((Party.AllowedArmorMask[armor] & (0x80 >> ultimaData.StartingCharacters[charIdx].Class)) != 0)
+                        {
+                            ultimaData.StartingCharacters[charIdx].Armor = (ushort)armor;
+                            selected = true;
+                        }
                     }
                 }
             }

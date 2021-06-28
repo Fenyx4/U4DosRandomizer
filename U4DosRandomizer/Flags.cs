@@ -15,6 +15,7 @@ namespace U4DosRandomizer
 
         public bool MiniMap { get; internal set; }
         public string SpellRemove { get; internal set; }
+        public bool StartingWeapons { get; internal set; }
         public bool DngStone { get; internal set; }
         public bool MixQuantity { get; internal set; }
         public int Overworld { get; internal set; }
@@ -72,6 +73,7 @@ namespace U4DosRandomizer
 
             mask = 0;
             mask = SET_MSK(mask, ClothMap, 0);
+            mask = SET_MSK(mask, StartingWeapons, 1);
             encoded.Add((byte)mask);
 
             encoded.Add((byte)Overworld);
@@ -127,6 +129,7 @@ namespace U4DosRandomizer
 
             mask = encoded[7];
             ClothMap = TST_MSK(mask, 0);
+            StartingWeapons = TST_MSK(mask, 1);
 
             Overworld = encoded[8];
             QuestItemPercentage = encoded[9];
