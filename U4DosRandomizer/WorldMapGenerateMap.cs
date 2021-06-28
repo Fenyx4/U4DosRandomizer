@@ -1859,7 +1859,7 @@ namespace U4DosRandomizer
                         riverLength = min;
                         if (max >= min)
                         {
-                            riverLength = Convert.ToInt32(Math.Floor(Math.Abs(random.NextDouble() - random.NextDouble()) * (1 + max - min) + min));
+                            riverLength = random.FavorLower(min, max);
                         }
 
                         //riverLength = random.Next(riverLength - i) + 1;

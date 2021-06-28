@@ -108,6 +108,7 @@ namespace U4DosRandomizer
         public List<string> LBText { get; internal set; }
         public List<string> Mantras { get; internal set; }
         public string WordOfPassage { get; internal set; }
+        public List<Character> StartingCharacters { get; internal set; }
         public byte DaemonSpawnX1 { get; internal set; }
         public byte DaemonSpawnX2 { get; internal set; }
         public byte DaemonSpawnY1 { get; internal set; }
@@ -119,6 +120,7 @@ namespace U4DosRandomizer
         public Coordinate WhirlpoolExit { get; internal set; }
         public List<ByteDirtyWrapper> SpellsRecipes { get; internal set; }
         bool spellRecipesSet = false;
+
         public void SetSpellsRecipes(List<Item> value)
         {
             if (spellRecipesSet)
@@ -167,6 +169,7 @@ namespace U4DosRandomizer
             PirateCove = new List<Coordinate>();
             AbyssEjectionLocations = new List<Coordinate>();
             ShopLocations = new List<List<byte>>();
+            StartingCharacters = new List<Character>();
             StartingKarma = new List<byte>();
             StartingEquipment = new List<ushort>();
             StartingArmor = new List<ushort>();

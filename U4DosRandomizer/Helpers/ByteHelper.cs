@@ -17,5 +17,14 @@ namespace U4DosRandomizer.Helpers
                 }
             }
         }
+
+        public static void OverwriteBytes(this byte[] bytes, ushort value, int startingOffset)
+        {
+            var overwriteBytes = BitConverter.GetBytes(value);
+            for (int offset = 0; offset < overwriteBytes.Length; offset++)
+            {
+                bytes[startingOffset + offset] = overwriteBytes[offset];
+            }
+        }
     }
 }

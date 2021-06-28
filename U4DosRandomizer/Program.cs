@@ -387,10 +387,19 @@ namespace U4DosRandomizer
 
             if(flags.RandomizeSpells)
             {
-                var recipes = new byte[4];
-                random.NextBytes(recipes);
-                ultimaData.SpellsRecipes['r' - 'a'].Byte = (byte)(recipes[0] | recipes[1]);
-                ultimaData.SpellsRecipes['g' - 'a'].Byte = (byte)(recipes[2] | recipes[3]);
+                var recipes = new byte[2];
+                ultimaData.SpellsRecipes['r' - 'a'].Byte = 0;
+                ultimaData.SpellsRecipes['g' - 'a'].Byte = 0;
+                while(ultimaData.SpellsRecipes['r' - 'a'].Byte == 0)
+                {
+                    random.NextBytes(recipes);
+                    ultimaData.SpellsRecipes['r' - 'a'].Byte = (byte)(recipes[0] | recipes[1]);
+                }
+                while (ultimaData.SpellsRecipes['g' - 'a'].Byte == 0)
+                {
+                    random.NextBytes(recipes);
+                    ultimaData.SpellsRecipes['g' - 'a'].Byte = (byte)(recipes[0] | recipes[1]);
+                }
             }
             if (!String.IsNullOrWhiteSpace(flags.SpellRemove))
             {
@@ -404,6 +413,36 @@ namespace U4DosRandomizer
                     ultimaData.SpellsRecipes[arr[i]-'a'].Byte = 0;
                 }
             }
+
+            ultimaData.StartingCharacters[0].XP = 9999;
+            for(int charIdx = 0; charIdx < 8; charIdx++)
+            {
+                var selected = false;
+                while(!selected)
+                {
+                    // -1 so Mystic weapons and armors aren't included
+                    var weapon = random.Next(1, Party.AllowedWeaponsMask.Length -1);
+                    //If weapon is allowed
+                    if((Party.AllowedWeaponsMask[weapon] & (0x80 >> ultimaData.StartingCharacters[charIdx].Class)) != 0)
+                    {
+                        ultimaData.StartingCharacters[charIdx].Weapon = (ushort)weapon;
+                        selected = true;
+                    }
+                }
+
+                selected = false;
+                while (!selected)
+                {
+                    var armor = random.Next(1, Party.AllowedArmorMask.Length);
+                    //If weapon is allowed
+                    if ((Party.AllowedArmorMask[armor] & (0x80 >> ultimaData.StartingCharacters[charIdx].Class)) != 0)
+                    {
+                        ultimaData.StartingCharacters[charIdx].Armor = (ushort)armor;
+                        selected = true;
+                    }
+                }
+            }
+
 
             //worldMap.TestAbyssEjection();
 
