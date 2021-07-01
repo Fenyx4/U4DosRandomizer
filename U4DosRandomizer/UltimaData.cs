@@ -107,6 +107,7 @@ namespace U4DosRandomizer
         public List<Coordinate> StartingPositions { get; set; }
         public List<string> LBText { get; internal set; }
         public List<string> Mantras { get; internal set; }
+        public List<byte> PrincipleItemRequirements { get; internal set; }
         public string WordOfPassage { get; internal set; }
         public List<Character> StartingCharacters { get; internal set; }
         public byte DaemonSpawnX1 { get; internal set; }
@@ -166,6 +167,7 @@ namespace U4DosRandomizer
             StartingPositions = new List<Coordinate>();
             LBText = new List<string>();
             Mantras = new List<string>();
+            PrincipleItemRequirements = new List<byte>();
             PirateCove = new List<Coordinate>();
             AbyssEjectionLocations = new List<Coordinate>();
             ShopLocations = new List<List<byte>>();
@@ -289,6 +291,7 @@ namespace U4DosRandomizer
         public static int ITEM_RUNE_HONOR { get; } = 20;
         public static int ITEM_RUNE_SPIRITUALITY { get; } = 21;
         public static int ITEM_RUNE_HUMILITY { get; } = 22;
+
         /*
 * https://github.com/ergonomy-joe/u4-decompiled/blob/master/SRC/U4_SRCH.C#L246
 * 0 - Mandrake

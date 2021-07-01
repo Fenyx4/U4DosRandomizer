@@ -6,6 +6,9 @@ namespace U4DosRandomizer
 {
     public class AvatarOffsetsOriginal : IAvatarOffset
     {
+        public int BELL_REQUIREMENT_OFFSET { get; } = 0x000;
+        public int BOOK_REQUIREMENT_OFFSET { get; } = 0x000;
+        public int CANDLE_REQUIREMENT_OFFSET { get; } = 0x000;
         // https://wiki.ultimacodex.com/wiki/Ultima_IV_Internal_Formats#AVATAR.EXE
         // Above doesn't work anymore cuz we have modified AVATAR.EXE
         public int MOONGATE_X_OFFSET { get; } = 0x0fad1;
@@ -133,6 +136,8 @@ namespace U4DosRandomizer
         public int ENABLE_DIAGONAL_ATTACK_OFFSET => throw new NotImplementedException();
 
         public int ENABLE_SACRIFICE_FIX_OFFSET => throw new NotImplementedException();
+
+        public int ENABLE_PRINCIPLE_ITEM_REORDER_OFFSET => throw new NotImplementedException();
 
         public int ENCODED_FLAGS_OFFSET => throw new NotImplementedException();
 

@@ -38,6 +38,7 @@ namespace U4DosRandomizer
         public bool RandomizeSpells { get; internal set; }
         public bool Sextant { get; internal set; }
         public bool ClothMap { get; internal set; }
+        public bool PrincipleItems { get; internal set; }
 
         public List<int> SupportedVersions = new List<int>() { 9 };
 
@@ -74,6 +75,7 @@ namespace U4DosRandomizer
             mask = 0;
             mask = SET_MSK(mask, ClothMap, 0);
             mask = SET_MSK(mask, StartingWeapons, 1);
+            mask = SET_MSK(mask, PrincipleItems, 2);
             encoded.Add((byte)mask);
 
             encoded.Add((byte)Overworld);
@@ -130,6 +132,7 @@ namespace U4DosRandomizer
             mask = encoded[7];
             ClothMap = TST_MSK(mask, 0);
             StartingWeapons = TST_MSK(mask, 1);
+            PrincipleItems = TST_MSK(mask, 2);
 
             Overworld = encoded[8];
             QuestItemPercentage = encoded[9];

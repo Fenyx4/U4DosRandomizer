@@ -22,7 +22,8 @@ namespace U4DosRandomizer
             PropertyInfo[] properties = this.GetType().GetInterface("IAvatarOffset").GetProperties();
             foreach (PropertyInfo pi in properties)
             {
-                if(pi.Name.ToLower().Contains("offset") && !pi.Name.ToLower().Contains("blink") && !pi.Name.ToLower().Contains("enable") && !pi.Name.ToLower().Contains("encoded") && !pi.Name.ToLower().Contains("seed") && !pi.Name.ToLower().Contains("pointer"))
+                if(pi.Name.ToLower().Contains("offset") && !pi.Name.ToLower().Contains("blink") && !pi.Name.ToLower().Contains("enable") && !pi.Name.ToLower().Contains("encoded") && !pi.Name.ToLower().Contains("seed") && !pi.Name.ToLower().Contains("pointer")
+                    && !pi.Name.ToLower().Contains("bell") && !pi.Name.ToLower().Contains("book") && !pi.Name.ToLower().Contains("candle"))
                 {
                     var newValue = avatarBytes[(int)pi.GetValue(this, null)];
                     var oldValue = originalAvatarBytes[(int)pi.GetValue(originalOffsets, null)];
@@ -58,6 +59,9 @@ namespace U4DosRandomizer
             }
         }
 
+        public int BELL_REQUIREMENT_OFFSET { get; } = 0x4E0; // ???
+        public int BOOK_REQUIREMENT_OFFSET { get; } = 0x52A; // ???
+        public int CANDLE_REQUIREMENT_OFFSET { get; } = 0x56F; // ???
         public int MOONGATE_X_OFFSET { get; } = 0x0fd5e; //0fad1
         public int MOONGATE_Y_OFFSET { get; } = 0x0fd66; //fad9
         public int AREA_X_OFFSET { get; } = 0x0fd8e; //fb01 // towns, cities, castles, dungeons, shrines
@@ -179,6 +183,8 @@ namespace U4DosRandomizer
         public int ENABLE_DIAGONAL_ATTACK_OFFSET { get; } = 0x6491; // New
 
         public int ENABLE_SACRIFICE_FIX_OFFSET { get; } = 0xA7FB; // New
+
+        public int ENABLE_PRINCIPLE_ITEM_REORDER_OFFSET { get; } = 0x4E9; // New
 
         public int ENCODED_FLAGS_OFFSET { get; } = 0xFBA7; // New
 

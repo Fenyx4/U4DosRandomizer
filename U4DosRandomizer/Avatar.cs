@@ -172,6 +172,10 @@ namespace U4DosRandomizer
                 textOffset++;
             }
 
+            data.PrincipleItemRequirements.Add(avatarBytes[AvatarOffset.BELL_REQUIREMENT_OFFSET]);
+            data.PrincipleItemRequirements.Add(avatarBytes[AvatarOffset.BOOK_REQUIREMENT_OFFSET]);
+            data.PrincipleItemRequirements.Add(avatarBytes[AvatarOffset.CANDLE_REQUIREMENT_OFFSET]);
+
             var wordOfPassageTextBytes = new List<byte>();
 
             for (int offSet = 0; offSet < 9; offSet++)
@@ -359,6 +363,14 @@ namespace U4DosRandomizer
                 {
                     throw new Exception($"Mantra text is too long.");
                 }
+            }
+
+            if (data.PrincipleItemRequirements[0] != 13)
+            {
+                avatarBytes[AvatarOffset.BELL_REQUIREMENT_OFFSET] = data.PrincipleItemRequirements[0];
+                avatarBytes[AvatarOffset.BOOK_REQUIREMENT_OFFSET] = data.PrincipleItemRequirements[1];
+                avatarBytes[AvatarOffset.CANDLE_REQUIREMENT_OFFSET] = data.PrincipleItemRequirements[2];
+                avatarBytes[AvatarOffset.ENABLE_PRINCIPLE_ITEM_REORDER_OFFSET] = (byte)0x0;
             }
 
             var wordOfPassageBytes = Encoding.ASCII.GetBytes(data.WordOfPassage.ToLower());
