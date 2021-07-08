@@ -28,6 +28,8 @@ namespace U4DosRandomizer
         int MONSTER_SPAWN_TIER_ONE { get; }
         int MONSTER_SPAWN_TIER_TWO { get; }
         int MONSTER_SPAWN_TIER_THREE { get; }
+        int MONSTER_QTY_ONE { get; }
+        int MONSTER_QTY_TWO { get; }
         int LB_TEXT_OFFSET { get; }
         int MANTRA_OFFSET { get; }
         int MANTRA_POINTERS_OFFSET { get; }

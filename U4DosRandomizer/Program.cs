@@ -125,6 +125,10 @@ namespace U4DosRandomizer
                 "--earlierMonsters",
                 "Make more difficult monsters appear earlier.",
                 CommandOptionType.NoValue);
+            CommandOption monsterQtyArg = commandLineApplication.Option(
+                "--monsterQty",
+                "More monsters from the start.",
+                CommandOptionType.NoValue);
             CommandOption randomizeSpellsArg = commandLineApplication.Option(
                 "--randomizeSpells",
                 "Randomizes the gate and resurrection spells that you learn in game.",
@@ -271,6 +275,7 @@ namespace U4DosRandomizer
                     flags.MonsterDamage = monsterDamage;
                     flags.WeaponDamage = weaponDamage;
                     flags.EarlierMonsters = earlierMonstersArg.HasValue();
+                    flags.MonsterQty = monsterQtyArg.HasValue();
                     flags.RandomizeSpells = randomizeSpellsArg.HasValue();
                     flags.Sextant = sextantArg.HasValue();
                     flags.ClothMap = clothMapArg.HasValue();
