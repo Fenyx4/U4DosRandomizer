@@ -55,6 +55,9 @@ namespace U4DosRandomizer
         public int MONSTER_SPAWN_TIER_TWO { get; } = 0x5B83;
         public int MONSTER_SPAWN_TIER_THREE { get; } = 0x5BBB;
 
+        public int MONSTER_QTY_ONE { get; } = 0x80EF;
+        public int MONSTER_QTY_TWO { get; } = 0x8100;
+
         public int LB_TEXT_OFFSET { get; } = 0x156ca;
         public int MANTRA_OFFSET { get; } = 0x16DD4;
         public int MANTRA_POINTERS_OFFSET { get; } = 0x17594;

@@ -35,6 +35,7 @@ namespace U4DosRandomizer
         public int MonsterDamage { get; internal set; }
         public int WeaponDamage { get; internal set; }
         public bool EarlierMonsters { get; internal set; }
+        public bool MonsterQty { get; internal set; }
         public bool RandomizeSpells { get; internal set; }
         public bool Sextant { get; internal set; }
         public bool ClothMap { get; internal set; }
@@ -74,6 +75,7 @@ namespace U4DosRandomizer
             mask = 0;
             mask = SET_MSK(mask, ClothMap, 0);
             mask = SET_MSK(mask, StartingWeapons, 1);
+            mask = SET_MSK(mask, MonsterQty, 2);
             encoded.Add((byte)mask);
 
             encoded.Add((byte)Overworld);
@@ -130,6 +132,7 @@ namespace U4DosRandomizer
             mask = encoded[7];
             ClothMap = TST_MSK(mask, 0);
             StartingWeapons = TST_MSK(mask, 1);
+            MonsterQty = TST_MSK(mask, 2);
 
             Overworld = encoded[8];
             QuestItemPercentage = encoded[9];

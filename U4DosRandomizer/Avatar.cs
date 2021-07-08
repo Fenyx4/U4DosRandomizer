@@ -531,6 +531,21 @@ namespace U4DosRandomizer
                     avatarBytes[AvatarOffset.MONSTER_SPAWN_TIER_THREE + offset] = tierCutoverBytes[offset];
                 }
             }
+
+            if (flags.MonsterQty)
+            {
+                var cmd = new byte[] { 0xB8, 0x10, 0x00, 0x90, 0x90 };
+                for(int i = 0; i < cmd.Length; i++)
+                {
+                    avatarBytes[AvatarOffset.MONSTER_QTY_ONE + i] = cmd[i];
+                }
+
+                cmd = new byte[] { 0x3D, 0x08, 0x00, 0x7D, 0xE4, 0x90 };
+                for (int i = 0; i < cmd.Length; i++)
+                {
+                    avatarBytes[AvatarOffset.MONSTER_QTY_TWO + i] = cmd[i];
+                }
+            }
         }
 
         public void Save(string path)
