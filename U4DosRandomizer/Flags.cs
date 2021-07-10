@@ -36,6 +36,7 @@ namespace U4DosRandomizer
         public int WeaponDamage { get; internal set; }
         public bool EarlierMonsters { get; internal set; }
         public bool MonsterQty { get; internal set; }
+        public bool NoRequireFullParty { get; internal set; }
         public bool RandomizeSpells { get; internal set; }
         public bool Sextant { get; internal set; }
         public bool ClothMap { get; internal set; }
@@ -76,6 +77,7 @@ namespace U4DosRandomizer
             mask = SET_MSK(mask, ClothMap, 0);
             mask = SET_MSK(mask, StartingWeapons, 1);
             mask = SET_MSK(mask, MonsterQty, 2);
+            mask = SET_MSK(mask, NoRequireFullParty, 3);
             encoded.Add((byte)mask);
 
             encoded.Add((byte)Overworld);
@@ -133,6 +135,7 @@ namespace U4DosRandomizer
             ClothMap = TST_MSK(mask, 0);
             StartingWeapons = TST_MSK(mask, 1);
             MonsterQty = TST_MSK(mask, 2);
+            NoRequireFullParty = TST_MSK(mask, 3);
 
             Overworld = encoded[8];
             QuestItemPercentage = encoded[9];

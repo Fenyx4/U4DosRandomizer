@@ -82,7 +82,7 @@ C_E21E() {
 		u4_puts(/*D_70D8*/"\nTake great care in these thy first travels in Britannia.\n"); C_E1FC();
 		u4_puts(/*D_7113*/"\nUntil thou dost well know thyself, travel not far from the safety of the townes!\n");
 	} else
-	if(U4_RND1(7) < 8 && Party.f_1d8 == 1) {
+	if(Party.f_1d8 == 1) {
 		u4_puts(/*D_7166*/"Travel not the open lands alone. There are many worthy people in the diverse townes whom it would be wise to ask to Join thee!\n"); C_E1FC();
 		u4_puts(/*D_71E6*/"\nBuild thy party unto eight travellers, for only a true leader can win the Quest!\n");
 	} else

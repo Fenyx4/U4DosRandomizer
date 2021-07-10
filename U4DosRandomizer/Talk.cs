@@ -479,6 +479,11 @@ namespace U4DosRandomizer
                 ultimaData.ShrineText[6 * 3 + 2] = "If thou dost seek the White Stone rest at the Inn of Spirits.";
             }
 
+            if (flags.NoRequireFullParty)
+            {
+                ultimaData.LBHelpText[18] = "Thou dost now seem ready to make the final journey into the dark Abyss!\n";
+            }
+
             // --- Fixes ---
             if (flags.Fixes)
             {

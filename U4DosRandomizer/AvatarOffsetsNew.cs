@@ -58,6 +58,8 @@ namespace U4DosRandomizer
             }
         }
 
+        public int ABYSS_PARTY_COMPARISON { get; } = 0x3452; //  0x34AB
+        public int LB_PARTY_COMPARISON { get; } = 0xE641; // 0xE449
         public int MOONGATE_X_OFFSET { get; } = 0x0fd5e; //0fad1
         public int MOONGATE_Y_OFFSET { get; } = 0x0fd66; //fad9
         public int AREA_X_OFFSET { get; } = 0x0fd8e; //fb01 // towns, cities, castles, dungeons, shrines
@@ -105,6 +107,7 @@ namespace U4DosRandomizer
         public int MONSTER_QTY_ONE { get; } = 0x8261; // 0x80EF
         public int MONSTER_QTY_TWO { get; } = 0x8272; // 0x8100
         public int LB_TEXT_OFFSET { get; } = 0x159CB; // 0x156ca
+        public int LB_HELP_TEXT_OFFSET { get; } = 0x165D6; // 0x162D4
         public int MANTRA_OFFSET { get; } = 0x170D6; //16DD4
         public int MANTRA_POINTERS_OFFSET { get; } = 0x17896; // 17594
         public int SHRINE_TEXT_OFFSET { get; } = 0x170F4; //16df2

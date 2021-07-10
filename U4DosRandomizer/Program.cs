@@ -129,6 +129,10 @@ namespace U4DosRandomizer
                 "--monsterQty",
                 "More monsters from the start.",
                 CommandOptionType.NoValue);
+            CommandOption noRequireFullPartyArg = commandLineApplication.Option(
+                "--noRequireFullParty",
+                "Don't require the full party.",
+                CommandOptionType.NoValue);
             CommandOption randomizeSpellsArg = commandLineApplication.Option(
                 "--randomizeSpells",
                 "Randomizes the gate and resurrection spells that you learn in game.",
@@ -276,6 +280,7 @@ namespace U4DosRandomizer
                     flags.WeaponDamage = weaponDamage;
                     flags.EarlierMonsters = earlierMonstersArg.HasValue();
                     flags.MonsterQty = monsterQtyArg.HasValue();
+                    flags.NoRequireFullParty = noRequireFullPartyArg.HasValue();
                     flags.RandomizeSpells = randomizeSpellsArg.HasValue();
                     flags.Sextant = sextantArg.HasValue();
                     flags.ClothMap = clothMapArg.HasValue();
