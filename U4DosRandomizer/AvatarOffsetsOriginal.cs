@@ -8,6 +8,8 @@ namespace U4DosRandomizer
     {
         // https://wiki.ultimacodex.com/wiki/Ultima_IV_Internal_Formats#AVATAR.EXE
         // Above doesn't work anymore cuz we have modified AVATAR.EXE
+        public int ABYSS_PARTY_COMPARISON { get; } = 0x34AB;
+        public int LB_PARTY_COMPARISON { get; } = 0xE449;
         public int MOONGATE_X_OFFSET { get; } = 0x0fad1;
         public int MOONGATE_Y_OFFSET { get; } = 0x0fad9;
         public int AREA_X_OFFSET { get; } = 0x0fb01; // towns, cities, castles, dungeons, shrines
@@ -59,6 +61,7 @@ namespace U4DosRandomizer
         public int MONSTER_QTY_TWO { get; } = 0x8100;
 
         public int LB_TEXT_OFFSET { get; } = 0x156ca;
+        public int LB_HELP_TEXT_OFFSET { get; } = 0x162D4;
         public int MANTRA_OFFSET { get; } = 0x16DD4;
         public int MANTRA_POINTERS_OFFSET { get; } = 0x17594;
         public int SHRINE_TEXT_OFFSET { get; } = 0x16df2;

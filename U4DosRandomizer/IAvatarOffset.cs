@@ -31,6 +31,7 @@ namespace U4DosRandomizer
         int MONSTER_QTY_ONE { get; }
         int MONSTER_QTY_TWO { get; }
         int LB_TEXT_OFFSET { get; }
+        int LB_HELP_TEXT_OFFSET { get; }
         int MANTRA_OFFSET { get; }
         int MANTRA_POINTERS_OFFSET { get; }
         int SHRINE_TEXT_OFFSET { get; }
@@ -59,6 +60,8 @@ namespace U4DosRandomizer
         int WHIRLPOOL_EXIT_Y_OFFSET { get; }
         int ABYSS_EJECTION_LOCATIONS_X { get; }
         int ABYSS_EJECTION_LOCATIONS_Y { get; }
+        int ABYSS_PARTY_COMPARISON { get; }
+        int LB_PARTY_COMPARISON { get; }
         int SPELL_RECIPE_OFFSET { get; }
         int BLINK_CAST_EXCLUSION_X1_OFFSET { get; }
         int BLINK_CAST_EXCLUSION_X2_OFFSET { get; }

@@ -156,6 +156,28 @@ namespace U4DosRandomizer
             data.LBText.Clear();
             data.LBText.AddRange(OriginalLBText);
 
+            OriginalLBHelpText = new List<string>();
+            OriginalLBHelpTextStartOffset = new List<int>();
+            lbTextBytes = new List<byte>();
+            textOffset = AvatarOffset.LB_HELP_TEXT_OFFSET;
+            for (int i = 0; i < 21; i++)
+            {
+                OriginalLBHelpTextStartOffset.Add(textOffset);
+                for (; avatarBytes[textOffset] != 0x00 && avatarBytes[textOffset] != 0xAB; textOffset++)
+                {
+                    lbTextBytes.Add(avatarBytes[textOffset]);
+                }
+                OriginalLBHelpText.Add(System.Text.Encoding.Default.GetString(lbTextBytes.ToArray()));
+                lbTextBytes.Clear();
+                if (avatarBytes[textOffset] == 0x0A || avatarBytes[textOffset] == 0xAB)
+                {
+                    textOffset++;
+                }
+                textOffset++;
+            }
+            data.LBHelpText.Clear();
+            data.LBHelpText.AddRange(OriginalLBHelpText);
+
             var mantraTextBytes = new List<byte>();
             textOffset = AvatarOffset.MANTRA_OFFSET;
             MantraMaxSize = 0;
@@ -335,6 +357,20 @@ namespace U4DosRandomizer
 
                 avatarBytesList.RemoveRange(OriginalLBTextStartOffset[i], OriginalLBText[i].Length);
                 avatarBytesList.InsertRange(OriginalLBTextStartOffset[i], Encoding.ASCII.GetBytes(data.LBText[i]));
+
+            }
+            avatarBytes = avatarBytesList.ToArray();
+
+            for (int i = 0; i < OriginalLBHelpText.Count; i++)
+            {
+                if (data.LBHelpText[i].Length > OriginalLBHelpText[i].Length)
+                {
+                    throw new Exception($"LB text \"{data.LBHelpText[i]}\" is too long.");
+                }
+                data.LBHelpText[i] = data.LBHelpText[i].PadRight(OriginalLBHelpText[i].Length, ' ');
+
+                avatarBytesList.RemoveRange(OriginalLBHelpTextStartOffset[i], OriginalLBHelpText[i].Length);
+                avatarBytesList.InsertRange(OriginalLBHelpTextStartOffset[i], Encoding.ASCII.GetBytes(data.LBHelpText[i]));
 
             }
             avatarBytes = avatarBytesList.ToArray();
@@ -546,6 +582,12 @@ namespace U4DosRandomizer
                     avatarBytes[AvatarOffset.MONSTER_QTY_TWO + i] = cmd[i];
                 }
             }
+
+            if (flags.NoRequireFullParty)
+            {
+                avatarBytes[AvatarOffset.ABYSS_PARTY_COMPARISON] = 0x76;
+                avatarBytes[AvatarOffset.LB_PARTY_COMPARISON] = 0x00;
+            }
         }
 
         public void Save(string path)
@@ -561,6 +603,8 @@ namespace U4DosRandomizer
         private List<int> OriginalShrineTextStartOffset { get; set; }
         public List<string> OriginalLBText { get; private set; }
         public List<int> OriginalLBTextStartOffset { get; private set; }
+        public List<string> OriginalLBHelpText { get; private set; }
+        public List<int> OriginalLBHelpTextStartOffset { get; private set; }
         public int MantraMaxSize { get; private set; }
         public IAvatarOffset AvatarOffset { get; private set; }
         private SpoilerLog SpoilerLog { get; }
