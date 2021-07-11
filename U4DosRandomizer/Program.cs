@@ -284,6 +284,7 @@ namespace U4DosRandomizer
                     flags.RandomizeSpells = randomizeSpellsArg.HasValue();
                     flags.Sextant = sextantArg.HasValue();
                     flags.ClothMap = clothMapArg.HasValue();
+                    flags.SpoilerLog = spoilerLogArg.HasValue();
                     Randomize(seed, path, flags, encodedArg.Value());
                     //Console.WriteLine("Seed: " + seed);
                     //var random = new Random(seed);
@@ -327,7 +328,7 @@ namespace U4DosRandomizer
             Console.WriteLine("Flags Base64: " + encoded);
 
             StreamWriter spoilerWriter = new StreamWriter("spoiler.txt");
-            SpoilerLog spoilerLog = new SpoilerLog(spoilerWriter);
+            SpoilerLog spoilerLog = new SpoilerLog(spoilerWriter, flags.SpoilerLog);
             System.IO.File.AppendAllText(@"seed.txt", seed.ToString() + " " + encoded + Environment.NewLine);
             spoilerLog.WriteFlags(flags);
 

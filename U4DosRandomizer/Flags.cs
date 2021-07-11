@@ -40,6 +40,7 @@ namespace U4DosRandomizer
         public bool RandomizeSpells { get; internal set; }
         public bool Sextant { get; internal set; }
         public bool ClothMap { get; internal set; }
+        public bool SpoilerLog { get; internal set; }
 
         public List<int> SupportedVersions = new List<int>() { 9 };
 
@@ -78,6 +79,11 @@ namespace U4DosRandomizer
             mask = SET_MSK(mask, StartingWeapons, 1);
             mask = SET_MSK(mask, MonsterQty, 2);
             mask = SET_MSK(mask, NoRequireFullParty, 3);
+            mask = SET_MSK(mask, SpoilerLog, 4);
+            encoded.Add((byte)mask);
+
+            // Add another one just for a bit of future proofing
+            mask = 0;
             encoded.Add((byte)mask);
 
             encoded.Add((byte)Overworld);
@@ -136,11 +142,14 @@ namespace U4DosRandomizer
             StartingWeapons = TST_MSK(mask, 1);
             MonsterQty = TST_MSK(mask, 2);
             NoRequireFullParty = TST_MSK(mask, 3);
+            SpoilerLog = TST_MSK(mask, 4);
 
-            Overworld = encoded[8];
-            QuestItemPercentage = encoded[9];
-            KarmaSetPercentage = encoded[10];
-            KarmaValue = encoded[11];
+            mask = encoded[8];
+
+            Overworld = encoded[9];
+            QuestItemPercentage = encoded[10];
+            KarmaSetPercentage = encoded[11];
+            KarmaValue = encoded[12];
             if (KarmaValue == 0)
             {
                 KarmaValue = null;
@@ -149,10 +158,10 @@ namespace U4DosRandomizer
             {
                 KarmaValue--;
             }
-            MonsterDamage = encoded[12];
-            WeaponDamage = encoded[13];
+            MonsterDamage = encoded[13];
+            WeaponDamage = encoded[14];
 
-            var spellRemoveMask = BitConverter.ToInt32(encoded, 14);
+            var spellRemoveMask = BitConverter.ToInt32(encoded, 15);
             SpellRemove = "";
             for (int offset = 0; offset < 26; offset++)
             {

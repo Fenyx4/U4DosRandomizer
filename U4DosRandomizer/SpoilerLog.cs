@@ -6,10 +6,12 @@ namespace U4DosRandomizer
     public class SpoilerLog
     {
         private StreamWriter spoilerWriter;
+        private bool enabled;
 
-        public SpoilerLog(StreamWriter spoilerWriter)
+        public SpoilerLog(StreamWriter spoilerWriter, bool enabled)
         {
             this.spoilerWriter = spoilerWriter;
+            this.enabled = enabled;
         }
 
         internal void WriteFlags(Flags flags)
@@ -19,8 +21,10 @@ namespace U4DosRandomizer
 
         internal void Add(SpoilerCategory category, string v)
         {
-            spoilerWriter.WriteLine(v);
-            //throw new NotImplementedException();
+            if (enabled)
+            {
+                spoilerWriter.WriteLine(v);
+            }
         }
     }
 }
