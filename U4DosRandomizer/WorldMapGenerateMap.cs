@@ -908,6 +908,37 @@ namespace U4DosRandomizer
                 ultimaData.Towns[i + 8].Y = loc.Y;
             }
 
+            // Clear the forests around towns
+            var clearAreas = new List<ITile>();
+            clearAreas.AddRange(ultimaData.Towns);
+            clearAreas.RemoveAt(11); // Cove can hide
+            clearAreas.RemoveAt(7); // Magincia can hide
+            clearAreas.AddRange(ultimaData.LCB);
+            clearAreas.AddRange(ultimaData.Castles);
+            foreach(var clearing in clearAreas)
+            {
+                var grass = clearing.NeighborCoordinates().ToList();
+                grass.Add(new Tile(clearing.X - 1, clearing.Y - 1, _worldMapTiles, v => Wrap(v)));
+                grass.Add(new Tile(clearing.X + 1, clearing.Y + 1, _worldMapTiles, v => Wrap(v)));
+
+                foreach(var tile in grass)
+                {
+                    if(tile.GetTile() == TileInfo.Forest)
+                    {
+                        tile.SetTile(TileInfo.Grasslands);
+                    }
+                }
+
+                var scrub = clearing.NeighborAndAdjacentCoordinates().SelectMany(x => x.NeighborCoordinates());
+                foreach (var tile in scrub)
+                {
+                    if (tile.GetTile() == TileInfo.Forest)
+                    {
+                        tile.SetTile(TileInfo.Scrubland);
+                    }
+                }
+            }
+
             // Shrines
             numLocations = ultimaData.Shrines.Count - 1;
             // Get a place by the water
