@@ -2371,8 +2371,17 @@ namespace U4DosRandomizer
                                                                       //WrapTextWidth = 100, // greater than zero so we will word wrap at 100 pixels wide
                                                     HorizontalAlignment = HorizontalAlignment.Center // right align
                                                 });
-
-                                                    foreach (var region in Regions)
+                                                    var textRegions = Regions.OrderBy(x => x.Center.Y).ToList();
+                                                    var lastY = textRegions[0].Center.Y;
+                                                    for (int i = 1; i < textRegions.Count; i++)
+                                                    {
+                                                        if (textRegions[i].Center.Y - lastY < 5)
+                                                        {
+                                                            textRegions[i].Center = new Point(textRegions[i].Center.X, lastY + 5);
+                                                        }
+                                                        lastY = textRegions[i].Center.Y;
+                                                    }
+                                                    foreach (var region in textRegions)
                                                     {
                                                         image.Mutate(x => x.DrawText(options, region.RunicName.ToUpper(), font, SixLabors.ImageSharp.Color.Black, new SixLabors.ImageSharp.PointF(region.Center.X * 4, region.Center.Y * 4)));
                                                     }
