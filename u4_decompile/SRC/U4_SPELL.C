@@ -147,19 +147,33 @@ int bp04;
 /*C_6558*/SPL_Awaken()
 {
 	register int si;
+	if(U4_RND1(7) < 8) {
 
-	si = AskChara(/*D_20E2*/"Who:\x12\x12\b");
-	if(si < 0)
-		return;
-	if(!C_63B4())
-		return;
-	if(Party.chara[si]._stat != 'S') {
-		w_Failed();
-		return;
-	}
-	Party.chara[si]._stat = 'G';
-	if(CurMode >= MOD_COMBAT) {
-		D_944A[si] = Fighters._chtile[si] = C_0ACF(si);
+		si = AskChara(/*D_20E2*/"Who:\x12\x12\b");
+		if(si < 0)
+			return;
+		if(!C_63B4())
+			return;
+		if(Party.chara[si]._stat != 'S') {
+			w_Failed();
+			return;
+		}
+		Party.chara[si]._stat = 'G';
+		if(CurMode >= MOD_COMBAT) {
+			D_944A[si] = Fighters._chtile[si] = C_0ACF(si);
+		}
+	} else {
+		if(!C_63B4())
+			return;
+		for(si = Party.f_1d8-1; si >= 0; si--)
+		{
+			if(Party.chara[si]._stat == 'S') {			
+				Party.chara[si]._stat = 'G';
+				if(CurMode >= MOD_COMBAT) {
+					D_944A[si] = Fighters._chtile[si] = C_0ACF(si);
+				}
+			}
+		}
 	}
 }
 
