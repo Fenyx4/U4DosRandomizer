@@ -102,6 +102,8 @@ namespace U4DosRandomizer
         public int ABYSS_EJECTION_LOCATIONS_Y { get; } = 0xFEBB;
 
         public int SPELL_RECIPE_OFFSET { get; } = 0x11A29;
+        public static int RUNE_IMAGE_INDEX2 { get; } = 0xFB85;
+        public static int RUNE_IMAGE_INDEX { get; } = 0x17551;
 
         // Originally blink didn't have an upperbound https://github.com/ergonomy-joe/u4-decompiled/blob/c2c2108fa3bb346bcd1d8c207c526f33a4c8f5ef/SRC/U4_SPELL.C#L179
         public int BLINK_CAST_EXCLUSION_X1_OFFSET => throw new NotImplementedException();

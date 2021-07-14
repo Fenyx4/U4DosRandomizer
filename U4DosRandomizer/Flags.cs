@@ -41,6 +41,7 @@ namespace U4DosRandomizer
         public bool Sextant { get; internal set; }
         public bool ClothMap { get; internal set; }
         public bool SpoilerLog { get; internal set; }
+        public bool VGAPatch { get; internal set; }
 
         public List<int> SupportedVersions = new List<int>() { 9 };
 

@@ -149,6 +149,9 @@ namespace U4DosRandomizer
 
         public int SPELL_RECIPE_OFFSET { get; } = 0x11CF2; //11A29
 
+        public static int RUNE_IMAGE_INDEX2 { get; } = 0xFE12; // FB85
+        public static int RUNE_IMAGE_INDEX { get; } = 0x17853; // 17551
+
         public int BLINK_CAST_EXCLUSION_X1_OFFSET { get; } = 0x68BB; // New
 
         public int BLINK_CAST_EXCLUSION_X2_OFFSET { get { return BLINK_CAST_EXCLUSION_X1_OFFSET + 4; } } // New

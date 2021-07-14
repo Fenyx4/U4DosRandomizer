@@ -11,6 +11,8 @@ namespace U4DosRandomizer
 {
     public class Avatar
     {
+        private const string upgradeFileHash = "f341263de422dba816a0dbbcde5dfe350e08dcb40cdf8147ed8f65aad5737d48";
+
         private const string filename = "AVATAR.EXE";
         private byte[] avatarBytes;
 
@@ -19,10 +21,14 @@ namespace U4DosRandomizer
             SpoilerLog = spoilerLog;
         }
 
-        public void Load(string path, UltimaData data, IWorldMap worldMap)
+        public void Load(string path, UltimaData data, IWorldMap worldMap, Flags flags)
         {
             var file = Path.Combine(path, filename);
 
+            if(flags.VGAPatch && HashHelper.BytesToString(HashHelper.GetHashSha256(file)) == upgradeFileHash)
+            {
+                DowngradeVGAPatch(file);
+            }
             FileHelper.TryBackupOriginalFile(file);
 
             // Apply delta file to create new file
@@ -251,6 +257,36 @@ namespace U4DosRandomizer
                     data.ShopLocations[townIdx].Add(avatarBytes[townIdx * 8 + shopIdx + AvatarOffset.SHOP_LOCATION_OFFSET]);
                 }
             }
+        }
+
+        private void DowngradeVGAPatch(string file)
+        {
+            byte[] bytes;
+            using (var avatarStream = new System.IO.FileStream(file, System.IO.FileMode.Open))
+            {
+                bytes = avatarStream.ReadAllBytes();
+            }
+
+            var originalRuneNums = new char[] { '1', '2', '0', '1', '2', '1', '3', '4' };
+            for(int i = 0; i < 8; i++)
+            {
+                bytes[AvatarOffsetsOriginal.RUNE_IMAGE_INDEX+5+i*7] = (byte)originalRuneNums[i];
+            }
+            bytes[AvatarOffsetsOriginal.RUNE_IMAGE_INDEX2] = 0x35;
+
+            using (var avatarOut = new System.IO.BinaryWriter(new System.IO.FileStream(file, System.IO.FileMode.Truncate)))
+            {
+                avatarOut.Write(bytes);
+            }
+        }
+
+        private void ApplyVGAPatch()
+        {
+            for (int i = 0; i < 8; i++)
+            {
+                avatarBytes[AvatarOffsetsNew.RUNE_IMAGE_INDEX + 5 + i * 7] = (byte)((i + 1).ToString()[0]);
+            }
+            avatarBytes[AvatarOffsetsNew.RUNE_IMAGE_INDEX2] = 0x30;
         }
 
         internal static void Restore(string path)
@@ -588,7 +624,13 @@ namespace U4DosRandomizer
                 avatarBytes[AvatarOffset.ABYSS_PARTY_COMPARISON] = 0x76;
                 avatarBytes[AvatarOffset.LB_PARTY_COMPARISON] = 0x00;
             }
+
+            if (flags.VGAPatch)
+            {
+                ApplyVGAPatch();
+            }
         }
+
 
         public void Save(string path)
         {

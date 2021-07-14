@@ -145,6 +145,10 @@ namespace U4DosRandomizer
                 "--clothMap",
                 "Cloth map of the world.",
                 CommandOptionType.NoValue);
+            CommandOption vgaPatchArg = commandLineApplication.Option(
+                "--vgaPatch",
+                "VGA patch compatibility.",
+                CommandOptionType.NoValue);
 
             CommandOption spoilerLogArg = commandLineApplication.Option(
                 "--spoilerLog",
@@ -285,6 +289,7 @@ namespace U4DosRandomizer
                     flags.Sextant = sextantArg.HasValue();
                     flags.ClothMap = clothMapArg.HasValue();
                     flags.SpoilerLog = spoilerLogArg.HasValue();
+                    flags.VGAPatch = vgaPatchArg.HasValue();
                     Randomize(seed, path, flags, encodedArg.Value());
                     //Console.WriteLine("Seed: " + seed);
                     //var random = new Random(seed);
@@ -362,7 +367,7 @@ namespace U4DosRandomizer
             worldMap.Load(path, randomValues[0], randomValues[1], randomValues[2], ultimaData);
 
             var avatar = new Avatar(spoilerLog);
-            avatar.Load(path, ultimaData, worldMap);
+            avatar.Load(path, ultimaData, worldMap, flags);
 
             var title = new Title(spoilerLog);
             title.Load(path, ultimaData);
