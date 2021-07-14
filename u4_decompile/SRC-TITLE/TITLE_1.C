@@ -801,7 +801,11 @@ C_2E04()
 	Party.chara[0]._str = tmp_str;
 	Party.chara[0]._int = tmp_int;
 	Party.chara[0]._dex = tmp_dex;
-	Party.chara[0].p_24 = (M_or_F == 'M')?0x0b:0x0c;
+	switch(M_or_F) {
+		case 'F': Party.chara[0].p_24 = 0x0c; break;
+		case 'O': Party.chara[0].p_24 = 'O'; break;
+		default: Party.chara[0].p_24 = 0x0b; break;
+	}
 	for(loc_A = 31; loc_A >= 0; loc_A --) {
 		D_6976._npc._000[loc_A] =
 		D_6976._npc._020[loc_A] =
@@ -882,10 +886,14 @@ C_3030()
 		return;
 	}
 	Gra_2();
-	C_0B1E(17, 4, /*D_31A2*/"Art thou Male or Female? ");
+	if(U4_RND1(7) < 8) {	
+		C_0B1E(17, 4, /*D_31A2*/"Art thou Male or Female? ");
+	} else {
+		C_0B1E(17, 4, /*D_31A2*/"Art thou Male, Female or Other? ");
+	}
 	M_or_F = u_kbread() & 0xff;
 	u4_toupper(M_or_F);
-	while(M_or_F != 'M' && M_or_F != 'F') {
+	while(M_or_F != 'M' && M_or_F != 'F' && M_or_F != 'O') {
 		sound_1();
 		M_or_F = u_kbread() & 0xff;
 		if(M_or_F == 0x1b || M_or_F == KBD_ENTER || M_or_F == KBD_SPACE) {
