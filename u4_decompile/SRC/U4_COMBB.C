@@ -155,7 +155,7 @@ unsigned char bp04;
 						(loc_C = (*(unsigned *)(D_95B2+loc_A+2) >> (loc_AShift+4)) & 0xf)
 					) 
 					{
-						if( D_95B2[loc_A] < TIL_80 ) {
+						if( U4_RND1(7) < 8 || D_95B2[loc_A] < TIL_80 ) {
 							Combat_MAP(loc_B, loc_C) = D_95B2[loc_A];
 						}
 						else {
