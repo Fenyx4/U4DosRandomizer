@@ -2,6 +2,9 @@ namespace U4DosRandomizer
 {
     public interface IAvatarOffset
     {
+        int BELL_REQUIREMENT_OFFSET { get; }
+        int BOOK_REQUIREMENT_OFFSET { get; }
+        int CANDLE_REQUIREMENT_OFFSET { get; }
         int MOONGATE_X_OFFSET { get; }
         int MOONGATE_Y_OFFSET { get; }
         int AREA_X_OFFSET { get; }
@@ -77,6 +80,7 @@ namespace U4DosRandomizer
         int ENABLE_HIT_CHANCE_OFFSET { get; }
         int ENABLE_DIAGONAL_ATTACK_OFFSET { get; }
         int ENABLE_SACRIFICE_FIX_OFFSET { get; }
+        int ENABLE_PRINCIPLE_ITEM_REORDER_OFFSET { get; }
         int BLINK_DESTINATION2_EXCLUSION_X1_OFFSET { get; }
         int BLINK_DESTINATION2_EXCLUSION_X2_OFFSET { get; }
         int BLINK_DESTINATION2_EXCLUSION_Y1_OFFSET { get; }

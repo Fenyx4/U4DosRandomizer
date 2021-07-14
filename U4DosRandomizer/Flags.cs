@@ -40,6 +40,7 @@ namespace U4DosRandomizer
         public bool RandomizeSpells { get; internal set; }
         public bool Sextant { get; internal set; }
         public bool ClothMap { get; internal set; }
+        public bool PrincipleItems { get; internal set; }
         public bool SpoilerLog { get; internal set; }
         public bool VGAPatch { get; internal set; }
 
@@ -81,6 +82,7 @@ namespace U4DosRandomizer
             mask = SET_MSK(mask, MonsterQty, 2);
             mask = SET_MSK(mask, NoRequireFullParty, 3);
             mask = SET_MSK(mask, SpoilerLog, 4);
+            mask = SET_MSK(mask, PrincipleItems, 5);
             encoded.Add((byte)mask);
 
             // Add another one just for a bit of future proofing
@@ -144,6 +146,7 @@ namespace U4DosRandomizer
             MonsterQty = TST_MSK(mask, 2);
             NoRequireFullParty = TST_MSK(mask, 3);
             SpoilerLog = TST_MSK(mask, 4);
+            PrincipleItems = TST_MSK(mask, 5);
 
             mask = encoded[8];
 

@@ -145,6 +145,10 @@ namespace U4DosRandomizer
                 "--clothMap",
                 "Cloth map of the world.",
                 CommandOptionType.NoValue);
+            CommandOption principleItemsArg = commandLineApplication.Option(
+                "--principleItems",
+                "Randomize the order of the Principle Items.",
+                CommandOptionType.NoValue);
             CommandOption vgaPatchArg = commandLineApplication.Option(
                 "--vgaPatch",
                 "VGA patch compatibility.",
@@ -288,6 +292,7 @@ namespace U4DosRandomizer
                     flags.RandomizeSpells = randomizeSpellsArg.HasValue();
                     flags.Sextant = sextantArg.HasValue();
                     flags.ClothMap = clothMapArg.HasValue();
+                    flags.PrincipleItems = principleItemsArg.HasValue();
                     flags.SpoilerLog = spoilerLogArg.HasValue();
                     flags.VGAPatch = vgaPatchArg.HasValue();
                     Randomize(seed, path, flags, encodedArg.Value());
@@ -464,6 +469,18 @@ namespace U4DosRandomizer
                         }
                     }
                 }
+            }
+
+            if(flags.PrincipleItems)
+            {
+                var values = new List<Tuple<int,byte>> { new Tuple<int,byte>(0, 0x10), new Tuple<int,byte>(1,0x08), new Tuple<int,byte>(2, 0x04) };
+                values.Shuffle(random);
+                
+                for(int i = 0; i < values.Count(); i++)
+                {
+                    ultimaData.PrincipleItemRequirements[values[i].Item1] = values[(i+1) % values.Count()].Item2;
+                }
+                ultimaData.PrincipleItemRequirements[values[0].Item1] = (byte)(4 - values[0].Item1);
             }
 
 
