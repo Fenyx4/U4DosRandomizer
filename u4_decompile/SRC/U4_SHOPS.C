@@ -317,7 +317,7 @@ int bp06;
 int bp04;
 {
 	register int si;
-	
+	/*ENABLE_WEAPON_OVERFLOW_FIX*/
 	if(U4_RND1(7) < 8) {	
 		if(D_46D2[bp06] * bp04 > Party._gold) {
 			u4_puts(/*D_4652*/"I fear you have not the funds, perhaps something else.\n");

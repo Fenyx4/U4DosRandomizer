@@ -886,6 +886,7 @@ C_3030()
 		return;
 	}
 	Gra_2();
+	/*ENABLE_OTHER*/
 	if(U4_RND1(7) < 8) {	
 		C_0B1E(17, 4, /*D_31A2*/"Art thou Male or Female? ");
 	} else {

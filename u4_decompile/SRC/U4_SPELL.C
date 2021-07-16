@@ -147,6 +147,7 @@ int bp04;
 /*C_6558*/SPL_Awaken()
 {
 	register int si;
+	/*ENABLE_AWAKEN_ALL*/
 	if(U4_RND1(7) < 8) {
 
 		si = AskChara(/*D_20E2*/"Who:\x12\x12\b");

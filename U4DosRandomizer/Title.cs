@@ -133,6 +133,7 @@ namespace U4DosRandomizer
             }
         }
 
+        public static int ENABLE_OTHER = 0x311E;
         public static int FLAG_ENCODE_OFFSET = 0x41D1; // N/A
         public static int START_X_OFFSET = 0x7140; //0x70dc;
         public static int START_Y_OFFSET = 0x7148; //0x70e4;

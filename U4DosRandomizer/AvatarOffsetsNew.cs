@@ -164,49 +164,59 @@ namespace U4DosRandomizer
         public static int RUNE_IMAGE_INDEX2 { get; } = 0x100AE; // FB85
         public static int RUNE_IMAGE_INDEX { get; } = 0x17B6F; // 17551
 
-        public int BLINK_CAST_EXCLUSION_X1_OFFSET { get; } = 0x68BB; // New
+        public int BLINK_CAST_EXCLUSION_X1_OFFSET { get; } = 0x6A9D; // New : C0
 
         public int BLINK_CAST_EXCLUSION_X2_OFFSET { get { return BLINK_CAST_EXCLUSION_X1_OFFSET + 4; } } // New
 
-        public int BLINK_CAST_EXCLUSION_Y1_OFFSET { get; } = 0x68D0; // New
+        public int BLINK_CAST_EXCLUSION_Y1_OFFSET { get; } = 0x6AB2; // New : C0
 
         public int BLINK_CAST_EXCLUSION_Y2_OFFSET { get { return BLINK_CAST_EXCLUSION_Y1_OFFSET + 4; } } // New
 
 
-        public int BLINK_DESTINATION_EXCLUSION_X1_OFFSET { get; } = 0x6955; // New
+        public int BLINK_DESTINATION_EXCLUSION_X1_OFFSET { get; } = 0x6B37; // New : 01
 
         public int BLINK_DESTINATION_EXCLUSION_X2_OFFSET { get { return BLINK_DESTINATION_EXCLUSION_X1_OFFSET + 4; } }  // New
 
-        public int BLINK_DESTINATION_EXCLUSION_Y1_OFFSET { get; } = 0x6974; // New
+        public int BLINK_DESTINATION_EXCLUSION_Y1_OFFSET { get; } = 0x6B56; // New : 01
 
         public int BLINK_DESTINATION_EXCLUSION_Y2_OFFSET { get { return BLINK_DESTINATION_EXCLUSION_Y1_OFFSET + 4; } } // New
 
-        public int BLINK_DESTINATION2_EXCLUSION_X1_OFFSET { get; } = 0x6997; // New
+        public int BLINK_DESTINATION2_EXCLUSION_X1_OFFSET { get; } = 0x6B79; // New : 01
 
         public int BLINK_DESTINATION2_EXCLUSION_X2_OFFSET { get { return BLINK_DESTINATION2_EXCLUSION_X1_OFFSET + 4; } } // New
 
-        public int BLINK_DESTINATION2_EXCLUSION_Y1_OFFSET { get; } = 0x69BA; // New
+        public int BLINK_DESTINATION2_EXCLUSION_Y1_OFFSET { get; } = 0x699C; // New : 01
 
         public int BLINK_DESTINATION2_EXCLUSION_Y2_OFFSET { get { return BLINK_DESTINATION2_EXCLUSION_Y1_OFFSET + 4; } }  // New
 
-        public int ENABLE_BELL_REQUIREMENT { get; } = 0x0; // New
-        public int ENABLE_MIX_QUANTITY_OFFSET { get; } = 0x8FC7; // New
+        public int ENABLE_BELL_REQUIREMENT { get; } = 0x04E9; // New : 08
+        public int ENABLE_TOWN_SAVE1 { get; } = 0x405E; // New : 08
+        public int ENABLE_TOWN_SAVE2 { get; } = 0x471B; // New : 08
+        public int ENABLE_TOWN_SAVE3 { get; } = 0x4815; // New : 08
+        public int ENABLE_TOWN_SAVE4 { get; } = 0x44A0; // New : 08
+        public int ENABLE_MIX_QUANTITY_OFFSET { get; } = 0x9229; // New : 08
 
-        public int ENABLE_SLEEP_BACKOFF_OFFSET { get; } = 0xA12A; // New
+        public int ENABLE_SLEEP_BACKOFF_OFFSET { get; } = 0xA38C; // New : 08
+        public int ENABLE_DAEMON_TRIGGER_FIX { get; } = 0x8006; // New : 08
+        public int ENABLE_MAP_EDGE_FIX1 { get; } = 0x56AE; // New : 08
+        public int ENABLE_MAP_EDGE_FIX2 { get; } = 0x59D1; // New : 08
+        public int ENABLE_MAP_EDGE_FIX3 { get; } = 0x83C0; // New : 08
+        public int ENABLE_AWAKEN_ALL { get; } = 0x69C5; // New : 08
 
-        public int ENABLE_ACTIVE_PLAYER_1_OFFSET { get; } = 0x5DD3; // New
+        public int ENABLE_ACTIVE_PLAYER_1_OFFSET { get; } = 0x5F72; // New : 08
 
-        public int ENABLE_HIT_CHANCE_OFFSET { get; } = 0x62DD; // New
+        public int ENABLE_HIT_CHANCE_OFFSET { get; } = 0x647C; // New : 08
 
-        public int ENABLE_DIAGONAL_ATTACK_OFFSET { get; } = 0x6491; // New
+        public int ENABLE_DIAGONAL_ATTACK_OFFSET { get; } = 0x6630; // New : 08
 
-        public int ENABLE_SACRIFICE_FIX_OFFSET { get; } = 0xA7FB; // New
+        public int ENABLE_SACRIFICE_FIX_OFFSET { get; } = 0xAA5D; // New : 08
 
-        public int ENABLE_PRINCIPLE_ITEM_REORDER_OFFSET { get; } = 0x4E9; // New
+        public int ENABLE_PRINCIPLE_ITEM_REORDER_OFFSET { get; } = 0x4FA; // New : E8
 
-        public int ENCODED_FLAGS_OFFSET { get; } = 0xFBA7; // New
+        public int ENABLE_WEAPON_OVERFLOW_FIX { get; } = 0xD377; // New 08
+        public int ENCODED_FLAGS_OFFSET { get; } = 0xFE43; // New : 20
 
-        public int SEED_OFFSET { get; } = 0xFB87; // New
+        public int SEED_OFFSET { get; } = 0xFE23; // New : 20
 
         public const byte Reagent_ash = (0x80 >> 0);
         public const byte Reagent_ginseng = (0x80 >> 1);

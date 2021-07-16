@@ -203,6 +203,7 @@ unsigned char bp06;
 unsigned char bp04;
 {
 	unsigned char temp = D_8742._map.x32x32[u4_wrap(bp04-D_95A5.y*16)][u4_wrap(bp06-D_95A5.x*16)];
+	/*ENABLE_MAP_EDGE_FIX1*/
 	if(U4_RND1(7) < 8) {
 		temp = D_8742._map.x32x32[bp04-D_95A5.y*16][bp06-D_95A5.x*16];
 	}
@@ -349,6 +350,7 @@ int bp04;
 C_56D3(bp04)
 int bp04;
 {
+	/*ENABLE_MAP_EDGE_FIX3*/
 	if (U4_RND1(7) < 8) {
 		return
 			(D_8742._npc._x[bp04] - D_95A5.x*16) >= 32 ||

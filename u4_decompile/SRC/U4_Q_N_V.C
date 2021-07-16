@@ -15,6 +15,7 @@
 	u4_putl(Party._moves, 1, '0');
 	u4_puts(/*D_21B2*/" moves\n");
 	if(Party._loc) {
+		/*ENABLE_TOWN_SAVE4*/
 		if((U4_RND1(7) < 8 && Party._loc < 0x11) || Party._loc > 0x18) {
 			u4_puts(/*D_21BA*/"Not Here!\n");
 			return;

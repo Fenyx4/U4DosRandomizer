@@ -180,6 +180,7 @@ register unsigned si;
 	D_9772 = D_8742._npc._x[si];
 	D_9140 = D_8742._npc._y[si];
 	if(Party._loc == 0x00) {
+		/*ENABLE_MAP_EDGE_FIX2*/
 		if(U4_RND1(7) < 8) {
 			D_946C = D_8742._map.x32x32[D_9140 - (D_95A5.y<<4)][D_9772 - (D_95A5.x<<4)];
 		} else {
