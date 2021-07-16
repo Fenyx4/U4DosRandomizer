@@ -6,9 +6,9 @@ namespace U4DosRandomizer
 {
     public class AvatarOffsetsOriginal : IAvatarOffset
     {
-        public int BELL_REQUIREMENT_OFFSET { get; } = 0x000;
-        public int BOOK_REQUIREMENT_OFFSET { get; } = 0x000;
-        public int CANDLE_REQUIREMENT_OFFSET { get; } = 0x000;
+        public int BELL_REQUIREMENT_OFFSET => throw new NotImplementedException();
+        public int BOOK_REQUIREMENT_OFFSET { get; } = 0x6DB;
+        public int CANDLE_REQUIREMENT_OFFSET { get; } = 0x720;
         // https://wiki.ultimacodex.com/wiki/Ultima_IV_Internal_Formats#AVATAR.EXE
         // Above doesn't work anymore cuz we have modified AVATAR.EXE
         public int ABYSS_PARTY_COMPARISON { get; } = 0x34AB;
