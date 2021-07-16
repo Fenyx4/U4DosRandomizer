@@ -41,6 +41,11 @@ namespace U4DosRandomizer
                 titleBytes = titleStream.ReadAllBytes();
             }
 
+            if (titleBytes[ENABLE_OTHER] != 0x08)
+            {
+                throw new Exception($"Offset ENABLE_OTHER appears to be wrong.");
+            }
+
             if (titleBytes[START_X_OFFSET] != 0xE7)
             {
                 throw new Exception($"Offset START_X_OFFSET appears to be wrong.");
@@ -51,12 +56,12 @@ namespace U4DosRandomizer
                 throw new Exception($"Offset START_Y_OFFSET appears to be wrong.");
             }
 
-            if (titleBytes[FLAG_ENCODE_OFFSET] != 0x43)
+            if (titleBytes[FLAG_ENCODE_OFFSET] != 0x20)
             {
                 throw new Exception($"Offset FLAG_ENCODE_OFFSET appears to be wrong.");
             }
 
-            if (titleBytes[ENABLE_KARMA_OVERRIDE_OFFSET] != 0x09)
+            if (titleBytes[ENABLE_KARMA_OVERRIDE_OFFSET] != 0x08)
             {
                 throw new Exception($"Offset ENABLE_KARMA_OVERRIDE_OFFSET appears to be wrong.");
             }
@@ -134,12 +139,12 @@ namespace U4DosRandomizer
         }
 
         public static int ENABLE_OTHER = 0x311E;
-        public static int FLAG_ENCODE_OFFSET = 0x41D1; // N/A
-        public static int START_X_OFFSET = 0x7140; //0x70dc;
-        public static int START_Y_OFFSET = 0x7148; //0x70e4;
+        public static int FLAG_ENCODE_OFFSET = 0x4201; // N/A
+        public static int START_X_OFFSET = 0x7170; //0x70dc;
+        public static int START_Y_OFFSET = 0x7178; //0x70e4;
 
         public static int ENABLE_KARMA_OVERRIDE_OFFSET = 0x2EA8;
-        public static int KARMA_OVERRIDE_VALUES_OFFSET = 0x7150;
+        public static int KARMA_OVERRIDE_VALUES_OFFSET = 0x7180;
         private SpoilerLog spoilerLog;
 
         public Title(SpoilerLog spoilerLog)

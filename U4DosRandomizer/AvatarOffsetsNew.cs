@@ -185,7 +185,7 @@ namespace U4DosRandomizer
 
         public int BLINK_DESTINATION2_EXCLUSION_X2_OFFSET { get { return BLINK_DESTINATION2_EXCLUSION_X1_OFFSET + 4; } } // New
 
-        public int BLINK_DESTINATION2_EXCLUSION_Y1_OFFSET { get; } = 0x699C; // New : 01
+        public int BLINK_DESTINATION2_EXCLUSION_Y1_OFFSET { get; } = 0x6B9C; // New : 01
 
         public int BLINK_DESTINATION2_EXCLUSION_Y2_OFFSET { get { return BLINK_DESTINATION2_EXCLUSION_Y1_OFFSET + 4; } }  // New
 
