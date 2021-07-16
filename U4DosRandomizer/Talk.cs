@@ -62,9 +62,9 @@ namespace U4DosRandomizer
 
         public void Update(UltimaData ultimaData, Avatar avatar, Flags flags, IWorldMap worldMap)
         {
+            Person person = null;
             if (flags.Overworld == 5)
             {
-                Person person = null;
                 // --- Items ---
                 if (ultimaData.Items[ultimaData.ITEM_BELL].Changed)
                 {
@@ -248,120 +248,6 @@ namespace U4DosRandomizer
 
                 // --- End Shrines ---
 
-                // --- Runes ---
-                if (flags.Runes)
-                {
-                    for (int i = 0; i < 8; i++)
-                    {
-                        var itemOption = ultimaData.ItemOptions[UltimaData.ITEM_RUNE_HONESTY + i];
-                        foreach(var newPerson in itemOption.People)
-                        {
-                            person = FindPerson(newPerson.Name, newPerson.Town);
-                            if(newPerson.Health != null)
-                            {
-                                person.Health = newPerson.Health;
-                            }
-                            if (newPerson.Job != null)
-                            {
-                                person.Job = newPerson.Job;
-                            }
-                            if (newPerson.Keyword1 != null)
-                            {
-                                person.Keyword1 = newPerson.Keyword1;
-                            }
-                            if (newPerson.Keyword2 != null)
-                            {
-                                person.Keyword2 = newPerson.Keyword2;
-                            }
-                            if (newPerson.Yes != null)
-                            {
-                                person.Yes = newPerson.Yes;
-                            }
-                            if (newPerson.No != null)
-                            {
-                                person.No = newPerson.No;
-                            }
-                            if (newPerson.Question != null)
-                            {
-                                person.Question = newPerson.Question;
-                            }
-                            if (newPerson.KeywordResponse1 != null)
-                            {
-                                person.KeywordResponse1 = newPerson.KeywordResponse1;
-                            }
-                            if (newPerson.KeywordResponse2 != null)
-                            {
-                                person.KeywordResponse2 = newPerson.KeywordResponse2;
-                            }
-                        }
-                    }
-                }
-
-                // --- End Runes ---
-
-                if (flags.Mantras)
-                {
-                    person = FindPerson("Cromwell");
-                    person.KeywordResponse2 = $"The mantra of the shrine of honesty is {Mantras[0].Text.ToUpper()}.";
-
-                    person = FindPerson("Cricket");
-                    person.KeywordResponse2 = $"The mantra of the shrine of compassion is {Mantras[1].Text.ToUpper()}!";
-
-                    person = FindPerson("Aesop");
-                    person.KeywordResponse2 = $"The mantra of valor is '{Mantras[2].Text.ToUpper()}'. Use it in the shrine on the next isle!";
-
-                    person = FindPerson("Silent");
-                    person.Job = $"{Mantras[3].Text}... {Mantras[3].Text}...";
-                    person.Health = $"{Mantras[3].Text}... {Mantras[3].Text}...";
-                    person.Keyword1 = $"{Mantras[3].Text.ToUpper()}...";
-                    person.KeywordResponse1 = $"{Mantras[3].Text}... {Mantras[3].Text}...";
-                    person.Keyword2 = $"{Mantras[3].Text.ToUpper()}";
-                    person.KeywordResponse2 = $"{Mantras[3].Text}... {Mantras[3].Text}...";
-
-                    person = FindPerson("Singsong");
-                    person.KeywordResponse2 = Mantras[4].Limerick;
-
-                    person = FindPerson("Kline");
-                    person.KeywordResponse1 = $"The mantra is '{Mantras[5].Text}'.";
-
-                    person = FindPerson("Barren", "Skara");
-                    person.KeywordResponse1 = $"I know it well, it is '{Mantras[6].Text.ToUpper()}'.";
-
-                    person = FindPerson("the Ankh of\nSpirituality");
-                    person.Keyword2 = Mantras[6].Text.ToUpper();
-
-                    person = FindPerson("Faultless");
-                    person.KeywordResponse2 = $"The mantra for pride, being the antithesis of humility, is '{new string(Mantras[7].Text.ToString().ToUpper().Reverse().ToArray())}'.";
-                }
-
-                if(flags.WordOfPassage)
-                {
-                    person = FindPerson("Robert Frasier");
-                    person.Yes = $"It is '{ultimaData.WordTruth.ToLower()}'! Seek ye now the other parts!";
-
-                    person = FindPerson("Lord Robert", "Empath");
-                    person.Yes = $"It is '{ultimaData.WordLove.ToLower()}'! Seek ye now the other parts!";
-
-                    person = FindPerson("Sentri");
-                    person.KeywordResponse2 = $"I know but one of three syllables - '{ultimaData.WordCourage.ToLower()}'.";
-                }
-
-                if(flags.RandomizeSpells)
-                {
-                    person = FindPerson("Nigel, at thy\nservice.");
-                    person.KeywordResponse2 = $"Yes, resurrection it takes: {GetRecipeText(ultimaData.SpellsRecipes['r' - 'a'].Byte)}!";
-
-                    person = FindPerson("Mentorian");
-                    if (ultimaData.SpellsRecipes['g' - 'a'].Byte == 0xFF)
-                    {
-                        person.KeywordResponse2 = $"As thou dost bear the ankh I shall tell thee. A gate spell needs { GetRecipeText(ultimaData.SpellsRecipes['g' - 'a'].Byte)}!";
-                    }
-                    else
-                    {
-                        person.KeywordResponse2 = $"Since thou dost bear the ankh I shall tell thee. A gate spell requires { GetRecipeText(ultimaData.SpellsRecipes['g' - 'a'].Byte)}!";
-                    }
-                }
-
                 // --- Towns and Castles ---
                 // TODO make response descriptive
                 if (ultimaData.Castles[0].IsDirty())
@@ -432,7 +318,7 @@ namespace U4DosRandomizer
                 var item = ultimaData.Items[ultimaData.ITEM_BELL];
                 var talkString = talkToLocation[new Tuple<byte, byte, byte>(item.Location, item.X, item.Y)].Item1;
                 talkString = talkString.Replace("<Item>", "the bell of courage").CapitalizeFirstLetter();
-                var person = FindPerson("Garam");
+                person = FindPerson("Garam");
                 person.KeywordResponse2 = talkString;
 
                 item = ultimaData.Items[ultimaData.ITEM_SKULL];
@@ -484,10 +370,124 @@ namespace U4DosRandomizer
                 ultimaData.LBHelpText[18] = "Thou dost now seem ready to make the final journey into the dark Abyss!\n";
             }
 
+            // --- Runes ---
+            if (flags.Runes)
+            {
+                for (int i = 0; i < 8; i++)
+                {
+                    var itemOption = ultimaData.ItemOptions[UltimaData.ITEM_RUNE_HONESTY + i];
+                    foreach (var newPerson in itemOption.People)
+                    {
+                        person = FindPerson(newPerson.Name, newPerson.Town);
+                        if (newPerson.Health != null)
+                        {
+                            person.Health = newPerson.Health;
+                        }
+                        if (newPerson.Job != null)
+                        {
+                            person.Job = newPerson.Job;
+                        }
+                        if (newPerson.Keyword1 != null)
+                        {
+                            person.Keyword1 = newPerson.Keyword1;
+                        }
+                        if (newPerson.Keyword2 != null)
+                        {
+                            person.Keyword2 = newPerson.Keyword2;
+                        }
+                        if (newPerson.Yes != null)
+                        {
+                            person.Yes = newPerson.Yes;
+                        }
+                        if (newPerson.No != null)
+                        {
+                            person.No = newPerson.No;
+                        }
+                        if (newPerson.Question != null)
+                        {
+                            person.Question = newPerson.Question;
+                        }
+                        if (newPerson.KeywordResponse1 != null)
+                        {
+                            person.KeywordResponse1 = newPerson.KeywordResponse1;
+                        }
+                        if (newPerson.KeywordResponse2 != null)
+                        {
+                            person.KeywordResponse2 = newPerson.KeywordResponse2;
+                        }
+                    }
+                }
+            }
+
+            // --- End Runes ---
+
+            if (flags.Mantras)
+            {
+                person = FindPerson("Cromwell");
+                person.KeywordResponse2 = $"The mantra of the shrine of honesty is {Mantras[0].Text.ToUpper()}.";
+
+                person = FindPerson("Cricket");
+                person.KeywordResponse2 = $"The mantra of the shrine of compassion is {Mantras[1].Text.ToUpper()}!";
+
+                person = FindPerson("Aesop");
+                person.KeywordResponse2 = $"The mantra of valor is '{Mantras[2].Text.ToUpper()}'. Use it in the shrine on the next isle!";
+
+                person = FindPerson("Silent");
+                person.Job = $"{Mantras[3].Text}... {Mantras[3].Text}...";
+                person.Health = $"{Mantras[3].Text}... {Mantras[3].Text}...";
+                person.Keyword1 = $"{Mantras[3].Text.ToUpper()}...";
+                person.KeywordResponse1 = $"{Mantras[3].Text}... {Mantras[3].Text}...";
+                person.Keyword2 = $"{Mantras[3].Text.ToUpper()}";
+                person.KeywordResponse2 = $"{Mantras[3].Text}... {Mantras[3].Text}...";
+
+                person = FindPerson("Singsong");
+                person.KeywordResponse2 = Mantras[4].Limerick;
+
+                person = FindPerson("Kline");
+                person.KeywordResponse1 = $"The mantra is '{Mantras[5].Text}'.";
+
+                person = FindPerson("Barren", "Skara");
+                person.KeywordResponse1 = $"I know it well, it is '{Mantras[6].Text.ToUpper()}'.";
+
+                person = FindPerson("the Ankh of\nSpirituality");
+                person.Keyword2 = Mantras[6].Text.ToUpper();
+
+                person = FindPerson("Faultless");
+                person.KeywordResponse2 = $"The mantra for pride, being the antithesis of humility, is '{new string(Mantras[7].Text.ToString().ToUpper().Reverse().ToArray())}'.";
+            }
+
+            if (flags.WordOfPassage)
+            {
+                person = FindPerson("Robert Frasier");
+                person.Yes = $"It is '{ultimaData.WordTruth.ToLower()}'! Seek ye now the other parts!";
+
+                person = FindPerson("Lord Robert", "Empath");
+                person.Yes = $"It is '{ultimaData.WordLove.ToLower()}'! Seek ye now the other parts!";
+
+                person = FindPerson("Sentri");
+                person.KeywordResponse2 = $"I know but one of three syllables - '{ultimaData.WordCourage.ToLower()}'.";
+            }
+
+            if (flags.RandomizeSpells)
+            {
+                person = FindPerson("Nigel, at thy\nservice.");
+                person.KeywordResponse2 = $"Yes, resurrection it takes: {GetRecipeText(ultimaData.SpellsRecipes['r' - 'a'].Byte)}!";
+
+                person = FindPerson("Mentorian");
+                if (ultimaData.SpellsRecipes['g' - 'a'].Byte == 0xFF)
+                {
+                    person.KeywordResponse2 = $"As thou dost bear the ankh I shall tell thee. A gate spell needs { GetRecipeText(ultimaData.SpellsRecipes['g' - 'a'].Byte)}!";
+                }
+                else
+                {
+                    person.KeywordResponse2 = $"Since thou dost bear the ankh I shall tell thee. A gate spell requires { GetRecipeText(ultimaData.SpellsRecipes['g' - 'a'].Byte)}!";
+                }
+            }
+
             // --- Fixes ---
             if (flags.Fixes)
             {
-                var person = FindPerson("Water");
+                person = FindPerson("Water");
                 person.QuestionFlag = 6;
                 SpoilerLog.Add(SpoilerCategory.Fix, $"Water asks question");
 
