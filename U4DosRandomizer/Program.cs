@@ -149,6 +149,22 @@ namespace U4DosRandomizer
                 "--principleItems",
                 "Randomize the order of the Principle Items.",
                 CommandOptionType.NoValue);
+            CommandOption townSavesArg = commandLineApplication.Option(
+                "--townSaves",
+                "Enable saving in towns.",
+                CommandOptionType.NoValue);
+            CommandOption daemonTriggerArg = commandLineApplication.Option(
+                "--daemonTrigger",
+                "Fix daemon spawn in Abyss",
+                CommandOptionType.NoValue);
+            CommandOption awakenUpgradeArg = commandLineApplication.Option(
+                "--awakenUpgrade",
+                "Awaken spell awakens all characters.",
+                CommandOptionType.NoValue);
+            CommandOption shopOverflowArg = commandLineApplication.Option(
+                "--shopOverflow",
+                "Don't allow overflow exploit in shops.",
+                CommandOptionType.NoValue);
             CommandOption vgaPatchArg = commandLineApplication.Option(
                 "--vgaPatch",
                 "VGA patch compatibility.",
@@ -293,8 +309,13 @@ namespace U4DosRandomizer
                     flags.Sextant = sextantArg.HasValue();
                     flags.ClothMap = clothMapArg.HasValue();
                     flags.PrincipleItems = principleItemsArg.HasValue();
+                    flags.TownSaves = townSavesArg.HasValue();
+                    flags.DaemonTrigger = daemonTriggerArg.HasValue();
+                    flags.AwakenUpgrade = awakenUpgradeArg.HasValue();
+                    flags.ShopOverflowFix = shopOverflowArg.HasValue();
                     flags.SpoilerLog = spoilerLogArg.HasValue();
                     flags.VGAPatch = vgaPatchArg.HasValue();
+                    
                     Randomize(seed, path, flags, encodedArg.Value());
                     //Console.WriteLine("Seed: " + seed);
                     //var random = new Random(seed);
@@ -402,13 +423,16 @@ namespace U4DosRandomizer
             {
                 var clothMap = worldMap.ToClothMap(ultimaData, new Random(randomValues[5]));
                 clothMap.SaveAsPng($"clothMap-{seed}.png");
-                new Process
+                if (flags.Overworld == 5)
                 {
-                    StartInfo = new ProcessStartInfo($"clothMap-{seed}.png")
+                    new Process
                     {
-                        UseShellExecute = true
-                    }
-                }.Start();
+                        StartInfo = new ProcessStartInfo($"clothMap-{seed}.png")
+                        {
+                            UseShellExecute = true
+                        }
+                    }.Start();
+                }
             }
 
             if(flags.RandomizeSpells)

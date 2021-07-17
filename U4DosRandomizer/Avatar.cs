@@ -637,6 +637,36 @@ namespace U4DosRandomizer
                 avatarBytes[AvatarOffset.LB_PARTY_COMPARISON] = 0x00;
             }
 
+            if (flags.TownSaves)
+            {
+                avatarBytes[AvatarOffset.ENABLE_TOWN_SAVE1] = (byte)0x0;
+                avatarBytes[AvatarOffset.ENABLE_TOWN_SAVE2] = (byte)0x0;
+                avatarBytes[AvatarOffset.ENABLE_TOWN_SAVE3] = (byte)0x0;
+                avatarBytes[AvatarOffset.ENABLE_TOWN_SAVE4] = (byte)0x0;
+            }
+
+            if (flags.DaemonTrigger)
+            {
+                avatarBytes[AvatarOffset.ENABLE_DAEMON_TRIGGER_FIX] = (byte)0x0;
+            }
+
+            if (flags.Fixes)
+            {
+                avatarBytes[AvatarOffset.ENABLE_MAP_EDGE_FIX1] = (byte)0x0;
+                avatarBytes[AvatarOffset.ENABLE_MAP_EDGE_FIX2] = (byte)0x0;
+                avatarBytes[AvatarOffset.ENABLE_MAP_EDGE_FIX3] = (byte)0x0;
+            }
+
+            if (flags.AwakenUpgrade)
+            {
+                avatarBytes[AvatarOffset.ENABLE_AWAKEN_ALL] = (byte)0x0;
+            }
+
+            if (flags.ShopOverflowFix)
+            {
+                avatarBytes[AvatarOffset.ENABLE_WEAPON_OVERFLOW_FIX] = (byte)0x0;
+            }
+
             if (flags.VGAPatch)
             {
                 ApplyVGAPatch();

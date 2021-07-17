@@ -74,13 +74,23 @@ namespace U4DosRandomizer
         int BLINK_DESTINATION_EXCLUSION_X2_OFFSET { get; }
         int BLINK_DESTINATION_EXCLUSION_Y1_OFFSET { get; }
         int BLINK_DESTINATION_EXCLUSION_Y2_OFFSET { get; }
+        int ENABLE_TOWN_SAVE1 { get; }
+        int ENABLE_TOWN_SAVE2 { get; }
+        int ENABLE_TOWN_SAVE3 { get; }
+        int ENABLE_TOWN_SAVE4 { get; }
         int ENABLE_MIX_QUANTITY_OFFSET { get; }
         int ENABLE_SLEEP_BACKOFF_OFFSET { get; }
+        int ENABLE_DAEMON_TRIGGER_FIX { get; }
+        int ENABLE_MAP_EDGE_FIX1 { get; }
+        int ENABLE_MAP_EDGE_FIX2 { get; }
+        int ENABLE_MAP_EDGE_FIX3 { get; }
+        int ENABLE_AWAKEN_ALL { get; }
         int ENABLE_ACTIVE_PLAYER_1_OFFSET { get; }
         int ENABLE_HIT_CHANCE_OFFSET { get; }
         int ENABLE_DIAGONAL_ATTACK_OFFSET { get; }
         int ENABLE_SACRIFICE_FIX_OFFSET { get; }
         int ENABLE_PRINCIPLE_ITEM_REORDER_OFFSET { get; }
+        int ENABLE_WEAPON_OVERFLOW_FIX { get; }
         int BLINK_DESTINATION2_EXCLUSION_X1_OFFSET { get; }
         int BLINK_DESTINATION2_EXCLUSION_X2_OFFSET { get; }
         int BLINK_DESTINATION2_EXCLUSION_Y1_OFFSET { get; }

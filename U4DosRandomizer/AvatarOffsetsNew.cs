@@ -189,7 +189,6 @@ namespace U4DosRandomizer
 
         public int BLINK_DESTINATION2_EXCLUSION_Y2_OFFSET { get { return BLINK_DESTINATION2_EXCLUSION_Y1_OFFSET + 4; } }  // New
 
-        public int ENABLE_BELL_REQUIREMENT { get; } = 0x04E9; // New : 08
         public int ENABLE_TOWN_SAVE1 { get; } = 0x405E; // New : 08
         public int ENABLE_TOWN_SAVE2 { get; } = 0x471B; // New : 08
         public int ENABLE_TOWN_SAVE3 { get; } = 0x4815; // New : 08
