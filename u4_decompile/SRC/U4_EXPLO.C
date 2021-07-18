@@ -40,7 +40,7 @@ unsigned bp04;
 	if(bp04 == 1 && U4_RND1(7) >= 8) {
 		if(Load("LCB_2.ULT", sizeof(struct t_500), &D_8742) == -1)
 			exit(3);
-		if(SAVE("LCB_2.SAV", sizeof(struct t_500), &D_8742) == -1)
+		if(Save("LCB_2.SAV", sizeof(struct t_500), &D_8742) == -1)
 			exit(3);
 	}
 	if(Load(D_0824[bp04 - 0x01], sizeof(struct t_500), &D_8742) == -1)

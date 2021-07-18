@@ -22,8 +22,7 @@ namespace U4DosRandomizer
             PropertyInfo[] properties = this.GetType().GetInterface("IAvatarOffset").GetProperties();
             foreach (PropertyInfo pi in properties)
             {
-                if(pi.Name.ToLower().Contains("offset") && !pi.Name.ToLower().Contains("blink") && !pi.Name.ToLower().Contains("enable") && !pi.Name.ToLower().Contains("encoded") && !pi.Name.ToLower().Contains("seed") && !pi.Name.ToLower().Contains("pointer")
-                    && !pi.Name.ToLower().Contains("bell"))
+                if(!pi.Name.ToLower().Contains("blink") && !pi.Name.ToLower().Contains("enable") && !pi.Name.ToLower().Contains("encoded") && !pi.Name.ToLower().Contains("seed") && !pi.Name.ToLower().Contains("pointers") && !pi.Name.Contains("BELL_REQUIREMENT_OFFSET"))
                 {
                     var newValue = avatarBytes[(int)pi.GetValue(this, null)];
                     var oldValue = originalAvatarBytes[(int)pi.GetValue(originalOffsets, null)];
@@ -48,27 +47,47 @@ namespace U4DosRandomizer
                         throw new Exception($"Offset {pi.Name} appears to be wrong.");
                     }
                 }
-                else if (pi.Name.Contains("enable"))
+                else if (pi.Name.ToLower().Contains("enable"))
                 {
                     var newValue = avatarBytes[(int)pi.GetValue(this, null)];
-                    if (newValue != 0x08)
+                    if (newValue != 0x08 && newValue != 0x09)
                     {
                         throw new Exception($"Offset {pi.Name} appears to be wrong.");
                     }
                 }
-                else if (pi.Name.Contains("bell"))
+                else if (pi.Name.Contains("BELL_REQUIREMENT_OFFSET"))
                 {
                     var newValue = avatarBytes[(int)pi.GetValue(this, null)];
-                    if (newValue != 0x10)
+                    if (newValue != 0x20)
                     {
                         throw new Exception($"Offset {pi.Name} appears to be wrong.");
                     }
+                }
+                else if(pi.Name.Contains("MANTRA_POINTERS_OFFSET"))
+                {
+                    var newValue = avatarBytes[(int)pi.GetValue(this, null)-1];
+                    if (newValue != 0x00)
+                    {
+                        throw new Exception($"Offset {pi.Name} appears to be wrong.");
+                    }
+                }                
+                else if (pi.Name.Contains("ENCODED_FLAGS_OFFSET") || pi.Name.Contains("SEED_OFFSET"))
+                {
+                    var newValue = avatarBytes[(int)pi.GetValue(this, null)];
+                    if (newValue != 0x20)
+                    {
+                        throw new Exception($"Offset {pi.Name} appears to be wrong.");
+                    }
+                }
+                else
+                {
+                    throw new NotImplementedException($"Offset {pi.Name} not being tested.");
                 }
             }
         }
 
         public int ABYSS_PARTY_COMPARISON { get; } = 0x34BB; //  34AB
-        public int LB_PARTY_COMPARISON { get; } = 0xE8D1; // E449
+        public int LB_PARTY_COMPARISON { get; } = 0xE8D2; // E449
         public int BELL_REQUIREMENT_OFFSET { get; } = 0x4E0; // New
         public int BOOK_REQUIREMENT_OFFSET { get; } = 0x52A; // 6DB
         public int CANDLE_REQUIREMENT_OFFSET { get; } = 0x56F; // 720
@@ -110,14 +129,14 @@ namespace U4DosRandomizer
             0x3	2	 ??? (a pointer?)
          */
 
-        public int MONSTER_DAMAGE_BITSHIFT_OFFSET { get; } = 0x9D03; // 98E6
+        public int MONSTER_DAMAGE_BITSHIFT_OFFSET { get; } = 0x9D04; // 98E6
         public int WEAPON_DAMAGE_OFFSET { get; } = 0x11C9A; // 11703
-        public int MONSTER_SPAWN_TIER_ONE { get; } = 0x5CAE; // 5B68
-        public int MONSTER_SPAWN_TIER_TWO { get; } = 0x5CC9; // 5B83
-        public int MONSTER_SPAWN_TIER_THREE { get; } = 0x5D01; // 5BBB
+        public int MONSTER_SPAWN_TIER_ONE { get; } = 0x5CAF; // 5B68
+        public int MONSTER_SPAWN_TIER_TWO { get; } = 0x5CCA; // 5B83
+        public int MONSTER_SPAWN_TIER_THREE { get; } = 0x5D02; // 5BBB
         //https://github.com/ergonomy-joe/u4-decompiled/blob/1964651295232b0ca39afafef254541a406eb66b/SRC/U4_COMBC.C#L210
-        public int MONSTER_QTY_ONE { get; } = 0x84D8; // 80EF
-        public int MONSTER_QTY_TWO { get; } = 0x84E9; // 8100
+        public int MONSTER_QTY_ONE { get; } = 0x84D9; // 80EF
+        public int MONSTER_QTY_TWO { get; } = 0x84EA; // 8100
         public int LB_TEXT_OFFSET { get; } = 0x15CE7; // 156ca
         public int LB_HELP_TEXT_OFFSET { get; } = 0x168F2; // 162D4
         public int MANTRA_OFFSET { get; } = 0x173F2; //16DD4
@@ -141,8 +160,8 @@ namespace U4DosRandomizer
         public int BALLOON_SPAWN_LOCATION_X_OFFSET { get; } = 0x29C0; //29BE
         public int BALLOON_SPAWN_LOCATION_Y_OFFSET { get; } = 0x29C5; //29C3
 
-        public int LBC_DUNGEON_EXIT_X_OFFSET { get; } = 0x47EF; //4766
-        public int LBC_DUNGEON_EXIT_Y_OFFSET { get; } = 0x47F4; //476B
+        public int LBC_DUNGEON_EXIT_X_OFFSET { get; } = 0x47F0; //4766
+        public int LBC_DUNGEON_EXIT_Y_OFFSET { get; } = 0x47F5; //476B
 
         public int ITEM_USE_TRIGGER_BELL_X_OFFSET { get; } = 0x04D1; //693
         public int ITEM_USE_TRIGGER_BELL_Y_OFFSET { get; } = 0x04D8; //69A
@@ -153,8 +172,8 @@ namespace U4DosRandomizer
         public int ITEM_USE_TRIGGER_SKULL_X_OFFSET { get; } = 0x0632; //7E3
         public int ITEM_USE_TRIGGER_SKULL_Y_OFFSET { get; } = 0x0639; //7EA
 
-        public int WHIRLPOOL_EXIT_X_OFFSET { get; } = 0x7E15; //7A92
-        public int WHIRLPOOL_EXIT_Y_OFFSET { get; } = 0x7E1A; //7A97
+        public int WHIRLPOOL_EXIT_X_OFFSET { get; } = 0x7E16; //7A92
+        public int WHIRLPOOL_EXIT_Y_OFFSET { get; } = 0x7E1B; //7A97
 
         public int ABYSS_EJECTION_LOCATIONS_X { get; } = 0x103D6; //FEAD  // Length 13 - Exit coords for when you fail tests in the Abyss https://github.com/ergonomy-joe/u4-decompiled/blob/c2c2108fa3bb346bcd1d8c207c526f33a4c8f5ef/SRC/U4_END.C#L37
         public int ABYSS_EJECTION_LOCATIONS_Y { get; } = 0x103E4; //FEBB
@@ -164,55 +183,55 @@ namespace U4DosRandomizer
         public static int RUNE_IMAGE_INDEX2 { get; } = 0x100AE; // FB85
         public static int RUNE_IMAGE_INDEX { get; } = 0x17B6F; // 17551
 
-        public int BLINK_CAST_EXCLUSION_X1_OFFSET { get; } = 0x6A9D; // New : C0
+        public int BLINK_CAST_EXCLUSION_X1_OFFSET { get; } = 0x6A9E; // New : C0
 
         public int BLINK_CAST_EXCLUSION_X2_OFFSET { get { return BLINK_CAST_EXCLUSION_X1_OFFSET + 4; } } // New
 
-        public int BLINK_CAST_EXCLUSION_Y1_OFFSET { get; } = 0x6AB2; // New : C0
+        public int BLINK_CAST_EXCLUSION_Y1_OFFSET { get; } = 0x6AB3; // New : C0
 
         public int BLINK_CAST_EXCLUSION_Y2_OFFSET { get { return BLINK_CAST_EXCLUSION_Y1_OFFSET + 4; } } // New
 
 
-        public int BLINK_DESTINATION_EXCLUSION_X1_OFFSET { get; } = 0x6B37; // New : 01
+        public int BLINK_DESTINATION_EXCLUSION_X1_OFFSET { get; } = 0x6B38; // New : 01
 
         public int BLINK_DESTINATION_EXCLUSION_X2_OFFSET { get { return BLINK_DESTINATION_EXCLUSION_X1_OFFSET + 4; } }  // New
 
-        public int BLINK_DESTINATION_EXCLUSION_Y1_OFFSET { get; } = 0x6B56; // New : 01
+        public int BLINK_DESTINATION_EXCLUSION_Y1_OFFSET { get; } = 0x6B57; // New : 01
 
         public int BLINK_DESTINATION_EXCLUSION_Y2_OFFSET { get { return BLINK_DESTINATION_EXCLUSION_Y1_OFFSET + 4; } } // New
 
-        public int BLINK_DESTINATION2_EXCLUSION_X1_OFFSET { get; } = 0x6B79; // New : 01
+        public int BLINK_DESTINATION2_EXCLUSION_X1_OFFSET { get; } = 0x6B7A; // New : 01
 
         public int BLINK_DESTINATION2_EXCLUSION_X2_OFFSET { get { return BLINK_DESTINATION2_EXCLUSION_X1_OFFSET + 4; } } // New
 
-        public int BLINK_DESTINATION2_EXCLUSION_Y1_OFFSET { get; } = 0x6B9C; // New : 01
+        public int BLINK_DESTINATION2_EXCLUSION_Y1_OFFSET { get; } = 0x6B9D; // New : 01
 
         public int BLINK_DESTINATION2_EXCLUSION_Y2_OFFSET { get { return BLINK_DESTINATION2_EXCLUSION_Y1_OFFSET + 4; } }  // New
 
         public int ENABLE_TOWN_SAVE1 { get; } = 0x405E; // New : 08
-        public int ENABLE_TOWN_SAVE2 { get; } = 0x471B; // New : 08
-        public int ENABLE_TOWN_SAVE3 { get; } = 0x4815; // New : 08
-        public int ENABLE_TOWN_SAVE4 { get; } = 0x44A0; // New : 08
-        public int ENABLE_MIX_QUANTITY_OFFSET { get; } = 0x9229; // New : 08
+        public int ENABLE_TOWN_SAVE2 { get; } = 0x471C; // New : 08
+        public int ENABLE_TOWN_SAVE3 { get; } = 0x4816; // New : 08
+        public int ENABLE_TOWN_SAVE4 { get; } = 0x74A1; // New : 08
+        public int ENABLE_MIX_QUANTITY_OFFSET { get; } = 0x922A; // New : 08
 
-        public int ENABLE_SLEEP_BACKOFF_OFFSET { get; } = 0xA38C; // New : 08
-        public int ENABLE_DAEMON_TRIGGER_FIX { get; } = 0x8006; // New : 08
-        public int ENABLE_MAP_EDGE_FIX1 { get; } = 0x56AE; // New : 08
-        public int ENABLE_MAP_EDGE_FIX2 { get; } = 0x59D1; // New : 08
-        public int ENABLE_MAP_EDGE_FIX3 { get; } = 0x83C0; // New : 08
-        public int ENABLE_AWAKEN_ALL { get; } = 0x69C5; // New : 08
+        public int ENABLE_SLEEP_BACKOFF_OFFSET { get; } = 0xA38D; // New : 08
+        public int ENABLE_DAEMON_TRIGGER_FIX { get; } = 0x8007; // New : 08
+        public int ENABLE_MAP_EDGE_FIX1 { get; } = 0x56AF; // New : 08
+        public int ENABLE_MAP_EDGE_FIX2 { get; } = 0x59D2; // New : 08
+        public int ENABLE_MAP_EDGE_FIX3 { get; } = 0x83C1; // New : 08
+        public int ENABLE_AWAKEN_ALL { get; } = 0x69C6; // New : 08
 
-        public int ENABLE_ACTIVE_PLAYER_1_OFFSET { get; } = 0x5F72; // New : 08
+        public int ENABLE_ACTIVE_PLAYER_1_OFFSET { get; } = 0x5F73; // New : 08
 
-        public int ENABLE_HIT_CHANCE_OFFSET { get; } = 0x647C; // New : 08
+        public int ENABLE_HIT_CHANCE_OFFSET { get; } = 0x647D; // New : 08
 
-        public int ENABLE_DIAGONAL_ATTACK_OFFSET { get; } = 0x6630; // New : 08
+        public int ENABLE_DIAGONAL_ATTACK_OFFSET { get; } = 0x6631; // New : 08
 
-        public int ENABLE_SACRIFICE_FIX_OFFSET { get; } = 0xAA5D; // New : 08
+        public int ENABLE_SACRIFICE_FIX_OFFSET { get; } = 0xAA5E; // New : 08
 
-        public int ENABLE_PRINCIPLE_ITEM_REORDER_OFFSET { get; } = 0x4FA; // New : E8
+        public int ENABLE_PRINCIPLE_ITEM_REORDER_OFFSET { get; } = 0x4E9; // New : E8
 
-        public int ENABLE_WEAPON_OVERFLOW_FIX { get; } = 0xD377; // New 08
+        public int ENABLE_WEAPON_OVERFLOW_FIX { get; } = 0xD378; // New 08
         public int ENCODED_FLAGS_OFFSET { get; } = 0xFE43; // New : 20
 
         public int SEED_OFFSET { get; } = 0xFE23; // New : 20
