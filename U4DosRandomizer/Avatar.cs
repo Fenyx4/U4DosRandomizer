@@ -437,7 +437,7 @@ namespace U4DosRandomizer
                 }
             }
 
-            if (data.PrincipleItemRequirements[0] != 13)
+            if (data.PrincipleItemRequirements[0] != 32)
             {
                 avatarBytes[AvatarOffset.BELL_REQUIREMENT_OFFSET] = data.PrincipleItemRequirements[0];
                 avatarBytes[AvatarOffset.BOOK_REQUIREMENT_OFFSET] = data.PrincipleItemRequirements[1];
