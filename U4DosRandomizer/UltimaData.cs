@@ -108,7 +108,7 @@ namespace U4DosRandomizer
         public List<string> LBText { get; internal set; }
         public List<string> LBHelpText { get; internal set; }
         public List<string> Mantras { get; internal set; }
-        public List<byte> PrincipleItemRequirements { get; internal set; }
+        public List<int> PrincipleItemRequirements { get; internal set; }
         public string WordOfPassage { get; internal set; }
         public List<Character> StartingCharacters { get; internal set; }
         public byte DaemonSpawnX1 { get; internal set; }
@@ -169,7 +169,7 @@ namespace U4DosRandomizer
             LBText = new List<string>();
             LBHelpText = new List<string>();
             Mantras = new List<string>();
-            PrincipleItemRequirements = new List<byte>();
+            PrincipleItemRequirements = new List<int>();
             PirateCove = new List<Coordinate>();
             AbyssEjectionLocations = new List<Coordinate>();
             ShopLocations = new List<List<byte>>();

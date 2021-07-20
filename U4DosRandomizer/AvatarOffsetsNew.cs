@@ -58,7 +58,7 @@ namespace U4DosRandomizer
                 else if (pi.Name.Contains("BELL_REQUIREMENT_OFFSET"))
                 {
                     var newValue = avatarBytes[(int)pi.GetValue(this, null)];
-                    if (newValue != 0x20)
+                    if (newValue != 0x04)
                     {
                         throw new Exception($"Offset {pi.Name} appears to be wrong.");
                     }

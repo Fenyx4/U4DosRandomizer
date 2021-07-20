@@ -497,14 +497,16 @@ namespace U4DosRandomizer
 
             if(flags.PrincipleItems)
             {
-                var values = new List<Tuple<int,byte>> { new Tuple<int,byte>(0, 0x10), new Tuple<int,byte>(1,0x08), new Tuple<int,byte>(2, 0x04) };
+                //https://www.youtube.com/watch?v=GhnCj7Fvqt0
+                var values = new List<Tuple<int, int>> { new Tuple<int,int>(0, ultimaData.PrincipleItemRequirements[1]), new Tuple<int, int>(1, ultimaData.PrincipleItemRequirements[2]), new Tuple<int, int>(2, ultimaData.PrincipleItemRequirements[0]) };
                 values.Shuffle(random);
                 
                 for(int i = 0; i < values.Count(); i++)
                 {
                     ultimaData.PrincipleItemRequirements[values[i].Item1] = values[(i+1) % values.Count()].Item2;
                 }
-                ultimaData.PrincipleItemRequirements[values[0].Item1] = (byte)(4 - values[0].Item1);
+                // Make the dependency for the first item be owning itself instead of one of the other items being used so there is an item you can start with
+                ultimaData.PrincipleItemRequirements[values[0].Item1] = 1 << (4 - values[0].Item1);
             }
 
 
