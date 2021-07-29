@@ -165,6 +165,10 @@ namespace U4DosRandomizer
                 "--shopOverflow",
                 "Don't allow overflow exploit in shops.",
                 CommandOptionType.NoValue);
+            CommandOption otherArg = commandLineApplication.Option(
+                "--other",
+                "Allow other gender like in Ultima III.",
+                CommandOptionType.NoValue);
             CommandOption vgaPatchArg = commandLineApplication.Option(
                 "--vgaPatch",
                 "VGA patch compatibility. Run randomizer after applying VGA patch.",
@@ -313,6 +317,7 @@ namespace U4DosRandomizer
                     flags.DaemonTrigger = daemonTriggerArg.HasValue();
                     flags.AwakenUpgrade = awakenUpgradeArg.HasValue();
                     flags.ShopOverflowFix = shopOverflowArg.HasValue();
+                    flags.Other = otherArg.HasValue();
                     flags.SpoilerLog = spoilerLogArg.HasValue();
                     flags.VGAPatch = vgaPatchArg.HasValue();
                     

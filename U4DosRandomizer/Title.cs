@@ -117,6 +117,8 @@ namespace U4DosRandomizer
 
             titleBytes[ENABLE_KARMA_OVERRIDE_OFFSET] = flags.KarmaSetPercentage > 0 ? (byte)0x0 : (byte)0x9;
 
+            titleBytes[ENABLE_OTHER] = flags.Other ? (byte)0x0 : (byte)0x8;
+
             for (int offset = 0; offset < 8; offset++)
             {
                 titleBytes[KARMA_OVERRIDE_VALUES_OFFSET + offset] = (data.StartingKarma[offset] == 100 ? (byte)0 : data.StartingKarma[offset]);

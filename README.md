@@ -46,7 +46,8 @@ Options:
   --townSaves                Enable saving in towns.
   --daemonTrigger            Fix daemon spawn in Abyss
   --awakenUpgrade            Awaken spell awakens all characters.
-  --shopOverflow             Don't allow overflow exploit in shops.
+  --shopOverflow             Don't allow overflow exploit in shops.  
+  --other                    Allow other gender like in Ultima III.
   --vgaPatch                 VGA patch compatibility. Run randomizer after applying VGA patch.
   --spoilerLog               Output a spoiler log.
   -? | -h | --help           Show help information

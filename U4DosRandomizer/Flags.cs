@@ -47,6 +47,7 @@ namespace U4DosRandomizer
         public bool DaemonTrigger { get; internal set; }
         public bool AwakenUpgrade { get; internal set; }
         public bool ShopOverflowFix { get; internal set; }
+        public bool Other { get; internal set; }
 
         public List<int> SupportedVersions = new List<int>() { 9 };
 
@@ -96,6 +97,7 @@ namespace U4DosRandomizer
             mask = SET_MSK(mask, DaemonTrigger, 0);
             mask = SET_MSK(mask, AwakenUpgrade, 1);
             mask = SET_MSK(mask, ShopOverflowFix, 2);
+            mask = SET_MSK(mask, Other, 3);
             encoded.Add((byte)mask);
 
             // Add another one just for a bit of future proofing
@@ -167,6 +169,7 @@ namespace U4DosRandomizer
             DaemonTrigger = TST_MSK(mask, 0);
             AwakenUpgrade = TST_MSK(mask, 1);
             ShopOverflowFix = TST_MSK(mask, 2);
+            Other = TST_MSK(mask, 3);
 
             mask = encoded[9];
 
