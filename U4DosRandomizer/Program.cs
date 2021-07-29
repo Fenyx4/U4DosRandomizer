@@ -167,7 +167,7 @@ namespace U4DosRandomizer
                 CommandOptionType.NoValue);
             CommandOption vgaPatchArg = commandLineApplication.Option(
                 "--vgaPatch",
-                "VGA patch compatibility.",
+                "VGA patch compatibility. Run randomizer after applying VGA patch.",
                 CommandOptionType.NoValue);
 
             CommandOption spoilerLogArg = commandLineApplication.Option(
