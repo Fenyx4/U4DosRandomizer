@@ -24,6 +24,11 @@ void cdecl /*C_191E*/main()
 		File_DNG = dopen(D_0894[Party._loc - 0x11], 0);
 		if(setjmp(D_9458) == 0)
 			DNG_main();
+	} else if (Party._loc != 0 && Party._loc < 0x11) {
+		CurMode = MOD_BUILDING;
+		C_3E30(Party._loc);
+		if(Load("TOWNMAP.SAV", sizeof(struct t_500), &D_8742) == -1)
+			exit(3);
 	} else {
 		Party._loc = 0;
 	}

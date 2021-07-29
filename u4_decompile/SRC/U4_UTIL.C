@@ -813,3 +813,9 @@ unsigned char upperbound;
 		else
 			return 0;
 }
+
+unsigned char u4_wrap(input)
+int input;
+{
+	return (unsigned char)((input % 256 + 256) % 256);
+}

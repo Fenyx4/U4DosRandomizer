@@ -145,9 +145,29 @@ namespace U4DosRandomizer
                 "--clothMap",
                 "Cloth map of the world.",
                 CommandOptionType.NoValue);
+            CommandOption principleItemsArg = commandLineApplication.Option(
+                "--principleItems",
+                "Randomize the order of the Principle Items.",
+                CommandOptionType.NoValue);
+            CommandOption townSavesArg = commandLineApplication.Option(
+                "--townSaves",
+                "Enable saving in towns.",
+                CommandOptionType.NoValue);
+            CommandOption daemonTriggerArg = commandLineApplication.Option(
+                "--daemonTrigger",
+                "Fix daemon spawn in Abyss",
+                CommandOptionType.NoValue);
+            CommandOption awakenUpgradeArg = commandLineApplication.Option(
+                "--awakenUpgrade",
+                "Awaken spell awakens all characters.",
+                CommandOptionType.NoValue);
+            CommandOption shopOverflowArg = commandLineApplication.Option(
+                "--shopOverflow",
+                "Don't allow overflow exploit in shops.",
+                CommandOptionType.NoValue);
             CommandOption vgaPatchArg = commandLineApplication.Option(
                 "--vgaPatch",
-                "VGA patch compatibility.",
+                "VGA patch compatibility. Run randomizer after applying VGA patch.",
                 CommandOptionType.NoValue);
 
             CommandOption spoilerLogArg = commandLineApplication.Option(
@@ -288,8 +308,14 @@ namespace U4DosRandomizer
                     flags.RandomizeSpells = randomizeSpellsArg.HasValue();
                     flags.Sextant = sextantArg.HasValue();
                     flags.ClothMap = clothMapArg.HasValue();
+                    flags.PrincipleItems = principleItemsArg.HasValue();
+                    flags.TownSaves = townSavesArg.HasValue();
+                    flags.DaemonTrigger = daemonTriggerArg.HasValue();
+                    flags.AwakenUpgrade = awakenUpgradeArg.HasValue();
+                    flags.ShopOverflowFix = shopOverflowArg.HasValue();
                     flags.SpoilerLog = spoilerLogArg.HasValue();
                     flags.VGAPatch = vgaPatchArg.HasValue();
+                    
                     Randomize(seed, path, flags, encodedArg.Value());
                     //Console.WriteLine("Seed: " + seed);
                     //var random = new Random(seed);
@@ -397,13 +423,16 @@ namespace U4DosRandomizer
             {
                 var clothMap = worldMap.ToClothMap(ultimaData, new Random(randomValues[5]));
                 clothMap.SaveAsPng($"clothMap-{seed}.png");
-                new Process
+                if (flags.Overworld == 5)
                 {
-                    StartInfo = new ProcessStartInfo($"clothMap-{seed}.png")
+                    new Process
                     {
-                        UseShellExecute = true
-                    }
-                }.Start();
+                        StartInfo = new ProcessStartInfo($"clothMap-{seed}.png")
+                        {
+                            UseShellExecute = true
+                        }
+                    }.Start();
+                }
             }
 
             if(flags.RandomizeSpells)
@@ -464,6 +493,20 @@ namespace U4DosRandomizer
                         }
                     }
                 }
+            }
+
+            if(flags.PrincipleItems)
+            {
+                //https://www.youtube.com/watch?v=GhnCj7Fvqt0
+                var values = new List<Tuple<int, int>> { new Tuple<int,int>(0, ultimaData.PrincipleItemRequirements[1]), new Tuple<int, int>(1, ultimaData.PrincipleItemRequirements[2]), new Tuple<int, int>(2, ultimaData.PrincipleItemRequirements[0]) };
+                values.Shuffle(random);
+                
+                for(int i = 0; i < values.Count(); i++)
+                {
+                    ultimaData.PrincipleItemRequirements[values[i].Item1] = values[(i+1) % values.Count()].Item2;
+                }
+                // Make the dependency for the first item be owning itself instead of one of the other items being used so there is an item you can start with
+                ultimaData.PrincipleItemRequirements[values[0].Item1] = 1 << (4 - values[0].Item1);
             }
 
 

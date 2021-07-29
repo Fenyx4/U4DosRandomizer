@@ -6,6 +6,9 @@ namespace U4DosRandomizer
 {
     public class AvatarOffsetsOriginal : IAvatarOffset
     {
+        public int BELL_REQUIREMENT_OFFSET => throw new NotImplementedException();
+        public int BOOK_REQUIREMENT_OFFSET { get; } = 0x6DB;
+        public int CANDLE_REQUIREMENT_OFFSET { get; } = 0x720;
         // https://wiki.ultimacodex.com/wiki/Ultima_IV_Internal_Formats#AVATAR.EXE
         // Above doesn't work anymore cuz we have modified AVATAR.EXE
         public int ABYSS_PARTY_COMPARISON { get; } = 0x34AB;
@@ -122,6 +125,10 @@ namespace U4DosRandomizer
 
         public int BLINK_DESTINATION_EXCLUSION_Y2_OFFSET => throw new NotImplementedException();
 
+        public int ENABLE_TOWN_SAVE1 => throw new NotImplementedException();
+        public int ENABLE_TOWN_SAVE2 => throw new NotImplementedException();
+        public int ENABLE_TOWN_SAVE3 => throw new NotImplementedException();
+        public int ENABLE_TOWN_SAVE4 => throw new NotImplementedException();
         public int ENABLE_MIX_QUANTITY_OFFSET => throw new NotImplementedException();
 
         public int BLINK_DESTINATION2_EXCLUSION_X1_OFFSET => throw new NotImplementedException();
@@ -133,6 +140,11 @@ namespace U4DosRandomizer
         public int BLINK_DESTINATION2_EXCLUSION_Y2_OFFSET => throw new NotImplementedException();
 
         public int ENABLE_SLEEP_BACKOFF_OFFSET => throw new NotImplementedException();
+        public int ENABLE_DAEMON_TRIGGER_FIX => throw new NotImplementedException();
+        public int ENABLE_MAP_EDGE_FIX1 => throw new NotImplementedException();
+        public int ENABLE_MAP_EDGE_FIX2 => throw new NotImplementedException();
+        public int ENABLE_MAP_EDGE_FIX3 => throw new NotImplementedException();
+        public int ENABLE_AWAKEN_ALL => throw new NotImplementedException();
 
         public int ENABLE_ACTIVE_PLAYER_1_OFFSET => throw new NotImplementedException();
 
@@ -141,6 +153,9 @@ namespace U4DosRandomizer
         public int ENABLE_DIAGONAL_ATTACK_OFFSET => throw new NotImplementedException();
 
         public int ENABLE_SACRIFICE_FIX_OFFSET => throw new NotImplementedException();
+
+        public int ENABLE_PRINCIPLE_ITEM_REORDER_OFFSET => throw new NotImplementedException();
+        public int ENABLE_WEAPON_OVERFLOW_FIX => throw new NotImplementedException();
 
         public int ENCODED_FLAGS_OFFSET => throw new NotImplementedException();
 

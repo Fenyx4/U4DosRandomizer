@@ -205,6 +205,7 @@ extern /*C_162F*/AskY_N();
 extern long /*C_169C*/AskInt(int);
 /*u4_util2*/
 extern void cdecl /*C_16CD*/u_delay(int, int);
+extern unsigned char u4_wrap(int);
 
 extern unsigned char u_rand_a();
 #define U4_RND1(a) (u_rand_a()&(a))
@@ -305,6 +306,7 @@ extern C_7D50();
 extern C_7D92();
 extern C_7DBC();
 extern C_7DFE(int);
+extern PrepFighters(int,unsigned);
 extern C_7FD7();
 extern C_7FFD();
 extern C_837A();

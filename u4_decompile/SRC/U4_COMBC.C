@@ -180,7 +180,12 @@ register unsigned si;
 	D_9772 = D_8742._npc._x[si];
 	D_9140 = D_8742._npc._y[si];
 	if(Party._loc == 0x00) {
-		D_946C = D_8742._map.x32x32[(D_9140 - (D_95A5.y<<4))][(D_9772 - (D_95A5.x<<4))];
+		/*ENABLE_MAP_EDGE_FIX2*/
+		if(U4_RND1(7) < 8) {
+			D_946C = D_8742._map.x32x32[D_9140 - (D_95A5.y<<4)][D_9772 - (D_95A5.x<<4)];
+		} else {
+			D_946C = D_8742._map.x32x32[u4_wrap(D_9140 - (D_95A5.y*16))][u4_wrap(D_9772 - (D_95A5.x*16))];
+		}
 	} else {
 		D_946C = D_8742._map.x32x32[D_9140][D_9772];
 	}
@@ -194,7 +199,7 @@ register unsigned si;
 C_7E7E()
 {
 	register int loc_A, loc_D;
-	int loc_B, loc_C;
+	int loc_B;
 	unsigned loc_E;
 
 	for(loc_D = 15; loc_D >= 0; loc_D --)
@@ -221,9 +226,7 @@ C_7E7E()
 				loc_E = D_2406[C_7C25(D_9452)];
 			}
 		}
-		Fighters._tile[loc_D] = Fighters._gtile[loc_D] = loc_E;
-		loc_C = D_23D2[C_7C25(loc_E)];
-		Fighters._HP[loc_D] = (loc_C >> 1) | U4_RND4(loc_C);
+		PrepFighters(loc_D,loc_E);
 	}
 	for(loc_D = Party.f_1d8 - 1; loc_D >= 0; loc_D --) {
 		if(!isCharaAlive(loc_D))
@@ -231,6 +234,17 @@ C_7E7E()
 		else
 			D_944A[loc_D] = Fighters._chtile[loc_D] = C_0ACF(loc_D);
 	}
+}
+
+PrepFighters(loc_A, loc_D)
+register int loc_A;
+unsigned loc_D;
+{
+	int loc_B;
+								
+	Fighters._tile[loc_A] = Fighters._gtile[loc_A] = loc_D;
+	loc_B = D_23D2[C_7C25(loc_D)];
+	Fighters._HP[loc_A] = (loc_B >> 1) | U4_RND4(loc_B);
 }
 
 C_7FD7()
@@ -324,9 +338,10 @@ C_7FFD()
 		/*shouldn't be "if(loc_A._010[loc_B]) {" ?*/
 			Combat._npcX[loc_B] = loc_A._020[loc_B];
 			Combat._npcY[loc_B] = loc_A._030[loc_B];
-			Fighters._tile[loc_B] = Fighters._gtile[loc_B] = loc_A._010[loc_B];
+			PrepFighters(loc_B, loc_A._010[loc_B]);
+			/*Fighters._tile[loc_B] = Fighters._gtile[loc_B] = loc_A._010[loc_B];
 			loc_C = D_23D2[C_7C25(loc_A._010[loc_B])];
-			Fighters._HP[loc_B] = (loc_C >> 1) | U4_RND4(loc_C);
+			Fighters._HP[loc_B] = (loc_C >> 1) | U4_RND4(loc_C);*/
 			if(Fighters._tile[loc_B] == (char)TIL_AC)
 				Fighters._gtile[loc_B] = TIL_3C;
 		}

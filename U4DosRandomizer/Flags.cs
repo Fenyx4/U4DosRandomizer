@@ -40,8 +40,13 @@ namespace U4DosRandomizer
         public bool RandomizeSpells { get; internal set; }
         public bool Sextant { get; internal set; }
         public bool ClothMap { get; internal set; }
+        public bool PrincipleItems { get; internal set; }
         public bool SpoilerLog { get; internal set; }
         public bool VGAPatch { get; internal set; }
+        public bool TownSaves { get; internal set; }
+        public bool DaemonTrigger { get; internal set; }
+        public bool AwakenUpgrade { get; internal set; }
+        public bool ShopOverflowFix { get; internal set; }
 
         public List<int> SupportedVersions = new List<int>() { 9 };
 
@@ -81,6 +86,16 @@ namespace U4DosRandomizer
             mask = SET_MSK(mask, MonsterQty, 2);
             mask = SET_MSK(mask, NoRequireFullParty, 3);
             mask = SET_MSK(mask, SpoilerLog, 4);
+            mask = SET_MSK(mask, PrincipleItems, 5);
+            mask = SET_MSK(mask, VGAPatch, 6);
+            mask = SET_MSK(mask, TownSaves, 7);
+            encoded.Add((byte)mask);
+
+            // Add another one just for a bit of future proofing
+            mask = 0;
+            mask = SET_MSK(mask, DaemonTrigger, 0);
+            mask = SET_MSK(mask, AwakenUpgrade, 1);
+            mask = SET_MSK(mask, ShopOverflowFix, 2);
             encoded.Add((byte)mask);
 
             // Add another one just for a bit of future proofing
@@ -144,13 +159,21 @@ namespace U4DosRandomizer
             MonsterQty = TST_MSK(mask, 2);
             NoRequireFullParty = TST_MSK(mask, 3);
             SpoilerLog = TST_MSK(mask, 4);
+            PrincipleItems = TST_MSK(mask, 5);
+            VGAPatch = TST_MSK(mask, 6);
+            TownSaves = TST_MSK(mask, 7);
 
             mask = encoded[8];
+            DaemonTrigger = TST_MSK(mask, 0);
+            AwakenUpgrade = TST_MSK(mask, 1);
+            ShopOverflowFix = TST_MSK(mask, 2);
 
-            Overworld = encoded[9];
-            QuestItemPercentage = encoded[10];
-            KarmaSetPercentage = encoded[11];
-            KarmaValue = encoded[12];
+            mask = encoded[9];
+
+            Overworld = encoded[10];
+            QuestItemPercentage = encoded[11];
+            KarmaSetPercentage = encoded[12];
+            KarmaValue = encoded[13];
             if (KarmaValue == 0)
             {
                 KarmaValue = null;
@@ -159,10 +182,10 @@ namespace U4DosRandomizer
             {
                 KarmaValue--;
             }
-            MonsterDamage = encoded[13];
-            WeaponDamage = encoded[14];
+            MonsterDamage = encoded[14];
+            WeaponDamage = encoded[15];
 
-            var spellRemoveMask = BitConverter.ToInt32(encoded, 15);
+            var spellRemoveMask = BitConverter.ToInt32(encoded, 16);
             SpellRemove = "";
             for (int offset = 0; offset < 26; offset++)
             {

@@ -200,6 +200,10 @@ namespace U4DosRandomizer
                 textOffset++;
             }
 
+            data.PrincipleItemRequirements.Add(BitConverter.ToUInt16(avatarBytes, AvatarOffset.BELL_REQUIREMENT_OFFSET-1));
+            data.PrincipleItemRequirements.Add(BitConverter.ToUInt16(avatarBytes, AvatarOffset.BOOK_REQUIREMENT_OFFSET-1));
+            data.PrincipleItemRequirements.Add(BitConverter.ToUInt16(avatarBytes, AvatarOffset.CANDLE_REQUIREMENT_OFFSET-1));
+
             var wordOfPassageTextBytes = new List<byte>();
 
             for (int offSet = 0; offSet < 9; offSet++)
@@ -433,6 +437,14 @@ namespace U4DosRandomizer
                 }
             }
 
+            if (data.PrincipleItemRequirements[0] != 1024)
+            {
+                avatarBytes.OverwriteBytes((ushort)data.PrincipleItemRequirements[0], AvatarOffset.BELL_REQUIREMENT_OFFSET-1);
+                avatarBytes.OverwriteBytes((ushort)data.PrincipleItemRequirements[1], AvatarOffset.BOOK_REQUIREMENT_OFFSET-1);
+                avatarBytes.OverwriteBytes((ushort)data.PrincipleItemRequirements[2], AvatarOffset.CANDLE_REQUIREMENT_OFFSET-1);
+                avatarBytes[AvatarOffset.ENABLE_PRINCIPLE_ITEM_REORDER_OFFSET] = (byte)0x0;
+            }
+
             var wordOfPassageBytes = Encoding.ASCII.GetBytes(data.WordOfPassage.ToLower());
             for (int j = 0; j < wordOfPassageBytes.Length; j++)
             {
@@ -623,6 +635,36 @@ namespace U4DosRandomizer
             {
                 avatarBytes[AvatarOffset.ABYSS_PARTY_COMPARISON] = 0x76;
                 avatarBytes[AvatarOffset.LB_PARTY_COMPARISON] = 0x00;
+            }
+
+            if (flags.TownSaves)
+            {
+                avatarBytes[AvatarOffset.ENABLE_TOWN_SAVE1] = (byte)0x0;
+                avatarBytes[AvatarOffset.ENABLE_TOWN_SAVE2] = (byte)0x0;
+                avatarBytes[AvatarOffset.ENABLE_TOWN_SAVE3] = (byte)0x0;
+                avatarBytes[AvatarOffset.ENABLE_TOWN_SAVE4] = (byte)0x0;
+            }
+
+            if (flags.DaemonTrigger)
+            {
+                avatarBytes[AvatarOffset.ENABLE_DAEMON_TRIGGER_FIX] = (byte)0x0;
+            }
+
+            if (flags.Fixes)
+            {
+                avatarBytes[AvatarOffset.ENABLE_MAP_EDGE_FIX1] = (byte)0x0;
+                avatarBytes[AvatarOffset.ENABLE_MAP_EDGE_FIX2] = (byte)0x0;
+                avatarBytes[AvatarOffset.ENABLE_MAP_EDGE_FIX3] = (byte)0x0;
+            }
+
+            if (flags.AwakenUpgrade)
+            {
+                avatarBytes[AvatarOffset.ENABLE_AWAKEN_ALL] = (byte)0x0;
+            }
+
+            if (flags.ShopOverflowFix)
+            {
+                avatarBytes[AvatarOffset.ENABLE_WEAPON_OVERFLOW_FIX] = (byte)0x0;
             }
 
             if (flags.VGAPatch)
