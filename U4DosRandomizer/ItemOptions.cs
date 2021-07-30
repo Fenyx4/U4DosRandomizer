@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Text;
 
@@ -67,7 +67,7 @@ namespace U4DosRandomizer
 					new ItemOption { Item = new Item(0x09, 0x17, 0x0B), People = new List<Person>() { new Person { KeywordResponse2 = "The rune of sacrifice lies in damp ground on the west side of the poorhouse.", Name = "Mischief" } } }, //Mischief
 					new ItemOption { Item = new Item(0x09, 0x0C, 0x04), People = new List<Person>() { new Person { KeywordResponse2 = "Ha! I placed the rune of sacrifice in the plant near my brother.", Name = "Mischief" } } }, //Mischief
 					new ItemOption { Item = new Item(0x09, 0x0A, 0x02), People = new List<Person>() { new Person { KeywordResponse2 = "Search well in the room in the Inn with three beds.", Name = "Mischief" } } }, //Mischief
-					new ItemOption { Item = new Item(0x04, 0x18, 0x0B), People = new List<Person>() { new Person { KeywordResponse2 = "The rune of sacrice is far from here! Search ye in Courage Healers of Serpent's Hold.", Name = "Mischief" } } }, //Mischief
+					new ItemOption { Item = new Item(0x04, 0x18, 0x0B), People = new List<Person>() { new Person { KeywordResponse2 = "The rune of sacrifice is far from here! Search ye in Courage Healers of Serpent's Hold.", Name = "Mischief" } } }, //Mischief
 					new ItemOption { Item = new Item(0x0F, 0x16, 0x1B), People = new List<Person>() { new Person { KeywordResponse2 = "Search for the rune of sacrifice in the treasure chamber of Vesper!", Name = "Mischief" } } } //Mischief
 				}
 			},
