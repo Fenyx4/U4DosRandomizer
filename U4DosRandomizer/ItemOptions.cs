@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Text;
 
@@ -84,7 +84,7 @@ namespace U4DosRandomizer
 				UltimaData.ITEM_RUNE_SPIRITUALITY, new List<ItemOption>
 				{
 					new ItemOption { Item = new Item(0x01, 0x11, 0x08), People = new List<Person>() { new Person { KeywordResponse2 = "Search for the rune of spirituality in the treasure chamber of Britannia!", Name = "the Ankh of\nSpirituality" } } }, // Ankh of Spirituality
-					new ItemOption { Item = new Item(0x0B, 0x05, 0x18), People = new List<Person>() { new Person { KeywordResponse2 = "Search in the empty bed at the healers.", Name = "the Ankh of\nSpirituality" } } }, // Ankh of Spirituality
+					new ItemOption { Item = new Item(0x0B, 0x05, 0x18), People = new List<Person>() { new Person { KeywordResponse2 = "Search in the empty bed at the healers.", Name = "the Ankh of\nSpirituality" }, new Person { No = "I can not find it!", Name = "Mike Ward" } } }, // Ankh of Spirituality
 					new ItemOption { Item = new Item(0x01, 0x0A, 0x18), People = new List<Person>() { new Person { KeywordResponse2 = "The seer hath the rune of Spirituality.", Name = "the Ankh of\nSpirituality" } } }, // Ankh of Spirituality
 					new ItemOption { Item = new Item(0x01, 0x0D, 0x16), People = new List<Person>() { new Person { KeywordResponse2 = "Search for the rune of spirituality with the captive reaper!", Name = "the Ankh of\nSpirituality" } } },
 					new ItemOption { Item = new Item(0x10, 0x02, 0x18), People = new List<Person>() { new Person { KeywordResponse2 = "Search for the rune of spirituality by those who study the Axiom in Cove!", Name = "the Ankh of\nSpirituality" } } }
