@@ -18,7 +18,7 @@ namespace U4DosRandomizer
         {
             Console.WriteLine("Hello World!");
 
-            CommandLineApplication commandLineApplication = new CommandLineApplication(throwOnUnexpectedArg: false);
+            CommandLineApplication commandLineApplication = new CommandLineApplication(throwOnUnexpectedArg: true);
             CommandOption seedArg = commandLineApplication.Option(
                 "-s |--s <seed>",
                 "The seed for the randomizer. "
