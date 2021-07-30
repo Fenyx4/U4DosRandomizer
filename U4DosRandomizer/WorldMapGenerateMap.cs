@@ -501,7 +501,7 @@ namespace U4DosRandomizer
                 Regions.Add(new Region
                 {
                     Name = "The Deep Forest",
-                    RunicName = "The DÁp Forest",
+                    RunicName = "Äe DÁp Forest",
                     Tiles = forestEnumerator.Current,
                     Center = GetCenterOfRegion(forestEnumerator.Current)
                 });
@@ -2369,8 +2369,8 @@ namespace U4DosRandomizer
                                                         ApplyKerning = true,
                                                         TabWidth = 8, // a tab renders as 8 spaces wide
                                                                       //WrapTextWidth = 100, // greater than zero so we will word wrap at 100 pixels wide
-                                                    HorizontalAlignment = HorizontalAlignment.Center // right align
-                                                });
+                                                        HorizontalAlignment = HorizontalAlignment.Center // right align
+                                                    });
                                                     var textRegions = Regions.OrderBy(x => x.Center.Y).ToList();
                                                     var lastY = textRegions[0].Center.Y;
                                                     for (int i = 1; i < textRegions.Count; i++)
