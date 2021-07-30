@@ -715,7 +715,25 @@ namespace U4DosRandomizer
             avatar.Save(path);
             worldMap.Save(path);
 
-            if (flags.MiniMap)
+            if (flags.TownSaves)
+            {
+                if(!File.Exists(path + "\\TOWNMAP.SAV"))
+                {
+                    File.Copy(path + "\\BRITAIN.ULT", path + "\\TOWNMAP.SAV");
+                }
+
+                if (!File.Exists(path + "\\LCB_1.SAV"))
+                {
+                    File.Copy(path + "\\LCB_1.ULT", path + "\\LCB_1.SAV");
+                }
+
+                if (!File.Exists(path + "\\LCB_2.SAV"))
+                {
+                    File.Copy(path + "\\LCB_2.ULT", path + "\\LCB_2.SAV");
+                }
+            }
+
+                if (flags.MiniMap)
             {
                 var image = worldMap.ToImage();
                 image.SaveAsPng($"worldMap-{seed}.png");
