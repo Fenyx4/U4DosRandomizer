@@ -1222,8 +1222,10 @@ namespace U4DosRandomizer
             loc = evenlyDistributedLocations[0];
             ultimaData.Items[ultimaData.ITEM_SKULL].X = loc.X;
             ultimaData.Items[ultimaData.ITEM_SKULL].Y = loc.Y;
-            ApplyShape(loc, "skull");
             excludeLocations.Add(loc);
+            // Shape for the skull location is slightly off so shift it by one here as a hack
+            ApplyShape(GetCoordinate(loc.X+1, loc.Y), "skull");
+            
 
             possibleLocations = GetAllMatchingTiles(c => AreaIsAll(TileInfo.Deep_Water, 7, c) && !excludeLocations.Contains(c));
             evenlyDistributedLocations = GetEvenlyDistributedValidLocations(random, 1, usedLocations, possibleLocations, ultimaData, true);
