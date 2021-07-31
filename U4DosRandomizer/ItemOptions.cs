@@ -54,7 +54,7 @@ namespace U4DosRandomizer
 				{
 					new ItemOption { Item = new Item(0x08, 0x0D, 0x06), People = new List<Person>() { new Person { No = "Then do thy penance in a cell, and with the felon search ye well.", Name = "Talfourd" } } }, //Talfourd - No@Pub - Rune
 					new ItemOption { Item = new Item(0x08, 0x0E, 0x08), People = new List<Person>() { new Person { No = "Then do thy penance in a cell, and with the beggars search ye well.", Name = "Talfourd" } } },
-					new ItemOption { Item = new Item(0x08, 0x1E, 0x12), People = new List<Person>() { new Person { No = "Search ye by the mage in the woods.", Name = "Talfourd" } } },
+					new ItemOption { Item = new Item(0x08, 0x1E, 0x12), People = new List<Person>() { new Person { No = "Atone thy sins and be more good, then seek by the spell maker within the woods.", Name = "Talfourd" } } },
 					//new ItemOption { Item = new Item(0x0B, 0x0A, 0x06), People = new List<Person>() { new Person { No = "Learn where your actions may lead. Ask at the tavern in the Den of thieves.@Rune of Justice, eh? The Balron guards it well." },
 					//new ItemOption { Item = new Item(0x0B, 0x05, 0x1C), People = new List<Person>() { new Person { No = "Learn where your actions may lead. Ask at the tavern in the Den of thieves.@Rune of Justice, eh? Search ye by the sleepy sorceress." },
 					//new ItemOption { Item = new Item(0x0B, 0x1B, 0x1B), People = new List<Person>() { new Person { No = "Learn where your actions may lead. Ask at the tavern in the Den of thieves.@Rune of Justice, eh? Search ye on the isle with Starlight." },
