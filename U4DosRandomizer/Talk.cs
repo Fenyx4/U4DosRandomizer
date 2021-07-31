@@ -72,6 +72,10 @@ namespace U4DosRandomizer
                     person.KeywordResponse2 = ReplaceSextantText(person.KeywordResponse2, GetSextantText(ultimaData.Items[ultimaData.ITEM_BELL]));
                 }
 
+                person = FindPerson("Derek the Bard");
+                // Make more thematic when Cove is better hidden
+                person.KeywordResponse2 = "The candle of love is found in a secret place hidden in Cove!";
+
                 if (ultimaData.Items[ultimaData.ITEM_SKULL].Changed)
                 {
                     person = FindPerson("Jude");
