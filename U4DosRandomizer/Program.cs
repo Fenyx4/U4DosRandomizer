@@ -196,6 +196,7 @@ namespace U4DosRandomizer
                 if(onlyRunicArg.HasValue())
                 {
                     var Regions = new List<Region>();
+                    Console.OutputEncoding = System.Text.Encoding.UTF8;
                     Console.WriteLine("Hello World!");
 
                     Regions.Add(new Region
