@@ -517,7 +517,7 @@ namespace U4DosRandomizer
                 person.No = "Then thou should\nvisit our\nphysician!";
                 person.Keyword2 = "PHYS";
                 person.KeywordResponse1 = person.KeywordResponse1.Replace("west", "north");
-                person.KeywordResponse2 = "Got north and take\nthe western door.";
+                person.KeywordResponse2 = "Got north and take\nthe eastern door.";
                 SpoilerLog.Add(SpoilerCategory.Fix, $"Michelle heal keyword");
 
                 person = FindPerson("Tracie");
