@@ -2363,16 +2363,19 @@ namespace U4DosRandomizer
                                                     FontFamily family = collection.Install(fontStream);
                                                     Font font = family.CreateFont(22, FontStyle.Regular);
 
-                                                    TextGraphicsOptions options = new TextGraphicsOptions(new SixLabors.ImageSharp.GraphicsOptions()
+                                                    DrawingOptions options = new DrawingOptions()
                                                     {
-                                                    },
-                                                    new TextOptions
-                                                    {
-                                                        ApplyKerning = true,
-                                                        TabWidth = 8, // a tab renders as 8 spaces wide
-                                                                      //WrapTextWidth = 100, // greater than zero so we will word wrap at 100 pixels wide
-                                                        HorizontalAlignment = HorizontalAlignment.Center // right align
-                                                    });
+                                                        GraphicsOptions = new SixLabors.ImageSharp.GraphicsOptions()
+                                                        {
+                                                        },
+                                                        TextOptions = new TextOptions
+                                                        {
+                                                            ApplyKerning = true,
+                                                            TabWidth = 8, // a tab renders as 8 spaces wide
+                                                                          //WrapTextWidth = 100, // greater than zero so we will word wrap at 100 pixels wide
+                                                            HorizontalAlignment = HorizontalAlignment.Center // right align
+                                                        }
+                                                    };
                                                     var textRegions = Regions.OrderBy(x => x.Center.Y).ToList();
                                                     var lastY = textRegions[0].Center.Y;
                                                     for (int i = 1; i < textRegions.Count; i++)
