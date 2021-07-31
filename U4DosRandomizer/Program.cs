@@ -196,31 +196,38 @@ namespace U4DosRandomizer
                 if(onlyRunicArg.HasValue())
                 {
                     var Regions = new List<Region>();
-                    Console.OutputEncoding = System.Text.Encoding.UTF8;
                     Console.WriteLine("Hello World!");
+
+                    var runicMap = new Dictionary<string, char>()
+                    {
+                        { "TH", '\u00C4' }, //Ä
+                        { "EE", '\u00C1' }, //Á
+                        { "EA", '\u00C0' } //À
+                    };
+
 
                     Regions.Add(new Region
                     {
                         Name = "The Deep Forest",
-                        RunicName = "Äe DÁp Forest"
+                        RunicName = $"{runicMap["TH"]}e D{runicMap["EE"]}p Forest"
                     });
 
                     Regions.Add(new Region
                     {
                         Name = "Isle of Deeds",
-                        RunicName = "Isle of DÁds"
+                        RunicName = $"Isle of D{runicMap["EE"]}ds"
                     });
 
                     Regions.Add(new Region
                     {
                         Name = "The High Stepes",
-                        RunicName = "Äe High Stepes"
+                        RunicName = $"{runicMap["TH"]}e High Stepes"
                     });
 
                     Regions.Add(new Region
                     {
                         Name = "Fens of the Dead",
-                        RunicName = "Fens of the DÀd"
+                        RunicName = $"Fens of the D{runicMap["EA"]}d"
                     });
 
                     foreach (var region in Regions)
