@@ -586,7 +586,7 @@ namespace U4DosRandomizer
             return result;
         }
 
-        private string[] reagents = new string[] { "nightshade", "mandrake", "pearl", "bloodmoss", "silk", "garlic", "ginseng", "ash", };
+        private string[] reagents = new string[] { "mandrake", "nightshade", "pearl", "bloodmoss", "silk", "garlic", "ginseng", "ash", };
         private string GetRecipeText(byte recipe)
         {
             var resultList = new List<string>();
