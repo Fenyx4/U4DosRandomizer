@@ -359,6 +359,7 @@ namespace U4DosRandomizer
             {
                 flags.DecodeAndSet(encoded);
                 json = JsonConvert.SerializeObject(flags);
+                seed = flags.Seed;
             }
             Console.WriteLine("Flags JSON  : " + json);
             Console.WriteLine("Flags Base64: " + encoded);
