@@ -489,6 +489,13 @@ namespace U4DosRandomizer
 
         private void ApplyRegions(UltimaData ultimaData, Random random)
         {
+            var runicMap = new Dictionary<string, char>()
+            {
+                { "TH", '\u00C4' }, //Ä
+                { "EE", '\u00C1' }, //Á
+                { "EA", '\u00C0' } //À
+            };
+
             Regions = new List<Region>();
 
             var forests = FindBodies(tile => tile.GetTile() == TileInfo.Forest).OrderByDescending(b => b.Count());
@@ -501,7 +508,7 @@ namespace U4DosRandomizer
                 Regions.Add(new Region
                 {
                     Name = "The Deep Forest",
-                    RunicName = "Äe DÁp Forest",
+                    RunicName = $"{runicMap["TH"]}e D{runicMap["EE"]}p Forest",
                     Tiles = forestEnumerator.Current,
                     Center = GetCenterOfRegion(forestEnumerator.Current)
                 });
@@ -564,7 +571,7 @@ namespace U4DosRandomizer
                 Regions.Add(new Region
                 {
                     Name = "Isle of Deeds",
-                    RunicName = "Isle of DÁds",
+                    RunicName = $"Isle of D{runicMap["EE"]}ds",
                     Tiles = islandEnumerator.Current,
                     Center = GetCenterOfRegion(islandEnumerator.Current)
                 });
@@ -588,7 +595,7 @@ namespace U4DosRandomizer
                 Regions.Add(new Region
                 {
                     Name = "The High Stepes",
-                    RunicName = "Äe High Stepes",
+                    RunicName = $"{runicMap["TH"]}e High Stepes",
                     Tiles = plainsEnumerator.Current,
                     Center = GetCenterOfRegion(plainsEnumerator.Current)
                 });
@@ -611,7 +618,7 @@ namespace U4DosRandomizer
                 Regions.Add(new Region
                 {
                     Name = "Fens of the Dead",
-                    RunicName = "Fens of the DÀd",
+                    RunicName = $"Fens of the D{runicMap["EA"]}d",
                     Tiles = swampsEnumerator.Current,
                     Center = GetCenterOfRegion(swampsEnumerator.Current)
                 });
