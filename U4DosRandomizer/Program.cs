@@ -1,6 +1,10 @@
 using Microsoft.Extensions.CommandLineUtils;
 using Newtonsoft.Json;
+using SixLabors.Fonts;
 using SixLabors.ImageSharp;
+using SixLabors.ImageSharp.Drawing.Processing;
+using SixLabors.ImageSharp.PixelFormats;
+using SixLabors.ImageSharp.Processing;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -9,6 +13,7 @@ using System.Linq;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.Text;
 using U4DosRandomizer.Helpers;
+using U4DosRandomizer.Resources;
 
 namespace U4DosRandomizer
 {
@@ -179,10 +184,90 @@ namespace U4DosRandomizer
                 "Output a spoiler log.",
                 CommandOptionType.NoValue);
 
+            CommandOption onlyRunicArg = commandLineApplication.Option(
+                "--onlyRunic",
+                "Output an image with some runic text to test the runic bug.",
+                CommandOptionType.NoValue);
+
             commandLineApplication.HelpOption("-? | -h | --help");
 
             commandLineApplication.OnExecute(() =>
             {
+                if(onlyRunicArg.HasValue())
+                {
+                    var Regions = new List<Region>();
+                    Console.WriteLine("Hello World!");
+
+                    Regions.Add(new Region
+                    {
+                        Name = "The Deep Forest",
+                        RunicName = "Äe DÁp Forest"
+                    });
+
+                    Regions.Add(new Region
+                    {
+                        Name = "Isle of Deeds",
+                        RunicName = "Isle of DÁds"
+                    });
+
+                    Regions.Add(new Region
+                    {
+                        Name = "The High Stepes",
+                        RunicName = "Äe High Stepes"
+                    });
+
+                    Regions.Add(new Region
+                    {
+                        Name = "Fens of the Dead",
+                        RunicName = "Fens of the DÀd"
+                    });
+
+                    foreach (var region in Regions)
+                    {
+                        Console.WriteLine(region.Name);
+                        Console.WriteLine(region.RunicName);
+                    }
+
+                    var image = new SixLabors.ImageSharp.Image<Rgba32>(256, 256);
+
+                    DrawingOptions options = new DrawingOptions()
+                    {
+                        GraphicsOptions = new SixLabors.ImageSharp.GraphicsOptions()
+                        {
+                        },
+                        TextOptions = new TextOptions
+                        {
+                            ApplyKerning = true,
+                            TabWidth = 8, // a tab renders as 8 spaces wide
+                                          //WrapTextWidth = 100, // greater than zero so we will word wrap at 100 pixels wide
+                            HorizontalAlignment = HorizontalAlignment.Center // right align
+                        }
+                    };
+
+                    FontCollection collection = new FontCollection();
+                    using (var fontStream = new MemoryStream(ClothMap.runes))
+                    {
+                        Console.WriteLine("Creating image!");
+                        FontFamily family = collection.Install(fontStream);
+                        Font font = family.CreateFont(22, FontStyle.Regular);
+                        for (int i = 0; i < Regions.Count; i++)
+                        {
+                            var region = Regions[i];
+                            image.Mutate(x => x.DrawText(options, region.RunicName.ToUpper(), font, SixLabors.ImageSharp.Color.Black, new SixLabors.ImageSharp.PointF(128, i * 20)));
+                        }
+                        Console.WriteLine("Saving Image!");
+                        image.SaveAsPng("image.png");
+
+                        new Process
+                        {
+                            StartInfo = new ProcessStartInfo("image.png")
+                            {
+                                UseShellExecute = true
+                            }
+                        }.Start();
+                    } 
+                    return 0;
+                }
                 var seed = Environment.TickCount;
                 if (seedArg.HasValue())
                 {
