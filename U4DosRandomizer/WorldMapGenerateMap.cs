@@ -32,6 +32,8 @@ namespace U4DosRandomizer
 
         private List<Region> Regions;
 
+        private List<River> Rivers;
+
         private SpoilerLog SpoilerLog { get; }
 
         public WorldMapGenerateMap(SpoilerLog spoilerLog)
@@ -745,6 +747,11 @@ namespace U4DosRandomizer
                     swamp[i] = GetCoordinate(swamp[i].X - bestOffset.X, swamp[i].Y - bestOffset.Y);
                 }
             }
+
+            foreach(var river in Rivers)
+            {
+                river.LevelOrderTraversal(r => r.Coordinate = GetCoordinate(r.Coordinate.X - bestOffset.X, r.Coordinate.Y - bestOffset.Y));
+            }
         }
 
         public override void Randomize(UltimaData ultimaData, Random randomLocations, Random randomItems)
@@ -1269,13 +1276,13 @@ namespace U4DosRandomizer
             // Original game only had single tiles in very special circumstances
             RemoveSingleTiles();
 
-            var rivers = AddRivers(random);
+            Rivers = AddRivers(random);
 
             // Original game only had single tiles in very special circumstances
             RemoveSingleTiles();
 
-            AddBridges(random, rivers);
-            AddScrubAndForest(random, rivers);
+            AddBridges(random, Rivers);
+            AddScrubAndForest(random, Rivers);
             AddSwamp(random);
         }
 
@@ -1583,6 +1590,13 @@ namespace U4DosRandomizer
             foreach (var tile in finalSet)
             {
                 tile.SetTile(TileInfo.Scrubland);
+                for (int x = 0; x < 4; x++)
+                {
+                    for (int y = 0; y < 4; y++)
+                    {
+                       // _clothMapTiles[tile.X * 4 + x, tile.Y * 4 + y] = TileInfo.Scrubland;
+                    }
+                }
             }
 
             // Add other blobs
@@ -2279,6 +2293,45 @@ namespace U4DosRandomizer
                                             using (SixLabors.ImageSharp.Image<Rgba32> swamp = SixLabors.ImageSharp.Image.Load<Rgba32>(ClothMap.swamp))
                                             {
                                                 var outlineOverlay = new SixLabors.ImageSharp.Image<Rgba32>(WorldMapGenerateMap.SIZE * 4, WorldMapGenerateMap.SIZE * 4);
+                                                var riverOverLayTiles = new byte[SIZE * 4, SIZE * 4];
+                                                var riverOverlay = new SixLabors.ImageSharp.Image<Rgba32>(WorldMapGenerateMap.SIZE * 4, WorldMapGenerateMap.SIZE * 4, new Rgba32(0,0,0,0));
+
+                                                var riverTiles = new Dictionary<ITile, ITile>();
+                                                foreach(var river in Rivers)
+                                                {
+                                                    river.LevelOrderTraversal(r =>
+                                                    {
+                                                        if (!riverTiles.ContainsKey(r.Coordinate))
+                                                        {
+                                                            riverTiles.Add(r.Coordinate, r.Coordinate);
+                                                        }
+                                                    });
+                                                }
+                                                for(int x = 0; x < SIZE * 4; x++)
+                                                {
+                                                    for(int y = 0; y < SIZE * 4; y++)
+                                                    {
+                                                        if(riverTiles.ContainsKey(GetCoordinate(x/4,y/4)))
+                                                        {
+                                                            riverOverLayTiles[x, y] = TileInfo.Shallow_Water;
+                                                        }
+                                                        else
+                                                        {
+                                                            riverOverLayTiles[x, y] = TileInfo.Grasslands;
+                                                        }                                                        
+                                                    }
+                                                }
+                                                var riverOverlayTileEroded = ErosionMap(riverOverLayTiles, new byte[] { TileInfo.Grasslands }, new byte[] { TileInfo.Shallow_Water });
+                                                //foreach (var tile in riverTiles)
+                                                //{
+                                                //    for (int x = 0; x < 4; x++)
+                                                //    {
+                                                //        for (int y = 0; y < 4; y++)
+                                                //        {
+                                                //            riverOverlay[tile.X * 4 + x, tile.Y * 4 + y] = medium_water[tile.X * 4 + x, tile.Y * 4 + y];
+                                                //        }
+                                                //    }
+                                                //}
 
                                                 var erosionMap = ErosionMap(_clothMapTiles, new byte[] { TileInfo.Deep_Water, TileInfo.Medium_Water, TileInfo.Shallow_Water }, new byte[] { });
                                                 var erosionMap2 = ErosionMap(_clothMapTiles, new byte[] { }, new byte[] { TileInfo.Deep_Water, TileInfo.Medium_Water, TileInfo.Shallow_Water });
@@ -2296,6 +2349,7 @@ namespace U4DosRandomizer
                                                     Span<Rgba32> mountainsOverlayRowSpan = mountainsOverlay.GetPixelRowSpan(y);
                                                     Span<Rgba32> pixelRowSpan = image.GetPixelRowSpan(y);
                                                     Span<Rgba32> outlineOverlayRowSpan = outlineOverlay.GetPixelRowSpan(y);
+                                                    Span<Rgba32> riverOverlayRowSpan = riverOverlay.GetPixelRowSpan(y);
                                                     for (int x = 0; x < WorldMapGenerateMap.SIZE * 4; x++)
                                                     {
                                                         //if (colorMap.ContainsKey(_worldMapTiles[x, y]))
@@ -2355,12 +2409,19 @@ namespace U4DosRandomizer
                                                             outlineOverlayRowSpan[x] = new Rgba32(0, 0, 0, 0);
                                                         }
 
+                                                        if (riverOverLayTiles[x,y] == TileInfo.Shallow_Water && riverOverlayTileEroded[x,y] == 0 )
+                                                        {
+                                                            riverOverlayRowSpan[x] = mediumWaterRowSpan[x];
+                                                        }
                                                     }
                                                 }
+
                                                 image = image.Clone(ctx => ctx.DrawImage(hillsOverlay, PixelColorBlendingMode.Normal, PixelAlphaCompositionMode.SrcOver, 1));
                                                 image = image.Clone(ctx => ctx.DrawImage(mountainsOverlay, PixelColorBlendingMode.Normal, PixelAlphaCompositionMode.SrcOver, 1));
                                                 outlineOverlay.Mutate(ctx => ctx.GaussianBlur(0.8f));
                                                 image = image.Clone(ctx => ctx.DrawImage(outlineOverlay, PixelColorBlendingMode.Normal, PixelAlphaCompositionMode.SrcOver, 1));
+                                                //var riverOverlayEroded = ErosionMap()
+                                                image = image.Clone(ctx => ctx.DrawImage(riverOverlay, PixelColorBlendingMode.Normal, PixelAlphaCompositionMode.SrcOver, 1));
 
                                                 image = ClothMapPlaceTags(image, random);
 
