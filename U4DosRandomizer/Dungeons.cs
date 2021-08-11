@@ -54,9 +54,15 @@ namespace U4DosRandomizer
             }
         }
 
-        public void Update(UltimaData ultimaData)
+        public void Update(UltimaData ultimaData, int seed)
         {
+            var random = new Random(seed);
+            var wilson = new WilsonMazeGenerator();
             //TODO - Do something here
+            foreach( var dungeon in dungeons.Values)
+            {
+                wilson.GenerateMaze(dungeon, 8, 8, 8, random);
+            }
         }
 
         public static void Restore(string path)

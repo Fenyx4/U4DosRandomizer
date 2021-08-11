@@ -210,7 +210,7 @@ namespace U4DosRandomizer
             title.Update(ultimaData);
             talk.Update(ultimaData, avatar);
             avatar.Update(ultimaData, flags);
-            dungeons.Update(ultimaData);
+            dungeons.Update(ultimaData, randomValues[3]);
 
             dungeons.Save(path);
             title.Save(path);

@@ -12,6 +12,7 @@ namespace U4DosRandomizer
         //private byte[,,] map = new byte[8, 8, 8];
 
         // Heavily modified from https://www.pixata.co.uk/2020/01/27/mazes-for-programmers-part-8-a-random-walk-with-wilsons-algorithm/
+        // Visualization https://bl.ocks.org/mbostock/11357811
         // since Ultima walls take up a tile
         public void GenerateMaze(Dungeon dungeon, int numLevels, int width, int height, Random rand)
         {
