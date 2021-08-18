@@ -137,24 +137,48 @@ unsigned char bp06;
 unsigned char bp04;
 {
 	register int /*si*/loc_A;
-	int loc_B, loc_C/*bp_04, bp_06*/;
+	int loc_B, loc_C, loc_D, loc_E, loc_AShift/*bp_04, bp_06*/;
 
-	for(loc_A = 3; loc_A >= 0; loc_A --) {
-		if(D_95B2[(loc_A << 2)]) {
+	for(loc_A = 12; loc_A >= 0; loc_A=loc_A-4) {
+		if(D_95B2[loc_A]) {
+			
 			if(
-				(bp06 << 12) == (*(unsigned *)(D_95B2+(loc_A << 2)) & 0xf000) &&
-				(bp04 <<  8) == (*(unsigned *)(D_95B2+(loc_A << 2)) & 0x0f00)
+				(bp06 << 12) == (*(unsigned *)(D_95B2+loc_A) & 0xf000) &&
+				(bp04 <<  8) == (*(unsigned *)(D_95B2+loc_A) & 0x0f00)
 			) {
-				loc_B = *(unsigned *)(D_95B2+(loc_A << 2)+2) & 0xf;
-				if(
-					loc_B |
-					(loc_C = (*(unsigned *)(D_95B2+(loc_A << 2)+2) >> 4) & 0xf)
-				) Combat_MAP(loc_B, loc_C) = D_95B2[(loc_A << 2)];
-				loc_B = (*(unsigned *)(D_95B2+(loc_A << 2)+2) >> 8) & 0xf;
-				if(
-					loc_B |
-					(loc_C = (*(unsigned *)(D_95B2+(loc_A << 2)+2) >> 12) & 0xf)
-				) Combat_MAP(loc_B, loc_C) = D_95B2[(loc_A << 2)] & 0xff;
+				loc_AShift = 0;
+				while(loc_AShift <= 8) {
+								
+					loc_B = (*(unsigned *)(D_95B2+loc_A+2) >> loc_AShift) & 0xf;
+					if(
+						loc_B |
+						(loc_C = (*(unsigned *)(D_95B2+loc_A+2) >> (loc_AShift+4)) & 0xf)
+					) 
+					{
+						/*ENABLE_DAEMON_TRIGGER_FIX*/
+						if( U4_RND1(7) < 8 || D_95B2[loc_A] < TIL_80 ) {
+							Combat_MAP(loc_B, loc_C) = D_95B2[loc_A];
+						}
+						else {
+							loc_D = 15;
+							while(loc_D >= 0 && Fighters._tile[loc_D]) {
+								loc_D--;
+							}
+							if(loc_D != -1) {
+								
+								PrepFighters(loc_D,D_95B2[loc_A]);
+								/*Fighters._tile[loc_D] = Fighters._gtile[loc_D] = D_95B2[loc_A];
+								loc_E = D_23D2[C_7C25(D_95B2[loc_A])];
+								Fighters._HP[loc_D] = (loc_E >> 1) | U4_RND4(loc_E);*/
+								
+								Combat._npcX[loc_D] = loc_C;
+								Combat._npcY[loc_D] = loc_B;
+							}
+						}
+							
+					}
+					loc_AShift=loc_AShift+8;
+				}
 			}
 		}
 	}/* while(--loc_A >= 0);*/

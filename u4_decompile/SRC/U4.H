@@ -195,6 +195,7 @@ extern /*C_11EB*/w_NoneLeft();
 extern /*C_11F9*/AskLetter(char *, char, char);
 extern /*C_1287*/AskChara(char *);
 extern /*C_12D6*/AskDir(char *, int *, int *);
+extern AskDirWithDiagonal(char *, int *, int *);
 extern /*C_138B*/food_dec(int);
 extern /*C_13B6*/MP_recover();
 extern /*C_1445*/u4_gets(char *, int);
@@ -204,6 +205,7 @@ extern /*C_162F*/AskY_N();
 extern long /*C_169C*/AskInt(int);
 /*u4_util2*/
 extern void cdecl /*C_16CD*/u_delay(int, int);
+extern unsigned char u4_wrap(int);
 
 extern unsigned char u_rand_a();
 #define U4_RND1(a) (u_rand_a()&(a))
@@ -304,6 +306,7 @@ extern C_7D50();
 extern C_7D92();
 extern C_7DBC();
 extern C_7DFE(int);
+extern PrepFighters(int,unsigned);
 extern C_7FD7();
 extern C_7FFD();
 extern C_837A();
@@ -342,6 +345,7 @@ extern char cdecl /*D_06A6*/SoundFlag;
 extern unsigned D_07F8;
 extern unsigned /*D_07FA*/*pKarmas[];
 extern int /*D_080A*/activeCharaX;
+extern int sleepBackOff;
 extern char D_080C[], D_0810[];
 extern char D_0814[], D_081C[];/*moongates positions*/
 extern char *D_0824[];
@@ -403,6 +407,7 @@ extern struct tCombat /*D_9470*/Combat;
 extern struct t_68 /*D_9530*/Fighters;
 extern int /*D_9598*/File_DNG;
 extern int /*D_959A*/activeChara;
+extern int operativeChara;
 extern struct aStruct D_959C;
 extern unsigned char /*D_959E*/tile_east;
 extern void far /*D_95A0*/*pCharset;

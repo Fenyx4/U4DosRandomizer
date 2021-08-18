@@ -316,9 +316,21 @@ C_CD1D(bp06, bp04)
 int bp06;
 int bp04;
 {
-	if(D_46D2[bp06] * bp04 > Party._gold) {
-		u4_puts(/*D_4652*/"I fear you have not the funds, perhaps something else.\n");
-		return;
+	register int si;
+	/*ENABLE_WEAPON_OVERFLOW_FIX*/
+	if(U4_RND1(7) < 8) {	
+		if(D_46D2[bp06] * bp04 > Party._gold) {
+			u4_puts(/*D_4652*/"I fear you have not the funds, perhaps something else.\n");
+			return;
+		}
+	} else {
+		/*Loop so it can't jump to an overflow and allow purchasing a lot of items for cheap. */
+		for(si = 0; si <= bp04; si++) {
+			if(D_46D2[bp06] * si > Party._gold) {
+				u4_puts(/*D_4652*/"I fear you have not the funds, perhaps something else.\n");
+				return;
+			}
+		}
 	}
 	Party._gold -= D_46D2[bp06] * bp04; dspl_Gold();
 	Party._weapons[bp06] += bp04;

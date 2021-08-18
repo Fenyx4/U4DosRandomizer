@@ -412,9 +412,13 @@ int bp04;
 	/* */
 C_9D51:
 	/*balron or reaper*/
-	if(U4_RND1(3) == 0) {
+	if(U4_RND2(sleepBackOff) == 0) {
 		if((unsigned char)Fighters._tile[bp08] == TIL_FC || (unsigned char)Fighters._tile[bp08] == TIL_B0) {
 			if(spell_sta != 'N') {
+				/*This should always evaluate to false. Leaving it functioning like regular. Randomizer will have option to turn it on by changing the 8 to a 0.*/
+				if(U4_RND1(7) >= 8 && ++sleepBackOff > 25)
+					sleepBackOff = 25;
+				/*u4_putl(sleepBackOff, 2, '0');*/
 				t_callback();
 				Gra_09(); sound(9, 0x80); Gra_09();
 				for(loc_B = Party.f_1d8 - 1; loc_B >= 0; loc_B --) {
@@ -428,6 +432,7 @@ C_9D51:
 			}
 		}
 	}
+	
 	/* */
 	if((unsigned char)Fighters._HP[bp08] < 24) {
 		loc_A = -loc_A;

@@ -4,12 +4,21 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using U4DosRandomizer.Helpers;
+using U4DosRandomizer.Resources;
 
 namespace U4DosRandomizer
 {
     public class Dungeons
     {
         public Dictionary<string, Dungeon> dungeons = new Dictionary<string, Dungeon>();
+
+        public Dungeons(SpoilerLog spoilerLog)
+        {
+            SpoilerLog = spoilerLog;
+        }
+
+        private SpoilerLog SpoilerLog { get; }
+
         //private static Dictionary<string, int> dungeonIdx = new Dictionary<string, int>()
         //{
         //    { "deceit", 0 },
@@ -22,7 +31,7 @@ namespace U4DosRandomizer
         //    { "abyss", 7 }
         //};
 
-        public void Load(string path, UltimaData data)
+        public void Load(string path, UltimaData data, Flags flags)
         {
             var files = Directory.GetFiles(path, "*.DNG");
             foreach (var file in files)
@@ -31,12 +40,26 @@ namespace U4DosRandomizer
                 {
                     FileHelper.TryBackupOriginalFile(file, false);
 
-                    using (var dngStream = new System.IO.FileStream($"{file}.orig", System.IO.FileMode.Open))
+                    if (flags.FixHythloth && file.Contains("HYTHLOTH"))
                     {
+                        using (var deltaStream = new MemoryStream(Patches.HYTHLOTH))
+                        {
+                            Dungeon dungeon = new Dungeon(deltaStream, data);
 
-                        Dungeon dungeon = new Dungeon(dngStream, data);
+                            dungeons.Add(Path.GetFileNameWithoutExtension(file), dungeon);
+                        }
 
-                        dungeons.Add(Path.GetFileNameWithoutExtension(file), dungeon);
+                        SpoilerLog.Add(SpoilerCategory.Fix, "Hythloth lvl 6 fixed.");
+                    }
+                    else
+                    {
+                        using (var dngStream = new System.IO.FileStream($"{file}.orig", System.IO.FileMode.Open))
+                        {
+
+                            Dungeon dungeon = new Dungeon(dngStream, data);
+
+                            dungeons.Add(Path.GetFileNameWithoutExtension(file), dungeon);
+                        }
                     }
                 }
             }
@@ -54,15 +77,39 @@ namespace U4DosRandomizer
             }
         }
 
-        public void Update(UltimaData ultimaData, int seed)
+        public void Randomize(Random random, Flags flags)
         {
-            var random = new Random(seed);
+            // Other stones
+            if (flags.DngStone)
+            {
+                foreach (var dungeonName in dungeons.Keys)
+                {
+                    if (dungeonName.ToLower() != "abyss" && dungeonName.ToLower() != "hythloth")
+                    {
+                        var dungeon = dungeons[dungeonName];
+                        var stones = dungeon.GetTiles(DungeonTileInfo.AltarOrStone);
+                        foreach (var stone in stones)
+                        {
+                            stone.SetTile(DungeonTileInfo.Nothing);
+                        }
+                        var possibleDungeonLocations = dungeon.GetTiles(DungeonTileInfo.Nothing);
+                        var dungeonLoc = possibleDungeonLocations[random.Next(0, possibleDungeonLocations.Count - 1)];
+                        dungeonLoc.SetTile(DungeonTileInfo.AltarOrStone);
+                        SpoilerLog.Add(SpoilerCategory.Dungeon, $"{dungeonName} stone at Level {dungeonLoc.L} - {dungeonLoc.X},{dungeonLoc.Y}");
+                    }
+                }
+            }
             var wilson = new WilsonMazeGenerator();
             //TODO - Do something here
             foreach( var dungeon in dungeons.Values)
             {
                 wilson.GenerateMaze(dungeon, 8, 8, 8, random);
             }
+        }
+
+        public void Update(UltimaData ultimaData, Flags flags)
+        {
+            
         }
 
         public static void Restore(string path)

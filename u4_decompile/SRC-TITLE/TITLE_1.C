@@ -27,10 +27,10 @@
 #define M_or_F static_C
 #define tmp_str static_D
 #define D_6940 static_E
-#define tmp_int static_F
+#define tmp_dex static_F
 #define curQuestionIndex static_G
 #define player_name static_H
-#define tmp_dex static_I
+#define tmp_int static_I
 #define tmp_karma static_J
 /*====---- ----====*/
 
@@ -663,8 +663,8 @@ unsigned bp04;/*left or right*/
 
 /*characterisics increments by virtue*/
 unsigned char D_30B2[] = {0, 0, 3, 0, 1, 1, 1, 0};/*str*/
-unsigned char D_30BA[] = {0, 3, 0, 1, 1, 0, 1, 0};/*int*/
-unsigned char D_30C2[] = {3, 0, 0, 1, 0, 1, 1, 0};/*dex*/
+unsigned char D_30BA[] = {0, 3, 0, 1, 1, 0, 1, 0};/*dex*/
+unsigned char D_30C2[] = {3, 0, 0, 1, 0, 1, 1, 0};/*int*/
 
 /*dilemmas text indexes*/
 unsigned char D_30CA[] = {
@@ -683,7 +683,7 @@ C_2C12()
 	unsigned char loc_B, loc_C;
 	unsigned char loc_D[8];
 
-	tmp_str = tmp_dex = tmp_int = 15;
+	tmp_str = tmp_int = tmp_dex = 15;
 	curQuestionIndex = 0;
 	for(loc_A = 7; loc_A >= 0; loc_A--) {
 		loc_D[loc_A] = 0;
@@ -743,8 +743,8 @@ C_2C12()
 		loc_D[lastVirtue] = 1;
 		tmp_karma[lastVirtue] += 5;
 		tmp_str += D_30B2[lastVirtue];
-		tmp_int += D_30BA[lastVirtue];
-		tmp_dex += D_30C2[lastVirtue];
+		tmp_dex += D_30BA[lastVirtue];
+		tmp_int += D_30C2[lastVirtue];
 		C_2B2A(0, lastVirtue, curQuestionIndex);
 		/*discarded virtue*/
 		loc_D[loc_C] = 0xff;
@@ -756,6 +756,7 @@ C_2C12()
 
 unsigned char D_30DC[] = {0xE7,0x53,0x23,0x3B,0x9E,0x69,0x17,0xBA};
 unsigned char D_30E4[] = {0x88,0x69,0xDD,0x2C,0x15,0xB7,0x81,0xAB};
+unsigned char karma_starts[] = {0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF};
 
 unsigned /*D_30EC*/*pKarmas[] = {
 	&(Party._hones),
@@ -778,16 +779,33 @@ C_2E04()
 	Party._x = D_30DC[lastVirtue];
 	Party._y = D_30E4[lastVirtue];
 	Party.f_1d8 = 1;
-	for(loc_A = 7; loc_A >= 0; loc_A --)
+	for(loc_A = 7; loc_A >= 0; loc_A --) {
 		*(pKarmas[loc_A]) = tmp_karma[loc_A];
+	}
+	
+	/*Set Karma*/
+	/*This should always evaluate to false. Leaving it functioning like regular. Randomizer will have option to turn it on by changing the 8 to a 0.*/
+	if(U4_RND1(7) >= 8) {
+		for(loc_A = 7; loc_A >= 0; loc_A --) {
+			if(karma_starts[loc_A] != 0xFF)	{
+				*(pKarmas[loc_A]) = karma_starts[loc_A];
+			}
+		}
+	}
+	
 	memcpy(&loc_B, &(Party.chara[lastVirtue]), sizeof(struct tChara));
 	memcpy(&(Party.chara[lastVirtue]), &(Party.chara[0]), sizeof(struct tChara));
 	memcpy(&(Party.chara[0]), &loc_B, sizeof(struct tChara));
 	strcpy(Party.chara[0]._name, player_name);
+	
 	Party.chara[0]._str = tmp_str;
-	Party.chara[0]._int = tmp_dex;
-	Party.chara[0]._dex = tmp_int;
-	Party.chara[0].p_24 = (M_or_F == 'M')?0x0b:0x0c;
+	Party.chara[0]._int = tmp_int;
+	Party.chara[0]._dex = tmp_dex;
+	switch(M_or_F) {
+		case 'F': Party.chara[0].p_24 = 0x0c; break;
+		case 'O': Party.chara[0].p_24 = 'O'; break;
+		default: Party.chara[0].p_24 = 0x0b; break;
+	}
 	for(loc_A = 31; loc_A >= 0; loc_A --) {
 		D_6976._npc._000[loc_A] =
 		D_6976._npc._020[loc_A] =
@@ -817,9 +835,8 @@ char *bp04;
 	txt_Y ++;
 	txt_X = 11;
 	u4_puts(/*D_3100*/"press drive letter");
-	while(!u_kbhit());
+	bp_02 = C_3290() & 0xff;
 	do {
-		bp_02 = u_kbread() & 0xff;
 		u4_toupper(bp_02);
 		if(bp_02 != 'B' || D_7082 != 0) {
 			if(bp_02 >= 'A' && bp_02 <= 'P') {
@@ -831,6 +848,7 @@ char *bp04;
 			return;
 		sound_1();
 		while(!u_kbhit());
+		bp_02 = u_kbread() & 0xff;
 	} while(1);
 }
 
@@ -868,10 +886,15 @@ C_3030()
 		return;
 	}
 	Gra_2();
-	C_0B1E(17, 4, /*D_31A2*/"Art thou Male or Female? ");
+	/*ENABLE_OTHER*/
+	if(U4_RND1(7) < 8) {	
+		C_0B1E(17, 4, /*D_31A2*/"Art thou Male or Female? ");
+	} else {
+		C_0B1E(17, 4, /*D_31A2*/"Art thou Male, Female or Other? ");
+	}
 	M_or_F = u_kbread() & 0xff;
 	u4_toupper(M_or_F);
-	while(M_or_F != 'M' && M_or_F != 'F') {
+	while(M_or_F != 'M' && M_or_F != 'F' && M_or_F != 'O') {
 		sound_1();
 		M_or_F = u_kbread() & 0xff;
 		if(M_or_F == 0x1b || M_or_F == KBD_ENTER || M_or_F == KBD_SPACE) {

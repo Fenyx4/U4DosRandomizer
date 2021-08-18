@@ -45,6 +45,6 @@ namespace U4DosRandomizer
 			return _coord.NeighborCoordinates();
 		}
 
-		#endregion
-	}
+        #endregion
+    }
 }

@@ -36,6 +36,13 @@ unsigned bp04;
 {
 	if(Save(/*D_172B*/"OUTMONST.SAV", sizeof(struct tNPC), &(D_8742._npc)) == -1)
 		exit(3);
+	/*ENABLE_TOWN_SAVE1*/
+	if(bp04 == 1 && U4_RND1(7) >= 8) {
+		if(Load("LCB_2.ULT", sizeof(struct t_500), &D_8742) == -1)
+			exit(3);
+		if(Save("LCB_2.SAV", sizeof(struct t_500), &D_8742) == -1)
+			exit(3);
+	}
 	if(Load(D_0824[bp04 - 0x01], sizeof(struct t_500), &D_8742) == -1)
 		exit(3);
 	File_TLK = dopen(D_1738[Party._loc - 1], 0);
@@ -383,8 +390,16 @@ C_431D()
 			return;
 		}
 		u4_puts(/*D_184B*/"to second floor!\n");
-		if(Load(/*D_185D*/"LCB_2.ULT", sizeof(struct t_500), &D_8742) == -1)
-			exit(3);
+		/*ENABLE_TOWN_SAVE2*/
+		if(U4_RND1(7) < 8) {
+			if(Load(/*D_185D*/"LCB_2.ULT", sizeof(struct t_500), &D_8742) == -1)
+				exit(3);
+		} else {
+			if(Save(/*D_185D*/"LCB_1.SAV", sizeof(struct t_500), &D_8742) == -1)
+				exit(3);
+			if(Load(/*D_185D*/"LCB_2.SAV", sizeof(struct t_500), &D_8742) == -1)
+				exit(3);
+		}
 	} else {
 		w_What();
 	}
@@ -432,6 +447,14 @@ C_431D()
 		return;
 	}
 	u4_puts(/*D_18AA*/"to first floor!\n");
-	if(Load(/*D_18BB*/"LCB_1.ULT", sizeof(struct t_500), &D_8742) == -1)
-		exit(3);
+	/*ENABLE_TOWN_SAVE3*/
+	if(U4_RND1(7) < 8) {
+		if(Load(/*D_18BB*/"LCB_1.ULT", sizeof(struct t_500), &D_8742) == -1)
+			exit(3);
+	} else {
+		if(Save(/*D_185D*/"LCB_2.SAV", sizeof(struct t_500), &D_8742) == -1)
+			exit(3);
+		if(Load(/*D_18BB*/"LCB_1.SAV", sizeof(struct t_500), &D_8742) == -1)
+			exit(3);
+	}
 }

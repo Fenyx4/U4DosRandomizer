@@ -6,88 +6,23 @@ namespace U4DosRandomizer
 {
     public class AvatarOffsetsOriginal : IAvatarOffset
     {
+        public int BELL_REQUIREMENT_OFFSET => throw new NotImplementedException();
+        public int BOOK_REQUIREMENT_OFFSET { get; } = 0x6DB;
+        public int CANDLE_REQUIREMENT_OFFSET { get; } = 0x720;
         // https://wiki.ultimacodex.com/wiki/Ultima_IV_Internal_Formats#AVATAR.EXE
         // Above doesn't work anymore cuz we have modified AVATAR.EXE
+        public int ABYSS_PARTY_COMPARISON { get; } = 0x34AB;
+        public int LB_PARTY_COMPARISON { get; } = 0xE449;
         public int MOONGATE_X_OFFSET { get; } = 0x0fad1;
         public int MOONGATE_Y_OFFSET { get; } = 0x0fad9;
         public int AREA_X_OFFSET { get; } = 0x0fb01; // towns, cities, castles, dungeons, shrines
         public int AREA_Y_OFFSET { get; } = 0x0fb21;
-        public int LOC_BUILDINGS { get; } = 0x01;
 
-        public int LOC_CASTLES { get; } = 0x01;
-        public int LOC_LCB { get; } = 0x01;
-        public int LOC_LYCAEUM { get; } = 0x02;
-        public int LOC_EMPATH { get; } = 0x03;
-        public int LOC_SERPENT { get; } = 0x04;
 
-        public int LOC_TOWNS { get; } = 0x05;
-        public int LOC_MOONGLOW { get; } = 0x05;
-        public int LOC_BRITAIN { get; } = 0x06;
-        public int LOC_JHELOM { get; } = 0x07;
-        public int LOC_YEW { get; } = 0x08;
-        public int LOC_MINOC { get; } = 0x09;
-        public int LOC_TRINSIC { get; } = 0x0a;
-        public int LOC_SKARA { get; } = 0x0b;
-        public int LOC_MAGINCIA { get; } = 0x0c;
-        public int LOC_PAWS { get; } = 0x0d;
-        public int LOC_DEN { get; } = 0x0e;
-        public int LOC_VESPER { get; } = 0x0f;
-        public int LOC_COVE { get; } = 0x10;
+        public int DEATH_EXIT_X_OFFSET { get; } = 0x011ac;
+        public int DEATH_EXIT_Y_OFFSET { get; } = 0x011b1;
 
-        public int LOC_DUNGEONS { get; } = 0x11;
-        public int LOC_DECEIT { get; } = 0x11;
-        public int LOC_DESPISE { get; } = 0x12;
-        public int LOC_DESTARD { get; } = 0x13;
-        public int LOC_WRONG { get; } = 0x14;
-        public int LOC_COVETOUS { get; } = 0x15;
-        public int LOC_SHAME { get; } = 0x16;
-        public int LOC_HYTHLOTH { get; } = 0x17;
-        public int LOC_ABYSS { get; } = 0x18;
-
-        public int LOC_SHRINES { get; } = 0x19;
-        public int LOC_HONESTY { get; } = 0x19;
-        public int LOC_COMPASSION { get; } = 0x1a;
-        public int LOC_VALOR { get; } = 0x1b;
-        public int LOC_JUSTICE { get; } = 0x1c;
-        public int LOC_SACRIFICE { get; } = 0x1d;
-        public int LOC_HONOR { get; } = 0x1e;
-        public int LOC_SPIRITUALITY { get; } = 0x1f;
-        public int LOC_HUMILITY { get; } = 0x20;
-        /*
-         * https://github.com/ergonomy-joe/u4-decompiled/blob/master/SRC/U4_LOC.H
-         * 0 - Britannia
-         * 1 - Lycaeum
-         * 2 - Empath Abbey
-         * 3 - Serpents Hold
-         * 4 - Moonglow
-         * 5 - Britain
-         * 6 - Jhelom
-         * 7 - Yew
-         * 8 - Minoc
-         * 9 - Trinsic
-         * 10 - Skara Brae
-         * 11 - Magincia
-         * 12 - Paws
-         * 13 - Buccaneer's Den
-         * 14 - Vesper
-         * 15 - Cove
-         * 16 - Deciet
-         * 17 - Despise
-         * 18 - Destard
-         * 19 - Wrong
-         * 20 - Covetous
-         * 21 - Shame
-         * 22 - Hythloth
-         * 23 - The Great Stygian Abyss
-         * 24 - Honesty
-         * 25 - Compassion
-         * 26 - Valor
-         * 27 - Justice
-         * 28 - Sacrifice
-         * 29 - Honor
-         * 30 - Spirituality
-         * 31 - Humility
-         */
+        
         public int PIRATE_COVE_X_OFFSET { get; } = 0x0fba9; // length 8
         public int PIRATE_COVE_Y_OFFSET { get; } = 0x0fbb1; // length 8
         public int PIRATE_COVE_SHIP_TILES { get; } = 0x0fbb9; // length 8 (Direction pirates are facing)
@@ -95,6 +30,7 @@ namespace U4DosRandomizer
         public int PIRATE_COVE_SPAWN_TRIGGER_X_OFFSET1 { get; } = 0x0308B;
         public int PIRATE_COVE_SPAWN_TRIGGER_Y_OFFSET2 { get; } = 0x03123;
         public int PIRATE_COVE_SPAWN_TRIGGER_X_OFFSET2 { get; } = 0x0312A;
+        public int WORD_OF_PASSAGE { get; } = 0x104F0;
         public int MONSTER_HP_OFFSET { get; } = 0x11685; // length 52
         public int MONSTER_LEADER_TYPES_OFFSET { get; } = 0x116b9; // length 36
         public int MONSTER_ENCOUNTER_SIZE_OFFSET { get; } = 0x116dd; // length 36
@@ -117,11 +53,26 @@ namespace U4DosRandomizer
             0x3	2	 ??? (a pointer?)
          */
 
+        public int MONSTER_DAMAGE_BITSHIFT_OFFSET { get; } = 0x98E6;
+
+        public int WEAPON_DAMAGE_OFFSET { get; } = 0x11703;
+        public int MONSTER_SPAWN_TIER_ONE { get; } = 0x5B68;
+        public int MONSTER_SPAWN_TIER_TWO { get; } = 0x5B83;
+        public int MONSTER_SPAWN_TIER_THREE { get; } = 0x5BBB;
+
+        public int MONSTER_QTY_ONE { get; } = 0x80EF;
+        public int MONSTER_QTY_TWO { get; } = 0x8100;
+
         public int LB_TEXT_OFFSET { get; } = 0x156ca;
+        public int LB_HELP_TEXT_OFFSET { get; } = 0x162D4;
+        public int MANTRA_OFFSET { get; } = 0x16DD4;
+        public int MANTRA_POINTERS_OFFSET { get; } = 0x17594;
         public int SHRINE_TEXT_OFFSET { get; } = 0x16df2;
 
         public int WHITE_STONE_LOCATION_TEXT { get; } = 0x17434;
         public int BLACK_STONE_LOCATION_TEXT { get; } = 0x174F9;
+
+        public int SHOP_LOCATION_OFFSET { get; } = 0x11F7F;
 
         public int DEMON_SPAWN_TRIGGER_X1_OFFSET { get; } = 0x2F17;
         public int DEMON_SPAWN_TRIGGER_X2_OFFSET { get; } = 0x2F1E;
@@ -154,6 +105,8 @@ namespace U4DosRandomizer
         public int ABYSS_EJECTION_LOCATIONS_Y { get; } = 0xFEBB;
 
         public int SPELL_RECIPE_OFFSET { get; } = 0x11A29;
+        public static int RUNE_IMAGE_INDEX2 { get; } = 0xFB85;
+        public static int RUNE_IMAGE_INDEX { get; } = 0x17551;
 
         // Originally blink didn't have an upperbound https://github.com/ergonomy-joe/u4-decompiled/blob/c2c2108fa3bb346bcd1d8c207c526f33a4c8f5ef/SRC/U4_SPELL.C#L179
         public int BLINK_CAST_EXCLUSION_X1_OFFSET => throw new NotImplementedException();
@@ -172,6 +125,10 @@ namespace U4DosRandomizer
 
         public int BLINK_DESTINATION_EXCLUSION_Y2_OFFSET => throw new NotImplementedException();
 
+        public int ENABLE_TOWN_SAVE1 => throw new NotImplementedException();
+        public int ENABLE_TOWN_SAVE2 => throw new NotImplementedException();
+        public int ENABLE_TOWN_SAVE3 => throw new NotImplementedException();
+        public int ENABLE_TOWN_SAVE4 => throw new NotImplementedException();
         public int ENABLE_MIX_QUANTITY_OFFSET => throw new NotImplementedException();
 
         public int BLINK_DESTINATION2_EXCLUSION_X1_OFFSET => throw new NotImplementedException();
@@ -181,6 +138,28 @@ namespace U4DosRandomizer
         public int BLINK_DESTINATION2_EXCLUSION_Y1_OFFSET => throw new NotImplementedException();
 
         public int BLINK_DESTINATION2_EXCLUSION_Y2_OFFSET => throw new NotImplementedException();
+
+        public int ENABLE_SLEEP_BACKOFF_OFFSET => throw new NotImplementedException();
+        public int ENABLE_DAEMON_TRIGGER_FIX => throw new NotImplementedException();
+        public int ENABLE_MAP_EDGE_FIX1 => throw new NotImplementedException();
+        public int ENABLE_MAP_EDGE_FIX2 => throw new NotImplementedException();
+        public int ENABLE_MAP_EDGE_FIX3 => throw new NotImplementedException();
+        public int ENABLE_AWAKEN_ALL => throw new NotImplementedException();
+
+        public int ENABLE_ACTIVE_PLAYER_1_OFFSET => throw new NotImplementedException();
+
+        public int ENABLE_HIT_CHANCE_OFFSET => throw new NotImplementedException();
+
+        public int ENABLE_DIAGONAL_ATTACK_OFFSET => throw new NotImplementedException();
+
+        public int ENABLE_SACRIFICE_FIX_OFFSET => throw new NotImplementedException();
+
+        public int ENABLE_PRINCIPLE_ITEM_REORDER_OFFSET => throw new NotImplementedException();
+        public int ENABLE_WEAPON_OVERFLOW_FIX => throw new NotImplementedException();
+
+        public int ENCODED_FLAGS_OFFSET => throw new NotImplementedException();
+
+        public int SEED_OFFSET => throw new NotImplementedException();
 
         public const byte Reagent_ash = (0x80 >> 0);
         public const byte Reagent_ginseng = (0x80 >> 1);

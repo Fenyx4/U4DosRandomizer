@@ -560,6 +560,69 @@ register int *di;
 	Gra_CR();
 }
 
+AskDirWithDiagonal(bp08, si/*bp06*/, di/*bp04*/)
+char *bp08;
+register int *si;
+register int *di;
+{
+	unsigned bp_02, bp_04;
+
+	*si = *di = 0;
+	do {
+		bp_02 = 1;
+		u4_puts(bp08);
+		bp_04 = u_kbread();
+		switch(bp_04) {
+			case KBD_SPACE: case KBD_ESC: case KBD_BS: case KBD_ENTER:
+			break;
+			case KBD_PGUP:
+				*di = -1;
+				*si = 1;
+				u4_puts("Northeast");
+			break;
+			case KBD_PGDN:
+				*di = 1;
+				*si = 1;
+				u4_puts("Southeast");
+			break;
+			case KBD_HOME:
+				*di = -1;
+				*si = -1;
+				u4_puts("Northwest");
+			break;
+			case KBD_END:
+				*di = 1;
+				*si = -1;
+				u4_puts("Southwest");
+			break;
+			case KBD_UP:
+				*di = -1;
+				u4_puts("North");
+			break;
+			case KBD_DOWN:
+				*di = 1;
+				u4_puts("South");
+			break;
+			case KBD_RIGHT:
+				*si = 1;
+				u4_puts("East");
+			break;
+			case KBD_LEFT:
+				*si = -1;
+				u4_puts("West");
+			break;
+			default:
+				bp_04 &= 0xff;
+				if(bp_04 >= ' ' && bp_04 < 0x7f)
+					u4_putc(bp_04);
+				Gra_CR();
+				sound(1);
+				bp_02 = 0;
+		}
+	} while(!bp_02);
+	Gra_CR();
+}
+
 /*C_138B*/food_dec(bp04)
 int bp04;
 {
@@ -749,4 +812,10 @@ unsigned char upperbound;
 			return 1;
 		else
 			return 0;
+}
+
+unsigned char u4_wrap(input)
+int input;
+{
+	return (unsigned char)((input % 256 + 256) % 256);
 }

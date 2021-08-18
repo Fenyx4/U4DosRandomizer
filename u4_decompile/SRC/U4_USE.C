@@ -163,7 +163,10 @@ C_0487() {
 		u4_puts(D_0100);
 		return;
 	}
-	if(Party._loc != 0 || Party._x != 0xe9 || Party._y != 0xe9) {
+	/*ENABLE_BELL_REQUIREMENT*/
+	if(Party._loc != 0 || Party._x != 0xe9 || Party._y != 0xe9 ||
+		(!TST_MSK(Party.mItems, 10) && U4_RND1(7) >= 8)
+	) {
 		u4_puts(D_00EE);
 		return;
 	}

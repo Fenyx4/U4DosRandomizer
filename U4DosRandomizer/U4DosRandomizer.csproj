@@ -16,14 +16,24 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Include="bin\Debug\netcoreapp3.1\scrubnoise" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="Microsoft.Extensions.CommandLineUtils" Version="1.1.1" />
     <PackageReference Include="Newtonsoft.Json" Version="12.0.3" />
     <PackageReference Include="Octodiff" Version="1.2.1" />
     <PackageReference Include="SimplexNoise" Version="2.0.0" />
-    <PackageReference Include="SixLabors.ImageSharp" Version="1.0.1" />
+    <PackageReference Include="SixLabors.ImageSharp" Version="1.0.3" />
+    <PackageReference Include="SixLabors.ImageSharp.Drawing" Version="1.0.0-beta13" />
   </ItemGroup>
 
   <ItemGroup>
+    <Compile Update="Resources\ClothMap.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>ClothMap.resx</DependentUpon>
+    </Compile>
     <Compile Update="Resources\Patches.Designer.cs">
       <DesignTime>True</DesignTime>
       <AutoGen>True</AutoGen>
@@ -37,6 +47,10 @@
   </ItemGroup>
 
   <ItemGroup>
+    <EmbeddedResource Update="Resources\ClothMap.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>ClothMap.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
     <EmbeddedResource Update="Resources\Patches.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Patches.Designer.cs</LastGenOutput>
