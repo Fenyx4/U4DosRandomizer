@@ -655,6 +655,7 @@ namespace U4DosRandomizer
                 avatarBytes[AvatarOffset.ENABLE_MAP_EDGE_FIX1] = (byte)0x0;
                 avatarBytes[AvatarOffset.ENABLE_MAP_EDGE_FIX2] = (byte)0x0;
                 avatarBytes[AvatarOffset.ENABLE_MAP_EDGE_FIX3] = (byte)0x0;
+                SpoilerLog.Add(SpoilerCategory.Fix, "Fix NPC behaviour on map edges");
             }
 
             if (flags.AwakenUpgrade)

@@ -521,7 +521,7 @@ namespace U4DosRandomizer
                 person.No = "Then thou should\nvisit our\nphysician!";
                 person.Keyword2 = "PHYS";
                 person.KeywordResponse1 = person.KeywordResponse1.Replace("west", "north");
-                person.KeywordResponse2 = "Got north and take\nthe eastern door.";
+                person.KeywordResponse2 = "Go north and take\nthe eastern door.";
                 SpoilerLog.Add(SpoilerCategory.Fix, $"Michelle heal keyword");
 
                 person = FindPerson("Tracie");
@@ -562,6 +562,10 @@ namespace U4DosRandomizer
                 person = FindPerson("Rabindranath\ntagore");
                 person.Name = "Rabindranath\nTagore";
                 SpoilerLog.Add(SpoilerCategory.Fix, $"Fix 'Rabindranath tagore' capitalization");
+
+                person = FindPerson("a poor beggar.");
+                person.Keyword1 = "SINN";
+                SpoilerLog.Add(SpoilerCategory.Fix, $"Fix 'a poor beggar.' keyword");
             }
 
         }
