@@ -99,12 +99,13 @@ namespace U4DosRandomizer
                     }
                 }
             }
-            var wilson = new WilsonMazeGenerator();
-            //TODO - Do something here
-            foreach( var dungeon in dungeons.Values)
-            {
-                wilson.GenerateMaze(dungeon, 8, 8, 8, random);
-            }
+            //var wilson = new WilsonMazeGenerator();
+            ////TODO - Do something here
+            //foreach( var dungeon in dungeons.Values)
+            //{
+            //    wilson.GenerateMaze(dungeon, 8, 8, 8, random);
+            //}
+
         }
 
         public void Update(UltimaData ultimaData, Flags flags)

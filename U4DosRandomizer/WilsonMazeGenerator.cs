@@ -7,7 +7,7 @@ using U4DosRandomizer.Helpers;
 
 namespace U4DosRandomizer
 {
-    public class WilsonMazeGenerator
+    public class WilsonMazeGenerator : IMazeGenerator
     {
         //private byte[,,] map = new byte[8, 8, 8];
 
@@ -19,11 +19,11 @@ namespace U4DosRandomizer
             byte[,,] map = new byte[numLevels, width, height];
 
             // Init with walls
-            for(int l = 0; l < numLevels; l++)
+            for (int l = 0; l < numLevels; l++)
             {
-                for(int x = 0; x < width; x++)
+                for (int x = 0; x < width; x++)
                 {
-                    for(int y = 0; y < height; y++)
+                    for (int y = 0; y < height; y++)
                     {
                         dungeon.GetTile(l, x, y).SetTile(DungeonTileInfo.Wall);
                     }
@@ -118,7 +118,7 @@ namespace U4DosRandomizer
             foreach (var kitty in kittyCornersInWalk)
             {
                 var connected = next.NeighborsSameLevel().Intersect(kitty.NeighborsSameLevel()).ToList();
-                if(!connected.Any(x => walk.Contains(x)))
+                if (!connected.Any(x => walk.Contains(x)))
                 {
                     return kitty;
                 }
