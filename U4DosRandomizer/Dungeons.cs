@@ -99,6 +99,12 @@ namespace U4DosRandomizer
                     }
                 }
             }
+
+            var noDungeons = new NoDungeonGenerator();
+            foreach( var dungeonName in dungeons.Keys)
+            {
+                noDungeons.GenerateMaze(dungeonName, dungeons[dungeonName], 8, 8, 8, random);
+            }
             //var wilson = new WilsonMazeGenerator();
             ////TODO - Do something here
             //foreach( var dungeon in dungeons.Values)

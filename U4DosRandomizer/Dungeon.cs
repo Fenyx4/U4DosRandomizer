@@ -100,7 +100,7 @@ namespace U4DosRandomizer
 
         public void SetTile(int l, int x, int y, byte tile)
         {
-            map[l, x, y] = tile;
+            map[l, x % 8 , y % 8] = tile;
         }
     }
 }

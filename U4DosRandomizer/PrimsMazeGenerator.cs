@@ -14,7 +14,7 @@ namespace U4DosRandomizer
         // Heavily modified from https://www.programmingalgorithms.com/algorithm/prim's-algorithm/
         // since Ultima walls take up a tile
         // Visualization https://medium.com/analytics-vidhya/maze-generations-algorithms-and-visualizations-9f5e88a3ae37
-        public void GenerateMaze(Dungeon dungeon, int numLevels, int width, int height, Random rand)
+        public void GenerateMaze(string dungeonName, Dungeon dungeon, int numLevels, int width, int height, Random rand)
         {
             byte[,,] map = new byte[numLevels, width, height];
 
