@@ -20,7 +20,8 @@ Options:
   --spellRemove              Put in the letters of the spells you want removed. e.g. "--spellRemove zed" would remove zdown, energy field and dispel.
   --startingWeaponsArmor     Randomize the weapons and armor player and companions start with.
   --mixQuantity              Lets you input how much of a spell you want to mix.
-  --dngStone                 Randomize the location of stones in the dungeons
+  -d |--dungeon              Sets randomization level for Dungeon maps. 1 for no change. 2 for make dungeons super simple. 3 for randomize location of dungeon stones. 5 for randomize the entire map. Defaults to 1.
+  --dngStone                 Randomize the location of stones in the dungeons (deprecated use --dungeon)
   --fixes                    Collection of non-gameplay fixes.
   --hythlothFix              Fixes an issue with Hythloth dungeon room.
   --sleepLockAssist          Helps prevent sleeplock in battles.
@@ -46,7 +47,7 @@ Options:
   --townSaves                Enable saving in towns.
   --daemonTrigger            Fix daemon spawn in Abyss
   --awakenUpgrade            Awaken spell awakens all characters.
-  --shopOverflow             Don't allow overflow exploit in shops.  
+  --shopOverflow             Don't allow overflow exploit in shops.
   --other                    Allow other gender like in Ultima III.
   --vgaPatch                 VGA patch compatibility. Run randomizer after applying VGA patch.
   --spoilerLog               Output a spoiler log.
