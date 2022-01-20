@@ -76,7 +76,7 @@ namespace U4DosRandomizer
 				{
 					new ItemOption { Item = new Item(0x0A, 0x02, 0x1D), People = new List<Person>() { new Person { KeywordResponse2 = "It is buried in the southwest corner of towne.", Name = "Terrin" } } }, // Terrin
 					new ItemOption { Item = new Item(0x0A, 0x1E, 0x01), People = new List<Person>() { new Person { KeywordResponse2 = "Search ye by the back door of the inn.", Name = "Terrin" } } }, // Terrin
-					new ItemOption { Item = new Item(0x0A, 0x0C, 0x01), People = new List<Person>() { new Person { KeywordResponse2 = "The innkeeper has it with his treasure.", Name = "Terrin" } } }, // Terrin
+					new ItemOption { Item = new Item(0x0A, 0x0C, 0x01), People = new List<Person>() { new Person { KeywordResponse2 = "The barkeep has it with his treasure.", Name = "Terrin" } } }, // Terrin
 					new ItemOption { Item = new Item(0x0A, 0x1E, 0x0A), People = new List<Person>() { new Person { KeywordResponse2 = "The skeleton keeps it nearby. Says it helps keep its thoughts clear.", Name = "Terrin" } } }
 				}
 			},
