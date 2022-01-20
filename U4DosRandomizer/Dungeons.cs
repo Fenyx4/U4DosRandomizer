@@ -80,7 +80,7 @@ namespace U4DosRandomizer
         public void Randomize(Random random, Flags flags)
         {
             // Other stones
-            if (flags.DngStone)
+            if (flags.Dungeon == 3)
             {
                 foreach (var dungeonName in dungeons.Keys)
                 {
@@ -100,10 +100,13 @@ namespace U4DosRandomizer
                 }
             }
 
-            var noDungeons = new NoDungeonGenerator();
-            foreach( var dungeonName in dungeons.Keys)
+            if (flags.Dungeon == 2)
             {
-                noDungeons.GenerateMaze(dungeonName, dungeons[dungeonName], 8, 8, 8, random);
+                var noDungeons = new NoDungeonGenerator();
+                foreach (var dungeonName in dungeons.Keys)
+                {
+                    noDungeons.GenerateMaze(dungeonName, dungeons[dungeonName], 8, 8, 8, random);
+                }
             }
             //var wilson = new WilsonMazeGenerator();
             ////TODO - Do something here

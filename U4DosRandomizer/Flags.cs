@@ -19,6 +19,7 @@ namespace U4DosRandomizer
         public bool DngStone { get; internal set; }
         public bool MixQuantity { get; internal set; }
         public int Overworld { get; internal set; }
+        public int Dungeon  { get; internal set; }
         public bool Fixes { get; internal set; }
         public int QuestItemPercentage { get; internal set; }
         public int KarmaSetPercentage { get; internal set; }
@@ -120,6 +121,8 @@ namespace U4DosRandomizer
 
             encoded.AddRange(BitConverter.GetBytes(spellRemoveMask));
 
+            encoded.Add((byte)Dungeon);
+
             return Convert.ToBase64String(encoded.ToArray());
         }
 
@@ -197,6 +200,8 @@ namespace U4DosRandomizer
                     SpellRemove += (char)('a' + offset);
                 }
             }
+
+            Dungeon = encoded[17];
         }
 
         private static int SET_MSK(int mask, bool bit, int offset)
