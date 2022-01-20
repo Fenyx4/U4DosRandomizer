@@ -57,9 +57,13 @@ namespace U4DosRandomizer
                 "--mixQuantity",
                 "Lets you input how much of a spell you want to mix. ",
                 CommandOptionType.NoValue);
+            CommandOption dungeonArg = commandLineApplication.Option(
+                "-d |--dungeon",
+                "Sets randomization level for Dungeon maps. 1 for no change. 2 for make dungeons super simple. 3 for randomize location of dungeon stones. 5 for randomize the entire map. Defaults to 1.",
+                CommandOptionType.SingleValue);
             CommandOption dngStoneArg = commandLineApplication.Option(
                 "--dngStone",
-                "Randomize the location of stones in the dungeons ",
+                "Randomize the location of stones in the dungeons (deprecated use --dungeon)",
                 CommandOptionType.NoValue);
             CommandOption fixesArg = commandLineApplication.Option(
                 "--fixes",
@@ -201,6 +205,15 @@ namespace U4DosRandomizer
                     }
                 }
 
+                var dungeon = 1;
+                if (dungeonArg.HasValue())
+                {
+                    if (!int.TryParse(dungeonArg.Value(), out dungeon))
+                    {
+                        throw new InvalidCastException("Dungeon argument must be a number");
+                    }
+                }
+
                 var questItems = 0;
                 if (questItemsArg.HasValue())
                 {
@@ -287,6 +300,7 @@ namespace U4DosRandomizer
                     Flags flags = new Flags(seed, 9);
                     flags.Overworld = overworld;
                     flags.MiniMap = minimapArg.HasValue();
+                    flags.Dungeon = dungeon;
                     flags.SpellRemove = spellRemoveArg.Value();
                     flags.StartingWeapons = startingWeapons.HasValue();
                     flags.DngStone = dngStoneArg.HasValue();
@@ -320,6 +334,11 @@ namespace U4DosRandomizer
                     flags.Other = otherArg.HasValue();
                     flags.SpoilerLog = spoilerLogArg.HasValue();
                     flags.VGAPatch = vgaPatchArg.HasValue();
+
+                    if(flags.DngStone)
+                    {
+                        flags.Dungeon = 3;
+                    }
                     
                     Randomize(seed, path, flags, encodedArg.Value());
                     //Console.WriteLine("Seed: " + seed);
@@ -331,6 +350,7 @@ namespace U4DosRandomizer
                     //var image = worldMap.ToImage();
                     //image.SaveAsPng("worldMap.png");
                 }
+
 
                 return 0;
             });
