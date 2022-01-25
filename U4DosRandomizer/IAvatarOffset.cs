@@ -35,6 +35,7 @@ namespace U4DosRandomizer
         int MONSTER_QTY_TWO { get; }
         int LB_TEXT_OFFSET { get; }
         int LB_HELP_TEXT_OFFSET { get; }
+        int TAVERN_TEXT_OFFSET { get; }
         int MANTRA_OFFSET { get; }
         int MANTRA_POINTERS_OFFSET { get; }
         int SHRINE_TEXT_OFFSET { get; }

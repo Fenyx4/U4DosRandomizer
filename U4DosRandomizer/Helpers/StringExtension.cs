@@ -15,5 +15,14 @@ namespace U4DosRandomizer.Helpers
             return input.Substring(0, 1).ToUpper(CultureInfo.CurrentCulture) +
                 input.Substring(1, input.Length - 1);
         }
+
+        public static string StripThe(this String input)
+        {
+            if (input != null && input.ToLower().StartsWith("the "))
+            {
+                return input.Substring(4);
+            }
+            return input;
+        }
     }
 }

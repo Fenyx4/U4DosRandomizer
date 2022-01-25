@@ -106,6 +106,7 @@ namespace U4DosRandomizer
         public List<string> ShrineText { get; set; }
         public List<Coordinate> StartingPositions { get; set; }
         public List<string> LBText { get; internal set; }
+        public List<string> TavernText { get; internal set; }
         public List<string> LBHelpText { get; internal set; }
         public List<string> Mantras { get; internal set; }
         public List<int> PrincipleItemRequirements { get; internal set; }
@@ -168,6 +169,7 @@ namespace U4DosRandomizer
             StartingPositions = new List<Coordinate>();
             LBText = new List<string>();
             LBHelpText = new List<string>();
+            TavernText = new List<string>();
             Mantras = new List<string>();
             PrincipleItemRequirements = new List<int>();
             PirateCove = new List<Coordinate>();

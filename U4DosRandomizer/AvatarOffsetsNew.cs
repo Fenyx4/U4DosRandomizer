@@ -79,6 +79,14 @@ namespace U4DosRandomizer
                         throw new Exception($"Offset {pi.Name} appears to be wrong.");
                     }
                 }
+                else if (pi.Name.Contains("TAVERN_TEXT_OFFSET"))
+                {
+                    var newValue = avatarBytes[(int)pi.GetValue(this, null)];
+                    if (newValue != 0x41)
+                    {
+                        throw new Exception($"Offset {pi.Name} appears to be wrong.");
+                    }
+                }
                 else
                 {
                     throw new NotImplementedException($"Offset {pi.Name} not being tested.");
@@ -137,6 +145,7 @@ namespace U4DosRandomizer
         //https://github.com/ergonomy-joe/u4-decompiled/blob/1964651295232b0ca39afafef254541a406eb66b/SRC/U4_COMBC.C#L210
         public int MONSTER_QTY_ONE { get; } = 0x84D9; // 80EF
         public int MONSTER_QTY_TWO { get; } = 0x84EA; // 8100
+        public int TAVERN_TEXT_OFFSET { get; } = 0x154C4; // 14EA7
         public int LB_TEXT_OFFSET { get; } = 0x15CE7; // 156ca
         public int LB_HELP_TEXT_OFFSET { get; } = 0x168F2; // 162D4
         public int MANTRA_OFFSET { get; } = 0x173F2; //16DD4

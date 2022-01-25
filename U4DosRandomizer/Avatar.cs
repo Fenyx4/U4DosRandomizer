@@ -184,6 +184,28 @@ namespace U4DosRandomizer
             data.LBHelpText.Clear();
             data.LBHelpText.AddRange(OriginalLBHelpText);
 
+            OriginalTavernText = new List<string>();
+            OriginalTavernTextStartOffset = new List<int>();
+            var tavernTextBytes = new List<byte>();
+            textOffset = AvatarOffset.TAVERN_TEXT_OFFSET;
+            for (int i = 0; i < 6; i++)
+            {
+                OriginalTavernTextStartOffset.Add(textOffset);
+                for (; avatarBytes[textOffset] != 0x00 && avatarBytes[textOffset] != 0xAB; textOffset++)
+                {
+                    tavernTextBytes.Add(avatarBytes[textOffset]);
+                }
+                OriginalTavernText.Add(System.Text.Encoding.Default.GetString(tavernTextBytes.ToArray()));
+                tavernTextBytes.Clear();
+                if (avatarBytes[textOffset] == 0x0A || avatarBytes[textOffset] == 0xAB)
+                {
+                    textOffset++;
+                }
+                textOffset++;
+            }
+            data.TavernText.Clear();
+            data.TavernText.AddRange(OriginalTavernText);
+
             var mantraTextBytes = new List<byte>();
             textOffset = AvatarOffset.MANTRA_OFFSET;
             MantraMaxSize = 0;
@@ -411,6 +433,20 @@ namespace U4DosRandomizer
 
                 avatarBytesList.RemoveRange(OriginalLBHelpTextStartOffset[i], OriginalLBHelpText[i].Length);
                 avatarBytesList.InsertRange(OriginalLBHelpTextStartOffset[i], Encoding.ASCII.GetBytes(data.LBHelpText[i]));
+
+            }
+            avatarBytes = avatarBytesList.ToArray();
+
+            for (int i = 0; i < OriginalTavernText.Count; i++)
+            {
+                if (data.TavernText[i].Length > OriginalTavernText[i].Length)
+                {
+                    throw new Exception($"Tavern text \"{data.TavernText[i]}\" is too long.");
+                }
+                data.TavernText[i] = data.TavernText[i].PadRight(OriginalTavernText[i].Length, ' ');
+
+                avatarBytesList.RemoveRange(OriginalTavernTextStartOffset[i], OriginalTavernText[i].Length);
+                avatarBytesList.InsertRange(OriginalTavernTextStartOffset[i], Encoding.ASCII.GetBytes(data.TavernText[i]));
 
             }
             avatarBytes = avatarBytesList.ToArray();
@@ -690,6 +726,8 @@ namespace U4DosRandomizer
         public List<int> OriginalLBTextStartOffset { get; private set; }
         public List<string> OriginalLBHelpText { get; private set; }
         public List<int> OriginalLBHelpTextStartOffset { get; private set; }
+        public List<string> OriginalTavernText { get; private set; }
+        public List<int> OriginalTavernTextStartOffset { get; private set; }
         public int MantraMaxSize { get; private set; }
         public IAvatarOffset AvatarOffset { get; private set; }
         private SpoilerLog SpoilerLog { get; }

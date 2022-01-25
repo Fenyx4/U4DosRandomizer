@@ -111,11 +111,11 @@ namespace U4DosRandomizer
                         var mandrakeText = "Mandrake root is found only ";    
                         if(mandrakeRegion != null && mandrakeRegion.Tiles.Any(c => c.Equals(mandrakeTile)))
                         {
-                            mandrakeText += $"in the {mandrakeRegion.Name} ";
+                            mandrakeText += $"in the {mandrakeRegion.Name.StripThe()} ";
                         }
                         else if(path != null && path.Count < 11)
                         {
-                            mandrakeText += $"near the {mandrakeRegion.Name} ";
+                            mandrakeText += $"near the {mandrakeRegion.Name.StripThe()} ";
                         }
                         else
                         {
@@ -136,11 +136,11 @@ namespace U4DosRandomizer
                             path = path2;
                             if (mandrakeRegion != null && mandrakeRegion.Tiles.Any(c => c == mandrakeTile))
                             {
-                                mandrakeText += $"and in the {mandrakeRegion.Name} ";
+                                mandrakeText += $"and in the {mandrakeRegion.Name.StripThe()} ";
                             }
                             else if (path != null && path.Count < 11)
                             {
-                                mandrakeText += $"and near the {mandrakeRegion.Name} ";
+                                mandrakeText += $"and near the {mandrakeRegion.Name.StripThe()} ";
                             }
                             else
                             {
@@ -298,6 +298,35 @@ namespace U4DosRandomizer
                 if (ultimaData.Towns[ultimaData.LOC_MAGINCIA - ultimaData.LOC_TOWNS].IsDirty())
                 {
                     ultimaData.LBText[13] = $"\n\n\nHe says:\nHumility is the\nfoundation of\nVirtue!  The\nruins of proud\nMagincia are a\ntestimony unto\nthe Virtue of\nHumility!\n\nFind the Ruins\nof Magincia to\nthe {CoordinateToCardinal(ultimaData.LCB[0], ultimaData.Towns[ultimaData.LOC_MAGINCIA - ultimaData.LOC_TOWNS])}!\n";
+                }
+                if (ultimaData.Towns[ultimaData.LOC_COVE - ultimaData.LOC_TOWNS].IsDirty())
+                {
+                    if (!flags.ClothMap)
+                    {
+                        ultimaData.TavernText[2] = $"Hmmm, Now let me see... Yes, it was the old Hermit... Sloven! He lives in Cove at {GetSextantText(ultimaData.Towns[ultimaData.LOC_COVE - ultimaData.LOC_TOWNS])}.\n";
+                    }
+                    else
+                    {
+                        var coveTile = worldMap.GetCoordinate(ultimaData.Towns[ultimaData.LOC_COVE - ultimaData.LOC_TOWNS].X, ultimaData.Towns[ultimaData.LOC_COVE - ultimaData.LOC_TOWNS].Y);
+                        IList<ITile> path = null;
+                        var coveRegion = worldMap.FindNearestRegion(coveTile, ultimaData, out path);
+
+                        var coveText = "Hmmm, Now let me see... Yes, it was the old Hermit... Sloven! He is tough to find, lives ";
+                        if (coveRegion != null && coveRegion.Tiles.Any(c => c.Equals(coveTile)))
+                        {
+                            coveText += $"in the {coveRegion.Name.StripThe()}.";
+                        }
+                        else if (path != null && path.Count < 11)
+                        {
+                            coveText += $"near the {coveRegion.Name.StripThe()}.";
+                        }
+                        else
+                        {
+                            coveText = $"Hmmm, Now let me see... Yes, it was the old Hermit... Sloven! He lives in Cove at {GetSextantText(ultimaData.Towns[ultimaData.LOC_COVE - ultimaData.LOC_TOWNS])}.\n";
+                        }
+
+                        ultimaData.TavernText[2] = coveText;
+                    }
                 }
 
                 // --- End Towns and Castles ---

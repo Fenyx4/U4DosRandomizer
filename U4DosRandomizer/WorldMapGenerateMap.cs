@@ -544,7 +544,7 @@ namespace U4DosRandomizer
 
             var islandEnumerator = islandsAndContinents.GetEnumerator();
             while (islandEnumerator.MoveNext() && islandEnumerator.Current.Count > 800) ;
-            if (islandEnumerator.Current != null)
+            if (islandEnumerator.Current != null && islandEnumerator.Current.Count <= 800)
             {
                 Regions.Add(new Region
                 {

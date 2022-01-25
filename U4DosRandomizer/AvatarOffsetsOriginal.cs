@@ -63,6 +63,7 @@ namespace U4DosRandomizer
         public int MONSTER_QTY_ONE { get; } = 0x80EF;
         public int MONSTER_QTY_TWO { get; } = 0x8100;
 
+        public int TAVERN_TEXT_OFFSET { get; } = 0x14EA7;
         public int LB_TEXT_OFFSET { get; } = 0x156ca;
         public int LB_HELP_TEXT_OFFSET { get; } = 0x162D4;
         public int MANTRA_OFFSET { get; } = 0x16DD4;
