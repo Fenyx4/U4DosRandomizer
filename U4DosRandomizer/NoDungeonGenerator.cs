@@ -63,8 +63,6 @@ namespace U4DosRandomizer
                 {
                     // Altar of Truth enter from the east needs to be in row 1 or 2
                     dungeon.SetTile(numLevels - 1, 1, 1, DungeonTileInfo.DungeonRoomStart + 15);
-                    dungeon.SetTile(numLevels - 1, 6, 2, DungeonTileInfo.Nothing);
-                    dungeon.SetTile(numLevels - 1, 7, 2, DungeonTileInfo.Nothing);
                     dungeon.SetTile(numLevels - 1, 8, 2, DungeonTileInfo.Nothing);
                     dungeon.SetTile(numLevels - 1, 1, 2, DungeonTileInfo.Nothing);
 
