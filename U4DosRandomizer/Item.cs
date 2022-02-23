@@ -1,6 +1,9 @@
-﻿namespace U4DosRandomizer
+﻿using System;
+using System.Diagnostics.CodeAnalysis;
+
+namespace U4DosRandomizer
 {
-    public class Item : ICoordinate
+    public class Item : ICoordinate, IEquatable<Item>
     {
         private byte x;
         private byte location;
@@ -41,6 +44,24 @@
             X = x;
             Y = y;
             Changed = false;
+        }
+
+        public override bool Equals(object obj)
+        {
+            return this.Equals(obj as Item);
+        }
+
+        public bool Equals([AllowNull] Item other)
+        {
+            if (other == null)
+                return false;
+
+            return this.X.Equals(other.X) && this.Y.Equals(other.Y) && this.Location.Equals(other.Location);
+        }
+
+        public override int GetHashCode()
+        {
+            return HashCode.Combine(x, y, location);
         }
     }
 }

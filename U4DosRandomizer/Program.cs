@@ -97,6 +97,10 @@ namespace U4DosRandomizer
                 "--runes",
                 "Randomize the location of the runes.",
                 CommandOptionType.NoValue);
+            CommandOption mysticsArg = commandLineApplication.Option(
+                "--mystics",
+                "Randomize the location of the mystics.",
+                CommandOptionType.NoValue);
             CommandOption mantrasArg = commandLineApplication.Option(
                 "--mantras",
                 "Randomize the mantras.",
@@ -313,6 +317,7 @@ namespace U4DosRandomizer
                     flags.DiagonalAttack = diagonalAttackArg.HasValue();
                     flags.SacrificeFix = sacrificeFixArg.HasValue();
                     flags.Runes = runesArg.HasValue();
+                    flags.Mystics = mysticsArg.HasValue();
                     flags.Mantras = mantrasArg.HasValue();
                     flags.WordOfPassage = wordOfPassageArg.HasValue();
                     flags.QuestItemPercentage = questItems;
@@ -439,7 +444,7 @@ namespace U4DosRandomizer
             if (flags.Fixes)
             {
                 spoilerLog.Add(SpoilerCategory.Fix, "Serpent Hold's Healer");
-                ultimaData.ShopLocations[ultimaData.LOC_SERPENT - 1][5] = 0x12;
+                ultimaData.ShopLocations[UltimaData.LOC_SERPENT - 1][5] = 0x12;
             }
 
             worldMap.Randomize(ultimaData, new Random(randomValues[3]), new Random(randomValues[4]));
@@ -631,20 +636,50 @@ namespace U4DosRandomizer
                 }
             }
 
-            if(flags.Runes)
+            var usedLocations = new List<Item>();
+            if (flags.Runes)
             {
                 spoilerLog.Add(SpoilerCategory.Feature, $"Rune locations randomized");
-                var usedLocations = new List<byte>();
                 for (int i = UltimaData.ITEM_RUNE_HONESTY; i < 8 + UltimaData.ITEM_RUNE_HONESTY; i++)
                 {
-                    var possibleOptions = ItemOptions.ItemToItemOptions[i].Where(x => !usedLocations.Contains(x.Item.Location)).ToList();
+                    var possibleOptions = ItemOptions.ItemToItemOptions[i].Where(x => !usedLocations.Contains(x.Item)).ToList();
                     var selectedItemOption = possibleOptions[random.Next(0, possibleOptions.Count)];
                     ultimaData.Items[i].X = selectedItemOption.Item.X;
                     ultimaData.Items[i].Y = selectedItemOption.Item.Y;
                     ultimaData.Items[i].Location = selectedItemOption.Item.Location;
 
                     ultimaData.ItemOptions.Add(i, selectedItemOption);
-                    usedLocations.Add(selectedItemOption.Item.Location);
+                    usedLocations.Add(selectedItemOption.Item);
+                }
+            }
+            else
+            {
+                for (int i = UltimaData.ITEM_RUNE_HONESTY; i < 8 + UltimaData.ITEM_RUNE_HONESTY; i++)
+                {
+                    usedLocations.Add(ItemOptions.ItemToItemOptions[i][0].Item);
+                }
+            }
+
+            if (flags.Mystics)
+            {
+                spoilerLog.Add(SpoilerCategory.Feature, $"Mystics locations randomized");
+                for (int i = UltimaData.ITEM_ARMOR; i < 2 + UltimaData.ITEM_ARMOR; i++)
+                {
+                    var possibleOptions = ItemOptions.ItemToItemOptions[i].Where(x => !usedLocations.Contains(x.Item)).ToList();
+                    var selectedItemOption = possibleOptions[random.Next(0, possibleOptions.Count)];
+                    ultimaData.Items[i].X = selectedItemOption.Item.X;
+                    ultimaData.Items[i].Y = selectedItemOption.Item.Y;
+                    ultimaData.Items[i].Location = selectedItemOption.Item.Location;
+
+                    ultimaData.ItemOptions.Add(i, selectedItemOption);
+                    usedLocations.Add(selectedItemOption.Item);
+                }
+            }
+            else
+            {
+                for (int i = UltimaData.ITEM_ARMOR; i < 2 + UltimaData.ITEM_ARMOR; i++)
+                {
+                    usedLocations.Add(ItemOptions.ItemToItemOptions[i][0].Item);
                 }
             }
 
