@@ -76,7 +76,7 @@ namespace U4DosRandomizer
 
             // LCB
             var lcb = new List<Tile>();
-            var lcbLoc = worldMap.GetCoordinate(avatarBytes[AvatarOffset.AREA_X_OFFSET + data.LOC_LCB - 1], avatarBytes[AvatarOffset.AREA_Y_OFFSET + data.LOC_LCB - 1]);
+            var lcbLoc = worldMap.GetCoordinate(avatarBytes[AvatarOffset.AREA_X_OFFSET + UltimaData.LOC_LCB - 1], avatarBytes[AvatarOffset.AREA_Y_OFFSET + UltimaData.LOC_LCB - 1]);
             lcb.Add(lcbLoc);
             lcb.Add(worldMap.GetCoordinate(lcbLoc.X - 1, lcbLoc.Y));
             lcb.Add(worldMap.GetCoordinate(lcbLoc.X + 1, lcbLoc.Y));
@@ -353,8 +353,8 @@ namespace U4DosRandomizer
                 avatarBytes[AvatarOffset.MOONGATE_Y_OFFSET + offset] = data.Moongates[offset].Y;
             }
 
-            avatarBytes[AvatarOffset.AREA_X_OFFSET + data.LOC_LCB - 1] = data.LCB[0].X;
-            avatarBytes[AvatarOffset.AREA_Y_OFFSET + data.LOC_LCB - 1] = data.LCB[0].Y;
+            avatarBytes[AvatarOffset.AREA_X_OFFSET + UltimaData.LOC_LCB - 1] = data.LCB[0].X;
+            avatarBytes[AvatarOffset.AREA_Y_OFFSET + UltimaData.LOC_LCB - 1] = data.LCB[0].Y;
 
             avatarBytes[AvatarOffset.DEATH_EXIT_X_OFFSET] = data.LCB[0].X;
             avatarBytes[AvatarOffset.DEATH_EXIT_Y_OFFSET] = data.LCB[0].Y;

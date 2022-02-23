@@ -88,10 +88,10 @@ namespace U4DosRandomizer
                     person.KeywordResponse2 = ReplaceSextantText(person.KeywordResponse2, GetSextantText(ultimaData.Items[ultimaData.ITEM_NIGHTSHADE]));
                 }
 
-                if (ultimaData.Towns[ultimaData.LOC_MAGINCIA - ultimaData.LOC_TOWNS].IsDirty())
+                if (ultimaData.Towns[UltimaData.LOC_MAGINCIA - ultimaData.LOC_TOWNS].IsDirty())
                 {
                     person = FindPerson("Shawn");
-                    person.No = ReplaceSextantText(person.No, GetSextantText(ultimaData.Towns[ultimaData.LOC_MAGINCIA - ultimaData.LOC_TOWNS]));
+                    person.No = ReplaceSextantText(person.No, GetSextantText(ultimaData.Towns[UltimaData.LOC_MAGINCIA - ultimaData.LOC_TOWNS]));
                 }
 
                 // Mandrake
@@ -193,7 +193,7 @@ namespace U4DosRandomizer
                 {
                     person = FindPerson("Simple");
                     //person.KeywordResponse2 = $"The shrine lies\nnear\n{GetSextantText(ultimaData.Shrines[ultimaData.LOC_HUMILITY - ultimaData.LOC_SHRINES])} and\nis guarded by\nendless hoards\nof daemons!";
-                    person.No = $"To the {CoordinateToCardinal(ultimaData.Towns[ultimaData.LOC_VESPER - ultimaData.LOC_TOWNS], ultimaData.Shrines[ultimaData.LOC_HUMILITY - ultimaData.LOC_SHRINES])} of here!";
+                    person.No = $"To the {CoordinateToCardinal(ultimaData.Towns[UltimaData.LOC_VESPER - ultimaData.LOC_TOWNS], ultimaData.Shrines[ultimaData.LOC_HUMILITY - ultimaData.LOC_SHRINES])} of here!";
                     person = FindPerson("Wierdrum");
                     person.KeywordResponse2 = $"Yes, I have been\nto the shrine,\nit lies near\n{GetSextantText(ultimaData.Shrines[ultimaData.LOC_HUMILITY - ultimaData.LOC_SHRINES])}!";
                 }
@@ -267,47 +267,47 @@ namespace U4DosRandomizer
                 {
                     ultimaData.LBText[5] = $"\n\nHe says:\nSerpent's Castle\nto the {CoordinateToCardinal(ultimaData.LCB[0], ultimaData.Castles[2])}\nis where\nCourage should\nbe sought!\n";
                 }
-                if (ultimaData.Towns[ultimaData.LOC_MOONGLOW - ultimaData.LOC_TOWNS].IsDirty())
+                if (ultimaData.Towns[UltimaData.LOC_MOONGLOW - ultimaData.LOC_TOWNS].IsDirty())
                 {
-                    ultimaData.LBText[6] = $"\nHe says:\nThe towne\nof Moonglow to\nthe {CoordinateToCardinal(ultimaData.LCB[0], ultimaData.Towns[ultimaData.LOC_MOONGLOW - ultimaData.LOC_TOWNS])} is\nwhere the virtue\nof Honesty\nthrives!\n";
+                    ultimaData.LBText[6] = $"\nHe says:\nThe towne\nof Moonglow to\nthe {CoordinateToCardinal(ultimaData.LCB[0], ultimaData.Towns[UltimaData.LOC_MOONGLOW - ultimaData.LOC_TOWNS])} is\nwhere the virtue\nof Honesty\nthrives!\n";
                 }
-                if (ultimaData.Towns[ultimaData.LOC_BRITAIN - ultimaData.LOC_TOWNS].IsDirty())
+                if (ultimaData.Towns[UltimaData.LOC_BRITAIN - ultimaData.LOC_TOWNS].IsDirty())
                 {
-                    ultimaData.LBText[7] = $"\n\nHe says:\nThe bards in\nBritain to the\n{CoordinateToCardinal(ultimaData.LCB[0], ultimaData.Towns[ultimaData.LOC_BRITAIN - ultimaData.LOC_TOWNS])}\nare well versed\nin\nCompassion!\n";
+                    ultimaData.LBText[7] = $"\n\nHe says:\nThe bards in\nBritain to the\n{CoordinateToCardinal(ultimaData.LCB[0], ultimaData.Towns[UltimaData.LOC_BRITAIN - ultimaData.LOC_TOWNS])}\nare well versed\nin\nCompassion!\n";
                 }
-                if (ultimaData.Towns[ultimaData.LOC_JHELOM - ultimaData.LOC_TOWNS].IsDirty())
+                if (ultimaData.Towns[UltimaData.LOC_JHELOM - ultimaData.LOC_TOWNS].IsDirty())
                 {
-                    ultimaData.LBText[8] = $"\n\nHe says:\nMany valiant\nfighters come\nfrom Jhelom\nto the \n{CoordinateToCardinal(ultimaData.LCB[0], ultimaData.Towns[ultimaData.LOC_JHELOM - ultimaData.LOC_TOWNS])}!\n";
+                    ultimaData.LBText[8] = $"\n\nHe says:\nMany valiant\nfighters come\nfrom Jhelom\nto the \n{CoordinateToCardinal(ultimaData.LCB[0], ultimaData.Towns[UltimaData.LOC_JHELOM - ultimaData.LOC_TOWNS])}!\n";
                 }
-                if (ultimaData.Towns[ultimaData.LOC_YEW - ultimaData.LOC_TOWNS].IsDirty())
+                if (ultimaData.Towns[UltimaData.LOC_YEW - ultimaData.LOC_TOWNS].IsDirty())
                 {
-                    ultimaData.LBText[9] = $"\n\n\nHe says:\nIn the city of\nYew, to the\n{CoordinateToCardinal(ultimaData.LCB[0], ultimaData.Towns[ultimaData.LOC_YEW - ultimaData.LOC_TOWNS])}, \nJustice is\nserved!\n";
+                    ultimaData.LBText[9] = $"\n\n\nHe says:\nIn the city of\nYew, to the\n{CoordinateToCardinal(ultimaData.LCB[0], ultimaData.Towns[UltimaData.LOC_YEW - ultimaData.LOC_TOWNS])}, \nJustice is\nserved!\n";
                 }
-                if (ultimaData.Towns[ultimaData.LOC_MINOC - ultimaData.LOC_TOWNS].IsDirty())
+                if (ultimaData.Towns[UltimaData.LOC_MINOC - ultimaData.LOC_TOWNS].IsDirty())
                 {
-                    ultimaData.LBText[10] = $"\nHe says:\nMinoc, towne of\nself-sacrifice,\nlies {CoordinateToCardinal(ultimaData.LCB[0], ultimaData.Towns[ultimaData.LOC_MINOC - ultimaData.LOC_TOWNS])}!\n";
+                    ultimaData.LBText[10] = $"\nHe says:\nMinoc, towne of\nself-sacrifice,\nlies {CoordinateToCardinal(ultimaData.LCB[0], ultimaData.Towns[UltimaData.LOC_MINOC - ultimaData.LOC_TOWNS])}!\n";
                 }
-                if (ultimaData.Towns[ultimaData.LOC_TRINSIC - ultimaData.LOC_TOWNS].IsDirty())
+                if (ultimaData.Towns[UltimaData.LOC_TRINSIC - ultimaData.LOC_TOWNS].IsDirty())
                 {
-                    ultimaData.LBText[11] = $"\nHe says:\nThe Paladins who\nstrive for Honor\nare oft seen in\nTrinsic, to the {CoordinateToCardinal(ultimaData.LCB[0], ultimaData.Towns[ultimaData.LOC_TRINSIC - ultimaData.LOC_TOWNS])}!\n";
+                    ultimaData.LBText[11] = $"\nHe says:\nThe Paladins who\nstrive for Honor\nare oft seen in\nTrinsic, to the {CoordinateToCardinal(ultimaData.LCB[0], ultimaData.Towns[UltimaData.LOC_TRINSIC - ultimaData.LOC_TOWNS])}!\n";
                 }
-                if (ultimaData.Towns[ultimaData.LOC_SKARA - ultimaData.LOC_TOWNS].IsDirty())
+                if (ultimaData.Towns[UltimaData.LOC_SKARA - ultimaData.LOC_TOWNS].IsDirty())
                 {
-                    ultimaData.LBText[12] = $"\nHe says:\nIn Skara Brae\nthe Spiritual\npath is taught.\nFind it to the\n{CoordinateToCardinal(ultimaData.LCB[0], ultimaData.Towns[ultimaData.LOC_SKARA - ultimaData.LOC_TOWNS])}!\n";
+                    ultimaData.LBText[12] = $"\nHe says:\nIn Skara Brae\nthe Spiritual\npath is taught.\nFind it to the\n{CoordinateToCardinal(ultimaData.LCB[0], ultimaData.Towns[UltimaData.LOC_SKARA - ultimaData.LOC_TOWNS])}!\n";
                 }
-                if (ultimaData.Towns[ultimaData.LOC_MAGINCIA - ultimaData.LOC_TOWNS].IsDirty())
+                if (ultimaData.Towns[UltimaData.LOC_MAGINCIA - ultimaData.LOC_TOWNS].IsDirty())
                 {
-                    ultimaData.LBText[13] = $"\n\n\nHe says:\nHumility is the\nfoundation of\nVirtue!  The\nruins of proud\nMagincia are a\ntestimony unto\nthe Virtue of\nHumility!\n\nFind the Ruins\nof Magincia to\nthe {CoordinateToCardinal(ultimaData.LCB[0], ultimaData.Towns[ultimaData.LOC_MAGINCIA - ultimaData.LOC_TOWNS])}!\n";
+                    ultimaData.LBText[13] = $"\n\n\nHe says:\nHumility is the\nfoundation of\nVirtue!  The\nruins of proud\nMagincia are a\ntestimony unto\nthe Virtue of\nHumility!\n\nFind the Ruins\nof Magincia to\nthe {CoordinateToCardinal(ultimaData.LCB[0], ultimaData.Towns[UltimaData.LOC_MAGINCIA - ultimaData.LOC_TOWNS])}!\n";
                 }
-                if (ultimaData.Towns[ultimaData.LOC_COVE - ultimaData.LOC_TOWNS].IsDirty())
+                if (ultimaData.Towns[UltimaData.LOC_COVE - ultimaData.LOC_TOWNS].IsDirty())
                 {
                     if (!flags.ClothMap)
                     {
-                        ultimaData.TavernText[2] = $"Hmmm, Now let me see... Yes, it was the old Hermit... Sloven! He lives in Cove at {GetSextantText(ultimaData.Towns[ultimaData.LOC_COVE - ultimaData.LOC_TOWNS])}.\n";
+                        ultimaData.TavernText[2] = $"Hmmm, Now let me see... Yes, it was the old Hermit... Sloven! He lives in Cove at {GetSextantText(ultimaData.Towns[UltimaData.LOC_COVE - ultimaData.LOC_TOWNS])}.\n";
                     }
                     else
                     {
-                        var coveTile = worldMap.GetCoordinate(ultimaData.Towns[ultimaData.LOC_COVE - ultimaData.LOC_TOWNS].X, ultimaData.Towns[ultimaData.LOC_COVE - ultimaData.LOC_TOWNS].Y);
+                        var coveTile = worldMap.GetCoordinate(ultimaData.Towns[UltimaData.LOC_COVE - ultimaData.LOC_TOWNS].X, ultimaData.Towns[UltimaData.LOC_COVE - ultimaData.LOC_TOWNS].Y);
                         IList<ITile> path = null;
                         var coveRegion = worldMap.FindNearestRegion(coveTile, ultimaData, out path);
 
@@ -322,7 +322,7 @@ namespace U4DosRandomizer
                         }
                         else
                         {
-                            coveText = $"Hmmm, Now let me see... Yes, it was the old Hermit... Sloven! He lives in Cove at {GetSextantText(ultimaData.Towns[ultimaData.LOC_COVE - ultimaData.LOC_TOWNS])}.\n";
+                            coveText = $"Hmmm, Now let me see... Yes, it was the old Hermit... Sloven! He lives in Cove at {GetSextantText(ultimaData.Towns[UltimaData.LOC_COVE - ultimaData.LOC_TOWNS])}.\n";
                         }
 
                         ultimaData.TavernText[2] = coveText;
@@ -407,53 +407,16 @@ namespace U4DosRandomizer
             // --- Runes ---
             if (flags.Runes)
             {
-                for (int i = 0; i < 8; i++)
-                {
-                    var itemOption = ultimaData.ItemOptions[UltimaData.ITEM_RUNE_HONESTY + i];
-                    foreach (var newPerson in itemOption.People)
-                    {
-                        person = FindPerson(newPerson.Name, newPerson.Town);
-                        if (newPerson.Health != null)
-                        {
-                            person.Health = newPerson.Health;
-                        }
-                        if (newPerson.Job != null)
-                        {
-                            person.Job = newPerson.Job;
-                        }
-                        if (newPerson.Keyword1 != null)
-                        {
-                            person.Keyword1 = newPerson.Keyword1;
-                        }
-                        if (newPerson.Keyword2 != null)
-                        {
-                            person.Keyword2 = newPerson.Keyword2;
-                        }
-                        if (newPerson.Yes != null)
-                        {
-                            person.Yes = newPerson.Yes;
-                        }
-                        if (newPerson.No != null)
-                        {
-                            person.No = newPerson.No;
-                        }
-                        if (newPerson.Question != null)
-                        {
-                            person.Question = newPerson.Question;
-                        }
-                        if (newPerson.KeywordResponse1 != null)
-                        {
-                            person.KeywordResponse1 = newPerson.KeywordResponse1;
-                        }
-                        if (newPerson.KeywordResponse2 != null)
-                        {
-                            person.KeywordResponse2 = newPerson.KeywordResponse2;
-                        }
-                    }
-                }
+                SetItemTalkFromOptions(ultimaData, UltimaData.ITEM_RUNE_HONESTY, 8);
             }
-
             // --- End Runes ---
+
+            // --- Mystics ---
+            if (flags.Mystics)
+            {
+                SetItemTalkFromOptions(ultimaData, UltimaData.ITEM_ARMOR, 2);
+            }
+            // --- End Mystics ---
 
             if (flags.Mantras)
             {
@@ -597,6 +560,56 @@ namespace U4DosRandomizer
                 SpoilerLog.Add(SpoilerCategory.Fix, $"Fix 'a poor beggar.' keyword");
             }
 
+        }
+
+        private void SetItemTalkFromOptions(UltimaData ultimaData, int offset, int count)
+        {
+            for (int i = 0; i < count; i++)
+            {
+                var itemOption = ultimaData.ItemOptions[offset + i];
+                foreach (var newPerson in itemOption.People)
+                {
+                    var person = FindPerson(newPerson.Name, newPerson.Town);
+                    if (newPerson.Health != null)
+                    {
+                        person.Health = newPerson.Health;
+                    }
+                    if (newPerson.Job != null)
+                    {
+                        person.Job = newPerson.Job;
+                    }
+                    if (newPerson.Keyword1 != null)
+                    {
+                        person.Keyword1 = newPerson.Keyword1;
+                    }
+                    if (newPerson.Keyword2 != null)
+                    {
+                        person.Keyword2 = newPerson.Keyword2;
+                    }
+                    if (newPerson.Yes != null)
+                    {
+                        person.Yes = newPerson.Yes;
+                    }
+                    if (newPerson.No != null)
+                    {
+                        person.No = newPerson.No;
+                    }
+                    if (newPerson.Question != null)
+                    {
+                        person.Question = newPerson.Question;
+                    }
+                    if (newPerson.KeywordResponse1 != null)
+                    {
+                        person.KeywordResponse1 = newPerson.KeywordResponse1;
+                    }
+                    if (newPerson.KeywordResponse2 != null)
+                    {
+                        person.KeywordResponse2 = newPerson.KeywordResponse2;
+                    }
+                }
+            }
+
+            return;
         }
 
         internal static void Restore(string path)

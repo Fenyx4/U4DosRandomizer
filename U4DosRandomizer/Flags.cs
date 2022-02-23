@@ -31,6 +31,7 @@ namespace U4DosRandomizer
         public bool DiagonalAttack { get; internal set; }
         public bool SacrificeFix { get; internal set; }
         public bool Runes { get; internal set; }
+        public bool Mystics { get; internal set; }
         public bool Mantras { get; internal set; }
         public bool WordOfPassage { get; internal set; }
         public int MonsterDamage { get; internal set; }
@@ -99,6 +100,7 @@ namespace U4DosRandomizer
             mask = SET_MSK(mask, AwakenUpgrade, 1);
             mask = SET_MSK(mask, ShopOverflowFix, 2);
             mask = SET_MSK(mask, Other, 3);
+            mask = SET_MSK(mask, Mystics, 4);
             encoded.Add((byte)mask);
 
             // Add another one just for a bit of future proofing
@@ -173,6 +175,7 @@ namespace U4DosRandomizer
             AwakenUpgrade = TST_MSK(mask, 1);
             ShopOverflowFix = TST_MSK(mask, 2);
             Other = TST_MSK(mask, 3);
+            Mystics = TST_MSK(mask, 4);
 
             mask = encoded[9];
 

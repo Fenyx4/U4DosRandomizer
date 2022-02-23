@@ -30,6 +30,7 @@ Options:
   --diagonalAttack           Allow diagonal attacks in combat.
   --sacrificeFix             Adds a way to gain sacrifice which the shrine says should work.
   --runes                    Randomize the location of the runes.
+  --mystics                  Randomize the location of the mystics.
   --mantras                  Randomize the mantras.
   --wordOfPassage            Randomize the Word of Passage.
   --questItems <0-100>       Percentage chance to start with a quest item.

@@ -285,8 +285,8 @@ namespace U4DosRandomizer
         public int ITEM_BOOK { get; } = 10; // Book of Truth
         public int ITEM_CANDLE { get; } = 11; //
         public int ITEM_TELESCOPE { get; } = 12; // telescope (Crashes if moved (probably fine in any other town))
-        public int ITEM_ARMOR { get; } = 13; // Mystic Armor
-        public int ITEM_WEAPON { get; } = 14; // Mystic Weapon
+        public static int ITEM_ARMOR { get; } = 13; // Mystic Armor
+        public static int ITEM_WEAPON { get; } = 14; // Mystic Weapon
         public static int ITEM_RUNE_HONESTY { get; } = 15;
         public static int ITEM_RUNE_COMPASSION { get; } = 16;
         public static int ITEM_RUNE_VALOR { get; } = 17;
@@ -328,24 +328,24 @@ namespace U4DosRandomizer
         public int LOC_BUILDINGS { get; } = 0x01;
 
         public int LOC_CASTLES { get; } = 0x01;
-        public int LOC_LCB { get; } = 0x01;
-        public int LOC_LYCAEUM { get; } = 0x02;
-        public int LOC_EMPATH { get; } = 0x03;
-        public int LOC_SERPENT { get; } = 0x04;
-
+        public static int LOC_LCB { get; } = 0x01;
+        public static int LOC_LYCAEUM { get; } = 0x02;
+        public static int LOC_EMPATH { get; } = 0x03;
+        public static int LOC_SERPENT { get; } = 0x04;
+                
         public int LOC_TOWNS { get; } = 0x05;
-        public int LOC_MOONGLOW { get; } = 0x05;
-        public int LOC_BRITAIN { get; } = 0x06;
-        public int LOC_JHELOM { get; } = 0x07;
-        public int LOC_YEW { get; } = 0x08;
-        public int LOC_MINOC { get; } = 0x09;
-        public int LOC_TRINSIC { get; } = 0x0a;
-        public int LOC_SKARA { get; } = 0x0b;
-        public int LOC_MAGINCIA { get; } = 0x0c;
-        public int LOC_PAWS { get; } = 0x0d;
-        public int LOC_DEN { get; } = 0x0e;
-        public int LOC_VESPER { get; } = 0x0f;
-        public int LOC_COVE { get; } = 0x10;
+        public static int LOC_MOONGLOW { get; } = 0x05;
+        public static int LOC_BRITAIN { get; } = 0x06;
+        public static int LOC_JHELOM { get; } = 0x07;
+        public static int LOC_YEW { get; } = 0x08;
+        public static int LOC_MINOC { get; } = 0x09;
+        public static int LOC_TRINSIC { get; } = 0x0a;
+        public static int LOC_SKARA { get; } = 0x0b;
+        public static int LOC_MAGINCIA { get; } = 0x0c;
+        public static int LOC_PAWS { get; } = 0x0d;
+        public static int LOC_DEN { get; } = 0x0e;
+        public static int LOC_VESPER { get; } = 0x0f;
+        public static int LOC_COVE { get; } = 0x10;
 
         public int LOC_DUNGEONS { get; } = 0x11;
         public int LOC_DECEIT { get; } = 0x11;

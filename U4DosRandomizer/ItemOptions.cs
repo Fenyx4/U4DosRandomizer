@@ -115,8 +115,50 @@ namespace U4DosRandomizer
 					} }
 					//Island with the vineyard
 					}
+			},
+			{
+				UltimaData.ITEM_ARMOR, new List<ItemOption>
+				{
+					new ItemOption { Item = new Item((byte)UltimaData.LOC_EMPATH,SextantCoordToHex('B', 'G'), SextantCoordToHex('A', 'E')), People = new List<Person>() { new Person { Yes = "The mystic armour lies in the centre of the oak grove!", Name = "Sir Simon" } } }, //Sir Simon
+					new ItemOption { Item = new Item((byte)UltimaData.LOC_EMPATH,SextantCoordToHex('A', 'F'), SextantCoordToHex('A', 'M')), People = new List<Person>() { new Person { Yes = "The mystic armour lies in the Abbey's treasure chamber!", Name = "Sir Simon" } } }, 
+					new ItemOption { Item = new Item((byte)UltimaData.LOC_BRITAIN,SextantCoordToHex('B', 'J'), SextantCoordToHex('A', 'B')), People = new List<Person>() { new Person { Yes = "The mystic armour lies at the end of a hall in Britain!", Name = "Sir Simon" } } }, 
+					new ItemOption { Item = new Item((byte)UltimaData.LOC_TRINSIC, 0x0C, 0x01), People = new List<Person>() { new Person { Yes = "I entrusted it to the barkeep in Trinsic. Search well his treasure.", Name = "Sir Simon" } } },
+					new ItemOption { Item = new Item((byte)UltimaData.LOC_LCB, SextantCoordToHex('A', 'O'), SextantCoordToHex('A', 'I')), People = new List<Person>() { new Person { Yes = "I entrusted it to the Lord of the land. Search in the treasure chamber of Britannia!", Name = "Sir Simon" } } },
+					new ItemOption { Item = new Item((byte)UltimaData.LOC_LCB, SextantCoordToHex('B', 'E'), SextantCoordToHex('A', 'F')), People = new List<Person>() { new Person { Yes = "I entrusted it to the Lord of the land. He doth display them behind his throne!", Name = "Sir Simon" } } },
+					new ItemOption { Item = new Item((byte)UltimaData.LOC_VESPER,  0x16, 0x1B), People = new List<Person>() { new Person { Yes = "The mystic armour lie in the treasure chamber of Vesper!", Name = "Sir Simon" } } },
+					// Leave this out until the candle is randomized
+					//new ItemOption { Item = new Item((byte)UltimaData.LOC_COVE,  SextantCoordToHex('B', 'G'), SextantCoordToHex('A', 'B')), People = new List<Person>() { new Person { Yes = "The mystic armour is found in a secret place hidden in Cove!", Name = "Sir Simon" } } },
+					// Leave this out until the book is randomized
+					//new ItemOption { Item = new Item((byte)UltimaData.LOC_LYCAEUM,  SextantCoordToHex('A', 'C'), SextantCoordToHex('A', 'E')), People = new List<Person>() { new Person { Yes = "I placed the mystic armour in the Lycaeum library under A!", Name = "Sir Simon" } } },
+				}
+			},
+			{
+				UltimaData.ITEM_WEAPON, new List<ItemOption>
+				{
+					new ItemOption { Item = new Item((byte)UltimaData.LOC_SERPENT,SextantCoordToHex('A', 'I'), SextantCoordToHex('A', 'P')), People = new List<Person>() { new Person { Yes = "The mystic weapons lie in the training room of Serpent castle!", Name = "Lady Tessa" } } }, // Lady Tessa
+					new ItemOption { Item = new Item((byte)UltimaData.LOC_JHELOM, 0x1E, 0x1E), People = new List<Person>() { new Person { Yes = "The mystic weapons lie in a tower in Jhelom!", Name = "Lady Tessa" } } }, //Lady Tessa
+					new ItemOption { Item = new Item((byte)UltimaData.LOC_JHELOM, 0x1E, 0x01), People = new List<Person>() { new Person { Yes = "The mystic weapons lie in a tower in Jhelom!", Name = "Lady Tessa" } } },
+					new ItemOption { Item = new Item((byte)UltimaData.LOC_JHELOM, 0x05, 0x14), People = new List<Person>() { new Person { Yes = "The mystic weapons lie in the southern guard tower in Jhelom!", Name = "Lady Tessa" } } },
+					new ItemOption { Item = new Item((byte)UltimaData.LOC_JHELOM, 0x05, 0x0A), People = new List<Person>() { new Person { Yes = "The mystic weapons lie in the northern guard tower in Jhelom!", Name = "Lady Tessa" } } },
+					new ItemOption { Item = new Item((byte)UltimaData.LOC_SERPENT, 0x12, 0x19), People = new List<Person>() { new Person { Yes = "The mystic weapons lie in the eastern gatehouse of Serpent's castle.", Name = "Lady Tessa" } } },
+					new ItemOption { Item = new Item((byte)UltimaData.LOC_SERPENT, SextantCoordToHex('A', 'M'), SextantCoordToHex('B', 'J')), People = new List<Person>() { new Person { Yes = "The mystic weapons lie in the western gatehouse of Serpent's castle.", Name = "Lady Tessa" } } },
+					new ItemOption { Item = new Item((byte)UltimaData.LOC_TRINSIC, 0x0C, 0x01), People = new List<Person>() { new Person { Yes = "I entrusted it to the barkeep in Trinsic. Search well his treasure.", Name = "Lady Tessa" } } },
+					new ItemOption { Item = new Item((byte)UltimaData.LOC_LCB, SextantCoordToHex('A', 'O'), SextantCoordToHex('A', 'I')), People = new List<Person>() { new Person { Yes = "I entrusted it to the Lord of the land. Search in the treasure chamber of Britannia!", Name = "Lady Tessa" } } },
+					new ItemOption { Item = new Item((byte)UltimaData.LOC_LCB, SextantCoordToHex('B', 'C'), SextantCoordToHex('A', 'F')), People = new List<Person>() { new Person { Yes = "I entrusted it to the Lord of the land. He doth display them behind his throne!", Name = "Lady Tessa" } } },
+					new ItemOption { Item = new Item((byte)UltimaData.LOC_VESPER,  0x16, 0x1B), People = new List<Person>() { new Person { Yes = "The mystic weapons lie in the treasure chamber of Vesper!", Name = "Lady Tessa" } } },
+					// Leave this out until the candle is randomized
+					//new ItemOption { Item = new Item((byte)UltimaData.LOC_COVE,  SextantCoordToHex('B', 'G'), SextantCoordToHex('A', 'B')), People = new List<Person>() { new Person { Yes = "The mystic weapons is found in a secret place hidden in Cove!", Name = "Lady Tessa" } } },
+					// Leave this out until the book is randomized
+					//new ItemOption { Item = new Item((byte)UltimaData.LOC_LYCAEUM,  SextantCoordToHex('A', 'G'), SextantCoordToHex('A', 'G')), People = new List<Person>() { new Person { Yes = "I placed the mystic weapons in the Lycaeum library under S for sword!", Name = "Lady Tessa" } } },
+				}
 			}
 		};
+
+		public static byte SextantCoordToHex(char v1, char v2)
+		{
+			//return $"lat-{(char)((item.Y >> 4) +'A')}'{(char)((item.Y & 0xF) + 'A')}\"{seperator}long-{(char)((item.X >> 4) + 'A')}'{(char)((item.X & 0xF) + 'A')}\""; 
+			return (byte)(((v1 - 'A') << 4) + (v2 - 'A'));
+		}
 	}
 }
 
