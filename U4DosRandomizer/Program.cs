@@ -636,27 +636,30 @@ namespace U4DosRandomizer
                 }
             }
 
-            var usedLocations = new List<Item>();
+            var usedSpots = new List<Item>();
             if (flags.Runes)
             {
                 spoilerLog.Add(SpoilerCategory.Feature, $"Rune locations randomized");
+                var usedLocations = new List<byte>();
                 for (int i = UltimaData.ITEM_RUNE_HONESTY; i < 8 + UltimaData.ITEM_RUNE_HONESTY; i++)
                 {
-                    var possibleOptions = ItemOptions.ItemToItemOptions[i].Where(x => !usedLocations.Contains(x.Item)).ToList();
+                    var possibleOptions = ItemOptions.ItemToItemOptions[i].Where(x => !usedSpots.Contains(x.Item)).ToList();
+                    possibleOptions = possibleOptions.Where(x => !usedLocations.Contains(x.Item.Location)).ToList();
                     var selectedItemOption = possibleOptions[random.Next(0, possibleOptions.Count)];
                     ultimaData.Items[i].X = selectedItemOption.Item.X;
                     ultimaData.Items[i].Y = selectedItemOption.Item.Y;
                     ultimaData.Items[i].Location = selectedItemOption.Item.Location;
 
                     ultimaData.ItemOptions.Add(i, selectedItemOption);
-                    usedLocations.Add(selectedItemOption.Item);
+                    usedSpots.Add(selectedItemOption.Item);
+                    usedLocations.Add(selectedItemOption.Item.Location);
                 }
             }
             else
             {
                 for (int i = UltimaData.ITEM_RUNE_HONESTY; i < 8 + UltimaData.ITEM_RUNE_HONESTY; i++)
                 {
-                    usedLocations.Add(ItemOptions.ItemToItemOptions[i][0].Item);
+                    usedSpots.Add(ItemOptions.ItemToItemOptions[i][0].Item);
                 }
             }
 
@@ -665,21 +668,21 @@ namespace U4DosRandomizer
                 spoilerLog.Add(SpoilerCategory.Feature, $"Mystics locations randomized");
                 for (int i = UltimaData.ITEM_ARMOR; i < 2 + UltimaData.ITEM_ARMOR; i++)
                 {
-                    var possibleOptions = ItemOptions.ItemToItemOptions[i].Where(x => !usedLocations.Contains(x.Item)).ToList();
+                    var possibleOptions = ItemOptions.ItemToItemOptions[i].Where(x => !usedSpots.Contains(x.Item)).ToList();
                     var selectedItemOption = possibleOptions[random.Next(0, possibleOptions.Count)];
                     ultimaData.Items[i].X = selectedItemOption.Item.X;
                     ultimaData.Items[i].Y = selectedItemOption.Item.Y;
                     ultimaData.Items[i].Location = selectedItemOption.Item.Location;
 
                     ultimaData.ItemOptions.Add(i, selectedItemOption);
-                    usedLocations.Add(selectedItemOption.Item);
+                    usedSpots.Add(selectedItemOption.Item);
                 }
             }
             else
             {
                 for (int i = UltimaData.ITEM_ARMOR; i < 2 + UltimaData.ITEM_ARMOR; i++)
                 {
-                    usedLocations.Add(ItemOptions.ItemToItemOptions[i][0].Item);
+                    usedSpots.Add(ItemOptions.ItemToItemOptions[i][0].Item);
                 }
             }
 
