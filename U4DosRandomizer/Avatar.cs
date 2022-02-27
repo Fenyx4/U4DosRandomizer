@@ -222,9 +222,9 @@ namespace U4DosRandomizer
                 textOffset++;
             }
 
-            data.PrincipleItemRequirements.Add(BitConverter.ToUInt16(avatarBytes, AvatarOffset.BELL_REQUIREMENT_OFFSET-1));
-            data.PrincipleItemRequirements.Add(BitConverter.ToUInt16(avatarBytes, AvatarOffset.BOOK_REQUIREMENT_OFFSET-1));
-            data.PrincipleItemRequirements.Add(BitConverter.ToUInt16(avatarBytes, AvatarOffset.CANDLE_REQUIREMENT_OFFSET-1));
+            data.PrincipleItemRequirements.Add(new PrincipleItem() { Name = "Bell", UsedMask = BitConverter.ToUInt16(avatarBytes, AvatarOffset.BOOK_REQUIREMENT_OFFSET - 1), RequiredMask = BitConverter.ToUInt16(avatarBytes, AvatarOffset.BELL_REQUIREMENT_OFFSET - 1) });
+            data.PrincipleItemRequirements.Add(new PrincipleItem() { Name = "Book", UsedMask = BitConverter.ToUInt16(avatarBytes, AvatarOffset.CANDLE_REQUIREMENT_OFFSET - 1), RequiredMask = BitConverter.ToUInt16(avatarBytes, AvatarOffset.BOOK_REQUIREMENT_OFFSET - 1) });
+            data.PrincipleItemRequirements.Add(new PrincipleItem() { Name = "Candle", UsedMask = BitConverter.ToUInt16(avatarBytes, AvatarOffset.BELL_REQUIREMENT_OFFSET - 1), RequiredMask = BitConverter.ToUInt16(avatarBytes, AvatarOffset.CANDLE_REQUIREMENT_OFFSET - 1) });
 
             var wordOfPassageTextBytes = new List<byte>();
 
@@ -473,11 +473,11 @@ namespace U4DosRandomizer
                 }
             }
 
-            if (data.PrincipleItemRequirements[0] != 1024)
+            if (data.PrincipleItemRequirements[0].RequiredMask != 1024)
             {
-                avatarBytes.OverwriteBytes((ushort)data.PrincipleItemRequirements[0], AvatarOffset.BELL_REQUIREMENT_OFFSET-1);
-                avatarBytes.OverwriteBytes((ushort)data.PrincipleItemRequirements[1], AvatarOffset.BOOK_REQUIREMENT_OFFSET-1);
-                avatarBytes.OverwriteBytes((ushort)data.PrincipleItemRequirements[2], AvatarOffset.CANDLE_REQUIREMENT_OFFSET-1);
+                avatarBytes.OverwriteBytes((ushort)data.PrincipleItemRequirements[0].RequiredMask, AvatarOffset.BELL_REQUIREMENT_OFFSET-1);
+                avatarBytes.OverwriteBytes((ushort)data.PrincipleItemRequirements[1].RequiredMask, AvatarOffset.BOOK_REQUIREMENT_OFFSET-1);
+                avatarBytes.OverwriteBytes((ushort)data.PrincipleItemRequirements[2].RequiredMask, AvatarOffset.CANDLE_REQUIREMENT_OFFSET-1);
                 avatarBytes[AvatarOffset.ENABLE_PRINCIPLE_ITEM_REORDER_OFFSET] = (byte)0x0;
             }
 

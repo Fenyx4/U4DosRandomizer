@@ -182,7 +182,7 @@ namespace U4DosRandomizer
                     ultimaData.ShrineText[6 * 3 + 2] = $"If thou dost seek the White Stone search not under the ground but at {GetSextantText(ultimaData.Items[ultimaData.ITEM_WHITE_STONE]).Replace('\n', ' ')}";
                 }
 
-                // TODO Book, candle, runes, mystic armor and mystic weapons I'm leaving along for now. Not randomizing stuff in towns yet.
+                // TODO Book, candle I'm leaving alone for now. Not randomizing stuff in towns yet.
 
                 // --- End Items ---
 
@@ -417,6 +417,16 @@ namespace U4DosRandomizer
                 SetItemTalkFromOptions(ultimaData, UltimaData.ITEM_ARMOR, 2);
             }
             // --- End Mystics ---
+
+            // --- Principle Items ---
+            var ordinalNumbers = new List<string>() { "First,", "Second", "Third," };
+            if (flags.PrincipleItems)
+            {
+                ultimaData.ShrineText[2 * 3 + 2] = $"{ordinalNumbers[ultimaData.PrincipleItemRequirements[0].Order]} ring the Bell of Courage at the entrance to the Great Stygian Abyss!";
+                ultimaData.ShrineText[0 * 3 + 2] = $"{ordinalNumbers[ultimaData.PrincipleItemRequirements[2].Order]} read the Book of Truth at the entrance to the Great Stygian Abyss!";
+                ultimaData.ShrineText[1 * 3 + 2] = $"{ordinalNumbers[ultimaData.PrincipleItemRequirements[1].Order]} light the Candle of Love at the entrance to the Great Stygian Abyss!";
+            }
+            // --- End Principle Items ---
 
             if (flags.Mantras)
             {
