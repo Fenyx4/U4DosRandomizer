@@ -535,7 +535,7 @@ namespace U4DosRandomizer
                 for(int i = 0; i < values.Count(); i++)
                 {
                     ultimaData.PrincipleItemRequirements[values[i].Item1].RequiredMask = values[(i+1) % values.Count()].Item2.UsedMask;
-                    ultimaData.PrincipleItemRequirements[i].Order = values[i].Item1;
+                    ultimaData.PrincipleItemRequirements[values[i].Item1].Order = (values.Count() - i) % values.Count();
                 }
                 // Make the dependency for the first item be owning itself instead of one of the other items being used so there is an item you can start with
                 ultimaData.PrincipleItemRequirements[values[0].Item1].RequiredMask = 1 << (4 - values[0].Item1);

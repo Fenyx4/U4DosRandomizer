@@ -109,6 +109,7 @@ namespace U4DosRandomizer
         public List<string> TavernText { get; internal set; }
         public List<string> LBHelpText { get; internal set; }
         public List<string> Mantras { get; internal set; }
+        public List<string> UsePrincipleItemText { get; internal set; }
         public List<PrincipleItem> PrincipleItemRequirements { get; internal set; }
         public string WordOfPassage { get; internal set; }
         public List<Character> StartingCharacters { get; internal set; }
@@ -170,6 +171,7 @@ namespace U4DosRandomizer
             LBText = new List<string>();
             LBHelpText = new List<string>();
             TavernText = new List<string>();
+            UsePrincipleItemText = new List<string>();
             Mantras = new List<string>();
             PrincipleItemRequirements = new List<PrincipleItem>();
             PirateCove = new List<Coordinate>();

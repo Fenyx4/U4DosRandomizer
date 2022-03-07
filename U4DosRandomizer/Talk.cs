@@ -423,9 +423,78 @@ namespace U4DosRandomizer
             if (flags.PrincipleItems)
             {
                 ultimaData.ShrineText[2 * 3 + 2] = $"{ordinalNumbers[ultimaData.PrincipleItemRequirements[0].Order]} ring the Bell of Courage at the entrance to the Great Stygian Abyss!";
-                ultimaData.ShrineText[0 * 3 + 2] = $"{ordinalNumbers[ultimaData.PrincipleItemRequirements[2].Order]} read the Book of Truth at the entrance to the Great Stygian Abyss!";
-                ultimaData.ShrineText[1 * 3 + 2] = $"{ordinalNumbers[ultimaData.PrincipleItemRequirements[1].Order]} light the Candle of Love at the entrance to the Great Stygian Abyss!";
+                ultimaData.ShrineText[0 * 3 + 2] = $"{ordinalNumbers[ultimaData.PrincipleItemRequirements[1].Order]} read the Book of Truth at the entrance to the Great Stygian Abyss!";
+                ultimaData.ShrineText[1 * 3 + 2] = $"{ordinalNumbers[ultimaData.PrincipleItemRequirements[2].Order]} light the Candle of Love at the entrance to the Great Stygian Abyss!";
+
+                var firstItem = ultimaData.PrincipleItemRequirements.Where(x => x.Order == 0).First();
+                switch (ultimaData.PrincipleItemRequirements[0].Order)
+                {
+                    case 0:
+                        ultimaData.UsePrincipleItemText[0] = $"The Bell rings on and on!\n";
+                        break;
+                    case 1:
+                        switch (firstItem.Name)
+                        {
+                            case "Book":
+                                ultimaData.UsePrincipleItemText[0] = $"The ringing resonate with the words!\n";
+                                break;
+                            case "Candle":
+                                ultimaData.UsePrincipleItemText[0] = $"The bell rings glinting in the light\n";
+                                break;
+                        }
+                        break;
+                    case 2:
+                        ultimaData.UsePrincipleItemText[0] = $"As you ring the Bell the Earth Trembles!\n\0\0\0";
+                        break;
+                    default:
+                        break;
+                }
+                switch (ultimaData.PrincipleItemRequirements[2].Order)
+                {
+                    case 0:
+                        ultimaData.UsePrincipleItemText[2] = $"The light shines bright!\n\0";
+                        break;
+                    case 1:
+                        switch (firstItem.Name)
+                        {
+                            case "Bell":
+                                ultimaData.UsePrincipleItemText[2] = $"The light pulses with the ringing!\n\0\0";
+                                break;
+                            case "Book":
+                                ultimaData.UsePrincipleItemText[2] = $"The light illuminates the book!\n\0\0\0\0\0";
+                                break;
+                        }
+                        break;
+                    case 2:
+                        ultimaData.UsePrincipleItemText[2] = $"As you light the Candle the Earth Trembles!\n";
+                        break;
+                    default:
+                        break;
+                }
+                switch (ultimaData.PrincipleItemRequirements[1].Order)
+                {
+                    case 0:
+                        ultimaData.UsePrincipleItemText[1] = $"The words echo on and on!\n";
+                        break;
+                    case 1:
+                        switch (firstItem.Name)
+                        {
+                            case "Bell":
+                                ultimaData.UsePrincipleItemText[1] = $"The words resonate with the ringing!\n";
+                                break;
+                            case "Candle":
+                                ultimaData.UsePrincipleItemText[1] = $"The words show clearly in the light!\n";
+                                break;
+                        }
+                        break;
+                    case 2:
+                        ultimaData.UsePrincipleItemText[1] = $"As you read the Book the Earth Trembles!\n\0\0\0";
+                        break;
+                    default:
+                        break;
+                }
             }
+
             // --- End Principle Items ---
 
             if (flags.Mantras)
