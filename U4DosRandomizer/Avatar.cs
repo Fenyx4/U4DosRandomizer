@@ -261,6 +261,12 @@ namespace U4DosRandomizer
                 data.SpellsRecipes.Add(new ByteDirtyWrapper(avatarBytes[AvatarOffset.SPELL_RECIPE_OFFSET + i]));
             }
 
+            data.HerbPrices = new List<byte>();
+            for(int i = 0; i < 4*6; i++)
+            {
+                data.HerbPrices.Add(avatarBytes[AvatarOffset.HERB_PRICES + i]);
+            }
+
             data.BlinkCastExclusionX1 = avatarBytes[AvatarOffset.BLINK_CAST_EXCLUSION_X1_OFFSET];
             data.BlinkCastExclusionX2 = avatarBytes[AvatarOffset.BLINK_CAST_EXCLUSION_X2_OFFSET];
             data.BlinkCastExclusionY1 = avatarBytes[AvatarOffset.BLINK_CAST_EXCLUSION_Y1_OFFSET];
@@ -566,6 +572,16 @@ namespace U4DosRandomizer
             for (int i = 0; i < data.SpellsRecipes.Count; i++)
             {
                 avatarBytes[AvatarOffset.SPELL_RECIPE_OFFSET + i] = data.SpellsRecipes[i].Byte;
+            }
+
+            for (int i = 0; i < data.HerbPrices.Count; i++)
+            {
+                avatarBytes[AvatarOffset.HERB_PRICES + i] = data.HerbPrices[i];
+            }
+
+            if(data.HerbPrices.FindAll( x => x >= 10).Count > 0)
+            {
+                avatarBytes[AvatarOffset.HERB_PRICE_INPUT] = 0x04;
             }
 
             // Cast exclusion isn't precise enough so allow them to cast anywhere and exclude the destination

@@ -62,6 +62,8 @@ namespace U4DosRandomizer
 
         public int MONSTER_QTY_ONE { get; } = 0x80EF;
         public int MONSTER_QTY_TWO { get; } = 0x8100;
+        public int HERB_PRICES { get; } = 0x1340B;
+        public int HERB_PRICE_INPUT { get; } = 0xCDFD;
 
         public int TAVERN_TEXT_OFFSET { get; } = 0x14EA7;
         public int LB_TEXT_OFFSET { get; } = 0x156ca;

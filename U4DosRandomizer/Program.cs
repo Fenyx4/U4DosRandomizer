@@ -145,6 +145,10 @@ namespace U4DosRandomizer
                 "--randomizeSpells",
                 "Randomizes the gate and resurrection spells that you learn in game.",
                 CommandOptionType.NoValue);
+            CommandOption herbArg = commandLineApplication.Option(
+                "--herbPrice",
+                "Changes how herb prices are modified. 1 for cheap reagents. 2 for shuffle reagent prices. 3 for expensive reagents.",
+                CommandOptionType.SingleValue);
             CommandOption sextantArg = commandLineApplication.Option(
                 "--sextant",
                 "Start with a sextant.",
@@ -272,6 +276,15 @@ namespace U4DosRandomizer
                     weaponDamage = weaponDamageTmp;
                 }
 
+                var herbPrices = 0;
+                if (herbArg.HasValue())
+                {
+                    if (!int.TryParse(herbArg.Value(), out herbPrices))
+                    {
+                        throw new InvalidCastException("Herb Prices argument must be a number");
+                    }
+                }
+
                 var path = Directory.GetCurrentDirectory();
                 if (pathArg.HasValue())
                 {
@@ -329,6 +342,7 @@ namespace U4DosRandomizer
                     flags.MonsterQty = monsterQtyArg.HasValue();
                     flags.NoRequireFullParty = noRequireFullPartyArg.HasValue();
                     flags.RandomizeSpells = randomizeSpellsArg.HasValue();
+                    flags.HerbPrices = herbPrices;
                     flags.Sextant = sextantArg.HasValue();
                     flags.ClothMap = clothMapArg.HasValue();
                     flags.PrincipleItems = principleItemsArg.HasValue();
@@ -755,6 +769,27 @@ namespace U4DosRandomizer
                 ultimaData.WordLove = selection.Item2;
                 ultimaData.WordCourage = selection.Item3;
                 ultimaData.WordOfPassage = selection.Item1 + selection.Item2 + selection.Item3;
+            }
+
+            if (flags.HerbPrices == 2)
+            {
+                ultimaData.HerbPrices.Shuffle(random);
+            }
+            else if (flags.HerbPrices == 1)
+            {
+                ultimaData.HerbPrices.Shuffle(random);
+                for (int i = 0; i < ultimaData.HerbPrices.Count; i++)
+                {
+                    ultimaData.HerbPrices[i] = 1;
+                }
+            }
+            else if (flags.HerbPrices == 3)
+            {
+                ultimaData.HerbPrices.Shuffle(random);
+                for (int i = 0; i < ultimaData.HerbPrices.Count; i++)
+                {
+                    ultimaData.HerbPrices[i] = (byte)(ultimaData.HerbPrices[i]*3);
+                }
             }
             
             //ultimaData.StartingStones = 0XFF;
