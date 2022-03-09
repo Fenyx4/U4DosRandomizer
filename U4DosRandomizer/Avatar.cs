@@ -579,6 +579,11 @@ namespace U4DosRandomizer
                 avatarBytes[AvatarOffset.HERB_PRICES + i] = data.HerbPrices[i];
             }
 
+            if(data.HerbPrices.FindAll( x => x >= 10).Count > 0)
+            {
+                avatarBytes[AvatarOffset.HERB_PRICE_INPUT] = 0x04;
+            }
+
             // Cast exclusion isn't precise enough so allow them to cast anywhere and exclude the destination
             avatarBytes[AvatarOffset.BLINK_CAST_EXCLUSION_X1_OFFSET] = data.BlinkCastExclusionX1;
             avatarBytes[AvatarOffset.BLINK_CAST_EXCLUSION_X2_OFFSET] = data.BlinkCastExclusionX2;

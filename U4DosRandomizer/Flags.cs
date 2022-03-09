@@ -40,6 +40,7 @@ namespace U4DosRandomizer
         public bool MonsterQty { get; internal set; }
         public bool NoRequireFullParty { get; internal set; }
         public bool RandomizeSpells { get; internal set; }
+        public int HerbPrices { get; set; }
         public bool Sextant { get; internal set; }
         public bool ClothMap { get; internal set; }
         public bool PrincipleItems { get; internal set; }
@@ -124,6 +125,7 @@ namespace U4DosRandomizer
             encoded.AddRange(BitConverter.GetBytes(spellRemoveMask));
 
             encoded.Add((byte)Dungeon);
+            encoded.Add((byte)HerbPrices);
 
             return Convert.ToBase64String(encoded.ToArray());
         }
@@ -204,7 +206,8 @@ namespace U4DosRandomizer
                 }
             }
 
-            Dungeon = encoded[17];
+            Dungeon = encoded[20];
+            HerbPrices = encoded[21];
         }
 
         private static int SET_MSK(int mask, bool bit, int offset)
