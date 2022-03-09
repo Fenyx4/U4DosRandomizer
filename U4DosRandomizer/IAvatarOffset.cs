@@ -33,6 +33,7 @@ namespace U4DosRandomizer
         int MONSTER_SPAWN_TIER_THREE { get; }
         int MONSTER_QTY_ONE { get; }
         int MONSTER_QTY_TWO { get; }
+        int HERB_PRICES { get; }
         int LB_TEXT_OFFSET { get; }
         int LB_HELP_TEXT_OFFSET { get; }
         int TAVERN_TEXT_OFFSET { get; }

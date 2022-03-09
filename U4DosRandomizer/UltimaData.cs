@@ -125,6 +125,7 @@ namespace U4DosRandomizer
         public List<ByteDirtyWrapper> SpellsRecipes { get; internal set; }
         bool spellRecipesSet = false;
 
+
         public void SetSpellsRecipes(List<Item> value)
         {
             if (spellRecipesSet)
@@ -136,6 +137,9 @@ namespace U4DosRandomizer
                 Items = value.AsReadOnly();
             }
         }
+
+        public List<byte> HerbPrices { get; internal set; }
+
         public byte BlinkCastExclusionX1 { get; internal set; }
         public byte BlinkCastExclusionX2 { get; internal set; }
         public byte BlinkCastExclusionY1 { get; internal set; }

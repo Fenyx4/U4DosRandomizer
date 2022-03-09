@@ -149,6 +149,7 @@ namespace U4DosRandomizer
         //https://github.com/ergonomy-joe/u4-decompiled/blob/1964651295232b0ca39afafef254541a406eb66b/SRC/U4_COMBC.C#L210
         public int MONSTER_QTY_ONE { get; } = 0x84D9; // 80EF
         public int MONSTER_QTY_TWO { get; } = 0x84EA; // 8100
+        public int HERB_PRICES { get; } = 0x139E8; // 1340B
         public int TAVERN_TEXT_OFFSET { get; } = 0x154C4; // 14EA7
         public int LB_TEXT_OFFSET { get; } = 0x15CE7; // 156ca
         public int LB_HELP_TEXT_OFFSET { get; } = 0x168F2; // 162D4

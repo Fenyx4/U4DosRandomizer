@@ -756,6 +756,8 @@ namespace U4DosRandomizer
                 ultimaData.WordCourage = selection.Item3;
                 ultimaData.WordOfPassage = selection.Item1 + selection.Item2 + selection.Item3;
             }
+
+            ultimaData.HerbPrices.Shuffle(random);
             
             //ultimaData.StartingStones = 0XFF;
             //ultimaData.StartingRunes = 0XFF;
