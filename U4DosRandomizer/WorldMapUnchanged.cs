@@ -41,7 +41,7 @@ namespace U4DosRandomizer
             }
         }
 
-        public override void Randomize(UltimaData ultimaData, Random random1, Random random2)
+        public override void Randomize(UltimaData ultimaData, Random random1, Random random2, Random random3)
         {
             SpoilerLog.Add(SpoilerCategory.Location, "Locations unchanged");
 

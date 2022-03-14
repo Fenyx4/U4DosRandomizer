@@ -747,10 +747,10 @@ namespace U4DosRandomizer
             }
         }
 
-        public override void Randomize(UltimaData ultimaData, Random randomLocations, Random randomItems)
+        public override void Randomize(UltimaData ultimaData, Random randomLocations, Random randomItems, Random randomLocations2)
         {
             
-            RandomizeLocations(ultimaData, randomLocations);
+            RandomizeLocations(ultimaData, randomLocations, randomLocations2);
 
             RandomizeItems(ultimaData, randomItems);
 
@@ -804,7 +804,7 @@ namespace U4DosRandomizer
         }
 
 
-        private void RandomizeLocations(UltimaData ultimaData, Random random)
+        private void RandomizeLocations(UltimaData ultimaData, Random random, Random random2)
         {
             // Lay down Stygian Abyss first so it doesn't stomp on other things
             // TODO: Make the entrance to the Abyss more random instead of laying down what is in the base game
@@ -999,6 +999,8 @@ namespace U4DosRandomizer
             // Moongates
             List<ITile> path = new List<ITile>();
             List<byte> validTiles = new List<byte>() { TileInfo.Grasslands, TileInfo.Scrubland, TileInfo.Swamp, TileInfo.Forest, TileInfo.Hills };
+            var moongateIndices = new List<int>() { 0, 1, 2, 3, 4, 5, 6, 7 };
+            moongateIndices.Shuffle(random2);
             for (int i = 0; i < 8; i++)
             {
                 path = new List<ITile>();
@@ -1028,8 +1030,8 @@ namespace U4DosRandomizer
                             }
                         }
                         possibleLocations.Remove(loc);
-                        ultimaData.Moongates[i].X = loc.X;
-                        ultimaData.Moongates[i].Y = loc.Y;
+                        ultimaData.Moongates[moongateIndices[i]].X = loc.X;
+                        ultimaData.Moongates[moongateIndices[i]].Y = loc.Y;
                         excludeLocations.Add(ultimaData.Moongates[i]);
                     }
                 }
