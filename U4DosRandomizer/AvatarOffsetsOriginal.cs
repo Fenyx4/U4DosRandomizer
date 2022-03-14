@@ -101,6 +101,8 @@ namespace U4DosRandomizer
         public int ITEM_USE_TRIGGER_SKULL_X_OFFSET { get; } = 0x07E3;
         public int ITEM_USE_TRIGGER_SKULL_Y_OFFSET { get; } = 0x07EA;
 
+        public int WEAPON_REQUIRED_FOR_ABYSS { get; } = 0x06223; 
+
         public int WHIRLPOOL_EXIT_X_OFFSET { get; } = 0x7A92;
         public int WHIRLPOOL_EXIT_Y_OFFSET { get; } = 0x7A97;
 

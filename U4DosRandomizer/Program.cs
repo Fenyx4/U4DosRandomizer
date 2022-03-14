@@ -169,6 +169,10 @@ namespace U4DosRandomizer
                 "--daemonTrigger",
                 "Fix daemon spawn in Abyss",
                 CommandOptionType.NoValue);
+            CommandOption requireMysticsArg = commandLineApplication.Option(
+                "--requireMystics",
+                "Require Mystics in the Abyss",
+                CommandOptionType.NoValue);
             CommandOption awakenUpgradeArg = commandLineApplication.Option(
                 "--awakenUpgrade",
                 "Awaken spell awakens all characters.",
@@ -348,6 +352,7 @@ namespace U4DosRandomizer
                     flags.PrincipleItems = principleItemsArg.HasValue();
                     flags.TownSaves = townSavesArg.HasValue();
                     flags.DaemonTrigger = daemonTriggerArg.HasValue();
+                    flags.RequireMysticWeapons = requireMysticsArg.HasValue();
                     flags.AwakenUpgrade = awakenUpgradeArg.HasValue();
                     flags.ShopOverflowFix = shopOverflowArg.HasValue();
                     flags.Other = otherArg.HasValue();
@@ -554,7 +559,6 @@ namespace U4DosRandomizer
                 // Make the dependency for the first item be owning itself instead of one of the other items being used so there is an item you can start with
                 ultimaData.PrincipleItemRequirements[values[0].Item1].RequiredMask = 1 << (4 - values[0].Item1);
             }
-
 
             //worldMap.TestAbyssEjection();
 

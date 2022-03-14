@@ -62,6 +62,7 @@ namespace U4DosRandomizer
         int ITEM_USE_TRIGGER_CANDLE_Y_OFFSET { get; }
         int ITEM_USE_TRIGGER_SKULL_X_OFFSET { get; }
         int ITEM_USE_TRIGGER_SKULL_Y_OFFSET { get; }
+        int WEAPON_REQUIRED_FOR_ABYSS { get; }
         int WHIRLPOOL_EXIT_X_OFFSET { get; }
         int WHIRLPOOL_EXIT_Y_OFFSET { get; }
         int USE_PRINCIPLE_ITEM_TEXT { get; }
