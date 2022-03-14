@@ -47,6 +47,7 @@ namespace U4DosRandomizer
         public bool SpoilerLog { get; internal set; }
         public bool VGAPatch { get; internal set; }
         public bool TownSaves { get; internal set; }
+        public bool RequireMysticWeapons { get; internal set; }        
         public bool DaemonTrigger { get; internal set; }
         public bool AwakenUpgrade { get; internal set; }
         public bool ShopOverflowFix { get; internal set; }
@@ -102,6 +103,7 @@ namespace U4DosRandomizer
             mask = SET_MSK(mask, ShopOverflowFix, 2);
             mask = SET_MSK(mask, Other, 3);
             mask = SET_MSK(mask, Mystics, 4);
+            mask = SET_MSK(mask, RequireMysticWeapons, 5);
             encoded.Add((byte)mask);
 
             // Add another one just for a bit of future proofing
@@ -178,6 +180,7 @@ namespace U4DosRandomizer
             ShopOverflowFix = TST_MSK(mask, 2);
             Other = TST_MSK(mask, 3);
             Mystics = TST_MSK(mask, 4);
+            RequireMysticWeapons = TST_MSK(mask, 5);
 
             mask = encoded[9];
 

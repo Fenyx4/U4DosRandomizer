@@ -757,6 +757,11 @@ namespace U4DosRandomizer
                 avatarBytes[AvatarOffset.ENABLE_DAEMON_TRIGGER_FIX] = (byte)0x0;
             }
 
+            if (flags.RequireMysticWeapons)
+            {
+                avatarBytes[AvatarOffset.WEAPON_REQUIRED_FOR_ABYSS] = (byte)0x0F;
+            }
+
             if (flags.Fixes)
             {
                 avatarBytes[AvatarOffset.ENABLE_MAP_EDGE_FIX1] = (byte)0x0;
