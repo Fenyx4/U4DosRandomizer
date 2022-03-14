@@ -6,7 +6,7 @@ namespace U4DosRandomizer
     public interface IWorldMap
     {
         void Load(string path, int v, int mapGeneratorSeed, int otherRandomSeed, UltimaData ultimaData);
-        void Randomize(UltimaData ultimaData, Random random1, Random random2);
+        void Randomize(UltimaData ultimaData, Random random1, Random random2, Random random3);
         SixLabors.ImageSharp.Image ToImage();
         SixLabors.ImageSharp.Image ToHeightMapImage();
 

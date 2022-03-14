@@ -16,7 +16,7 @@ namespace U4DosRandomizer
 
         public abstract void Load(string path, int v, int mapGeneratorSeed, int otherRandomSeed, UltimaData ultimaData);
 
-        public abstract void Randomize(UltimaData ultimaData, Random random1, Random random2);
+        public abstract void Randomize(UltimaData ultimaData, Random random1, Random random2, Random random3);
 
         public void Save(string path)
         {

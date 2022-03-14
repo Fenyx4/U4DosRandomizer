@@ -461,7 +461,7 @@ namespace U4DosRandomizer
                 ultimaData.ShopLocations[UltimaData.LOC_SERPENT - 1][5] = 0x12;
             }
 
-            worldMap.Randomize(ultimaData, new Random(randomValues[3]), new Random(randomValues[4]));
+            worldMap.Randomize(ultimaData, new Random(randomValues[3]), new Random(randomValues[4]), new Random(randomValues[7]));
             dungeons.Randomize(new Random(randomValues[6]), flags);
 
             if (flags.ClothMap)

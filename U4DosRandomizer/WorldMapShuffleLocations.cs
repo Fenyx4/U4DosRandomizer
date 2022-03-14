@@ -45,7 +45,7 @@ namespace U4DosRandomizer
             //RemoveAvatarIsle();
         }
 
-        public override void Randomize(UltimaData ultimaData, Random random1, Random random2)
+        public override void Randomize(UltimaData ultimaData, Random random1, Random random2, Random random3)
         {
             var swapPool = new List<Tuple<TileDirtyWrapper, ICoordinate, int>>();
 
