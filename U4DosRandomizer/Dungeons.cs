@@ -79,6 +79,11 @@ namespace U4DosRandomizer
 
         public void Randomize(Random random, Flags flags)
         {
+            var hsDungeons = new HitomezashiStitchMazeGenerator();
+            //foreach (var dungeonName in dungeons.Keys)
+            {
+                hsDungeons.GenerateMaze("abyss", dungeons["ABYSS"], 8, 8, 8, random);
+            }
             // Other stones
             if (flags.Dungeon == 3)
             {
