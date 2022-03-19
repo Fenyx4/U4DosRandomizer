@@ -149,28 +149,21 @@ namespace U4DosRandomizer
                 }
             }
 
+            var corridorColor = map[0, 1, 1].Color;
             for (int l = 0; l < numLevels; l++)
             {
                 for (int x = 0; x < width; x++)
                 {
                     for (int y = 0; y < height; y++)
                     {
-                        var tile = DungeonTileInfo.Wall;
-                        switch (map[l, x, y].Color)
+                        if(map[l, x, y].Color == corridorColor)
                         {
-                            case 0:
-                                tile = DungeonTileInfo.AltarOrStone;
-                                break;
-                            case 1:
-                                tile = DungeonTileInfo.Nothing;
-                                break;
-                            case 2:
-                                tile = DungeonTileInfo.Wall;
-                                break;
-                            default:
-                                break;
+                            dungeon.SetTile(l, y, x, DungeonTileInfo.Nothing);
                         }
-                        dungeon.SetTile(l, y, x, tile);
+                        else
+                        {
+                            dungeon.SetTile(l, y, x, DungeonTileInfo.Wall);
+                        }
                     }
                 }
             }
