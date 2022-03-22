@@ -79,17 +79,17 @@ namespace U4DosRandomizer
 
         public void Randomize(Random random, Flags flags)
         {
-            //IMazeGenerator wipeDungeons = new WipeMazeGenerator();
-            //foreach (var dungeonName in dungeons.Keys)
-            //{
-            //    wipeDungeons.GenerateMaze(dungeonName, dungeons[dungeonName], 8, 8, 8, random);
-            //}
-
-            var hsDungeons = new HitomezashiStitchMazeGenerator();
+            IMazeGenerator wipeDungeons = new WipeMazeGenerator();
             foreach (var dungeonName in dungeons.Keys)
             {
-                hsDungeons.GenerateMaze(dungeonName, dungeons[dungeonName], 8, 8, 8, random);
+                wipeDungeons.GenerateMaze(dungeonName, dungeons[dungeonName], 8, 8, 8, random);
             }
+
+            //var hsDungeons = new HitomezashiStitchMazeGenerator();
+            //foreach (var dungeonName in dungeons.Keys)
+            //{
+            //    hsDungeons.GenerateMaze(dungeonName, dungeons[dungeonName], 8, 8, 8, random);
+            //}
 
             // Other stones
             if (flags.Dungeon == 3)
@@ -163,13 +163,13 @@ namespace U4DosRandomizer
                 }
 
                 var evenlyDistributedLadderOptions = GetEvenlyDistributed(random, random.Next(2)+1, dungeon, filteredPossibleLocations, 
-                    c => {
-                            var path = Search.GetPath(dungeon.GetWidth(), dungeon.GetHeight(), c,
-                             c => { return c.GetTile() == DungeonTileInfo.LadderUp; },
-                             c => { return (c.GetTile() == DungeonTileInfo.LadderUp || c.GetTile() == DungeonTileInfo.Nothing) && ((DungeonTile)c).L == l; });
+                    (a, b) => {
+                            var path = Search.GetPath(dungeon.GetWidth(), dungeon.GetHeight(), a,
+                             a => { return a.GetTile() == DungeonTileInfo.LadderUp || a.Equals(b); },
+                             a => { return (a.GetTile() == DungeonTileInfo.LadderUp || a.GetTile() == DungeonTileInfo.Nothing) && ((DungeonTile)a).L == l; });
                             return path.Count == 0 ? int.MaxValue : path.Count;
                         },
-                    4);
+                    8);
                 foreach (var ladder in evenlyDistributedLadderOptions)
                 {
                     if(ladder.GetTile() == DungeonTileInfo.LadderUp || ladder.GetTile() == DungeonTileInfo.LadderBoth)
@@ -185,22 +185,22 @@ namespace U4DosRandomizer
             }
         }
 
-        public delegate int GetDistance(DungeonTile coord);
+        public delegate int GetDistance(ITile a, ITile b);
 
         private List<DungeonTile> GetEvenlyDistributed(Random random, int totalResults, Dungeon dungeon, List<DungeonTile> possibleLocations, GetDistance distanceCalc, int numCandidates = 10)
         {
             // Using Mitchell's best-candidate algorithm - https://bost.ocks.org/mike/algorithms/
             var results = new List<DungeonTile>();
 
-            var randomIdx = random.Next(0, possibleLocations.Count);
+            int randomIdx = random.Next(0, possibleLocations.Count);
             var original = possibleLocations[randomIdx];
 
-            var usedLocations = new List<DungeonTile>();
+            var usedLocations = new List<ITile>();
 
             results.Add(original);
             usedLocations.Add(original);
 
-            for (int i = 0; i < totalResults; i++)
+            for (int i = 1; i < totalResults; i++)
             {
                 DungeonTile bestCandidate = null;
                 var bestDistance = 0;
@@ -211,7 +211,7 @@ namespace U4DosRandomizer
                     randomIdx = random.Next(0, possibleLocations.Count);
                     DungeonTile selection = possibleLocations[randomIdx];
 
-                    var distance = distanceCalc(selection);
+                    var distance = distanceCalc(FindClosest(selection, usedLocations, distanceCalc), selection);
 
                     if (distance > bestDistance)
                     {
@@ -229,6 +229,23 @@ namespace U4DosRandomizer
             }
 
             return results;
+        }
+
+        private ITile FindClosest(ITile selection, List<ITile> locations, GetDistance distanceCalc)
+        {
+            ITile closest = null;
+            var closestDistance = int.MaxValue;
+            for (int i = 0; i < locations.Count(); i++)
+            {
+                var distance = distanceCalc(selection, locations[i]);
+                if (distance >= 0 && distance < closestDistance)
+                {
+                    closest = locations[i];
+                    closestDistance = distance;
+                }
+            }
+
+            return closest;
         }
 
         public void Update(UltimaData ultimaData, Flags flags)
