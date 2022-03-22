@@ -102,5 +102,15 @@ namespace U4DosRandomizer
         {
             map[l, x % 8 , y % 8] = tile;
         }
+
+        public int GetWidth()
+        {
+            return 8;
+        }
+
+        public int GetHeight()
+        {
+            return 8;
+        }
     }
 }

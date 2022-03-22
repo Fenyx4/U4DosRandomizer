@@ -3,19 +3,20 @@ using System.Collections.Generic;
 
 namespace U4DosRandomizer
 {
-    public class DungeonTile
+    public class DungeonTile : ITile
     {
         public int L { get; private set; }
-        public int X { get; private set; }
-        public int Y { get; private set; }
+
+        public byte X { get; internal set; }
+        public byte Y { get; internal set; }
 
         private byte[,,] map;
 
         public DungeonTile(int l, int x, int y, byte[,,] map)
         {
             this.L = l;
-            this.X = Wrap(x);
-            this.Y = Wrap(y);
+            this.X = (byte)Wrap(x);
+            this.Y = (byte)Wrap(y);
             this.map = map;
         }
 
@@ -85,6 +86,66 @@ namespace U4DosRandomizer
                 return false;
             else
                 return X == ((DungeonTile)obj).X && Y == ((DungeonTile)obj).Y && L == ((DungeonTile)obj).L;
+        }
+
+        public IEnumerable<ITile> NeighborCoordinates()
+        {
+            DungeonTile[] neighbors = null;
+            int idx = 0;
+            if(L == 0)
+            {
+                neighbors = new DungeonTile[5];
+                neighbors[idx++] = new DungeonTile(L + 1, X, Y, map);
+            }
+            else if(L == 7)
+            {
+                neighbors = new DungeonTile[5];
+                neighbors[idx++] = new DungeonTile(L - 1, X, Y, map);
+            }
+            else 
+            {
+                neighbors = new DungeonTile[6];
+                neighbors[idx++] = new DungeonTile(L + 1, X, Y, map);
+                neighbors[idx++] = new DungeonTile(L - 1, X, Y, map);
+            }
+            neighbors[idx++] = new DungeonTile(L, X - 1, Y, map);
+            neighbors[idx++] = new DungeonTile(L, X + 1, Y, map);
+            neighbors[idx++] = new DungeonTile(L, X, Y - 1, map);
+            neighbors[idx++] = new DungeonTile(L, X, Y + 1, map);
+
+            return neighbors;
+        }
+
+        public IEnumerable<ITile> NeighborAndAdjacentCoordinates()
+        {
+            DungeonTile[] neighbors = null;
+            int idx = 0;
+            if (L == 0)
+            {
+                neighbors = new DungeonTile[9];
+                neighbors[idx++] = new DungeonTile(L + 1, X, Y, map);
+            }
+            else if (L == 7)
+            {
+                neighbors = new DungeonTile[9];
+                neighbors[idx++] = new DungeonTile(L - 1, X, Y, map);
+            }
+            else
+            {
+                neighbors = new DungeonTile[10];
+                neighbors[idx++] = new DungeonTile(L + 1, X, Y, map);
+                neighbors[idx++] = new DungeonTile(L - 1, X, Y, map);
+            }
+            neighbors[idx++] = new DungeonTile(L, X - 1, Y, map);
+            neighbors[idx++] = new DungeonTile(L, X + 1, Y, map);
+            neighbors[idx++] = new DungeonTile(L, X, Y - 1, map);
+            neighbors[idx++] = new DungeonTile(L, X, Y + 1, map);
+            neighbors[idx++] = new DungeonTile(L, X - 1, Y - 1, map);
+            neighbors[idx++] = new DungeonTile(L, X + 1, Y - 1, map);
+            neighbors[idx++] = new DungeonTile(L, X - 1, Y + 1, map);
+            neighbors[idx++] = new DungeonTile(L, X + 1, Y + 1, map);
+
+            return neighbors;
         }
     }
 }
