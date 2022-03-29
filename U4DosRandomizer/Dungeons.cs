@@ -137,7 +137,7 @@ namespace U4DosRandomizer
             }
         }
 
-        private void IsolationRemover(string dungeonName, Dungeon dungeon, int numLevels, int width, int height, Random random)
+        private void IsolationRemover(string dungeonName, Dungeon dungeon, int numLevels, int width, int height, Random random, int isolationFails = 0)
         {
             var dungeonCopy = dungeon.Copy();
             Fill(dungeonCopy.GetTile(0, 1, 1), dungeonCopy);
@@ -154,10 +154,13 @@ namespace U4DosRandomizer
             };
 
             DungeonTile connection = null;
-            var isolatedTiles = true;
-            while (isolatedTiles)
+            var previousIsolatedTiles = Int32.MinValue;
+            var isolatedTiles = Int32.MaxValue;
+            var isolatedLevel = Int32.MaxValue;
+            while (isolatedTiles > 0 && previousIsolatedTiles != isolatedTiles)
             {
-                isolatedTiles = false;
+                previousIsolatedTiles = isolatedTiles;
+                isolatedTiles = 0;
                 allTiles.Shuffle(random);
                 foreach (var tile in allTiles)
                 {
@@ -198,11 +201,35 @@ namespace U4DosRandomizer
                     }
                     if(tile.GetTile() == DungeonTileInfo.Nothing)
                     {
-                        isolatedTiles = true;
+                        isolatedTiles++;
+                        isolatedLevel = tile.L;
                     }
                 }
             }
 
+            if(isolatedTiles > 0)
+            {
+                isolationFails++;
+                var x_offset = isolationFails % 8 != 0 ? 1 : 0;
+                var y_offset = isolationFails % 8 == 0 ? 1 : 0;
+                for (int x = 0; x < width; x++)
+                {
+                    for(int y = 0; y < height; y++)
+                    {
+                        dungeonCopy.SetTile(isolatedLevel, x, y, dungeon.GetTile(isolatedLevel, (x + x_offset) % 8, (y + y_offset) % 8).GetTile());
+                    }
+                }
+
+                for (int x = 0; x < width; x++)
+                {
+                    for (int y = 0; y < height; y++)
+                    {
+                        dungeon.SetTile(isolatedLevel, x, y, dungeonCopy.GetTile(isolatedLevel, x, y).GetTile());
+                    }
+                }
+
+                IsolationRemover(dungeonName, dungeon, numLevels, width, height, random, isolationFails);
+            }
         }
 
         private static void Fill(DungeonTile start, Dungeon dungeon)
