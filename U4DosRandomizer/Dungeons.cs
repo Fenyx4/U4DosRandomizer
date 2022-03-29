@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text;
 using U4DosRandomizer.Helpers;
 using U4DosRandomizer.Resources;
 
@@ -79,17 +78,20 @@ namespace U4DosRandomizer
 
         public void Randomize(Random random, Flags flags)
         {
-            IMazeGenerator wipeDungeons = new WipeMazeGenerator();
-            foreach (var dungeonName in dungeons.Keys)
-            {
-                wipeDungeons.GenerateMaze(dungeonName, dungeons[dungeonName], 8, 8, 8, random);
-            }
-
-            //var hsDungeons = new HitomezashiStitchMazeGenerator();
+            var height = 8;
+            var width = 8;
+            var levels = 8;
+            //IMazeGenerator wipeDungeons = new WipeMazeGenerator();
             //foreach (var dungeonName in dungeons.Keys)
             //{
-            //    hsDungeons.GenerateMaze(dungeonName, dungeons[dungeonName], 8, 8, 8, random);
+            //    wipeDungeons.GenerateMaze(dungeonName, dungeons[dungeonName], levels, width, height, random);
             //}
+
+            var hsDungeons = new HitomezashiStitchMazeGenerator();
+            foreach (var dungeonName in dungeons.Keys)
+            {
+                hsDungeons.GenerateMaze(dungeonName, dungeons[dungeonName], levels, width, height, random);
+            }
 
             // Other stones
             if (flags.Dungeon == 3)
@@ -124,10 +126,107 @@ namespace U4DosRandomizer
             ////TODO - Do something here
             //foreach( var dungeon in dungeons.Values)
             //{
-            //    wilson.GenerateMaze(dungeon, 8, 8, 8, random);
+            //    wilson.GenerateMaze(dungeon, levels, width, height, random);
             //}
 
-            AddLadders("COVETOUS", dungeons["COVETOUS"], 8, 8, 8, random);
+            foreach (var dungeonName in dungeons.Keys)
+            {
+                dungeons[dungeonName].SetTile(0, 1, 1, DungeonTileInfo.LadderUp);
+                //AddLadders(dungeonName, dungeons[dungeonName], levels, width, height, random);
+                IsolationRemover(dungeonName, dungeons[dungeonName], levels, width, height, random);
+            }
+        }
+
+        private void IsolationRemover(string dungeonName, Dungeon dungeon, int numLevels, int width, int height, Random random)
+        {
+            var dungeonCopy = dungeon.Copy();
+            Fill(dungeonCopy.GetTile(0, 1, 1), dungeonCopy);
+
+            var allTiles = dungeonCopy.GetTiles();
+            
+            var directions = new List<int[]>() {
+                new int[] { -1, 0, 0 },
+                new int[] { 1, 0, 0 },
+                new int[] { 0, -2, 0 },
+                new int[] { 0, 2, 0 },
+                new int[] { 0, 0, -2 },
+                new int[] { 0, 0, 2 },
+            };
+
+            DungeonTile connection = null;
+            var isolatedTiles = true;
+            while (isolatedTiles)
+            {
+                isolatedTiles = false;
+                allTiles.Shuffle(random);
+                foreach (var tile in allTiles)
+                {
+                    directions.Shuffle(random);
+                    foreach (var direction in directions)
+                    {
+                        if (tile.L + direction[0] < numLevels && tile.L + direction[0] >= 0)
+                        {
+                            if (!(tile.GetTile() == DungeonTileInfo.Nothing || tile.GetTile() == DungeonTileInfo.Wall) && dungeonCopy.GetTile(tile.L + direction[0], tile.X + direction[1], tile.Y + direction[2]).GetTile() == DungeonTileInfo.Nothing)
+                            {
+                                connection = dungeonCopy.GetTile(tile.L + direction[0],
+                                    tile.X + direction[1] / 2,
+                                    tile.Y + direction[2] / 2);
+                                if (connection.L > tile.L)
+                                {
+                                    dungeon.SetTile(tile.L, tile.X, tile.Y, DungeonTileInfo.LadderDown);
+                                    tile.SetTile(DungeonTileInfo.LadderDown);
+                                    dungeon.SetTile(connection.L, connection.X, connection.Y, DungeonTileInfo.LadderUp);
+                                    connection.SetTile(DungeonTileInfo.LadderUp);
+                                    Fill(connection, dungeon);
+                                }
+                                else if (connection.L < tile.L)
+                                {
+                                    dungeon.SetTile(tile.L, tile.X, tile.Y, DungeonTileInfo.LadderUp);
+                                    tile.SetTile(DungeonTileInfo.LadderUp);
+                                    dungeon.SetTile(connection.L, connection.X, connection.Y, DungeonTileInfo.LadderDown);
+                                    connection.SetTile(DungeonTileInfo.LadderDown);
+                                    Fill(connection, dungeon);
+                                }
+                                else
+                                {
+                                    dungeon.SetTile(connection.L, connection.X, connection.Y, DungeonTileInfo.Nothing);
+                                    connection.SetTile(DungeonTileInfo.Nothing);
+                                    Fill(connection, dungeon);
+                                }
+                            }
+                        }
+                    }
+                    if(tile.GetTile() == DungeonTileInfo.Nothing)
+                    {
+                        isolatedTiles = true;
+                    }
+                }
+            }
+
+        }
+
+        private static void Fill(DungeonTile start, Dungeon dungeon)
+        {
+            //https://www.astrolog.org/labyrnth/algrithm.htm
+            Algorithms.BreadthFirstTraversal.BreadthFirst(start,
+                c => { if (c.GetTile() == DungeonTileInfo.Nothing) { c.SetTile(0xF1); } return true; },
+                c =>
+                {
+                    var neighbors = c.NeighborCoordinates();
+                    var results = new List<ITile>();
+                    foreach (var neighbor in neighbors)
+                    {
+                        var neighborDungeonTile = (DungeonTile)neighbor;
+                        if (neighbor.GetTile() != DungeonTileInfo.Wall &&
+                        !(!(c.GetTile() == DungeonTileInfo.LadderDown || c.GetTile() == DungeonTileInfo.LadderBoth) && neighborDungeonTile.L > ((DungeonTile)c).L) &&
+                        !(!(c.GetTile() == DungeonTileInfo.LadderUp || c.GetTile() == DungeonTileInfo.LadderBoth) && neighborDungeonTile.L < ((DungeonTile)c).L))
+                        {
+                            results.Add(neighbor);
+                        }
+
+                    }
+                    return results;
+                });
         }
 
         private void AddLadders(string dungeonName, Dungeon dungeon, int numLevels, int width, int height, Random random)

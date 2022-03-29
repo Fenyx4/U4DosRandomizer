@@ -10,6 +10,12 @@ namespace U4DosRandomizer
         private byte[,,] map = new byte[8, 8, 8];
         private List<byte[]> rooms = new List<byte[]>();
 
+        private Dungeon(byte [,,] map, List<byte[]> rooms)
+        {
+            this.map = map;
+            this.rooms = rooms;
+        }
+
         public Dungeon(Stream dngStream, UltimaData data)
         {
             BinaryReader readBinary = new BinaryReader(dngStream);
@@ -93,6 +99,23 @@ namespace U4DosRandomizer
             return results;
         }
 
+        public List<DungeonTile> GetTiles()
+        {
+            var results = new List<DungeonTile>();
+            for (int l = 0; l < 8; l++)
+            {
+                for (int x = 0; x < 8; x++)
+                {
+                    for (int y = 0; y < 8; y++)
+                    {
+                        results.Add(new DungeonTile(l, x, y, map));
+                    }
+                }
+            }
+
+            return results;
+        }
+
         public DungeonTile GetTile(int level, int x, int y)
         {
             return new DungeonTile(level, x, y, map);
@@ -111,6 +134,33 @@ namespace U4DosRandomizer
         public int GetHeight()
         {
             return 8;
+        }
+
+        public Dungeon Copy()
+        {
+            var mapCopy = new byte[8, 8, 8];
+            for(int l = 0; l < 8; l++)
+            {
+                for(int x = 0; x < 8; x++)
+                {
+                    for(int y = 0; y < 8; y++)
+                    {
+                        mapCopy[l, x, y] = map[l, x, y];
+                    }
+                }
+            }
+
+            var roomsCopy = new List<byte[]>();
+            for(int i = 0; i < roomsCopy.Count; i++)
+            {
+                roomsCopy.Add(new byte[rooms[i].Length]);
+                for(int j = 0; j < 8; j++)
+                {
+                    roomsCopy[i][j] = roomsCopy[i][j];
+                }
+            }
+
+            return new Dungeon(mapCopy, roomsCopy);
         }
     }
 }

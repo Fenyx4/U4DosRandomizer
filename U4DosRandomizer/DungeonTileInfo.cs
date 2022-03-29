@@ -30,6 +30,6 @@ namespace U4DosRandomizer
         public const byte Door                                            = 0xC0;	
         public const byte DungeonRoomStart                              = 0xD0; // To DF
         public const byte HiddenDoor                                     = 0xE0;	
-        public const byte Wall                                            = 0xF0;	
+        public const byte Wall                                            = 0xF0;
     }
 }
