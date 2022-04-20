@@ -5,10 +5,37 @@ namespace U4DosRandomizer
 {
     public class DungeonTile : ITile
     {
-        public int L { get; private set; }
+        private int l_value = 0;
+        public int L { get
+            {
+                return l_value;
+            }
+            private set
+            {
+                l_value = value;
+            }
+        }
 
-        public byte X { get; internal set; }
-        public byte Y { get; internal set; }
+        private byte x_value = 0;
+        public byte X { get
+            {
+                return x_value;
+            } 
+            internal set
+            {
+                x_value = value;
+            } 
+        }
+        private byte y_value = 0;
+        public byte Y { get
+            {
+                return y_value;
+            }
+            internal set
+            {
+                y_value = value;
+            }
+        }
 
         private byte[,,] map;
 
@@ -22,21 +49,21 @@ namespace U4DosRandomizer
 
         public byte GetTile()
         {
-            return map[L, X, Y];
+            return map[l_value, x_value, y_value];
         }
 
         public void SetTile(byte tile)
         {
-            map[L, X, Y] = tile;
+            map[l_value, x_value, y_value] = tile;
         }
 
         public IEnumerable<DungeonTile> NeighborsSameLevel()
         {
             DungeonTile[] neighbors = new DungeonTile[4];
-            neighbors[0] = new DungeonTile(L, X - 1, Y, map);
-            neighbors[1] = new DungeonTile(L, X + 1, Y, map);
-            neighbors[2] = new DungeonTile(L, X, Y - 1, map);
-            neighbors[3] = new DungeonTile(L, X, Y + 1, map);
+            neighbors[0] = new DungeonTile(l_value, x_value - 1, y_value, map);
+            neighbors[1] = new DungeonTile(l_value, x_value + 1, y_value, map);
+            neighbors[2] = new DungeonTile(l_value, x_value, y_value - 1, map);
+            neighbors[3] = new DungeonTile(l_value, x_value, y_value + 1, map);
 
             return neighbors;
         }
@@ -44,14 +71,14 @@ namespace U4DosRandomizer
         public IEnumerable<DungeonTile> NeighborsSameLevelAndAdjacent()
         {
             DungeonTile[] neighbors = new DungeonTile[8];
-            neighbors[0] = new DungeonTile(L, X - 1, Y, map);
-            neighbors[1] = new DungeonTile(L, X + 1, Y, map);
-            neighbors[2] = new DungeonTile(L, X, Y - 1, map);
-            neighbors[3] = new DungeonTile(L, X, Y + 1, map);
-            neighbors[4] = new DungeonTile(L, X - 1, Y - 1, map);
-            neighbors[5] = new DungeonTile(L, X + 1, Y - 1, map);
-            neighbors[6] = new DungeonTile(L, X - 1, Y + 1, map);
-            neighbors[7] = new DungeonTile(L, X + 1, Y + 1, map);
+            neighbors[0] = new DungeonTile(l_value, x_value - 1, y_value, map);
+            neighbors[1] = new DungeonTile(l_value, x_value + 1, y_value, map);
+            neighbors[2] = new DungeonTile(l_value, x_value, y_value - 1, map);
+            neighbors[3] = new DungeonTile(l_value, x_value, y_value + 1, map);
+            neighbors[4] = new DungeonTile(l_value, x_value - 1, y_value - 1, map);
+            neighbors[5] = new DungeonTile(l_value, x_value + 1, y_value - 1, map);
+            neighbors[6] = new DungeonTile(l_value, x_value - 1, y_value + 1, map);
+            neighbors[7] = new DungeonTile(l_value, x_value + 1, y_value + 1, map);
 
             return neighbors;
         }
@@ -59,10 +86,10 @@ namespace U4DosRandomizer
         public IEnumerable<DungeonTile> KittyCorners()
         {
             DungeonTile[] neighbors = new DungeonTile[4];
-            neighbors[0] = new DungeonTile(L, X - 1, Y - 1, map);
-            neighbors[1] = new DungeonTile(L, X + 1, Y - 1, map);
-            neighbors[2] = new DungeonTile(L, X - 1, Y + 1, map);
-            neighbors[3] = new DungeonTile(L, X + 1, Y + 1, map);
+            neighbors[0] = new DungeonTile(l_value, x_value - 1, y_value - 1, map);
+            neighbors[1] = new DungeonTile(l_value, x_value + 1, y_value - 1, map);
+            neighbors[2] = new DungeonTile(l_value, x_value - 1, y_value + 1, map);
+            neighbors[3] = new DungeonTile(l_value, x_value + 1, y_value + 1, map);
 
             return neighbors;
         }
@@ -74,10 +101,7 @@ namespace U4DosRandomizer
 
         public override int GetHashCode()
         {
-            int result = (int)(X ^ (X >> 32));
-            result = 31 * result + (int)(Y ^ (Y >> 32));
-            result = 31 * result + (int)(L ^ (L >> 32));
-            return result;
+            return HashCode.Combine(l_value, x_value, y_value);
         }
 
         public override bool Equals(Object obj)

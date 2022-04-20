@@ -10,7 +10,7 @@ namespace U4DosRandomizer
         private byte[,,] map = new byte[8, 8, 8];
         private List<byte[]> rooms = new List<byte[]>();
 
-        private Dungeon(byte [,,] map, List<byte[]> rooms)
+        public Dungeon(byte [,,] map, List<byte[]> rooms)
         {
             this.map = map;
             this.rooms = rooms;

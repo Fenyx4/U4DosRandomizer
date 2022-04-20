@@ -128,16 +128,53 @@ namespace U4DosRandomizer
             //{
             //    wilson.GenerateMaze(dungeon, levels, width, height, random);
             //}
-
+            
             foreach (var dungeonName in dungeons.Keys)
             {
-                dungeons[dungeonName].SetTile(0, 1, 1, DungeonTileInfo.LadderUp);
-                //AddLadders(dungeonName, dungeons[dungeonName], levels, width, height, random);
-                IsolationRemover(dungeonName, dungeons[dungeonName], levels, width, height, random);
+                if (dungeonName != "DESPISE")
+                {
+                    dungeons[dungeonName].SetTile(0, 1, 1, DungeonTileInfo.LadderUp);
+                    //AddLadders(dungeonName, dungeons[dungeonName], levels, width, height, random);
+                    IsolationRemover(dungeonName, dungeons[dungeonName], levels, width, height, random);
+
+                    PlaceAltar(dungeonName, dungeons[dungeonName], levels, width, height, random);
+
+                    Fill(dungeons[dungeonName].GetTile(0, 1, 1), dungeons[dungeonName]);
+                }
             }
+
+            //dungeons["COVETOUS"].SetTile(0, 1, 1, DungeonTileInfo.LadderUp);
+            //IsolationRemover("COVETOUS", dungeons["COVETOUS"], levels, width, height, random);
+            Fill(dungeons["DESPISE"].GetTile(0, 1, 1), dungeons["DESPISE"]);
         }
 
-        private void IsolationRemover(string dungeonName, Dungeon dungeon, int numLevels, int width, int height, Random random, int isolationFails = 0)
+        private void PlaceAltar(string dungeonName, Dungeon dungeon, int levels, int width, int height, Random random)
+        {
+            ITile furthestTile = dungeon.GetTile(0, 1, 1);
+            Algorithms.BreadthFirstTraversal.BreadthFirst(dungeon.GetTile(0, 1, 1),
+                c => { furthestTile = c; return true; },
+                c =>
+                {
+                    var neighbors = c.NeighborCoordinates();
+                    var results = new List<ITile>();
+                    foreach (var neighbor in neighbors)
+                    {
+                        var neighborDungeonTile = (DungeonTile)neighbor;
+                        if (neighbor.GetTile() != DungeonTileInfo.Wall &&
+                        !(!(c.GetTile() == DungeonTileInfo.LadderDown || c.GetTile() == DungeonTileInfo.LadderBoth) && neighborDungeonTile.L > ((DungeonTile)c).L) &&
+                        !(!(c.GetTile() == DungeonTileInfo.LadderUp || c.GetTile() == DungeonTileInfo.LadderBoth) && neighborDungeonTile.L < ((DungeonTile)c).L))
+                        {
+                            results.Add(neighbor);
+                        }
+
+                    }
+                    return results;
+                });
+
+            furthestTile.SetTile(DungeonTileInfo.AltarOrStone);
+        }
+
+        public static void IsolationRemover(string dungeonName, Dungeon dungeon, int numLevels, int width, int height, Random random, int isolationFails = 0)
         {
             var dungeonCopy = dungeon.Copy();
             Fill(dungeonCopy.GetTile(0, 1, 1), dungeonCopy);
@@ -153,7 +190,7 @@ namespace U4DosRandomizer
                 new int[] { 0, 0, 2 },
             };
 
-            DungeonTile connection = null;
+            DungeonTile connection;
             var previousIsolatedTiles = Int32.MinValue;
             var isolatedTiles = Int32.MaxValue;
             var isolatedLevel = Int32.MaxValue;
@@ -176,18 +213,18 @@ namespace U4DosRandomizer
                                     tile.Y + direction[2] / 2);
                                 if (connection.L > tile.L)
                                 {
-                                    dungeon.SetTile(tile.L, tile.X, tile.Y, DungeonTileInfo.LadderDown);
-                                    tile.SetTile(DungeonTileInfo.LadderDown);
-                                    dungeon.SetTile(connection.L, connection.X, connection.Y, DungeonTileInfo.LadderUp);
-                                    connection.SetTile(DungeonTileInfo.LadderUp);
+                                    MergeLadder(dungeon.GetTile(tile.L, tile.X, tile.Y), DungeonTileInfo.LadderDown);
+                                    MergeLadder(tile, DungeonTileInfo.LadderDown);
+                                    MergeLadder(dungeon.GetTile(connection.L, connection.X, connection.Y), DungeonTileInfo.LadderUp);
+                                    MergeLadder(connection, DungeonTileInfo.LadderUp);
                                     Fill(connection, dungeon);
                                 }
                                 else if (connection.L < tile.L)
                                 {
-                                    dungeon.SetTile(tile.L, tile.X, tile.Y, DungeonTileInfo.LadderUp);
-                                    tile.SetTile(DungeonTileInfo.LadderUp);
-                                    dungeon.SetTile(connection.L, connection.X, connection.Y, DungeonTileInfo.LadderDown);
-                                    connection.SetTile(DungeonTileInfo.LadderDown);
+                                    MergeLadder(dungeon.GetTile(tile.L, tile.X, tile.Y), DungeonTileInfo.LadderUp);
+                                    MergeLadder(tile, DungeonTileInfo.LadderUp);
+                                    MergeLadder(dungeon.GetTile(connection.L, connection.X, connection.Y), DungeonTileInfo.LadderDown);
+                                    MergeLadder(connection, DungeonTileInfo.LadderDown);
                                     Fill(connection, dungeon);
                                 }
                                 else
@@ -199,7 +236,11 @@ namespace U4DosRandomizer
                             }
                         }
                     }
-                    if(tile.GetTile() == DungeonTileInfo.Nothing)
+
+                }
+                foreach (var tile in allTiles)
+                {
+                    if (tile.GetTile() == DungeonTileInfo.Nothing)
                     {
                         isolatedTiles++;
                         isolatedLevel = tile.L;
@@ -228,11 +269,65 @@ namespace U4DosRandomizer
                     }
                 }
 
+
+                for (int x = 0; x < width; x++)
+                {
+                    for (int y = 0; y < height; y++)
+                    {
+                        var tile = dungeon.GetTile(isolatedLevel, x, y);
+                        if (tile.GetTile() == DungeonTileInfo.LadderUp || tile.GetTile() == DungeonTileInfo.LadderDown || tile.GetTile() == DungeonTileInfo.LadderBoth)
+                        {
+                            tile.SetTile(DungeonTileInfo.Nothing);
+                        }
+
+                        if (isolatedLevel != 7)
+                        {
+                            tile = dungeon.GetTile(isolatedLevel + 1, x, y);
+                            if(tile.GetTile() == DungeonTileInfo.LadderUp)
+                            {
+                                tile.SetTile(DungeonTileInfo.Nothing);
+                            }
+                            else if(tile.GetTile() == DungeonTileInfo.LadderBoth)
+                            {
+                                tile.SetTile(DungeonTileInfo.LadderDown);
+                            }
+                        }
+
+                        if (isolatedLevel != 0)
+                        {
+                            tile = dungeon.GetTile(isolatedLevel - 1, x, y);
+                            if (tile.GetTile() == DungeonTileInfo.LadderDown)
+                            {
+                                tile.SetTile(DungeonTileInfo.Nothing);
+                            }
+                            else if (tile.GetTile() == DungeonTileInfo.LadderBoth)
+                            {
+                                tile.SetTile(DungeonTileInfo.LadderUp);
+                            }
+                        }
+                    }
+                }
+
                 IsolationRemover(dungeonName, dungeon, numLevels, width, height, random, isolationFails);
             }
         }
 
-        private static void Fill(DungeonTile start, Dungeon dungeon)
+        private static void MergeLadder(DungeonTile tile, byte ladderAddition)
+        {
+            if(tile.GetTile() == DungeonTileInfo.LadderDown || tile.GetTile() == DungeonTileInfo.LadderUp)
+            {
+                if(tile.GetTile() != ladderAddition)
+                {
+                    tile.SetTile(DungeonTileInfo.LadderBoth);
+                }
+            }
+            else
+            {
+                tile.SetTile(ladderAddition);
+            }
+        }
+
+        public static void Fill(DungeonTile start, Dungeon dungeon)
         {
             //https://www.astrolog.org/labyrnth/algrithm.htm
             Algorithms.BreadthFirstTraversal.BreadthFirst(start,
