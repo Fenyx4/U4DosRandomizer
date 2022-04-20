@@ -10,10 +10,21 @@ namespace U4DosRandomizer
         private byte[,,] map = new byte[8, 8, 8];
         private List<byte[]> rooms = new List<byte[]>();
 
-        public Dungeon(byte [,,] map, List<byte[]> rooms)
+        public Dungeon(byte[,,] map, List<byte[]> rooms)
         {
             this.map = map;
             this.rooms = rooms;
+
+            for (int l = 0; l < 8; l++)
+            {
+                for (int x = 0; x < 8; x++)
+                {
+                    for (int y = 0; y < 8; y++)
+                    {
+                        dungeonTileHash.Add((l * 8 * 8) + x + y * 8, new DungeonTile(l, x, y, this, map));
+                    }
+                }
+            }
         }
 
         public Dungeon(Stream dngStream, UltimaData data)
@@ -40,6 +51,11 @@ namespace U4DosRandomizer
                 roomArr.CopyTo(roomClone, 0);
                 rooms.Add(roomClone);
             }
+        }
+
+        internal byte GetTileValue(int l, byte x, byte y)
+        {
+            return map[l, x, y];
         }
 
         public IEnumerable<DungeonTile> Tiles(int level)
@@ -90,7 +106,7 @@ namespace U4DosRandomizer
                     {
                         if(map[l, x, y] == tile)
                         {
-                            results.Add(new DungeonTile(l, x, y, map));
+                            results.Add(GetTile(l, x, y));
                         }
                     }
                 }
@@ -108,7 +124,7 @@ namespace U4DosRandomizer
                 {
                     for (int y = 0; y < 8; y++)
                     {
-                        results.Add(new DungeonTile(l, x, y, map));
+                        results.Add(GetTile(l, x, y));
                     }
                 }
             }
@@ -116,9 +132,10 @@ namespace U4DosRandomizer
             return results;
         }
 
+        private Dictionary<int, DungeonTile> dungeonTileHash = new Dictionary<int, DungeonTile>();
         public DungeonTile GetTile(int level, int x, int y)
         {
-            return new DungeonTile(level, x, y, map);
+            return dungeonTileHash[(level * 8 * 8) + Wrap(x) + Wrap(y) * 8];
         }
 
         public void SetTile(int l, int x, int y, byte tile)
@@ -161,6 +178,11 @@ namespace U4DosRandomizer
             }
 
             return new Dungeon(mapCopy, roomsCopy);
+        }
+
+        private static int Wrap(int input)
+        {
+            return (input % 8 + 8) % 8;
         }
     }
 }

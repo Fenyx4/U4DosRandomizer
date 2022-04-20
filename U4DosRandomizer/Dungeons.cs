@@ -339,9 +339,10 @@ namespace U4DosRandomizer
                     foreach (var neighbor in neighbors)
                     {
                         var neighborDungeonTile = (DungeonTile)neighbor;
+                        var tile = c.GetTile();
                         if (neighbor.GetTile() != DungeonTileInfo.Wall &&
-                        !(!(c.GetTile() == DungeonTileInfo.LadderDown || c.GetTile() == DungeonTileInfo.LadderBoth) && neighborDungeonTile.L > ((DungeonTile)c).L) &&
-                        !(!(c.GetTile() == DungeonTileInfo.LadderUp || c.GetTile() == DungeonTileInfo.LadderBoth) && neighborDungeonTile.L < ((DungeonTile)c).L))
+                        !(!(tile == DungeonTileInfo.LadderDown || tile == DungeonTileInfo.LadderBoth) && neighborDungeonTile.L > ((DungeonTile)c).L) &&
+                        !(!(tile == DungeonTileInfo.LadderUp || tile == DungeonTileInfo.LadderBoth) && neighborDungeonTile.L < ((DungeonTile)c).L))
                         {
                             results.Add(neighbor);
                         }
