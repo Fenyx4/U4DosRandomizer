@@ -11,9 +11,11 @@ namespace U4DosRandomizer.Algorithms
             var queue = new Queue<ITile>();
             queue.Enqueue(startTile);
             HashSet<ITile> closedset = new HashSet<ITile>(); // The set of nodes visited
+            closedset.Add(startTile);
             while (queue.Count > 0)
             {
                 var cell = queue.Dequeue();
+
                 closedset.Add(cell);
                 actionPerTile(cell);
                 var neighbors = getNeighbors(cell);
@@ -21,6 +23,7 @@ namespace U4DosRandomizer.Algorithms
                 {
                     if (!closedset.Contains(neighbor))
                     {
+                        closedset.Add(neighbor);
                         queue.Enqueue(neighbor);
                     }
                 }
