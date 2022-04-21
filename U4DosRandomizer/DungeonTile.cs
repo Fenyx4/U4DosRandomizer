@@ -114,6 +114,42 @@ namespace U4DosRandomizer
                 return x_value == ((DungeonTile)obj).x_value && y_value == ((DungeonTile)obj).y_value && l_value == ((DungeonTile)obj).l_value;
         }
 
+        public List<ITile> WalkableNeighborCoordinates()
+        {
+            var neighbors = new List<ITile>();
+            var tileValue = GetTile();
+            if (l_value != 0 && (tileValue == DungeonTileInfo.LadderUp || tileValue == DungeonTileInfo.LadderBoth))
+            {
+                neighbors.Add(dungeon.GetTile(l_value - 1, x_value, y_value));
+            }
+            if (tileValue == DungeonTileInfo.LadderDown || tileValue == DungeonTileInfo.LadderBoth)
+            {
+                neighbors.Add(dungeon.GetTile(l_value + 1, x_value, y_value));
+            }
+            var tile = dungeon.GetTile(l_value, x_value - 1, y_value);
+            if (tile.GetTile() != DungeonTileInfo.Wall)
+            {
+                neighbors.Add(tile);
+            }
+            tile = dungeon.GetTile(l_value, x_value + 1, y_value);
+            if (tile.GetTile() != DungeonTileInfo.Wall)
+            {
+                neighbors.Add(tile);
+            }
+            tile = dungeon.GetTile(l_value, x_value, y_value - 1);
+            if (tile.GetTile() != DungeonTileInfo.Wall)
+            {
+                neighbors.Add(tile);
+            }
+            tile = dungeon.GetTile(l_value, x_value, y_value + 1);
+            if (tile.GetTile() != DungeonTileInfo.Wall)
+            {
+                neighbors.Add(tile);
+            }
+
+            return neighbors;
+        }
+
         public IEnumerable<ITile> NeighborCoordinates()
         {
             DungeonTile[] neighbors = null;

@@ -334,21 +334,7 @@ namespace U4DosRandomizer
                 c => { if (c.GetTile() == DungeonTileInfo.Nothing) { c.SetTile(0xF1); } return true; },
                 c =>
                 {
-                    var neighbors = c.NeighborCoordinates();
-                    var results = new List<ITile>();
-                    foreach (var neighbor in neighbors)
-                    {
-                        var neighborDungeonTile = (DungeonTile)neighbor;
-                        var tile = c.GetTile();
-                        if (neighbor.GetTile() != DungeonTileInfo.Wall &&
-                        !(!(tile == DungeonTileInfo.LadderDown || tile == DungeonTileInfo.LadderBoth) && neighborDungeonTile.L > ((DungeonTile)c).L) &&
-                        !(!(tile == DungeonTileInfo.LadderUp || tile == DungeonTileInfo.LadderBoth) && neighborDungeonTile.L < ((DungeonTile)c).L))
-                        {
-                            results.Add(neighbor);
-                        }
-
-                    }
-                    return results;
+                    return ((DungeonTile)c).WalkableNeighborCoordinates();
                 });
         }
 
