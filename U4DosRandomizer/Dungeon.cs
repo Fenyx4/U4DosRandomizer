@@ -51,6 +51,17 @@ namespace U4DosRandomizer
                 roomArr.CopyTo(roomClone, 0);
                 rooms.Add(roomClone);
             }
+
+            for (int l = 0; l < 8; l++)
+            {
+                for (int x = 0; x < 8; x++)
+                {
+                    for (int y = 0; y < 8; y++)
+                    {
+                        dungeonTileHash.Add((l * 8 * 8) + x + y * 8, new DungeonTile(l, x, y, this, map));
+                    }
+                }
+            }
         }
 
         internal byte GetTileValue(int l, byte x, byte y)
@@ -118,15 +129,10 @@ namespace U4DosRandomizer
         public List<DungeonTile> GetTiles()
         {
             var results = new List<DungeonTile>();
-            for (int l = 0; l < 8; l++)
+
+            foreach (var tile in dungeonTileHash.Values)
             {
-                for (int x = 0; x < 8; x++)
-                {
-                    for (int y = 0; y < 8; y++)
-                    {
-                        results.Add(GetTile(l, x, y));
-                    }
-                }
+                results.Add(tile);
             }
 
             return results;

@@ -131,21 +131,25 @@ namespace U4DosRandomizer
             
             foreach (var dungeonName in dungeons.Keys)
             {
-                if (dungeonName != "DESPISE")
+                //if (dungeonName != "DESPISE")
                 {
                     dungeons[dungeonName].SetTile(0, 1, 1, DungeonTileInfo.LadderUp);
                     //AddLadders(dungeonName, dungeons[dungeonName], levels, width, height, random);
-                    IsolationRemover(dungeonName, dungeons[dungeonName], levels, width, height, random);
+                    var dungeonNew = IsolationRemover(dungeonName, dungeons[dungeonName], levels, width, height, random);
+                    foreach (var tile in dungeonNew.GetTiles())
+                    {
+                        dungeons[dungeonName].SetTile(tile.L, tile.X, tile.Y, tile.GetTile());
+                    }
 
                     PlaceAltar(dungeonName, dungeons[dungeonName], levels, width, height, random);
 
-                    Fill(dungeons[dungeonName].GetTile(0, 1, 1), dungeons[dungeonName]);
+                    //Fill(dungeons[dungeonName].GetTile(0, 1, 1), dungeons[dungeonName]);
                 }
             }
 
             //dungeons["COVETOUS"].SetTile(0, 1, 1, DungeonTileInfo.LadderUp);
             //IsolationRemover("COVETOUS", dungeons["COVETOUS"], levels, width, height, random);
-            Fill(dungeons["DESPISE"].GetTile(0, 1, 1), dungeons["DESPISE"]);
+            //Fill(dungeons["DESPISE"].GetTile(0, 1, 1), dungeons["DESPISE"]);
         }
 
         private void PlaceAltar(string dungeonName, Dungeon dungeon, int levels, int width, int height, Random random)
@@ -174,9 +178,10 @@ namespace U4DosRandomizer
             furthestTile.SetTile(DungeonTileInfo.AltarOrStone);
         }
 
-        public static void IsolationRemover(string dungeonName, Dungeon dungeon, int numLevels, int width, int height, Random random, int isolationFails = 0)
+        public static Dungeon IsolationRemover(string dungeonName, Dungeon dungeon, int numLevels, int width, int height, Random random, int isolationFails = 0)
         {
-            var dungeonCopy = dungeon.Copy();
+            var dungeonOriginal = dungeon.Copy();
+            var dungeonCopy = dungeonOriginal.Copy();
             Fill(dungeonCopy.GetTile(0, 1, 1), dungeonCopy);
 
             var allTiles = dungeonCopy.GetTiles();
@@ -196,6 +201,7 @@ namespace U4DosRandomizer
             var isolatedLevel = Int32.MaxValue;
             while (isolatedTiles > 0 && previousIsolatedTiles != isolatedTiles)
             {
+                isolatedLevel = Int32.MaxValue;
                 previousIsolatedTiles = isolatedTiles;
                 isolatedTiles = 0;
                 allTiles.Shuffle(random);
@@ -213,25 +219,25 @@ namespace U4DosRandomizer
                                     tile.Y + direction[2] / 2);
                                 if (connection.L > tile.L)
                                 {
-                                    MergeLadder(dungeon.GetTile(tile.L, tile.X, tile.Y), DungeonTileInfo.LadderDown);
+                                    MergeLadder(dungeonOriginal.GetTile(tile.L, tile.X, tile.Y), DungeonTileInfo.LadderDown);
                                     MergeLadder(tile, DungeonTileInfo.LadderDown);
-                                    MergeLadder(dungeon.GetTile(connection.L, connection.X, connection.Y), DungeonTileInfo.LadderUp);
+                                    MergeLadder(dungeonOriginal.GetTile(connection.L, connection.X, connection.Y), DungeonTileInfo.LadderUp);
                                     MergeLadder(connection, DungeonTileInfo.LadderUp);
-                                    Fill(connection, dungeon);
+                                    Fill(connection, dungeonOriginal);
                                 }
                                 else if (connection.L < tile.L)
                                 {
-                                    MergeLadder(dungeon.GetTile(tile.L, tile.X, tile.Y), DungeonTileInfo.LadderUp);
+                                    MergeLadder(dungeonOriginal.GetTile(tile.L, tile.X, tile.Y), DungeonTileInfo.LadderUp);
                                     MergeLadder(tile, DungeonTileInfo.LadderUp);
-                                    MergeLadder(dungeon.GetTile(connection.L, connection.X, connection.Y), DungeonTileInfo.LadderDown);
+                                    MergeLadder(dungeonOriginal.GetTile(connection.L, connection.X, connection.Y), DungeonTileInfo.LadderDown);
                                     MergeLadder(connection, DungeonTileInfo.LadderDown);
-                                    Fill(connection, dungeon);
+                                    Fill(connection, dungeonOriginal);
                                 }
                                 else
                                 {
-                                    dungeon.SetTile(connection.L, connection.X, connection.Y, DungeonTileInfo.Nothing);
+                                    dungeonOriginal.SetTile(connection.L, connection.X, connection.Y, DungeonTileInfo.Nothing);
                                     connection.SetTile(DungeonTileInfo.Nothing);
-                                    Fill(connection, dungeon);
+                                    Fill(connection, dungeonOriginal);
                                 }
                             }
                         }
@@ -243,7 +249,7 @@ namespace U4DosRandomizer
                     if (tile.GetTile() == DungeonTileInfo.Nothing)
                     {
                         isolatedTiles++;
-                        isolatedLevel = tile.L;
+                        isolatedLevel = Math.Min(tile.L, isolatedLevel);
                     }
                 }
             }
@@ -253,6 +259,9 @@ namespace U4DosRandomizer
                 isolationFails++;
                 var x_offset = isolationFails % 8 != 0 ? 1 : 0;
                 var y_offset = isolationFails % 8 == 0 ? 1 : 0;
+
+                dungeonCopy = dungeon.Copy();
+
                 for (int x = 0; x < width; x++)
                 {
                     for(int y = 0; y < height; y++)
@@ -261,55 +270,18 @@ namespace U4DosRandomizer
                     }
                 }
 
-                for (int x = 0; x < width; x++)
-                {
-                    for (int y = 0; y < height; y++)
-                    {
-                        dungeon.SetTile(isolatedLevel, x, y, dungeonCopy.GetTile(isolatedLevel, x, y).GetTile());
-                    }
-                }
+                //for (int x = 0; x < width; x++)
+                //{
+                //    for (int y = 0; y < height; y++)
+                //    {
+                //        dungeonCopy.SetTile(isolatedLevel, x, y, dungeon.GetTile(isolatedLevel, x, y).GetTile());
+                //    }
+                //}
 
-
-                for (int x = 0; x < width; x++)
-                {
-                    for (int y = 0; y < height; y++)
-                    {
-                        var tile = dungeon.GetTile(isolatedLevel, x, y);
-                        if (tile.GetTile() == DungeonTileInfo.LadderUp || tile.GetTile() == DungeonTileInfo.LadderDown || tile.GetTile() == DungeonTileInfo.LadderBoth)
-                        {
-                            tile.SetTile(DungeonTileInfo.Nothing);
-                        }
-
-                        if (isolatedLevel != 7)
-                        {
-                            tile = dungeon.GetTile(isolatedLevel + 1, x, y);
-                            if(tile.GetTile() == DungeonTileInfo.LadderUp)
-                            {
-                                tile.SetTile(DungeonTileInfo.Nothing);
-                            }
-                            else if(tile.GetTile() == DungeonTileInfo.LadderBoth)
-                            {
-                                tile.SetTile(DungeonTileInfo.LadderDown);
-                            }
-                        }
-
-                        if (isolatedLevel != 0)
-                        {
-                            tile = dungeon.GetTile(isolatedLevel - 1, x, y);
-                            if (tile.GetTile() == DungeonTileInfo.LadderDown)
-                            {
-                                tile.SetTile(DungeonTileInfo.Nothing);
-                            }
-                            else if (tile.GetTile() == DungeonTileInfo.LadderBoth)
-                            {
-                                tile.SetTile(DungeonTileInfo.LadderUp);
-                            }
-                        }
-                    }
-                }
-
-                IsolationRemover(dungeonName, dungeon, numLevels, width, height, random, isolationFails);
+                return IsolationRemover(dungeonName, dungeonCopy, numLevels, width, height, random, isolationFails);
             }
+
+            return dungeonOriginal;
         }
 
         private static void MergeLadder(DungeonTile tile, byte ladderAddition)
