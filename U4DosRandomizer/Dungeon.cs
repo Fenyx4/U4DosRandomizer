@@ -64,6 +64,28 @@ namespace U4DosRandomizer
             }
         }
 
+        public bool ValidateTile(DungeonTile tile)
+        {
+            var right = GetTile(tile.L, tile.X + 1, tile.Y);
+            var below = GetTile(tile.L, tile.X, tile.Y + 1);
+            var kitty = GetTile(tile.L, tile.X + 1, tile.Y + 1);
+            if (tile.GetTile() == right.GetTile() &&
+                tile.GetTile() == below.GetTile() &&
+                tile.GetTile() == kitty.GetTile())
+            {
+                return false;
+            }
+
+            if (tile.GetTile() != right.GetTile() &&
+                tile.GetTile() != below.GetTile() &&
+                tile.GetTile() == kitty.GetTile())
+            {
+                return false;
+            }
+
+            return true;
+        }
+
         internal byte GetTileValue(int l, byte x, byte y)
         {
             return map[l, x, y];
@@ -146,7 +168,7 @@ namespace U4DosRandomizer
 
         public void SetTile(int l, int x, int y, byte tile)
         {
-            map[l, x % 8 , y % 8] = tile;
+            map[l, Wrap(x) , Wrap(y)] = tile;
         }
 
         public int GetWidth()

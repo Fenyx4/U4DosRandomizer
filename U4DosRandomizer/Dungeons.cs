@@ -87,7 +87,7 @@ namespace U4DosRandomizer
             //    wipeDungeons.GenerateMaze(dungeonName, dungeons[dungeonName], levels, width, height, random);
             //}
 
-            var hsDungeons = new HitomezashiStitchMazeGenerator();
+            var hsDungeons = new ConstraintMatchMazeGenerator();
             foreach (var dungeonName in dungeons.Keys)
             {
                 hsDungeons.GenerateMaze(dungeonName, dungeons[dungeonName], levels, width, height, random);
