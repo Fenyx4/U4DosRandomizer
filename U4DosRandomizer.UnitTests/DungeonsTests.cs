@@ -28,7 +28,7 @@ namespace U4DosRandomizer.UnitTests
 
             map[0, 1, 1] = DungeonTileInfo.LadderUp;
 
-            var dungeon = new Dungeon(map, rooms);
+            var dungeon = new Dungeon(map, rooms, null);
 
             // Act
             Dungeons.Fill(dungeon.GetTile(0, 1, 1), dungeon);
@@ -82,7 +82,7 @@ namespace U4DosRandomizer.UnitTests
             map[0, 6, 6] = DungeonTileInfo.LadderDown;
             map[1, 6, 6] = DungeonTileInfo.LadderUp;
 
-            var dungeon = new Dungeon(map, rooms);
+            var dungeon = new Dungeon(map, rooms, null);
 
             // Act
             Dungeons.Fill(dungeon.GetTile(0, 1, 1), dungeon);
@@ -160,7 +160,7 @@ namespace U4DosRandomizer.UnitTests
             map[0, 5, 4] = DungeonTileInfo.Wall;
             map[0, 5, 5] = DungeonTileInfo.Wall;
 
-            var dungeon = new Dungeon(map, rooms);
+            var dungeon = new Dungeon(map, rooms, null);
 
             // Act
             Dungeons.Fill(dungeon.GetTile(0, 1, 1), dungeon);
@@ -214,7 +214,7 @@ namespace U4DosRandomizer.UnitTests
             List<byte[]> rooms = new List<byte[]>();
             byte[,,] map = MakeEmptyMap();
 
-            var dungeon = new Dungeon(map, rooms);
+            var dungeon = new Dungeon(map, rooms, null);
 
             // Act
             var dungeonNew = Dungeons.IsolationRemover("IsolationRemoval_NoConnectionBetweenLevels_ConnectAllLevels", dungeon, 8, 8, 8, new System.Random(0));
@@ -296,7 +296,7 @@ namespace U4DosRandomizer.UnitTests
             map[1, 5, 7] = DungeonTileInfo.Wall;
             map[1, 6, 7] = DungeonTileInfo.Wall;
 
-            var dungeon = new Dungeon(map, rooms);
+            var dungeon = new Dungeon(map, rooms, null);
 
             // Act
             var dungeonNew = Dungeons.IsolationRemover("IsolationRemoval_NoConnectionBetweenLevels_ConnectAllLevels", dungeon, 8, 8, 8, new System.Random(0));
@@ -394,7 +394,7 @@ namespace U4DosRandomizer.UnitTests
             map[0, 5, 6] = DungeonTileInfo.Wall;
             map[2, 5, 6] = DungeonTileInfo.Wall;
 
-            var dungeon = new Dungeon(map, rooms);
+            var dungeon = new Dungeon(map, rooms, null);
 
             // Act
             var dungeonNew = Dungeons.IsolationRemover("IsolationRemoval_NoConnectionBetweenLevels_ConnectAllLevels", dungeon, 8, 8, 8, new System.Random(0));
@@ -454,7 +454,7 @@ namespace U4DosRandomizer.UnitTests
                 }
             }
             Assert.AreEqual(1, numberLadderDown, "No ladders down on level 1");
-            Assert.AreEqual(2, numberLadderUp, "No ladders up on level 1");
+            Assert.AreEqual(1, numberLadderUp, "No ladders up on level 1");
 
             for (int l = 2; l < 8; l++)
             {
@@ -478,7 +478,7 @@ namespace U4DosRandomizer.UnitTests
                         }
                     }
                 }
-                if (l == 1)
+                if (l == 2)
                 {
                     Assert.AreEqual(2, numberLadderUp, "No ladders up on level " + l.ToString());
                 }

@@ -1,6 +1,7 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using U4DosRandomizer.Algorithms;
 
 namespace U4DosRandomizer.UnitTests
@@ -16,7 +17,7 @@ namespace U4DosRandomizer.UnitTests
             byte[,,] map = MakeEmptyMap();
             List<byte[]> rooms = new List<byte[]>();
 
-            var dungeon = new Dungeon(map, rooms);
+            var dungeon = new Dungeon(map, rooms, null);
 
             var mg = new ConstraintMatchMazeGenerator();
 
@@ -75,7 +76,7 @@ namespace U4DosRandomizer.UnitTests
             byte[,,] map = MakeEmptyMap();
             List<byte[]> rooms = new List<byte[]>();
 
-            var dungeon = new Dungeon(map, rooms);
+            var dungeon = new Dungeon(map, rooms, null);
 
             var mg = new ConstraintMatchMazeGenerator();
 
@@ -87,6 +88,48 @@ namespace U4DosRandomizer.UnitTests
 
                 // Assert
                 Assert.AreEqual(DungeonTileInfo.Nothing, dungeon.GetTile(0, 1, 1).GetTile(), "0,1,1 needs to be empty so there can be a ladder up.");
+            }
+
+        }
+
+        [TestMethod]
+        public void GenerateMaze_Altar()
+        {
+            // Arrange
+            var dungeonNames = new List<string>() { "Wrong", "Covetous", "Despise", "Deceit", "Hythloth", "Shame", "Destard" };
+            var dungeons = new List<Tuple<string,Dungeon>>();
+
+            foreach (var dungeonName in dungeonNames)
+            {
+                byte[,,] map = MakeEmptyMap();
+                List<byte[]> rooms = new List<byte[]>();
+
+                var dungeon = new Dungeon(map, rooms, null);
+                dungeons.Add(new Tuple<string,Dungeon>(dungeonName, dungeon));
+            }
+
+            var mg = new ConstraintMatchMazeGenerator();
+
+            var rand = new System.Random(0);
+            for (int i = 0; i < 100; i++)
+            {
+                // Act
+                var dungeon = dungeons[i%7];
+                mg.GenerateMaze(dungeon.Item1, dungeon.Item2, 8, 8, 8, rand);
+
+                // Assert
+                var altars = dungeon.Item2.GetTiles().Where(t => t.GetTile() == DungeonTileInfo.DungeonRoomStart + 15).ToList();
+
+                if (dungeon.Item1 == "Despise")
+                {
+                    Assert.AreEqual(1, altars.Count());
+                    var altar = altars[0];
+                    Assert.AreEqual(3, altar.Y);
+                    Assert.AreEqual(DungeonTileInfo.Wall, dungeon.Item2.GetTile(altar.L, altar.X, altar.Y - 1).GetTile());
+                    Assert.AreEqual(DungeonTileInfo.Wall, dungeon.Item2.GetTile(altar.L, altar.X, altar.Y + 1).GetTile());
+                    Assert.AreEqual(DungeonTileInfo.Wall, dungeon.Item2.GetTile(altar.L, altar.X + 1, altar.Y).GetTile());
+                    //Assert.AreEqual(DungeonTileInfo.Nothing, dungeon.Item2.GetTile(0, 1, 1).GetTile(), "0,1,1 needs to be empty so there can be a ladder up.");
+                }
             }
 
         }

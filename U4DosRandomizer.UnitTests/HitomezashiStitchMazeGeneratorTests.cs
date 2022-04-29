@@ -15,7 +15,7 @@ namespace U4DosRandomizer.UnitTests
             byte[,,] map = MakeEmptyMap();
             List<byte[]> rooms = new List<byte[]>();
 
-            var dungeon = new Dungeon(map, rooms);
+            var dungeon = new Dungeon(map, rooms, null);
 
             var stitch = new HitomezashiStitchMazeGenerator();
 

@@ -46,7 +46,7 @@ namespace U4DosRandomizer.Benchmarks
             //map[0, 6, 6] = DungeonTileInfo.LadderDown;
             //map[1, 6, 6] = DungeonTileInfo.LadderUp;
 
-            var dungeon = new Dungeon(map, rooms);
+            var dungeon = new Dungeon(map, rooms, null);
 
             Dungeons.Fill(dungeon.GetTile(0, 1, 1), dungeon);
         }
@@ -71,7 +71,7 @@ namespace U4DosRandomizer.Benchmarks
             map[0, 6, 6] = DungeonTileInfo.LadderDown;
             map[1, 6, 6] = DungeonTileInfo.LadderUp;
 
-            var dungeon = new Dungeon(map, rooms);
+            var dungeon = new Dungeon(map, rooms, null);
 
             Dungeons.Fill(dungeon.GetTile(0, 1, 1), dungeon);
         }
@@ -115,7 +115,7 @@ namespace U4DosRandomizer.Benchmarks
             map[6, 6, 6] = DungeonTileInfo.LadderDown;
             map[7, 6, 6] = DungeonTileInfo.LadderUp;
 
-            var dungeon = new Dungeon(map, rooms);
+            var dungeon = new Dungeon(map, rooms, null);
 
             Dungeons.Fill(dungeon.GetTile(0, 1, 1), dungeon);
         }

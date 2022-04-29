@@ -7,7 +7,7 @@ using U4DosRandomizer.Helpers;
 
 namespace U4DosRandomizer
 {
-    public class ContraintMatchMazeGenerator : IMazeGenerator
+    public class ConstraintMatchMazeGenerator : IMazeGenerator
     {
         
         public void GenerateMaze(string dungeonName, Dungeon dungeon, int numLevels, int width, int height, Random rand)
@@ -21,6 +21,7 @@ namespace U4DosRandomizer
                 valid = false;
                 while (!valid)
                 {
+                    dungeon.ClearImmuneTiles();
                     for (int x = 0; x < width; x++)
                     {
                         for (int y = 0; y < height; y++)
@@ -28,6 +29,10 @@ namespace U4DosRandomizer
                             
                             dungeon.GetTile(l,x,y).SetTile(DungeonTileInfo.Nothing);
                         }
+                    }
+                    if (l == 7)
+                    {
+                        PlaceAltar(dungeonName, dungeon, numLevels, width, rand);
                     }
                     valid = true;
                     for (int x = 0; x < width && valid; x++)
@@ -44,22 +49,25 @@ namespace U4DosRandomizer
                                 // The four tiles will be invalid because they will all be nothing (Not allowed in an Ultima map)
                                 // So choose a random tile an make it a wall
                                 var quadTile = dungeon.GetTile(l, x + quadTileOffset % 2, y + quadTileOffset / 2);
-                                quadTile.SetTile(DungeonTileInfo.Wall);
-
-                                // Check if that tile is valid in the grander scale of things
-                                valid = true;
-                                for (int i = 0; i < 2; i++)
+                                if (!dungeon.GetImmuneTiles().Contains(quadTile))
                                 {
-                                    for (int j = 0; j < 2; j++)
+                                    quadTile.SetTile(DungeonTileInfo.Wall);
+
+                                    // Check if that tile is valid in the grander scale of things
+                                    valid = true;
+                                    for (int i = 0; i < 2; i++)
                                     {
-                                        var surroundingTile = dungeon.GetTile(quadTile.L, quadTile.X - 1 + i, quadTile.Y - 1 + j);
-                                        valid = valid && dungeon.ValidateTile(surroundingTile);
+                                        for (int j = 0; j < 2; j++)
+                                        {
+                                            var surroundingTile = dungeon.GetTile(quadTile.L, quadTile.X - 1 + i, quadTile.Y - 1 + j);
+                                            valid = valid && dungeon.ValidateTile(surroundingTile);
+                                        }
                                     }
-                                }
 
-                                if (!valid)
-                                {
-                                    quadTile.SetTile(DungeonTileInfo.Nothing);
+                                    if (!valid)
+                                    {
+                                        quadTile.SetTile(DungeonTileInfo.Nothing);
+                                    }
                                 }
                             }
                         }
@@ -99,6 +107,24 @@ namespace U4DosRandomizer
             return;
         }
 
+        private void PlaceAltar(string dungeonName, Dungeon dungeon, int numLevels, int width, Random rand)
+        {
+            if(dungeonName.ToLower() == "Despise".ToLower())
+            {
+                var x = rand.Next(width);
+                dungeon.SetTile(numLevels - 1, x, 3, DungeonTileInfo.DungeonRoomStart + 15);
+                dungeon.AddImmuneTile(dungeon.GetTile(numLevels - 1, x, 3));
+
+                dungeon.SetTile(numLevels - 1, x, 2, DungeonTileInfo.Wall);
+                dungeon.AddImmuneTile(dungeon.GetTile(numLevels - 1, x, 2));
+
+                dungeon.SetTile(numLevels - 1, x, 4, DungeonTileInfo.Wall);
+                dungeon.AddImmuneTile(dungeon.GetTile(numLevels-1, x, 4));
+
+                dungeon.SetTile(numLevels - 1, x + 1, 3, DungeonTileInfo.Wall);
+                dungeon.AddImmuneTile(dungeon.GetTile(numLevels-1, x+1, 3));
+            }
+        }
     }
 
 

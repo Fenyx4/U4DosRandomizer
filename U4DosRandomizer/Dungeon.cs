@@ -10,7 +10,10 @@ namespace U4DosRandomizer
         private byte[,,] map = new byte[8, 8, 8];
         private List<byte[]> rooms = new List<byte[]>();
 
-        public Dungeon(byte[,,] map, List<byte[]> rooms)
+        private List<DungeonTile> immuneTiles = new List<DungeonTile>();
+        private Dictionary<int, DungeonTile> dungeonTileHash = new Dictionary<int, DungeonTile>();
+
+        public Dungeon(byte[,,] map, List<byte[]> rooms, List<DungeonTile> immuneTiles)
         {
             this.map = map;
             this.rooms = rooms;
@@ -23,6 +26,14 @@ namespace U4DosRandomizer
                     {
                         dungeonTileHash.Add((l * 8 * 8) + x + y * 8, new DungeonTile(l, x, y, this, map));
                     }
+                }
+            }
+
+            if (immuneTiles != null)
+            {
+                foreach (var tile in immuneTiles)
+                {
+                    this.immuneTiles.Add(GetTile(tile.L, tile.X, tile.Y));
                 }
             }
         }
@@ -66,19 +77,22 @@ namespace U4DosRandomizer
 
         public bool ValidateTile(DungeonTile tile)
         {
-            var right = GetTile(tile.L, tile.X + 1, tile.Y);
-            var below = GetTile(tile.L, tile.X, tile.Y + 1);
-            var kitty = GetTile(tile.L, tile.X + 1, tile.Y + 1);
-            if (tile.GetTile() == right.GetTile() &&
-                tile.GetTile() == below.GetTile() &&
-                tile.GetTile() == kitty.GetTile())
+            var right = GetTile(tile.L, tile.X + 1, tile.Y).GetTile();
+            right = right == DungeonTileInfo.Wall ? DungeonTileInfo.Wall : DungeonTileInfo.Nothing;
+            var below = GetTile(tile.L, tile.X, tile.Y + 1).GetTile(); ;
+            below = below == DungeonTileInfo.Wall ? DungeonTileInfo.Wall : DungeonTileInfo.Nothing;
+            var kitty = GetTile(tile.L, tile.X + 1, tile.Y + 1).GetTile();
+            kitty = kitty == DungeonTileInfo.Wall ? DungeonTileInfo.Wall : DungeonTileInfo.Nothing;
+            if (tile.GetTile() == right &&
+                tile.GetTile() == below &&
+                tile.GetTile() == kitty)
             {
                 return false;
             }
 
-            if (tile.GetTile() != right.GetTile() &&
-                tile.GetTile() != below.GetTile() &&
-                tile.GetTile() == kitty.GetTile())
+            if (tile.GetTile() != right &&
+                tile.GetTile() != below &&
+                tile.GetTile() == kitty)
             {
                 return false;
             }
@@ -160,7 +174,11 @@ namespace U4DosRandomizer
             return results;
         }
 
-        private Dictionary<int, DungeonTile> dungeonTileHash = new Dictionary<int, DungeonTile>();
+        internal void AddImmuneTile(DungeonTile dungeonTile)
+        {
+            immuneTiles.Add(dungeonTile);
+        }
+
         public DungeonTile GetTile(int level, int x, int y)
         {
             return dungeonTileHash[(level * 8 * 8) + Wrap(x) + Wrap(y) * 8];
@@ -168,6 +186,10 @@ namespace U4DosRandomizer
 
         public void SetTile(int l, int x, int y, byte tile)
         {
+            if(immuneTiles.Contains(GetTile(l, x, y)))
+            {
+                Console.WriteLine("Trying to change an immune tile");
+            }
             map[l, Wrap(x) , Wrap(y)] = tile;
         }
 
@@ -205,12 +227,24 @@ namespace U4DosRandomizer
                 }
             }
 
-            return new Dungeon(mapCopy, roomsCopy);
+            return new Dungeon(mapCopy, roomsCopy, immuneTiles);
         }
 
         private static int Wrap(int input)
         {
             return (input % 8 + 8) % 8;
+        }
+
+        internal List<DungeonTile> GetImmuneTiles()
+        {
+            var result = new List<DungeonTile>();
+            result.AddRange(immuneTiles);
+            return result; 
+        }
+
+        public void ClearImmuneTiles()
+        {
+            immuneTiles.Clear();
         }
     }
 }
