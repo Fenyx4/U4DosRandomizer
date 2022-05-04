@@ -124,16 +124,136 @@ namespace U4DosRandomizer.UnitTests
                 {
                     Assert.AreEqual(1, altars.Count());
                     var altar = altars[0];
-                    Assert.AreEqual(3, altar.Y);
-                    Assert.AreEqual(DungeonTileInfo.Wall, dungeon.Item2.GetTile(altar.L, altar.X, altar.Y - 1).GetTile());
-                    Assert.AreEqual(DungeonTileInfo.Wall, dungeon.Item2.GetTile(altar.L, altar.X, altar.Y + 1).GetTile());
-                    Assert.AreEqual(DungeonTileInfo.Wall, dungeon.Item2.GetTile(altar.L, altar.X + 1, altar.Y).GetTile());
+                    Assert.AreEqual(3, altar.X);
+                    TestNorthEntrance(dungeon, altar);
+                    //Assert.AreEqual(DungeonTileInfo.Nothing, dungeon.Item2.GetTile(0, 1, 1).GetTile(), "0,1,1 needs to be empty so there can be a ladder up.");
+                }
+
+                if (dungeon.Item1 == "Deceit")
+                {
+                    Assert.AreEqual(1, altars.Count());
+                    var altar = altars[0];
+                    Assert.IsTrue(altar.X < 3);
+                    TestNorthEntrance(dungeon, altar);
+                    //Assert.AreEqual(DungeonTileInfo.Nothing, dungeon.Item2.GetTile(0, 1, 1).GetTile(), "0,1,1 needs to be empty so there can be a ladder up.");
+                }
+
+                if (dungeon.Item1 == "Destard")
+                {
+                    Assert.AreEqual(1, altars.Count());
+                    var altar = altars[0];
+                    Assert.IsTrue(altar.X > 3);
+                    TestNorthEntrance(dungeon, altar);
+                    //Assert.AreEqual(DungeonTileInfo.Nothing, dungeon.Item2.GetTile(0, 1, 1).GetTile(), "0,1,1 needs to be empty so there can be a ladder up.");
+                }
+
+                if (dungeon.Item1 == "Covetous")
+                {
+                    Assert.AreEqual(2, altars.Count());
+                    var altar = altars[0];
+                    if (altar.X < 3)
+                    {
+                        Assert.IsTrue(altar.X < 3);
+                        TestWestEntrance(dungeon, altar);
+                    }
+                    altar = altars[1];
+                    if (altar.X > 3)
+                    {
+                        Assert.IsTrue(altar.X > 3);
+                        TestEastEntrance(dungeon, altar);
+                    }
+                    //Assert.AreEqual(DungeonTileInfo.Nothing, dungeon.Item2.GetTile(0, 1, 1).GetTile(), "0,1,1 needs to be empty so there can be a ladder up.");
+                }
+
+                if (dungeon.Item1 == "Wrong")
+                {
+                    Assert.AreEqual(2, altars.Count());
+                    var altar = altars[0];
+                    if (altar.X < 3)
+                    {
+                        Assert.IsTrue(altar.X < 3);
+                        TestWestEntrance(dungeon, altar);
+                    }
+                    altar = altars[1];
+                    if (altar.X == 3)
+                    {
+                        Assert.IsTrue(altar.X == 3);
+                        TestEastEntrance(dungeon, altar);
+                    }
+                    //Assert.AreEqual(DungeonTileInfo.Nothing, dungeon.Item2.GetTile(0, 1, 1).GetTile(), "0,1,1 needs to be empty so there can be a ladder up.");
+                }
+
+                if (dungeon.Item1 == "Shame")
+                {
+                    Assert.AreEqual(2, altars.Count());
+                    var altar = altars[0];
+                    if (altar.X < 3)
+                    {
+                        Assert.IsTrue(altar.X < 3);
+                        TestEastEntrance(dungeon, altar);
+                    }
+                    altar = altars[1];
+                    if (altar.X > 3)
+                    {
+                        Assert.IsTrue(altar.X > 3);
+                        TestWestEntrance(dungeon, altar);
+                    }
+                    //Assert.AreEqual(DungeonTileInfo.Nothing, dungeon.Item2.GetTile(0, 1, 1).GetTile(), "0,1,1 needs to be empty so there can be a ladder up.");
+                }
+
+                if (dungeon.Item1 == "Hythloth")
+                {
+                    Assert.AreEqual(3, altars.Count());
+                    var altar = altars[0];
+                    if (altar.X < 3)
+                    {
+                        Assert.IsTrue(altar.X < 3);
+                        TestSouthEntrance(dungeon, altar);
+                    }
+                    if (altar.X == 3)
+                    {
+                        Assert.IsTrue(altar.X == 3);
+                        TestSouthEntrance(dungeon, altar);
+                    }
+                    altar = altars[1];
+                    if (altar.X > 3)
+                    {
+                        Assert.IsTrue(altar.X > 3);
+                        TestSouthEntrance(dungeon, altar);
+                    }
                     //Assert.AreEqual(DungeonTileInfo.Nothing, dungeon.Item2.GetTile(0, 1, 1).GetTile(), "0,1,1 needs to be empty so there can be a ladder up.");
                 }
             }
 
         }
 
+        private static void TestEastEntrance(Tuple<string, Dungeon> dungeon, DungeonTile altar)
+        {
+            Assert.AreEqual(DungeonTileInfo.Wall, dungeon.Item2.GetTile(altar.L, altar.X - 1, altar.Y).GetTile());
+            Assert.AreEqual(DungeonTileInfo.Wall, dungeon.Item2.GetTile(altar.L, altar.X, altar.Y - 1).GetTile());
+            Assert.AreEqual(DungeonTileInfo.Wall, dungeon.Item2.GetTile(altar.L, altar.X + 1, altar.Y).GetTile());
+        }
+
+        private static void TestWestEntrance(Tuple<string, Dungeon> dungeon, DungeonTile altar)
+        {
+            Assert.AreEqual(DungeonTileInfo.Wall, dungeon.Item2.GetTile(altar.L, altar.X - 1, altar.Y).GetTile());
+            Assert.AreEqual(DungeonTileInfo.Wall, dungeon.Item2.GetTile(altar.L, altar.X, altar.Y + 1).GetTile());
+            Assert.AreEqual(DungeonTileInfo.Wall, dungeon.Item2.GetTile(altar.L, altar.X + 1, altar.Y).GetTile());
+        }
+
+        private static void TestNorthEntrance(Tuple<string, Dungeon> dungeon, DungeonTile altar)
+        {
+            Assert.AreEqual(DungeonTileInfo.Wall, dungeon.Item2.GetTile(altar.L, altar.X, altar.Y - 1).GetTile());
+            Assert.AreEqual(DungeonTileInfo.Wall, dungeon.Item2.GetTile(altar.L, altar.X, altar.Y + 1).GetTile());
+            Assert.AreEqual(DungeonTileInfo.Wall, dungeon.Item2.GetTile(altar.L, altar.X + 1, altar.Y).GetTile());
+        }
+
+        private static void TestSouthEntrance(Tuple<string, Dungeon> dungeon, DungeonTile altar)
+        {
+            Assert.AreEqual(DungeonTileInfo.Wall, dungeon.Item2.GetTile(altar.L, altar.X, altar.Y - 1).GetTile());
+            Assert.AreEqual(DungeonTileInfo.Wall, dungeon.Item2.GetTile(altar.L, altar.X, altar.Y + 1).GetTile());
+            Assert.AreEqual(DungeonTileInfo.Wall, dungeon.Item2.GetTile(altar.L, altar.X - 1, altar.Y).GetTile());
+        }
 
         private static byte[,,] MakeEmptyMap()
         {

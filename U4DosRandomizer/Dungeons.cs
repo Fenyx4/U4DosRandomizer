@@ -141,8 +141,8 @@ namespace U4DosRandomizer
                     {
                         dungeons[dungeonName].SetTile(tile.L, tile.X, tile.Y, tile.GetTile());
                     }
-                    
-                    PlaceStoneAltar(dungeonName, dungeons[dungeonName], levels, width, height, random);
+
+                    //PlaceStoneAltar(dungeonName, dungeons[dungeonName], levels, width, height, random);
 
                     //Fill(dungeons[dungeonName].GetTile(0, 1, 1), dungeons[dungeonName]);
                 }
@@ -157,7 +157,7 @@ namespace U4DosRandomizer
         {
             ITile furthestTile = dungeon.GetTile(0, 1, 1);
             Algorithms.BreadthFirstTraversal.BreadthFirst(dungeon.GetTile(0, 1, 1),
-                c => { furthestTile = c; return true; },
+                c => { if (c.GetTile() == DungeonTileInfo.Nothing) { furthestTile = c; }; return true; },
                 c =>
                 {
                     var neighbors = c.NeighborCoordinates();
@@ -181,8 +181,9 @@ namespace U4DosRandomizer
 
         private static bool NeedsConnecting(DungeonTile tile)
         {
-            // If it is nothing or if it is a ladder surrounded by walls then connect it.
+            // If it is nothing or an altar room or if it is a ladder surrounded by walls then connect it.
             return tile.GetTile() == DungeonTileInfo.Nothing ||
+                tile.GetTile() == DungeonTileInfo.DungeonRoomStart + 15 ||
                 ((tile.GetTile() == DungeonTileInfo.LadderDown || tile.GetTile() == DungeonTileInfo.LadderUp) &&
                   tile.NeighborsSameLevel().All( t => t.GetTile() == DungeonTileInfo.Wall));
         }
@@ -208,6 +209,7 @@ namespace U4DosRandomizer
             var previousIsolatedTiles = Int32.MinValue;
             var isolatedTiles = Int32.MaxValue;
             var isolatedLevel = Int32.MaxValue;
+            var filledTiles = new byte[] { DungeonTileInfo.LadderBoth, DungeonTileInfo.LadderDown, DungeonTileInfo.LadderUp, 0xF1 };
             while (isolatedTiles > 0 && previousIsolatedTiles != isolatedTiles)
             {
                 isolatedLevel = Int32.MaxValue;
@@ -221,7 +223,11 @@ namespace U4DosRandomizer
                     {
                         if (tile.L + direction[0] < numLevels && tile.L + direction[0] >= 0)
                         {
-                            if (!(tile.GetTile() == DungeonTileInfo.Nothing || tile.GetTile() == DungeonTileInfo.Wall) && NeedsConnecting(dungeonCopy.GetTile(tile.L + direction[0], tile.X + direction[1], tile.Y + direction[2])))
+                            var nearby = dungeonCopy.GetTile(tile.L + direction[0], tile.X + direction[1], tile.Y + direction[2]);
+                            // Has been filled
+                            if ( filledTiles.Contains(tile.GetTile()) && 
+                                // Has not been filled
+                                NeedsConnecting(dungeonCopy.GetTile(tile.L + direction[0], tile.X + direction[1], tile.Y + direction[2])))
                             {
                                 connection = dungeonCopy.GetTile(tile.L + direction[0],
                                     tile.X + direction[1] / 2,
@@ -264,7 +270,8 @@ namespace U4DosRandomizer
                 }
                 foreach (var tile in allTiles)
                 {
-                    if (tile.GetTile() == DungeonTileInfo.Nothing)
+                    if (tile.GetTile() == DungeonTileInfo.Nothing ||
+                        (tile.GetTile() == DungeonTileInfo.DungeonRoomStart + 15 && tile.WalkableNeighborCoordinates().Count == 0))
                     {
                         isolatedTiles++;
                         isolatedLevel = Math.Min(tile.L, isolatedLevel);
