@@ -31,6 +31,7 @@ namespace U4DosRandomizer
         private Random randomDownhill;
 
         private List<Region> Regions;
+        private List<ITile> Ocean;
 
         private SpoilerLog SpoilerLog { get; }
 
@@ -473,8 +474,10 @@ namespace U4DosRandomizer
 
             FileHelper.TryBackupOriginalFile(file);
 
-            _worldMapGenerated = new DiamondSquare(SIZE, 184643518.256878, mapSeed).getData(mapGeneratorRandom);
-            _clothMapGenerated = new DiamondSquare(SIZE*4, 184643518.256878, mapSeed).getData(clothMapGeneratorRandom);
+            // The roughness does almost nothing for us since we squish it down into our tile space
+            double magicRoughness = 184643518.256878;
+            _worldMapGenerated = new DiamondSquare(SIZE, magicRoughness, mapSeed).getData(mapGeneratorRandom);
+            _clothMapGenerated = new DiamondSquare(SIZE*4, magicRoughness, mapSeed).getData(clothMapGeneratorRandom);
             _generatedMin = _worldMapGenerated.Cast<double>().Min();
             _generatedMax = _worldMapGenerated.Cast<double>().Max();
             MapGeneratedMapToUltimaTiles();
@@ -491,9 +494,9 @@ namespace U4DosRandomizer
         {
             var runicMap = new Dictionary<string, char>()
             {
-                { "TH", '\u00C4' }, //Ä
-                { "EE", '\u00C1' }, //Á
-                { "EA", '\u00C0' } //À
+                { "TH", '\u00C4' }, //ï¿½
+                { "EE", '\u00C1' }, //ï¿½
+                { "EA", '\u00C0' } //ï¿½
             };
 
             Regions = new List<Region>();
@@ -528,7 +531,12 @@ namespace U4DosRandomizer
             var bodiesOfWater = FindBodies(tile => tile.GetTile() == TileInfo.Deep_Water || tile.GetTile() == TileInfo.Medium_Water).OrderByDescending(b => b.Count());
 
             var waterEnumerator = bodiesOfWater.GetEnumerator();
-            if (waterEnumerator.MoveNext() && waterEnumerator.MoveNext())
+            if(waterEnumerator.MoveNext())
+            {
+                Ocean = waterEnumerator.Current;
+            }
+
+            if (waterEnumerator.MoveNext())
             {
                 Regions.Add(new Region
                 {
@@ -823,8 +831,6 @@ namespace U4DosRandomizer
             var shapeLoc = new Coordinate(stygianUpperLeft.X + 6, stygianUpperLeft.Y + 6);
             ApplyShape(shapeLoc, "abyss", false);
 
-            var ocean = FindBodies(tile => tile.GetTile() == TileInfo.Deep_Water || tile.GetTile() == TileInfo.Medium_Water).OrderByDescending(b => b.Count()).FirstOrDefault();
-
             //var entrancePathToWater = Search.GetPath(SIZE, SIZE, entranceToStygian,
             //    c => { return ocean.Contains(c); }, // Find deep water to help make sure a boat can reach here. TODO: Make sure it reaches the ocean.
             //    c => { return !(Between(c.X, Wrap(shapeLoc.X - 12), Wrap(shapeLoc.X + 12)) && Between(c.Y, Wrap(shapeLoc.Y - 12), Wrap(shapeLoc.Y + 12))); },
@@ -1062,7 +1068,6 @@ namespace U4DosRandomizer
                     path = Search.GetPath(SIZE, SIZE, lcbEntrance,
                         // Gotta be able to walk to a Moongate from LCB
                         c => { return ultimaData.Moongates.Contains(c); },
-                        // Only valid if all neighbors all also mountains
                         c => { return IsWalkable(c) && c != lcbEastSide && c != lcbWestSide && c != lcbEastSide; },
                         (c, cf, b) => { return (float)random.NextDouble(); });
                     if (path.Count > 0)
@@ -1096,6 +1101,48 @@ namespace U4DosRandomizer
                 loc.SetTile(TileInfo.Dungeon_Entrance);
                 ultimaData.Dungeons[i].X = loc.X;
                 ultimaData.Dungeons[i].Y = loc.Y;
+            }
+
+            // Check if the path to the dungeon is blocked by a lake and make the lake connect to the ocean
+            for (int i = 0; i < 6; i++)
+            {
+                loc = ultimaData.Dungeons[i];
+                path = Search.GetPath(SIZE, SIZE, loc,
+                        // To Moongate
+                        c => { return ultimaData.Moongates.Contains(c); },
+                        c => { return IsWalkable(c); });
+                if (path == null || path.Count == 0)
+                {
+                    path = Search.GetPath(SIZE, SIZE, loc,
+                        // To Moongate
+                        c => { return ultimaData.Moongates.Contains(c); },
+                        c => { return IsWalkableOrSailable(c); },
+                        (c, cf, b) =>
+                        {
+                            if (IsWater(c))
+                            { return 50; }
+                            else
+                            { return 0; }
+                        });
+
+                    for (int j = 0; j < path.Count; j++)
+                    {
+                        if (IsWater(path[j]) && !Ocean.Contains(path[j]))
+                        {
+                            var entrancePathToWater = Search.GetPath(SIZE, SIZE, path[j],
+                                c => { return Ocean.Contains(c); }, // Find deep water to help make sure a boat can reach here. 
+                                c => { return c.GetTile() < TileInfo.Mountains; },
+                                // Follow water as long as you can then head downhill and away from the dungeon
+                                (c, cf, b) => { if (IsWater(c)) { return 1.0f; } else { return GoDownhillHueristic(c, cf, b) + (float)Math.Sqrt(DistanceSquared(c, loc)) / SIZE; } }); 
+
+                            for (int k = 0; k < entrancePathToWater.Count; k++)
+                            {
+                                GetCoordinate(entrancePathToWater[k].X, entrancePathToWater[k].Y).SetTile(TileInfo.Medium_Water);
+                            }
+                            break;
+                        }
+                    }
+                }
             }
 
             // special for Hythloth
@@ -1182,6 +1229,11 @@ namespace U4DosRandomizer
             ultimaData.WhirlpoolExit = new Coordinate(loc.X, loc.Y);
 
             return;
+        }
+
+        public bool IsWalkableOrOcean(ITile coord)
+        {
+            return (coord.GetTile() >= TileInfo.Swamp && coord.GetTile() <= TileInfo.Hills) || (coord.GetTile() >= TileInfo.Dungeon_Entrance && coord.GetTile() <= TileInfo.Village) || ((coord.GetTile() == TileInfo.Deep_Water || coord.GetTile() == TileInfo.Medium_Water) && Ocean.Contains(coord));
         }
 
         private void RandomizeItems(UltimaData ultimaData, Random random)
