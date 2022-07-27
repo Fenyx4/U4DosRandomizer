@@ -652,18 +652,23 @@ namespace U4DosRandomizer
             return nearestRegion;
         }
 
-        private static Point GetCenterOfRegion(List<ITile> deepForest)
+        private Point GetCenterOfRegion(List<ITile> region)
         {
-            var centerOfDeepForest = new Point(0, 0);
+            var centerOfRegion = new Point(0, 0);
 
-            for (int i = 0; i < deepForest.Count; i++)
+            for (int i = 0; i < region.Count; i++)
             {
-                centerOfDeepForest.X += deepForest[i].X;
-                centerOfDeepForest.Y += deepForest[i].Y;
+                centerOfRegion.X += region[i].X;
+                centerOfRegion.Y += region[i].Y; 
             }
-            centerOfDeepForest.X = centerOfDeepForest.X / deepForest.Count;
-            centerOfDeepForest.Y = centerOfDeepForest.Y / deepForest.Count;
-            return centerOfDeepForest;
+            centerOfRegion.X = centerOfRegion.X / region.Count;
+            centerOfRegion.Y = centerOfRegion.Y / region.Count;
+
+            var closestToCenter = region.OrderBy(r => DistanceSquared(GetCoordinate(centerOfRegion.X, centerOfRegion.Y), r)).First();
+            centerOfRegion.X = closestToCenter.X;
+            centerOfRegion.Y = closestToCenter.Y;
+
+            return centerOfRegion;
         }
 
         private void Center()
