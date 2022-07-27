@@ -311,7 +311,7 @@ namespace U4DosRandomizer
                         IList<ITile> path = null;
                         var coveRegion = worldMap.FindNearestRegion(coveTile, ultimaData, out path);
 
-                        var coveText = "Hmmm, Now let me see... Yes, it was the old Hermit... Sloven! He is tough to find, lives ";
+                        var coveText = "Hmmm, let me see... Yes, it was the old Hermit... Sloven! He is tough to find, lives ";
                         if (coveRegion != null && coveRegion.Tiles.Any(c => c.Equals(coveTile)))
                         {
                             coveText += $"in the {coveRegion.Name.StripThe()}.";
