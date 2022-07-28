@@ -68,6 +68,12 @@
     <None Update="shapes\bell">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Update="shapes\cove">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="shapes\locklake">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Update="shapes\skull">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>

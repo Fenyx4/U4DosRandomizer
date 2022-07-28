@@ -501,6 +501,56 @@ namespace U4DosRandomizer
 
             Regions = new List<Region>();
 
+            var bodiesOfWater = FindBodies(tile => tile.GetTile() == TileInfo.Deep_Water || tile.GetTile() == TileInfo.Medium_Water).OrderByDescending(b => b.Count());
+
+            var waterEnumerator = bodiesOfWater.GetEnumerator();
+            if(waterEnumerator.MoveNext())
+            {
+                Ocean = waterEnumerator.Current;
+            }
+
+            if (waterEnumerator.MoveNext())
+            {
+                Regions.Add(new Region
+                {
+                    Name = "Lock Lake",
+                    RunicName = "Lock Lake",
+                    Tiles = waterEnumerator.Current,
+                    Center = GetCenterOfRegion(waterEnumerator.Current)
+                });
+            }
+            else
+            {
+                var possibleLocations = GetAllMatchingTiles(c => {
+                    var result = true;
+                    for (int x = 0; x < 5; x++)
+                    {
+                        for (int y = 0; y < 5; y++)
+                        {
+                            result = result && IsWater(GetCoordinate(c.X + x, c.Y + y));
+                        }
+                    }
+
+                    return result;
+                });
+
+                var randomIdx = random.Next(0, possibleLocations.Count);
+                var lakeLoc = possibleLocations[randomIdx];
+                ApplyShape(lakeLoc, "locklake", false);
+
+                FindBodies(tile => tile.GetTile() == TileInfo.Deep_Water || tile.GetTile() == TileInfo.Medium_Water).OrderByDescending(b => b.Count());
+                waterEnumerator.MoveNext();
+                waterEnumerator.MoveNext();
+
+                Regions.Add(new Region
+                {
+                    Name = "Lock Lake",
+                    RunicName = "Lock Lake",
+                    Tiles = waterEnumerator.Current,
+                    Center = GetCenterOfRegion(waterEnumerator.Current)
+                });
+            }
+
             var forests = FindBodies(tile => tile.GetTile() == TileInfo.Forest).OrderByDescending(b => b.Count());
 
             var forestEnumerator = forests.GetEnumerator();
@@ -527,26 +577,6 @@ namespace U4DosRandomizer
                     Center = GetCenterOfRegion(forestEnumerator.Current)
                 });
             }
-
-            var bodiesOfWater = FindBodies(tile => tile.GetTile() == TileInfo.Deep_Water || tile.GetTile() == TileInfo.Medium_Water).OrderByDescending(b => b.Count());
-
-            var waterEnumerator = bodiesOfWater.GetEnumerator();
-            if(waterEnumerator.MoveNext())
-            {
-                Ocean = waterEnumerator.Current;
-            }
-
-            if (waterEnumerator.MoveNext())
-            {
-                Regions.Add(new Region
-                {
-                    Name = "Lock Lake",
-                    RunicName = "Lock Lake",
-                    Tiles = waterEnumerator.Current,
-                    Center = GetCenterOfRegion(waterEnumerator.Current)
-                });
-            }
-
 
             var islandsAndContinents = FindBodies(tile => tile.GetTile() != TileInfo.Deep_Water && tile.GetTile() != TileInfo.Medium_Water && tile.GetTile() != TileInfo.Shallow_Water).OrderByDescending(b => b.Count());
 
@@ -854,6 +884,8 @@ namespace U4DosRandomizer
                 }
             }
 
+            var lockLake = Regions.Where(r => r.Name == "Lock Lake").FirstOrDefault();
+
             //Pirate Cove - Set locations based off Stygian location
             var originalX = 0xe9; // Original Stygian location
             var originalY = 0xe9;
@@ -908,7 +940,7 @@ namespace U4DosRandomizer
             ultimaData.Towns[7].Y = loc.Y;
 
             // Castles
-            var numLocations = 4 + ultimaData.Castles.Count;
+            var numLocations = 3 + ultimaData.Castles.Count;
             evenlyDistributedLocations = GetEvenlyDistributedValidLocations(random, numLocations, usedLocations, possibleLocations, ultimaData, true);
             possibleLocations = possibleLocations.Except(evenlyDistributedLocations).ToList();
             for (int i = 0; i < 3; i++)
@@ -919,12 +951,57 @@ namespace U4DosRandomizer
             }
 
             // Villages
-            for (int i = 0; i < 4; i++)
+            for (int i = 0; i < 3; i++)
             {
                 loc = RandomSelectFromListCheckPathChangeAndRemove(random, evenlyDistributedLocations, TileInfo.Village);
                 ultimaData.Towns[i + 8].X = loc.X;
                 ultimaData.Towns[i + 8].Y = loc.Y;
             }
+            // Cove
+            //possibleLocations = GetAllMatchingTiles(c => c.GetTile() == TileInfo.Mountains);
+            //possibleLocations = GetAllMatchingTiles(c => AreaIsAll(TileInfo.Mountains, 5, c));
+            possibleLocations = GetAllMatchingTiles(c => AreaIsAll(IsNotWater, 5, 5, c, false) && AreaIsAll(TileInfo.Mountains, 2, c));
+            evenlyDistributedLocations = GetEvenlyDistributedValidLocations(random, 80, usedLocations, possibleLocations, ultimaData, false);
+            //possibleLocations = possibleLocations.Except(evenlyDistributedLocations).ToList();
+
+            var closestToLocke = evenlyDistributedLocations.OrderBy(c => DistanceSquared(c, GetCoordinate(lockLake.Center.X, lockLake.Center.Y))).FirstOrDefault();
+            loc = closestToLocke;
+            var cove = GetCoordinate(loc.X + 3, loc.Y + 1);
+            ultimaData.Towns[11].X = Wrap(cove.X);
+            ultimaData.Towns[11].Y = Wrap(cove.Y);
+            ApplyShape(GetCoordinate(loc.X, loc.Y), "cove", false);
+            ultimaData.WhirlpoolExit = new Coordinate(lockLake.Center.X, lockLake.Center.Y);
+
+            var startOfCoveRiver = GetCoordinate(loc.X + 1, loc.Y + 3);
+            var coveRiver = Search.GetPath(SIZE, SIZE, startOfCoveRiver,
+                                c => { return lockLake.Tiles.Contains(c); }, // Find deep water to help make sure a boat can reach here. 
+                                c => {
+                                    foreach (var neighbor in c.NeighborAndAdjacentCoordinates())
+                                    {
+                                        if (neighbor.Equals(startOfCoveRiver))
+                                        { return true; }
+
+                                        if (neighbor.GetTile() > TileInfo.Mountains)
+                                        {
+                                            return false;
+                                        }
+
+                                        if (IsSailableWater(neighbor) && !lockLake.Tiles.Contains(neighbor))
+                                        { return false; }
+                                    }
+
+                                    return true;
+                                },
+                                // Follow water as long as you can then head downhill and away from the dungeon
+                                (c, cf, b) => { if (IsWater(c)) { return 0.0f; } else { return ((float)random.NextDouble()/2) + (float)Math.Sqrt(DistanceSquared(c, cove)) / SIZE; } });
+
+            for (int k = 0; k < coveRiver.Count; k++)
+            {
+                GetCoordinate(coveRiver[k].X, coveRiver[k].Y).SetTile(TileInfo.Medium_Water);
+            }
+
+            //loc.SetTile(TileInfo.A);
+
 
             // Clear the forests around towns
             var clearAreas = new List<ITile>();
@@ -1138,7 +1215,7 @@ namespace U4DosRandomizer
                                 c => { return Ocean.Contains(c); }, // Find deep water to help make sure a boat can reach here. 
                                 c => { return c.GetTile() < TileInfo.Mountains; },
                                 // Follow water as long as you can then head downhill and away from the dungeon
-                                (c, cf, b) => { if (IsWater(c)) { return 1.0f; } else { return GoDownhillHueristic(c, cf, b) + (float)Math.Sqrt(DistanceSquared(c, loc)) / SIZE; } }); 
+                                (c, cf, b) => { if (IsWater(c)) { return 0.0f; } else { return GoDownhillHueristic(c, cf, b) + (float)Math.Sqrt(DistanceSquared(c, loc)) / SIZE; } }); 
 
                             for (int k = 0; k < entrancePathToWater.Count; k++)
                             {
@@ -1219,19 +1296,15 @@ namespace U4DosRandomizer
             ultimaData.AbyssEjectionLocations[12].X = stygian.X;
             ultimaData.AbyssEjectionLocations[12].Y = stygian.Y;
 
-            // Whirlpool normally exits in Lock Lake
-            // TODO: Put it somewhere more thematic
-            // For now stick it in the middle of some deep water somewhere
-            var lockLake = Regions.Where(r => r.Name == "Lock Lake").FirstOrDefault();
-            if (lockLake != null)
-            {
-                loc = lockLake.Tiles[random.Next(0, lockLake.Tiles.Count - 1)];
-            }
-            else
-            {
-                loc = GetRandomCoordinate(random, c => c.GetTile() == TileInfo.Deep_Water, excludeLocations);
-            }
-            ultimaData.WhirlpoolExit = new Coordinate(loc.X, loc.Y);
+            //// Whirlpool exits in Lock Lake
+            //if (lockLake != null)
+            //{
+            //    loc = lockLake.Tiles[random.Next(0, lockLake.Tiles.Count - 1)];
+            //}
+            //else
+            //{
+            //    throw new Exception("No Lock Lake found.");
+            //}
 
             return;
         }
@@ -2109,6 +2182,11 @@ namespace U4DosRandomizer
 
         private bool AreaIsAll(int tile, int width, int height, ICoordinate coordinate, bool center)
         {
+            return AreaIsAll(c => c.GetTile() == tile, width, height, coordinate, center);
+        }
+
+        private bool AreaIsAll(Func<ITile, bool> p, int width, int height, ICoordinate coordinate, bool center)
+        {
             int centerX = width / 2;
             int centerY = height / 2;
 
@@ -2123,7 +2201,7 @@ namespace U4DosRandomizer
             {
                 for (int y = 0; y < height; y++)
                 {
-                    result = result && IsTile(coordinate.X - centerX + x, coordinate.Y - centerY + y, tile);
+                    result = result && p(GetCoordinate(coordinate.X - centerX + x, coordinate.Y - centerY + y));
                 }
             }
 
