@@ -972,33 +972,70 @@ namespace U4DosRandomizer
             ApplyShape(GetCoordinate(loc.X, loc.Y), "cove", false);
             ultimaData.WhirlpoolExit = new Coordinate(lockLake.Center.X, lockLake.Center.Y);
 
-            var startOfCoveRiver = GetCoordinate(loc.X + 1, loc.Y + 3);
-            var coveRiver = Search.GetPath(SIZE, SIZE, startOfCoveRiver,
-                                c => { return lockLake.Tiles.Contains(c); }, // Find deep water to help make sure a boat can reach here. 
-                                c => {
-                                    foreach (var neighbor in c.NeighborAndAdjacentCoordinates())
-                                    {
-                                        if (neighbor.Equals(startOfCoveRiver))
-                                        { return true; }
+            var headOfCoveRiver = GetCoordinate(loc.X + 1, loc.Y + 3);
+            headOfCoveRiver.SetTile(TileInfo.Grasslands);
+            var covePath = Search.GetPath(SIZE, SIZE, headOfCoveRiver,
+                                c => { return lockLake.Tiles.Contains(c); }, // Find a spot in Lock Lake
+                                c => { return true; } // Any tile is fine just getting a starting point and a distance
+                                );
 
-                                        if (neighbor.GetTile() > TileInfo.Mountains)
-                                        {
-                                            return false;
-                                        }
+            var riverLength = covePath.Count();
+            var riverMouth = covePath[riverLength - 1];
+            var direction = new Tuple<int, int>(covePath[riverLength - 2].X - riverMouth.X, covePath[riverLength - 2].Y - riverMouth.Y);
 
-                                        if (IsSailableWater(neighbor) && !lockLake.Tiles.Contains(neighbor))
-                                        { return false; }
-                                    }
-
-                                    return true;
-                                },
-                                // Follow water as long as you can then head downhill and away from the dungeon
-                                (c, cf, b) => { if (IsWater(c)) { return 0.0f; } else { return ((float)random.NextDouble()/2) + (float)Math.Sqrt(DistanceSquared(c, cove)) / SIZE; } });
-
-            for (int k = 0; k < coveRiver.Count; k++)
+            covePath = null;
+            int count = 0;
+            byte[,] worldMapCache = new byte[SIZE, SIZE];
+            for( int x = 0; x < SIZE; x++ )
             {
-                GetCoordinate(coveRiver[k].X, coveRiver[k].Y).SetTile(TileInfo.Medium_Water);
+                for(int y = 0; y < SIZE; y++ )
+                {
+                    worldMapCache[x, y] = _worldMapTiles[x, y];
+                }
             }
+            while ((covePath == null || covePath.Count == 0) && count < 50)
+            {
+                for (int x = 0; x < SIZE; x++)
+                {
+                    for (int y = 0; y < SIZE; y++)
+                    {
+                        _worldMapTiles[x, y] = worldMapCache[x, y];
+                    }
+                }
+                var currentNode = new RiverNode()
+                {
+                    Coordinate = riverMouth,
+                    Parent = null,
+                    Children = new List<RiverNode>(),
+                    depth = 0
+                };
+                RiverTributary(random, currentNode, direction, riverLength, TileInfo.A, IsNotWater);
+                var river = new River()
+                {
+                    Tree = currentNode,
+                    Direction = direction
+                };
+                //Rivers.Add(river);
+
+                river.LevelOrderTraversal(n =>
+                {
+                    n.Coordinate.SetTile(TileInfo.Shallow_Water);
+                    //n.Coordinate.SetClothTile(TileInfo.Shallow_Water);
+                });
+
+                covePath = Search.GetPath(SIZE, SIZE, cove,
+                                    c => { return lockLake.Tiles.Contains(c); }, // Find a spot in Lock Lake
+                                    c => { return IsWalkable(c) || c.GetTile() == TileInfo.Shallow_Water; }, // Any tile is fine just getting a starting point and a distance
+                                    (c, cf, b) => { return c.GetTile() == TileInfo.Shallow_Water ? 0 : 1; });
+                Console.WriteLine($"CovePath: {covePath.Count}");
+                count++;                
+            }
+            covePath.ForEach(c => { if (!c.Equals(cove)) { c.SetTile(TileInfo.Medium_Water); } });
+
+            //for (int k = 0; k < coveRiver.Count; k++)
+            //{
+            // //   GetCoordinate(coveRiver[k].X, coveRiver[k].Y).SetTile(TileInfo.Medium_Water);
+            //}
 
             //loc.SetTile(TileInfo.A);
 
@@ -1941,12 +1978,16 @@ namespace U4DosRandomizer
 
 
 
-        private void RiverTributary(Random random, RiverNode currentNode, Tuple<int, int> direction, int riverLength, byte tile)
+        private void RiverTributary(Random random, RiverNode currentNode, Tuple<int, int> direction, int riverLength, byte tile, IsNodeValid allowedTileMatcher = null)
         {
+            if(allowedTileMatcher == null)
+            {
+                allowedTileMatcher = IsWalkable;
+            }
             for (int i = 0; i < riverLength; i++)
             {
                 var advanced = false;
-                if (LookAhead(currentNode.Coordinate, direction, IsWalkable, 2, 1, 1))
+                if (LookAhead(currentNode.Coordinate, direction, allowedTileMatcher, 2, 1, 1))
                 {
                     currentNode.Coordinate.SetTile(tile);
                     var nextCoord = GetCoordinate(currentNode.Coordinate.X + direction.Item1, currentNode.Coordinate.Y + direction.Item2);
@@ -2025,7 +2066,7 @@ namespace U4DosRandomizer
                         newTributaryNode = AdvanceRiverTile(currentNode, newTributaryCoord);
                         newTributaryNode.Coordinate.SetTile(tile);
 
-                        RiverTributary(random, currentNode, direction, riverLength - i, (byte)(tile + 1));
+                        RiverTributary(random, currentNode, direction, riverLength - i, (byte)(tile + 1), allowedTileMatcher);
                         var max = riverLength + 1;
                         var min = i + 2;
                         riverLength = min;
@@ -2058,7 +2099,7 @@ namespace U4DosRandomizer
             return currentNode;
         }
 
-        private bool LookAhead(ITile currentCoord, Tuple<int, int> direction, Func<ITile, bool> tileMatcher, int forwardDist, int leftDist, int rightDist)
+        private bool LookAhead(ITile currentCoord, Tuple<int, int> direction, IsNodeValid tileMatcher, int forwardDist, int leftDist, int rightDist)
         {
             //if (IsWalkable(GetCoordinate(currentCoord.X + direction.Item1, currentCoord.Y + direction.Item2)) &&
             //       IsWalkable(GetCoordinate(currentCoord.X + direction.Item1 * 2, currentCoord.Y + direction.Item2 * 2)))
