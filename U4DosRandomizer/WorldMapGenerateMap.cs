@@ -1567,10 +1567,14 @@ namespace U4DosRandomizer
         {
             var lockLakeSize = 16;
             var lockLake = LakeMap(random, lockLakeSize);
-            var possibleLocations = GetAllMatchingTiles(c => {
+            var grassLocations = GetAllMatchingTiles(c => { return c.GetTile() == TileInfo.Grasslands; });
 
-                // Find how far away the mountain range is
-                var pathToMountain = Search.GetPath(SIZE, SIZE, c,
+            grassLocations.Shuffle(random);
+
+            var chosenLakeLocation = grassLocations.First( c => { 
+
+            // Find how far away the mountain range is
+            var pathToMountain = Search.GetPath(SIZE, SIZE, c,
                     c => c.GetTile() == TileInfo.Mountains,
                     IsNotWater);
 
@@ -1598,10 +1602,6 @@ namespace U4DosRandomizer
                 return true;
             });
 
-            random.Next();
-            random.Next();
-            random.Next();
-            var chosenLakeLocation = possibleLocations.Rand(random);
             for (int x = 0; x < lockLakeSize; x++)
             {
                 for (int y = 0; y < lockLakeSize; y++)
