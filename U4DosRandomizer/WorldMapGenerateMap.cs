@@ -1619,11 +1619,8 @@ namespace U4DosRandomizer
                 {
                     var tileX = WrapInt(chosenLakeLocation.X * 4 - lockLakeSize * 4 / 2 + x, SIZE * 4);
                     var tileY = WrapInt(chosenLakeLocation.Y * 4 - lockLakeSize * 4 / 2 + y, SIZE * 4);
-                    if (_clothMapTiles[tileX, tileY] == TileInfo.Grasslands)
-                    {
-                        // Lock Lake has Deep Water that doesn't show up on the map
-                        _clothMapTiles[tileX, tileY] = lockLake.Item2[x, y] == TileInfo.Deep_Water ? TileInfo.Shallow_Water : lockLake.Item2[x, y];
-                    }
+                    // Lock Lake has Deep Water that doesn't show up on the map
+                    _clothMapTiles[tileX, tileY] = lockLake.Item2[x, y] == TileInfo.Deep_Water ? TileInfo.Shallow_Water : lockLake.Item2[x, y];
                 }
             }
         }
