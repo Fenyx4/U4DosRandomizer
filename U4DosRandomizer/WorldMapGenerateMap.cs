@@ -2107,13 +2107,15 @@ namespace U4DosRandomizer
                     Children = new List<RiverNode>(),
                     depth = 0
                 };
+
                 RiverTributary(new Random(randomSeeds[i]), currentNode, direction, riverLength, TileInfo.A);
                 if(currentNode.Children.Count > 0)
                 {
                     var river = new River()
                     {
                         Tree = currentNode,
-                        Direction = direction
+                        Direction = direction,
+                        RandomSeed = randomSeeds[i]
                     };
                     rivers.Add(river);
 
@@ -2121,6 +2123,30 @@ namespace U4DosRandomizer
                         n.Coordinate.SetTile(TileInfo.Shallow_Water);
                         //n.Coordinate.SetClothTile(TileInfo.Shallow_Water);
                     });
+
+                    //currentNode = new RiverNode()
+                    //{
+                    //    Coordinate = mouth,
+                    //    Parent = null,
+                    //    Children = new List<RiverNode>(),
+                    //    depth = 0
+                    //};
+
+                    //RiverTributary(new Random(randomSeeds[i]), currentNode, direction, riverLength*2, TileInfo.A);
+                    //var longRiver = new River()
+                    //{
+                    //    Tree = currentNode,
+                    //    Direction = direction,
+                    //    RandomSeed = randomSeeds[i]
+                    //};
+                    //river.LevelOrderTraversal(n => {
+                    //    n.Coordinate.SetTile(TileInfo.A);
+                    //    //n.Coordinate.SetClothTile(TileInfo.Shallow_Water);
+                    //});
+                    //longRiver.LevelOrderTraversal(n => {
+                    //    n.Coordinate.SetTile(TileInfo.B);
+                    //    //n.Coordinate.SetClothTile(TileInfo.Shallow_Water);
+                    //});
                 }
                 else
                 {
