@@ -931,7 +931,7 @@ namespace U4DosRandomizer
             // Cove
             //possibleLocations = GetAllMatchingTiles(c => c.GetTile() == TileInfo.Mountains);
             //possibleLocations = GetAllMatchingTiles(c => AreaIsAll(TileInfo.Mountains, 5, c));
-            possibleLocations = GetAllMatchingTiles(c => AreaIsAll(IsNotWater, 5, 5, c, false) && AreaIsAll(TileInfo.Mountains, 2, c));
+            possibleLocations = GetAllMatchingTiles(c => AreaIsAll(IsNotWater, 5, 5, c, false) && AreaIsAll(c => c.GetTile() == TileInfo.Mountains, 4, 4, c, false));
             evenlyDistributedLocations = GetEvenlyDistributedValidLocations(random, 80, usedLocations, possibleLocations, ultimaData, false);
             //possibleLocations = possibleLocations.Except(evenlyDistributedLocations).ToList();
 
@@ -941,20 +941,20 @@ namespace U4DosRandomizer
             ultimaData.Towns[11].X = Wrap(cove.X);
             ultimaData.Towns[11].Y = Wrap(cove.Y);
             ApplyShape(GetCoordinate(loc.X, loc.Y), "cove", false);
-            ultimaData.WhirlpoolExit = new Coordinate(lockLake.Center.X, lockLake.Center.Y);
+            if (IsWater(GetCoordinate(lockLake.Center.X, lockLake.Center.Y).GetTile()))
+            {
+                ultimaData.WhirlpoolExit = new Coordinate(lockLake.Center.X, lockLake.Center.Y);
+            }
+            else
+            {
+                var lakeTiles = new List<ITile>(lockLake.Tiles);
+                lakeTiles.Shuffle(random);
+                ultimaData.WhirlpoolExit = new Coordinate(lakeTiles[0].X, lakeTiles[0].Y);
+            }
 
             var headOfCoveRiver = GetCoordinate(loc.X + 1, loc.Y + 3);
             headOfCoveRiver.SetTile(TileInfo.Grasslands);
-            var covePath = Search.GetPath(SIZE, SIZE, headOfCoveRiver,
-                                c => { return lockLake.Tiles.Contains(c); }, // Find a spot in Lock Lake
-                                c => { return true; } // Any tile is fine just getting a starting point and a distance
-                                );
-
-            var riverLength = covePath.Count() - 2;
-            var riverMouth = covePath[covePath.Count() - 1];
-            var direction = new Tuple<int, int>(covePath[covePath.Count() - 2].X - riverMouth.X, covePath[covePath.Count() - 2].Y - riverMouth.Y);
-
-            covePath = null;
+            
             int count = 0;
             byte[,] worldMapCache = new byte[SIZE, SIZE];
             for (int x = 0; x < SIZE; x++)
@@ -975,8 +975,22 @@ namespace U4DosRandomizer
                 GetCoordinate(cove.X+1, cove.Y),
                 GetCoordinate(cove.X+1, cove.Y+1),
             };
+            List<ITile> covePath = null;
+            var lockLakeTiles = new List<ITile>(lockLake.Tiles);
+            var removedLockLakeTiles = new List<ITile>();
             while ((covePath == null || covePath.Count == 0) && count < 50)
             {
+                covePath = Search.GetPath(SIZE, SIZE, headOfCoveRiver,
+                                c => { return lockLakeTiles.Contains(c); }, // Find a spot in Lock Lake
+                                c => { return !removedLockLakeTiles.Contains(c); } // Any tile is fine just getting a starting point and a distance
+                                );
+
+                var riverLength = covePath.Count() - 2;
+                var riverMouth = covePath[covePath.Count() - 1];
+                var direction = new Tuple<int, int>(covePath[covePath.Count() - 2].X - riverMouth.X, covePath[covePath.Count() - 2].Y - riverMouth.Y);
+
+                covePath = null;
+
                 for (int x = 0; x < SIZE; x++)
                 {
                     for (int y = 0; y < SIZE; y++)
@@ -1011,8 +1025,13 @@ namespace U4DosRandomizer
                                     (c, cf, b) => { return c.GetTile() == TileInfo.Shallow_Water ? 0 : 1; });
                 Console.WriteLine($"CovePath: {covePath.Count}");
                 count++;
+                if(covePath.Count == 0)
+                {
+                    lockLakeTiles.Remove(riverMouth);
+                    removedLockLakeTiles.Add(riverMouth);
+                }
             }
-            if (covePath != null)
+            if (covePath != null && covePath.Count > 0)
             {
                 covePath.ForEach(c => { if (IsWater(c)) { c.SetTile(TileInfo.Medium_Water); } });
             }
@@ -1429,6 +1448,8 @@ namespace U4DosRandomizer
             // Original game only had single tiles in very special circumstances
             RemoveSingleTiles();
 
+            random.Next();
+            random.Next();
             AddLockLake(random);
 
             var rivers = AddRivers(random);
