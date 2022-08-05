@@ -32,6 +32,7 @@ namespace U4DosRandomizer
 
         private List<Region> Regions;
         private List<ITile> Ocean;
+        public static List<River> Rivers { get; internal set; }
 
         private SpoilerLog SpoilerLog { get; }
 
@@ -975,21 +976,31 @@ namespace U4DosRandomizer
                 GetCoordinate(cove.X+1, cove.Y),
                 GetCoordinate(cove.X+1, cove.Y+1),
             };
-            List<ITile> covePath = null;
+            
+            List<ITile> coveRiverPath = null;
+            ITile riverMouth = null;
+            int riverLength = 0;
+            Tuple<int, int> direction = null;
+
             var lockLakeTiles = new List<ITile>(lockLake.Tiles);
             var removedLockLakeTiles = new List<ITile>();
-            while ((covePath == null || covePath.Count == 0) && count < 50)
+            while ((coveRiverPath == null || coveRiverPath.Count == 0) && count < 256)
             {
-                covePath = Search.GetPath(SIZE, SIZE, headOfCoveRiver,
-                                c => { return lockLakeTiles.Contains(c); }, // Find a spot in Lock Lake
-                                c => { return !removedLockLakeTiles.Contains(c); } // Any tile is fine just getting a starting point and a distance
-                                );
+                if (count % 16 == 0)
+                {
+                    var covePath = Search.GetPath(SIZE, SIZE, headOfCoveRiver,
+                                    c => { return lockLakeTiles.Contains(c); }, // Find a spot in Lock Lake
+                                    c => { return !removedLockLakeTiles.Contains(c); } // Any tile is fine just getting a starting point and a distance
+                                    );
 
-                var riverLength = covePath.Count() - 2;
-                var riverMouth = covePath[covePath.Count() - 1];
-                var direction = new Tuple<int, int>(covePath[covePath.Count() - 2].X - riverMouth.X, covePath[covePath.Count() - 2].Y - riverMouth.Y);
 
-                covePath = null;
+                    riverMouth = covePath[covePath.Count() - 1];
+                    riverLength = covePath.Count() - 2;
+                    direction = new Tuple<int, int>(covePath[covePath.Count() - 2].X - riverMouth.X, covePath[covePath.Count() - 2].Y - riverMouth.Y);
+
+                    lockLakeTiles.Remove(riverMouth);
+                    removedLockLakeTiles.Add(riverMouth);
+                }
 
                 for (int x = 0; x < SIZE; x++)
                 {
@@ -1019,21 +1030,16 @@ namespace U4DosRandomizer
                     //n.Coordinate.SetClothTile(TileInfo.Shallow_Water);
                 });
 
-                covePath = Search.GetPath(SIZE, SIZE, cove,
+                coveRiverPath = Search.GetPath(SIZE, SIZE, cove,
                                     c => { return lockLake.Tiles.Contains(c); }, // Find a spot in Lock Lake
                                     c => { return IsWalkable(c) || c.GetTile() == TileInfo.Shallow_Water; }, // Any tile is fine just getting a starting point and a distance
                                     (c, cf, b) => { return c.GetTile() == TileInfo.Shallow_Water ? 0 : 1; });
-                Console.WriteLine($"CovePath: {covePath.Count}");
+                Console.WriteLine($"CovePath: {coveRiverPath.Count}");
                 count++;
-                if(covePath.Count == 0)
-                {
-                    lockLakeTiles.Remove(riverMouth);
-                    removedLockLakeTiles.Add(riverMouth);
-                }
             }
-            if (covePath != null && covePath.Count > 0)
+            if (coveRiverPath != null && coveRiverPath.Count > 0)
             {
-                covePath.ForEach(c => { if (IsWater(c)) { c.SetTile(TileInfo.Medium_Water); } });
+                coveRiverPath.ForEach(c => { if (IsWater(c)) { c.SetTile(TileInfo.Medium_Water); } });
             }
             else
             {
@@ -1450,15 +1456,16 @@ namespace U4DosRandomizer
 
             random.Next();
             random.Next();
+            random.Next();
             AddLockLake(random);
 
-            var rivers = AddRivers(random);
+            Rivers = AddRivers(random);
 
             // Original game only had single tiles in very special circumstances
             RemoveSingleTiles();
 
-            AddBridges(random, rivers);
-            AddScrubAndForest(random, rivers);
+            AddBridges(random, Rivers);
+            AddScrubAndForest(random, Rivers);
             AddSwamp(random);
 
         }
@@ -1603,14 +1610,25 @@ namespace U4DosRandomizer
                 if (pathToMountain != null && (pathToMountain.Count() > 11 && pathToMountain.Count() < 14))
                 {
                     // If we can place it without overlapping the ocean or another body of water
+                    // Need to look one space away too to not abut the ocean
                     for(int x = 0; x < lockLakeSize; x++)
                     {
                         for(int y = 0; y < lockLakeSize; y++)
                         {
                             var coord = GetCoordinate(c.X - lockLakeSize / 2 + x, c.Y - lockLakeSize / 2 + y);
-                            if(lockLake.Item1[x,y] != TileInfo.Grasslands && IsWater(coord))
+                            if (lockLake.Item1[x, y] != TileInfo.Grasslands)
                             {
-                                return false;
+                                if (IsWater(coord))
+                                {
+                                    return false;
+                                }
+                                foreach(var neighbor in coord.NeighborAndAdjacentCoordinates())
+                                {
+                                    if (IsWater(neighbor))
+                                    {
+                                        return false;
+                                    }
+                                }
                             }
                         }
                     }
@@ -1646,11 +1664,32 @@ namespace U4DosRandomizer
             }
         }
 
+        static public double Linear(double x, double x0, double x1, double y0, double y1)
+        {
+            if ((x1 - x0) == 0)
+            {
+                return (y0 + y1) / 2;
+            }
+            return y0 + (x - x0) * (y1 - y0) / (x1 - x0);
+        }
+
         private static Tuple<byte[,], byte[,]> LakeMap(Random random, int lakeSize)
         {
             SimplexNoise.Noise.Seed = random.Next();
             var lakeNoiseFloat = SimplexNoise.Noise.Calc2D(lakeSize * 4, lakeSize * 4, 0.1f / 4f);
             var lakeNoise = Float2dToDouble2d(lakeNoiseFloat, lakeSize * 4);
+            var min = lakeNoise.Cast<double>().Min();
+            var max = lakeNoise.Cast<double>().Max();
+
+            for(int x = 0; x < lakeSize*4; x++)
+            {
+                for(int y = 0; y < lakeSize*4; y++)
+                {
+                    var lerpX = Linear(Math.Abs(x- (lakeSize * 4 / 2)), 0, (lakeSize * 4/2), max, min);
+                    var lerpY = Linear(Math.Abs(y - (lakeSize * 4 / 2)), 0, (lakeSize * 4/2), max, min);
+                    lakeNoise[x, y] = (lerpX + lerpY + (3* lakeNoise[x,y]));
+                }
+            }
 
             var percentInMap = new Dictionary<byte, double>()
                 {
