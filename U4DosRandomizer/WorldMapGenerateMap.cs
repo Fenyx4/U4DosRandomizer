@@ -39,6 +39,8 @@ namespace U4DosRandomizer
         public WorldMapGenerateMap(SpoilerLog spoilerLog)
         {
             SpoilerLog = spoilerLog;
+
+            Regions = new List<Region>();
         }
 
         private List<Tile> _potentialSwamps = new List<Tile>();
@@ -502,8 +504,6 @@ namespace U4DosRandomizer
                 { "EA", '\u00C0' } //�
             };
 
-            Regions = new List<Region>();
-
             var bodiesOfWater = FindBodies(tile => tile.GetTile() == TileInfo.Deep_Water || tile.GetTile() == TileInfo.Medium_Water).OrderByDescending(b => b.Count());
 
             var waterEnumerator = bodiesOfWater.GetEnumerator();
@@ -512,16 +512,17 @@ namespace U4DosRandomizer
                 Ocean = waterEnumerator.Current;
             }
 
-            if (waterEnumerator.MoveNext())
-            {
-                Regions.Add(new Region
-                {
-                    Name = "Lock Lake",
-                    RunicName = "Lock Lake",
-                    Tiles = waterEnumerator.Current,
-                    Center = GetCenterOfRegion(waterEnumerator.Current)
-                });
-            }
+            // Lock Lake already done in AddLockLake()
+            //if (waterEnumerator.MoveNext())
+            //{
+            //    Regions.Add(new Region
+            //    {
+            //        Name = "Lock Lake",
+            //        RunicName = "Lock Lake",
+            //        Tiles = waterEnumerator.Current,
+            //        Center = GetCenterOfRegion(waterEnumerator.Current)
+            //    });
+            //}
 
             var forests = FindBodies(tile => tile.GetTile() == TileInfo.Forest).OrderByDescending(b => b.Count());
 
@@ -760,6 +761,17 @@ namespace U4DosRandomizer
                     swamp[i] = GetCoordinate(swamp[i].X - bestOffset.X, swamp[i].Y - bestOffset.Y);
                 }
             }
+
+            foreach(var region in Regions)
+            {
+                var offsetTiles = new List<ITile>();
+                foreach(var tile in region.Tiles)
+                {
+                    offsetTiles.Add(GetCoordinate(tile.X - bestOffset.X, tile.Y - bestOffset.Y));
+                }
+                region.Tiles = offsetTiles;
+                region.Center = GetCenterOfRegion(offsetTiles);
+            }
         }
 
         public override void Randomize(UltimaData ultimaData, Random randomLocations, Random randomItems, Random randomLocations2)
@@ -982,7 +994,12 @@ namespace U4DosRandomizer
             int riverLength = 0;
             Tuple<int, int> direction = null;
 
-            var lockLakeTiles = new List<ITile>(lockLake.Tiles);
+            var bodiesOfWater = FindBodies(tile => tile.GetTile() == TileInfo.Deep_Water || tile.GetTile() == TileInfo.Medium_Water).OrderByDescending(b => b.Count()).ToList();
+            var bodiesOfWaterIncludingRiversAndBridges = FindBodies(tile => IsWater(tile) || tile.GetTile() == TileInfo.Bridge ).OrderByDescending(b => b.Count()).ToList();
+            var lockLakeAndAttachedRivers = bodiesOfWaterIncludingRiversAndBridges.Single( b => b.Any( c => lockLake.Tiles.Contains(c)));
+            
+            var lockLakeTiles = new List<ITile>(lockLakeAndAttachedRivers);
+            Console.WriteLine(lockLakeTiles.FirstOrDefault(c => c.GetTile() == TileInfo.Bridge) != null);
             var removedLockLakeTiles = new List<ITile>();
             while ((coveRiverPath == null || coveRiverPath.Count == 0) && count < 256)
             {
@@ -1029,21 +1046,22 @@ namespace U4DosRandomizer
                     n.Coordinate.SetTile(TileInfo.Shallow_Water);
                     //n.Coordinate.SetClothTile(TileInfo.Shallow_Water);
                 });
+                currentNode.Coordinate.SetTile(TileInfo.Medium_Water);
 
                 coveRiverPath = Search.GetPath(SIZE, SIZE, cove,
                                     c => { return lockLake.Tiles.Contains(c); }, // Find a spot in Lock Lake
-                                    c => { return IsWalkable(c) || c.GetTile() == TileInfo.Shallow_Water; }, // Any tile is fine just getting a starting point and a distance
-                                    (c, cf, b) => { return c.GetTile() == TileInfo.Shallow_Water ? 0 : 1; });
+                                    c => { return (IsWalkable(c) || IsWater(c) || c.GetTile() == TileInfo.Bridge) && !Ocean.Contains(c); }, 
+                                    (c, cf, b) => { return c.GetTile() == TileInfo.Shallow_Water || c.GetTile() == TileInfo.Bridge ? 0 : 1; }); // Follow the river where able
                 Console.WriteLine($"CovePath: {coveRiverPath.Count}");
                 count++;
             }
             if (coveRiverPath != null && coveRiverPath.Count > 0)
             {
-                coveRiverPath.ForEach(c => { if (IsWater(c)) { c.SetTile(TileInfo.Medium_Water); } });
+                coveRiverPath.ForEach(c => { if (IsWater(c) || c.GetTile() == TileInfo.Bridge) { c.SetTile(TileInfo.Medium_Water); } });
             }
             else
             {
-                // We could get the lake connected. Give up and have the boat pop up in Cove.
+                // We couldn't get the lake connected. Give up and have the boat pop up in Cove.
                 headOfCoveRiver.SetTile(TileInfo.Deep_Water);
                 ultimaData.WhirlpoolExit = new Coordinate(headOfCoveRiver.X, headOfCoveRiver.Y);
             }
@@ -1455,9 +1473,10 @@ namespace U4DosRandomizer
             RemoveSingleTiles();
 
             random.Next();
-            random.Next();
-            random.Next();
-            AddLockLake(random);
+            //random.Next();
+            //random.Next();
+            var lockLake = AddLockLake(random);
+            Regions.Add(lockLake);
 
             Rivers = AddRivers(random);
 
@@ -1591,8 +1610,14 @@ namespace U4DosRandomizer
             return new Tuple<byte[,], byte[,]>(mapSized, clothMapSizedSwamp);
         }
 
-        private void AddLockLake(Random random)
+        private Region AddLockLake(Random random)
         {
+            var lakeRegion = new Region()
+            {
+                Name = "Lock Lake",
+                RunicName = "Lock Lake",
+                Tiles = new List<ITile>()
+            };
             var lockLakeSize = 16;
             var lockLake = LakeMap(random, lockLakeSize);
             var grassLocations = GetAllMatchingTiles(c => { return c.GetTile() == TileInfo.Grasslands; });
@@ -1647,21 +1672,30 @@ namespace U4DosRandomizer
                 {
                     if (lockLake.Item1[x, y] != TileInfo.Grasslands)
                     {
-                        GetCoordinate(chosenLakeLocation.X - lockLakeSize / 2 + x, chosenLakeLocation.Y - lockLakeSize / 2 + y).SetTile(lockLake.Item1[x, y]);
+                        var coord = GetCoordinate(chosenLakeLocation.X - lockLakeSize / 2 + x, chosenLakeLocation.Y - lockLakeSize / 2 + y);
+                        coord.SetTile(lockLake.Item1[x, y]);
+                        lakeRegion.Tiles.Add(coord);
                     }
                 }
             }
+
+            lakeRegion.Center = GetCenterOfRegion(lakeRegion.Tiles);
 
             for (int x = 0; x < lockLakeSize * 4; x++)
             {
                 for (int y = 0; y < lockLakeSize * 4; y++)
                 {
-                    var tileX = WrapInt(chosenLakeLocation.X * 4 - lockLakeSize * 4 / 2 + x, SIZE * 4);
-                    var tileY = WrapInt(chosenLakeLocation.Y * 4 - lockLakeSize * 4 / 2 + y, SIZE * 4);
-                    // Lock Lake has Deep Water that doesn't show up on the map
-                    _clothMapTiles[tileX, tileY] = lockLake.Item2[x, y] == TileInfo.Deep_Water ? TileInfo.Shallow_Water : lockLake.Item2[x, y];
+                    if (lockLake.Item2[x, y] != TileInfo.Grasslands)
+                    {
+                        var tileX = WrapInt(chosenLakeLocation.X * 4 - lockLakeSize * 4 / 2 + x, SIZE * 4);
+                        var tileY = WrapInt(chosenLakeLocation.Y * 4 - lockLakeSize * 4 / 2 + y, SIZE * 4);
+                        // Lock Lake has Deep Water that doesn't show up on the map
+                        _clothMapTiles[tileX, tileY] = lockLake.Item2[x, y] == TileInfo.Deep_Water ? TileInfo.Shallow_Water : lockLake.Item2[x, y];
+                    }
                 }
             }
+
+            return lakeRegion;
         }
 
         static public double Linear(double x, double x0, double x1, double y0, double y1)
@@ -1770,7 +1804,6 @@ namespace U4DosRandomizer
 
         private List<List<ITile>> FindBodies(Func<ITile, bool> bodyMatcher)
         {
-            // Find Ocean
             var bodies = new List<List<ITile>>();
             var closedSet = new HashSet<ITile>();
             for (int x = 0; x < SIZE; x++)
