@@ -999,7 +999,7 @@ namespace U4DosRandomizer
             var lockLakeAndAttachedRivers = bodiesOfWaterIncludingRiversAndBridges.Single( b => b.Any( c => lockLake.Tiles.Contains(c)));
             
             var lockLakeTiles = new List<ITile>(lockLakeAndAttachedRivers);
-            Console.WriteLine(lockLakeTiles.FirstOrDefault(c => c.GetTile() == TileInfo.Bridge) != null);
+
             var removedLockLakeTiles = new List<ITile>();
             while ((coveRiverPath == null || coveRiverPath.Count == 0) && count < 256)
             {
@@ -1051,12 +1051,13 @@ namespace U4DosRandomizer
                 coveRiverPath = Search.GetPath(SIZE, SIZE, cove,
                                     c => { return lockLake.Tiles.Contains(c); }, // Find a spot in Lock Lake
                                     c => { return (IsWalkable(c) || IsWater(c) || c.GetTile() == TileInfo.Bridge) && !Ocean.Contains(c); }, 
-                                    (c, cf, b) => { return c.GetTile() == TileInfo.Shallow_Water || c.GetTile() == TileInfo.Bridge ? 0 : 1; }); // Follow the river where able
+                                    (c, cf, b) => { return IsWater(c) || c.GetTile() == TileInfo.Bridge ? 0 : 50; }); // Follow the river where able
                 Console.WriteLine($"CovePath: {coveRiverPath.Count}");
                 count++;
             }
             if (coveRiverPath != null && coveRiverPath.Count > 0)
             {
+                //coveRiverPath.ForEach(c => { c.SetTile(TileInfo.A); });
                 coveRiverPath.ForEach(c => { if (IsWater(c) || c.GetTile() == TileInfo.Bridge) { c.SetTile(TileInfo.Medium_Water); } });
             }
             else
