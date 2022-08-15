@@ -69,28 +69,34 @@ namespace U4DosRandomizer
                 if (ultimaData.Items[ultimaData.ITEM_BELL].Changed)
                 {
                     person = FindPerson("Garam");
+                    // Original: The Bell of Courage lies at the bottom of a deep well at sea found at lat-N'A" long-L'A"
                     person.KeywordResponse2 = ReplaceSextantText(person.KeywordResponse2, GetSextantText(ultimaData.Items[ultimaData.ITEM_BELL]));
                 }
 
                 person = FindPerson("Derek the Bard");
-                // Make more thematic when Cove is better hidden
-                person.KeywordResponse2 = "The candle of love is found in a secret place hidden in Cove!";
+                // Original The Candle of Love is found in a secret place hidden off Lock Lake!
+                // // Make more thematic when Cove is better hidden
+                // No longer need since Cove is back by Lock Lake
+                //person.KeywordResponse2 = "The candle of love is found in a secret place hidden in Cove!";
 
                 if (ultimaData.Items[ultimaData.ITEM_SKULL].Changed)
                 {
                     person = FindPerson("Jude");
+                    // Original : It can be found at lat-P'F" long-M'F" on the darkest night!
                     person.Yes = ReplaceSextantText(person.Yes, GetSextantText(ultimaData.Items[ultimaData.ITEM_SKULL]));
                 }
 
                 if (ultimaData.Items[ultimaData.ITEM_NIGHTSHADE].Changed)
                 {
                     person = FindPerson("Virgil");
+                    // Original : Nightshade may be found only near lat-J'F", long-C'O" only on the darkest of nights!
                     person.KeywordResponse2 = ReplaceSextantText(person.KeywordResponse2, GetSextantText(ultimaData.Items[ultimaData.ITEM_NIGHTSHADE]));
                 }
 
                 if (ultimaData.Towns[UltimaData.LOC_MAGINCIA - ultimaData.LOC_TOWNS].IsDirty())
                 {
                     person = FindPerson("Shawn");
+                    // Original : My towne was destroyed for its Pride. The ruins lie on an isle at lat-K'J" long-L'L"!
                     person.No = ReplaceSextantText(person.No, GetSextantText(ultimaData.Towns[UltimaData.LOC_MAGINCIA - ultimaData.LOC_TOWNS]));
                 }
 
@@ -98,6 +104,7 @@ namespace U4DosRandomizer
                 if (ultimaData.Items[ultimaData.ITEM_MANDRAKE].Changed || ultimaData.Items[ultimaData.ITEM_MANDRAKE2].Changed)
                 {
                     person = FindPerson("Calumny");
+                    // Original : Mandrake root is found only in the Fens of the Dead and in the Bloody Plains where the ground is always damp.
                     if (!flags.ClothMap)
                     {
                         person.KeywordResponse2 = $"Mandrake is found near {GetSextantText(ultimaData.Items[ultimaData.ITEM_MANDRAKE])}\nand\n{GetSextantText(ultimaData.Items[ultimaData.ITEM_MANDRAKE2])} ";
@@ -159,6 +166,7 @@ namespace U4DosRandomizer
                 if (ultimaData.Items[ultimaData.ITEM_HORN].Changed)
                 {
                     person = FindPerson("Malchor");
+                    // Original : Some say that the Silver Horn is buried on a small isle off the tip of Spiritwood.
                     person.KeywordResponse2 = $"Some say that\nthe silver horn\nis buried at\n{GetSextantText(ultimaData.Items[ultimaData.ITEM_HORN])}";
                 }
 
@@ -167,17 +175,20 @@ namespace U4DosRandomizer
                 if (ultimaData.Items[ultimaData.ITEM_WHEEL].Changed)
                 {
                     person = FindPerson("Lassorn");
+                    // Original : I alone survived the shipwreck.
                     person.KeywordResponse2 = $"She went down in\nthe deep waters\nat\n{GetSextantText(ultimaData.Items[ultimaData.ITEM_WHEEL])}!";
                 }
 
                 // TODO Black stone currently at the moongate will need to change this text if we ever do randomize it
                 person = FindPerson("Merlin");
+                // Resp2 Original : Stand where the gate of both moons dark shall appear. Search when the moons go dark!
 
                 // White stone
                 // TODO make response descriptive
                 if (ultimaData.Items[ultimaData.ITEM_WHITE_STONE].Changed)
                 {
                     person = FindPerson("Isaac");
+                    // Original : The White Stone sits atop the Serpent's Spine. It can only be reached by one who floats within the clouds.
                     person.KeywordResponse2 = $"The white stone\nsits atop the\nmountains at\n{GetSextantText(ultimaData.Items[ultimaData.ITEM_WHITE_STONE])}.\nIt can only be\nreached by one\nwho floats\nwithin the\nclouds.";
                     ultimaData.ShrineText[6 * 3 + 2] = $"If thou dost seek the White Stone search not under the ground but at {GetSextantText(ultimaData.Items[ultimaData.ITEM_WHITE_STONE]).Replace('\n', ' ')}";
                 }
@@ -193,9 +204,12 @@ namespace U4DosRandomizer
                 {
                     person = FindPerson("Simple");
                     //person.KeywordResponse2 = $"The shrine lies\nnear\n{GetSextantText(ultimaData.Shrines[ultimaData.LOC_HUMILITY - ultimaData.LOC_SHRINES])} and\nis guarded by\nendless hoards\nof daemons!";
+                    // Original : Southeast of Britannia!
                     person.No = $"To the {CoordinateToCardinal(ultimaData.Towns[UltimaData.LOC_VESPER - ultimaData.LOC_TOWNS], ultimaData.Shrines[ultimaData.LOC_HUMILITY - ultimaData.LOC_SHRINES])} of here!";
                     person = FindPerson("Wierdrum");
-                    person.KeywordResponse2 = $"Yes, I have been\nto the shrine,\nit lies near\n{GetSextantText(ultimaData.Shrines[ultimaData.LOC_HUMILITY - ultimaData.LOC_SHRINES])}!";
+                    // Original: Yes, I have been to the Shrine, it lies on the north bank in the isle of the Abyss!
+                    // Not needed anymore. Abyss is back to stock.
+                    //person.KeywordResponse2 = $"Yes, I have been\nto the shrine,\nit lies near\n{GetSextantText(ultimaData.Shrines[ultimaData.LOC_HUMILITY - ultimaData.LOC_SHRINES])}!";
                 }
 
 
@@ -204,6 +218,7 @@ namespace U4DosRandomizer
                 if (ultimaData.Shrines[ultimaData.LOC_COMPASSION - ultimaData.LOC_SHRINES].IsDirty())
                 {
                     person = FindPerson("Shapero");
+                    // Original : Find the Shrine of Compassion east across 2 bridges!
                     person.Yes = $"Find the shrine\nof compassion\nat\n{GetSextantText(ultimaData.Shrines[ultimaData.LOC_COMPASSION - ultimaData.LOC_SHRINES])}!";
                 }
 
@@ -212,6 +227,7 @@ namespace U4DosRandomizer
                 if (ultimaData.Shrines[ultimaData.LOC_SACRIFICE - ultimaData.LOC_SHRINES].IsDirty())
                 {
                     person = FindPerson("Merida");
+                    // Original : The Shrine is on a lake to the east!
                     person.No = $"The shrine is at\n{GetSextantText(ultimaData.Shrines[ultimaData.LOC_SACRIFICE - ultimaData.LOC_SHRINES])}!";
                 }
 
@@ -228,6 +244,7 @@ namespace U4DosRandomizer
                 if (ultimaData.Shrines[ultimaData.LOC_HONESTY - ultimaData.LOC_SHRINES].IsDirty())
                 {
                     person = FindPerson("Calabrini");
+                    // Original : Perhaps, the Shrine which lies on an isle to the north!
                     person.No = $"Perhaps, the\nshrine which\nlies at\n{GetSextantText(ultimaData.Shrines[ultimaData.LOC_HONESTY - ultimaData.LOC_SHRINES])}!";
                 }
 
@@ -236,6 +253,7 @@ namespace U4DosRandomizer
                 if (ultimaData.Shrines[ultimaData.LOC_HONOR - ultimaData.LOC_SHRINES].IsDirty())
                 {
                     person = FindPerson("Dergin");
+                    // Original : The shrine lies to the south and west beyond the swamps!
                     person.No = $"The shrine lies at\n{GetSextantText(ultimaData.Shrines[ultimaData.LOC_HONOR - ultimaData.LOC_SHRINES])}!";
                 }
 
@@ -248,6 +266,7 @@ namespace U4DosRandomizer
                 if (ultimaData.Shrines[ultimaData.LOC_VALOR - ultimaData.LOC_SHRINES].IsDirty())
                 {
                     person = FindPerson("Sir Hrothgar");
+                    // Original : Thou should seek the shrine of valor!
                     person.No = $"Thou should seek\nthe shrine of\nvalor at\n{GetSextantText(ultimaData.Shrines[ultimaData.LOC_VALOR - ultimaData.LOC_SHRINES])}!";
                 }
 
@@ -301,31 +320,34 @@ namespace U4DosRandomizer
                 }
                 if (ultimaData.Towns[UltimaData.LOC_COVE - ultimaData.LOC_TOWNS].IsDirty())
                 {
+                    // Original : Hmmm, Now let me see... Yes, it was the old Hermit... Sloven! He is tough to find, lives near Lock Lake I hear.
                     if (!flags.ClothMap)
                     {
                         ultimaData.TavernText[2] = $"Hmmm, Now let me see... Yes, it was the old Hermit... Sloven! He lives in Cove at {GetSextantText(ultimaData.Towns[UltimaData.LOC_COVE - ultimaData.LOC_TOWNS])}.\n";
                     }
                     else
                     {
-                        var coveTile = worldMap.GetCoordinate(ultimaData.Towns[UltimaData.LOC_COVE - ultimaData.LOC_TOWNS].X, ultimaData.Towns[UltimaData.LOC_COVE - ultimaData.LOC_TOWNS].Y);
-                        IList<ITile> path = null;
-                        var coveRegion = worldMap.FindNearestRegion(coveTile, ultimaData, out path);
+                        // No longer needed since Cove is back by Lock Lake
 
-                        var coveText = "Hmmm, let me see... Yes, it was the old Hermit... Sloven! He is tough to find, lives ";
-                        if (coveRegion != null && coveRegion.Tiles.Any(c => c.Equals(coveTile)))
-                        {
-                            coveText += $"in the {coveRegion.Name.StripThe()}.";
-                        }
-                        else if (path != null && path.Count < 11)
-                        {
-                            coveText += $"near the {coveRegion.Name.StripThe()}.";
-                        }
-                        else
-                        {
-                            coveText = $"Hmmm, Now let me see... Yes, it was the old Hermit... Sloven! He lives in Cove at {GetSextantText(ultimaData.Towns[UltimaData.LOC_COVE - ultimaData.LOC_TOWNS])}.\n";
-                        }
+                        //var coveTile = worldMap.GetCoordinate(ultimaData.Towns[UltimaData.LOC_COVE - ultimaData.LOC_TOWNS].X, ultimaData.Towns[UltimaData.LOC_COVE - ultimaData.LOC_TOWNS].Y);
+                        //IList<ITile> path = null;
+                        //var coveRegion = worldMap.FindNearestRegion(coveTile, ultimaData, out path);
 
-                        ultimaData.TavernText[2] = coveText;
+                        //var coveText = "Hmmm, let me see... Yes, it was the old Hermit... Sloven! He is tough to find, lives ";
+                        //if (coveRegion != null && coveRegion.Tiles.Any(c => c.Equals(coveTile)))
+                        //{
+                        //    coveText += $"in the {coveRegion.Name.StripThe()}.";
+                        //}
+                        //else if (path != null && path.Count < 11)
+                        //{
+                        //    coveText += $"near the {coveRegion.Name.StripThe()}.";
+                        //}
+                        //else
+                        //{
+                        //    coveText = $"Hmmm, Now let me see... Yes, it was the old Hermit... Sloven! He lives in Cove at {GetSextantText(ultimaData.Towns[UltimaData.LOC_COVE - ultimaData.LOC_TOWNS])}.\n";
+                        //}
+
+                        //ultimaData.TavernText[2] = coveText;
                     }
                 }
 
@@ -333,6 +355,7 @@ namespace U4DosRandomizer
 
                 // --- Other ---
                 // TODO: Pirate location? Bucaneer's Den?
+                // Resp2 Original : Pirates come from an isle to the east!
                 person = FindPerson("Wilmoore");
             }
             else if (flags.Overworld == 2)
