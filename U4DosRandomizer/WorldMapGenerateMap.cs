@@ -2761,10 +2761,17 @@ namespace U4DosRandomizer
                                                 outlineOverlay.Mutate(ctx => ctx.GaussianBlur(0.8f));
                                                 image = image.Clone(ctx => ctx.DrawImage(outlineOverlay, PixelColorBlendingMode.Normal, PixelAlphaCompositionMode.SrcOver, 1));
 
-                                                var imageAndUsed = ClothMapPlaceTags(image, random);
-                                                image = imageAndUsed.Item1;
-                                                var usedPixels = imageAndUsed.Item2;
+                                                var usedPixels = new int[SIZE * 4, SIZE * 4];
+                                                for (int x = 0; x < SIZE * 4; x++)
+                                                {
+                                                    for (int y = 0; y < SIZE * 4; y++)
+                                                    {
+                                                        usedPixels[x, y] = 0;
+                                                    }
+                                                }
 
+                                                
+                                                
                                                 image = ClothMapPlaceLocations(image, data, usedPixels);
                                                 image = ClothMapPlaceMoons(image, data, usedPixels);
 
@@ -2826,6 +2833,8 @@ namespace U4DosRandomizer
                                                     }
                                                 }
 
+                                                image = ClothMapPlaceTags(image, random, usedPixels);
+
                                             }
                                         }
                                     }
@@ -2860,16 +2869,8 @@ namespace U4DosRandomizer
             return false;
         }
 
-        private Tuple<SixLabors.ImageSharp.Image<Rgba32>, int[,]> ClothMapPlaceTags(SixLabors.ImageSharp.Image<Rgba32> image, Random random)
+        private SixLabors.ImageSharp.Image<Rgba32> ClothMapPlaceTags(SixLabors.ImageSharp.Image<Rgba32> image, Random random, int[,] usedPixels)
         {
-            var usedPixels = new int[SIZE * 4, SIZE * 4];
-            for(int x = 0; x < SIZE*4; x++)
-            {
-                for (int y = 0; y < SIZE * 4; y++)
-                {
-                    usedPixels[x,y] = 0;
-                }
-            }
             var tagImages = new List<Tuple<SixLabors.ImageSharp.Image<Rgba32>, int, int>>();
             //FontRectangle size = TextMeasurer.Measure(region.RunicName.ToUpper(), new RendererOptions(font));
             
@@ -2946,7 +2947,7 @@ namespace U4DosRandomizer
                 }
             }
 
-            return new Tuple<SixLabors.ImageSharp.Image<Rgba32>, int[,]>( image, usedPixels);
+            return image;
         }
 
         private static void MarkUsedPixels(SixLabors.ImageSharp.Point point, int[,] usedPixels, SixLabors.ImageSharp.Image<Rgba32> image)
