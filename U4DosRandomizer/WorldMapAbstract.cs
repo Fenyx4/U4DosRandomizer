@@ -63,6 +63,23 @@ namespace U4DosRandomizer
             return distanceSquared;
         }
 
+        public int DistanceSquared(int destX, int destY, int originX, int originY)
+        {
+            var deltaX = Math.Abs(destX - originX);
+            if (deltaX > SIZE / 2)
+            {
+                deltaX = SIZE - deltaX;
+            }
+            var deltaY = Math.Abs(destY - originY);
+            if (deltaY > SIZE / 2)
+            {
+                deltaY = SIZE - deltaY;
+            }
+            var distanceSquared = (deltaX * deltaX + deltaY * deltaY);
+
+            return distanceSquared;
+        }
+
         public Region FindNearestRegion(ICoordinate targetTile, UltimaData data, out IList<ITile> outPath)
         {
             outPath = null;
