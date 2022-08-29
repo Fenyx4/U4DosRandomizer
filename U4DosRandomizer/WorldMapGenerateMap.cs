@@ -1045,7 +1045,7 @@ namespace U4DosRandomizer
                     Tree = currentNode,
                     Direction = direction
                 };
-                //Rivers.Add(river);
+                Rivers.Add(river);
 
                 river.LevelOrderTraversal(n =>
                 {
@@ -2686,19 +2686,33 @@ namespace U4DosRandomizer
             {
                 PathBuilder pathBuilder = new PathBuilder();
 
+
+                var angle = (float)(Math.PI/32 * (random.NextDouble()*2-1));
+                var transform = System.Numerics.Matrix3x2.CreateRotation(angle, new System.Numerics.Vector2(river.Tree.Coordinate.X*4, river.Tree.Coordinate.Y*4));
+                pathBuilder.SetTransform(transform);
+
+                var driftRange = 0.15; // random.NextDouble(0.20, 0.30) * (random.Next(2) == 0 ? -1 : 1);
+                var driftXdelta = river.Direction.Item2 != 0 ? driftRange : 0;
+                var driftYdelta = river.Direction.Item1 != 0 ? driftRange : 0;
+                var driftX = 0.0;
+                var driftY = 0.0;
                 river.LevelOrderTraversal(c =>
                 {
+                    var driftWithJitterX = driftX;// + (0.25 * (random.Next(2) - 1));
+                    var driftWithJitterY = driftY;// + (0.25 * (random.Next(2) - 1));
                     if (c.Parent != null)
                     {
                         //pathBuilder.AddLine(new SixLabors.ImageSharp.PointF(c.Coordinate.X * 4, c.Coordinate.Y * 4), new SixLabors.ImageSharp.PointF(c.Parent.Coordinate.X * 4, c.Parent.Coordinate.Y * 4));
                         if (c.Parent.Parent == null)
                         {
-                            pathBuilder.AddLine(c.Coordinate.X * 4, c.Coordinate.Y * 4, c.Parent.Coordinate.X * 4, c.Parent.Coordinate.Y * 4);
+                            pathBuilder.AddLine(c.Coordinate.X * 4 + (int)driftWithJitterX, c.Coordinate.Y * 4 + (int)driftWithJitterY, c.Parent.Coordinate.X * 4 + (int)driftWithJitterX, c.Parent.Coordinate.Y * 4 + (int)driftWithJitterY);
                         }
                         else
                         {
                             int xStart = c.Parent.Coordinate.X * 4;
                             int yStart = c.Parent.Coordinate.Y * 4;
+                            int xControl = c.Parent.Coordinate.X * 4;
+                            int yControl = c.Parent.Coordinate.Y * 4;
                             int xEnd = c.Parent.Coordinate.X * 4;
                             int yEnd = c.Parent.Coordinate.Y * 4;
                             if(c.Parent.Coordinate.X > c.Parent.Parent.Coordinate.X)
@@ -2734,8 +2748,14 @@ namespace U4DosRandomizer
                             {
                                 yStart = c.Parent.Coordinate.Y * 4 + 2;
                             }
+                            xStart = (int)(xStart + driftWithJitterX);
+                            yStart = (int)(yStart + driftWithJitterY);
+                            xEnd = (int)(xEnd + driftWithJitterX);
+                            yEnd = (int)(yEnd + driftWithJitterY);
+                            xControl = (int)(xControl + driftWithJitterX);
+                            yControl = (int)(yControl + driftWithJitterY);
 
-                            pathBuilder.AddBezier(new SixLabors.ImageSharp.PointF(xStart, yStart), new SixLabors.ImageSharp.PointF(c.Parent.Coordinate.X * 4, c.Parent.Coordinate.Y * 4), new SixLabors.ImageSharp.PointF(xEnd, yEnd));
+                            pathBuilder.AddBezier(new SixLabors.ImageSharp.PointF(xStart, yStart), new SixLabors.ImageSharp.PointF(xControl, yControl), new SixLabors.ImageSharp.PointF(xEnd, yEnd));
                             //pathBuilder.AddBezier(new SixLabors.ImageSharp.PointF(c.Coordinate.X * 4, c.Coordinate.Y * 4), new SixLabors.ImageSharp.PointF(c.Parent.Coordinate.X * 4, c.Parent.Coordinate.Y * 4), new SixLabors.ImageSharp.PointF(c.Coordinate.X * 4, c.Coordinate.Y * 4));
                             //pathBuilder.AddBezier(new SixLabors.ImageSharp.PointF(c.Coordinate.X * 4, c.Coordinate.Y * 4), new SixLabors.ImageSharp.PointF(c.Parent.Coordinate.X * 4, c.Parent.Coordinate.Y * 4), new SixLabors.ImageSharp.PointF(c.Parent.Parent.Coordinate.X * 4, c.Parent.Parent.Coordinate.Y * 4));
                         }
@@ -2747,17 +2767,24 @@ namespace U4DosRandomizer
                     }
                     else
                     {
-                        var parent = GetCoordinate(c.Coordinate.X + (river.Direction.Item1 * -2), c.Coordinate.Y + (river.Direction.Item2 * -2));
+                        var xEnd = c.Coordinate.X + (river.Direction.Item1 * -2);
+                        var yEnd = c.Coordinate.Y + (river.Direction.Item2 * -2);
                         //pathBuilder.AddLine(new SixLabors.ImageSharp.PointF(c.Coordinate.X * 4, c.Coordinate.Y * 4), new SixLabors.ImageSharp.PointF(parent.X * 4, parent.Y * 4));
-                        pathBuilder.AddLine(c.Coordinate.X * 4, c.Coordinate.Y * 4, parent.X * 4, parent.Y * 4);
+                        pathBuilder.AddLine(c.Coordinate.X * 4 + (int)driftWithJitterX, c.Coordinate.Y * 4 + (int)driftWithJitterY, xEnd * 4 + (int)driftWithJitterX, yEnd * 4 + (int)driftWithJitterY);
 
                         pathBuilder.CloseFigure();
                     }
+                    driftX = driftX + driftXdelta + Math.Log(1+driftX)/20;
+                    driftY = driftY + driftYdelta + Math.Log(1+driftY)/20;
                 });
 
                 IPath path = pathBuilder.Build();
-                rivers.Mutate(ctx => ctx
-                    .Draw(riverOptions, pen, path)); // draw the path so we can see what the text is supposed to be following
+                //if (Rivers.FindIndex(c => c.Tree == river.Tree) == 0)
+                {
+                    rivers.Mutate(ctx => ctx
+                        .Draw(riverOptions, pen, path)); // draw the path so we can see what the text is supposed to be following
+                }
+                pathBuilder.ResetTransform();
             }
             //pathBuilder.AddLine(new SixLabors.ImageSharp.PointF(river.Tree.Coordinate.X * 4, river.Tree.Coordinate.Y *4), new SixLabors.ImageSharp.PointF(river.Tree.Children[0].Coordinate.X * 4, river.Tree.Children[0].Coordinate.Y * 4));
 
@@ -2767,7 +2794,6 @@ namespace U4DosRandomizer
             {
                 using (SixLabors.ImageSharp.Image<Rgba32> medium_water = SixLabors.ImageSharp.Image.Load<Rgba32>(ClothMap.medium_water))
                 {
-                    
                     using (SixLabors.ImageSharp.Image<Rgba32> grass = SixLabors.ImageSharp.Image.Load<Rgba32>(ClothMap.grass))
                     {
                         using (SixLabors.ImageSharp.Image<Rgba32> scrub = SixLabors.ImageSharp.Image.Load<Rgba32>(ClothMap.scrub))
