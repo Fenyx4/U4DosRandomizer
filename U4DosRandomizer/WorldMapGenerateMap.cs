@@ -2680,26 +2680,36 @@ namespace U4DosRandomizer
                 }
             };
 
+            var maxDepth = 0;
+            foreach (var river in Rivers)
+            {
+                river.LevelOrderTraversal(c => maxDepth = Math.Max(c.depth, maxDepth));
+            }
 
             //var river = Rivers[0];
             foreach (var river in Rivers)
             {
                 PathBuilder pathBuilder = new PathBuilder();
+                var depth = 0;
+                river.LevelOrderTraversal(c => depth = Math.Max(c.depth, depth));
 
 
-                var angle = (float)(Math.PI/32 * (random.NextDouble()*2-1));
+                var angle = (float)(Math.PI/32 * (random.NextDouble()*2-1) * (depth/maxDepth * -1 + 1));
                 var transform = System.Numerics.Matrix3x2.CreateRotation(angle, new System.Numerics.Vector2(river.Tree.Coordinate.X*4, river.Tree.Coordinate.Y*4));
                 pathBuilder.SetTransform(transform);
 
-                var driftRange = 0.15; // random.NextDouble(0.20, 0.30) * (random.Next(2) == 0 ? -1 : 1);
+                var driftRange = random.NextDouble(0.20, 0.30) * (random.Next(2) == 0 ? -1 : 1) * (depth / maxDepth * -1 + 1);
                 var driftXdelta = river.Direction.Item2 != 0 ? driftRange : 0;
                 var driftYdelta = river.Direction.Item1 != 0 ? driftRange : 0;
                 var driftX = 0.0;
                 var driftY = 0.0;
                 river.LevelOrderTraversal(c =>
                 {
-                    var driftWithJitterX = driftX;// + (0.25 * (random.Next(2) - 1));
-                    var driftWithJitterY = driftY;// + (0.25 * (random.Next(2) - 1));
+                    var driftWithJitterX = driftX + (0.25 * (random.Next(2) - 1));
+                    var driftWithJitterY = driftY + (0.25 * (random.Next(2) - 1));
+
+                    driftWithJitterX = driftWithJitterX * (c.depth / maxDepth * -1 + 1);
+                    driftWithJitterY = driftWithJitterY * (c.depth / maxDepth * -1 + 1);
                     if (c.Parent != null)
                     {
                         //pathBuilder.AddLine(new SixLabors.ImageSharp.PointF(c.Coordinate.X * 4, c.Coordinate.Y * 4), new SixLabors.ImageSharp.PointF(c.Parent.Coordinate.X * 4, c.Parent.Coordinate.Y * 4));
