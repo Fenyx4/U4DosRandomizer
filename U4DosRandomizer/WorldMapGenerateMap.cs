@@ -3036,7 +3036,7 @@ namespace U4DosRandomizer
                                                                 TabWidth = 8, // a tab renders as 8 spaces wide
                                                                               //WrapTextWidth = 100, // greater than zero so we will word wrap at 100 pixels wide
                                                                 HorizontalAlignment = HorizontalAlignment.Center,
-                                                                Origin = new System.Numerics.Vector2(x * 4, y * 4)
+                                                                //Origin = new System.Numerics.Vector2(x * 4, y * 4)
                                                             };
                                                             FontRectangle size = TextMeasurer.Measure(region.RunicName.ToUpper(), textOptions);
                                                             //Console.WriteLine(size.Top.ToString() + " " + size.Left.ToString() + " " + size.Right.ToString() + " " + size.Bottom.ToString());
@@ -3067,7 +3067,7 @@ namespace U4DosRandomizer
                                                             x = WrapInt(x + xOffset, SIZE);
 
                                                             MarkUsedPixels(usedPixels, size.Top + (y * 4), size.Bottom + (y * 4), (size.Right - size.Left) / -2 + (x * 4), (size.Right - size.Left) / 2 + (x * 4));
-
+                                                            textOptions.Origin = new System.Numerics.Vector2(x * 4, y * 4);
                                                             image.Mutate(ctx => ctx.DrawText(drawingOptions, textOptions, region.RunicName.ToUpper(), Brushes.Solid(SixLabors.ImageSharp.Color.Black), null));
                                                             //image.Mutate(ctx => ctx.DrawPolygon(SixLabors.ImageSharp.Color.HotPink, 2.0f, new SixLabors.ImageSharp.PointF(region.Center.X * 4, region.Center.Y * 4), new SixLabors.ImageSharp.PointF(region.Center.X * 4 + 2, region.Center.Y * 4 + 2)));
                                                         }
