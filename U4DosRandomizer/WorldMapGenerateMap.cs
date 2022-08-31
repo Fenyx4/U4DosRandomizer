@@ -2773,6 +2773,7 @@ namespace U4DosRandomizer
                             //pathBuilder.AddBezier(new SixLabors.ImageSharp.PointF(c.Coordinate.X * 4, c.Coordinate.Y * 4), new SixLabors.ImageSharp.PointF(c.Parent.Coordinate.X * 4, c.Parent.Coordinate.Y * 4), new SixLabors.ImageSharp.PointF(c.Coordinate.X * 4, c.Coordinate.Y * 4));
                             //pathBuilder.AddBezier(new SixLabors.ImageSharp.PointF(c.Coordinate.X * 4, c.Coordinate.Y * 4), new SixLabors.ImageSharp.PointF(c.Parent.Coordinate.X * 4, c.Parent.Coordinate.Y * 4), new SixLabors.ImageSharp.PointF(c.Parent.Parent.Coordinate.X * 4, c.Parent.Parent.Coordinate.Y * 4));
                         }
+
                         pathBuilder.CloseFigure();
 
                         //Console.WriteLine($"Self: {c.Coordinate.X} {c.Coordinate.Y}");
@@ -2788,13 +2789,12 @@ namespace U4DosRandomizer
 
                         pathBuilder.CloseFigure();
                     }
-                    driftX = driftX + driftXdelta + Math.Log(1+driftX)/20;
-                    driftY = driftY + driftYdelta + Math.Log(1+driftY)/20;
+                    driftX = driftX + driftXdelta + (Math.Log(1+Math.Abs(driftX))/20 * (driftX < 0 ? -1 : 1));
+                    driftY = driftY + driftYdelta + (Math.Log(1+Math.Abs(driftY))/20 * (driftY < 0 ? -1 : 1));
                 });
 
                 IPath path = pathBuilder.Build();
                 //if (Rivers.FindIndex(c => c.Tree == river.Tree) == 0)
-                if(i == 3)
                 {
                     rivers.Mutate(ctx => ctx.Draw(riverOptions, pen, path));
                 }
