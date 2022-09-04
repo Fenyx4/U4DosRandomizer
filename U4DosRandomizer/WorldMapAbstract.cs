@@ -5,6 +5,8 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 
+using U4DosRandomizer.Resources;
+
 namespace U4DosRandomizer
 {
     public abstract class WorldMapAbstract : IWorldMap
@@ -171,59 +173,69 @@ namespace U4DosRandomizer
         public SixLabors.ImageSharp.Image ToImage()
         {
             var image = new SixLabors.ImageSharp.Image<Rgba32>(WorldMapGenerateMap.SIZE, WorldMapGenerateMap.SIZE);
-            for (int y = 0; y < WorldMapGenerateMap.SIZE; y++)
+            image.ProcessPixelRows(pixelAccessor =>
             {
-                Span<Rgba32> pixelRowSpan = image.GetPixelRowSpan(y);
-                for (int x = 0; x < WorldMapGenerateMap.SIZE; x++)
+                for (int y = 0; y < WorldMapGenerateMap.SIZE; y++)
                 {
-                    if (colorMap.ContainsKey(_worldMapTiles[x, y]))
+                    Span<Rgba32> pixelRowSpan = pixelAccessor.GetRowSpan(y);
+                    for (int x = 0; x < WorldMapGenerateMap.SIZE; x++)
                     {
-                        pixelRowSpan[x] = colorMap[_worldMapTiles[x, y]];
-                    }
-                    else
-                    {
-                        pixelRowSpan[x] = SixLabors.ImageSharp.Color.White;
-                    }
+                        if (colorMap.ContainsKey(_worldMapTiles[x, y]))
+                        {
+                            pixelRowSpan[x] = colorMap[_worldMapTiles[x, y]];
+                        }
+                        else
+                        {
+                            pixelRowSpan[x] = SixLabors.ImageSharp.Color.White;
+                        }
 
+                    }
                 }
-            }
+            });
+            
 
             return image;
         }
 
         public Image ToClothMap(UltimaData data, Random random)
         {
-            using (Image<Rgba32> deep_water = Image.Load<Rgba32>("E:\\Projects\\U4DosRandomizer\\Assets\\deep_water.png"))
+            using (Image<Rgba32> deep_water = Image.Load<Rgba32>(ClothMap.deep_water))
             {
-                using (Image<Rgba32> grass = Image.Load<Rgba32>("E:\\Projects\\U4DosRandomizer\\Assets\\grass.png"))
+                using (Image<Rgba32> grass = Image.Load<Rgba32>(ClothMap.grass))
                 {
                     var image = new Image<Rgba32>(WorldMapGenerateMap.SIZE*4, WorldMapGenerateMap.SIZE*4);
-                    for (int y = 0; y < WorldMapGenerateMap.SIZE*4; y++)
-                    {
-                        Span<Rgba32> deepWaterRowSpan = deep_water.GetPixelRowSpan(y);
-                        Span<Rgba32> grassRowSpan = grass.GetPixelRowSpan(y);
-                        Span<Rgba32> pixelRowSpan = image.GetPixelRowSpan(y);
-                        for (int x = 0; x < WorldMapGenerateMap.SIZE*4; x++)
-                        {
-                            //if (colorMap.ContainsKey(_worldMapTiles[x, y]))
-                            //{
-                            //    pixelRowSpan[x] = colorMap[_worldMapTiles[x, y]];
-                            //}
-                            //else
-                            //{
-                            //    pixelRowSpan[x] = SixLabors.ImageSharp.Color.White;
-                            //}
-                            if(_worldMapTiles[x/4, y/4] == TileInfo.Deep_Water)
-                            {
-                                pixelRowSpan[x] = deepWaterRowSpan[x];
-                            }
-                            else
-                            {
-                                pixelRowSpan[x] = grassRowSpan[x];
-                            }
 
+                    image.ProcessPixelRows(deep_water, grass, (imageAccessor, deepWaterAccessor, grassAccessor) =>
+                    {
+                        for (int y = 0; y < WorldMapGenerateMap.SIZE * 4; y++)
+                        {
+                            Span<Rgba32> deepWaterRowSpan = deepWaterAccessor.GetRowSpan(y);
+                            Span<Rgba32> grassRowSpan = grassAccessor.GetRowSpan(y);
+                            Span<Rgba32> pixelRowSpan = imageAccessor.GetRowSpan(y);
+                            for (int x = 0; x < WorldMapGenerateMap.SIZE * 4; x++)
+                            {
+                                //if (colorMap.ContainsKey(_worldMapTiles[x, y]))
+                                //{
+                                //    pixelRowSpan[x] = colorMap[_worldMapTiles[x, y]];
+                                //}
+                                //else
+                                //{
+                                //    pixelRowSpan[x] = SixLabors.ImageSharp.Color.White;
+                                //}
+                                if (_worldMapTiles[x / 4, y / 4] == TileInfo.Deep_Water)
+                                {
+                                    pixelRowSpan[x] = deepWaterRowSpan[x];
+                                }
+                                else
+                                {
+                                    pixelRowSpan[x] = grassRowSpan[x];
+                                }
+
+                            }
                         }
-                    }
+                    });
+
+                    
                     return image;
                 }
             }
