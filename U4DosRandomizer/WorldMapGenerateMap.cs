@@ -5,14 +5,11 @@ using SixLabors.Fonts;
 using SimplexNoise;
 using System;
 using System.Collections.Generic;
-using System.Drawing;
 using System.IO;
 using System.Linq;
 using U4DosRandomizer.Helpers;
 using U4DosRandomizer.Resources;
 using SixLabors.ImageSharp.Drawing;
-using SixLabors.ImageSharp;
-using static System.Net.Mime.MediaTypeNames;
 
 namespace U4DosRandomizer
 {
@@ -997,7 +994,6 @@ namespace U4DosRandomizer
                 GetCoordinate(cove.X+1, cove.Y+1),
             };
             
-            List<ITile> coveRiverPath = null;
             ITile riverMouth = null;
             int riverLength = 0;
             Tuple<int, int> direction = null;
@@ -1008,32 +1004,34 @@ namespace U4DosRandomizer
             
             var lockLakeTiles = new List<ITile>(lockLakeAndAttachedRivers);
 
-            var removedLockLakeTiles = new List<ITile>();
-            while ((coveRiverPath == null || coveRiverPath.Count == 0) && count < 256)
+            var attemptedLockLakeTiles = new List<ITile>();
+            River river = null;
+            River bestRiver = null;
+            var shortestCheatPathToRiverCount = Int32.MaxValue;
+            var shortestCheatPathToRiver = new List<ITile>();
+            while (shortestCheatPathToRiverCount != 0 && count < 2048 && lockLakeTiles.Count > 0)
             {
+                // Every 16 attempts try a new river mouth
                 if (count % 16 == 0)
                 {
                     var covePath = Search.GetPath(SIZE, SIZE, headOfCoveRiver,
                                     c => { return lockLakeTiles.Contains(c); }, // Find a spot in Lock Lake
-                                    c => { return !removedLockLakeTiles.Contains(c); } // Any tile is fine just getting a starting point and a distance
+                                    c => { return !attemptedLockLakeTiles.Contains(c); } // Any tile is fine just getting a starting point and a distance
                                     );
 
-
+                    if(covePath.Count() == 0)
+                    {
+                        break;
+                    }
                     riverMouth = covePath[covePath.Count() - 1];
                     riverLength = covePath.Count() - 2;
                     direction = new Tuple<int, int>(covePath[covePath.Count() - 2].X - riverMouth.X, covePath[covePath.Count() - 2].Y - riverMouth.Y);
 
                     lockLakeTiles.Remove(riverMouth);
-                    removedLockLakeTiles.Add(riverMouth);
+                    attemptedLockLakeTiles.Add(riverMouth);
                 }
 
-                for (int x = 0; x < SIZE; x++)
-                {
-                    for (int y = 0; y < SIZE; y++)
-                    {
-                        _worldMapTiles[x, y] = worldMapCache[x, y];
-                    }
-                }
+                // Try a new river
                 var currentNode = new RiverNode()
                 {
                     Coordinate = riverMouth,
@@ -1041,31 +1039,71 @@ namespace U4DosRandomizer
                     Children = new List<RiverNode>(),
                     depth = 0
                 };
+                //RiverTributary(random, currentNode, direction, riverLength, TileInfo.A, c => { return (IsNotWater(c) || removedLockLakeTiles.Contains(c) || lockLakeTiles.Contains(c)) && !notAllowedForRiverTile.Contains(c); });
                 RiverTributary(random, currentNode, direction, riverLength, TileInfo.A, c => { return IsNotWater(c) && !notAllowedForRiverTile.Contains(c); });
-                var river = new River()
+                river = new River()
                 {
                     Tree = currentNode,
                     Direction = direction
                 };
-                Rivers.Add(river);
-
+                //Rivers.Add(river);
+                var riverCoords = new List<ITile>();
                 river.LevelOrderTraversal(n =>
                 {
                     n.Coordinate.SetTile(TileInfo.Shallow_Water);
                     //n.Coordinate.SetClothTile(TileInfo.Shallow_Water);
+                    riverCoords.Add(n.Coordinate);
                 });
                 currentNode.Coordinate.SetTile(TileInfo.Medium_Water);
 
-                coveRiverPath = Search.GetPath(SIZE, SIZE, cove,
-                                    c => { return lockLake.Tiles.Contains(c); }, // Find a spot in Lock Lake
-                                    c => { return (IsWalkable(c) || IsWater(c) || c.GetTile() == TileInfo.Bridge) && !Ocean.Contains(c); }, 
-                                    (c, cf, b) => { return IsWater(c) || c.GetTile() == TileInfo.Bridge ? 0 : 50; }); // Follow the river where able
+                var pathFromHeadToRiver = Search.GetPath(SIZE, SIZE, headOfCoveRiver,
+                    c => { return riverCoords.Contains(c); },
+                    c => { return !notAllowedForRiverTile.Contains(c); });
+
+                if(pathFromHeadToRiver.Count > 0)
+                {
+                    foreach(var tile in pathFromHeadToRiver)
+                    {
+                        tile.SetTile(TileInfo.Medium_Water);
+                    }
+                }
+
+                if (pathFromHeadToRiver.Count < shortestCheatPathToRiverCount)
+                {
+                    bestRiver = river;
+                    shortestCheatPathToRiverCount = pathFromHeadToRiver.Count;
+                    shortestCheatPathToRiver = pathFromHeadToRiver;
+                }
+
+                // Undo previous river
+                for (int x = 0; x < SIZE; x++)
+                {
+                    for (int y = 0; y < SIZE; y++)
+                    {
+                        _worldMapTiles[x, y] = worldMapCache[x, y];
+                    }
+                }
+
                 //Console.WriteLine($"CovePath: {coveRiverPath.Count}");
                 count++;
             }
-            if (coveRiverPath != null && coveRiverPath.Count > 0)
+
+            if (bestRiver != null)
             {
-                //coveRiverPath.ForEach(c => { c.SetTile(TileInfo.A); });
+                Rivers.Add(bestRiver);
+                bestRiver.LevelOrderTraversal(n =>
+                {
+                    n.Coordinate.SetTile(TileInfo.Shallow_Water);
+                });
+                foreach (var tile in shortestCheatPathToRiver)
+                {
+                    tile.SetTile(TileInfo.Medium_Water);
+                }
+
+                var coveRiverPath = Search.GetPath(SIZE, SIZE, cove,
+                                    c => { return lockLake.Tiles.Contains(c); }, // Find a spot in Lock Lake
+                                    c => { return (IsWalkable(c) || IsWater(c) || c.GetTile() == TileInfo.Bridge) && !Ocean.Contains(c); },
+                                    (c, cf, b) => { return IsWater(c) || c.GetTile() == TileInfo.Bridge ? 0 : 50; }); // Follow the river where able
                 coveRiverPath.ForEach(c => { if (IsWater(c) || c.GetTile() == TileInfo.Bridge) { c.SetTile(TileInfo.Medium_Water); } });
             }
             else
@@ -1630,15 +1668,17 @@ namespace U4DosRandomizer
 
             grassLocations.Shuffle(random);
 
+            var possibleCoveLocations = GetAllMatchingTiles(c => AreaIsAll(IsNotWater, 5, 5, c, false) && AreaIsAll(c => c.GetTile() == TileInfo.Mountains, 4, 4, c, false));
+
             var chosenLakeLocation = grassLocations.First( c => { 
 
             // Find how far away the mountain range is
             var pathToMountain = Search.GetPath(SIZE, SIZE, c,
-                    c => c.GetTile() == TileInfo.Mountains,
+                    c => possibleCoveLocations.Contains(c),
                     IsNotWater);
 
                 // If it isn't too close or too far away
-                if (pathToMountain != null && (pathToMountain.Count() > 11 && pathToMountain.Count() < 14))
+                if (pathToMountain != null && (pathToMountain.Count() > 16 && pathToMountain.Count() < 19))
                 {
                     // If we can place it without overlapping the ocean or another body of water
                     // Need to look one space away too to not abut the ocean
