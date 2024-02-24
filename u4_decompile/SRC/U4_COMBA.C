@@ -314,6 +314,7 @@ int /*bp04*/_range;
 	int loc_A;
 	
 	loc_C = &(Party.chara[activeChara]);
+	/* WEAPON_REQUIRED_FOR_ABYSS */
 	if(Party._loc == 0x18 && loc_C->_weapon < 11) {
 		/*abyss without good weapons*/
 		w_missed(_range);

@@ -33,6 +33,8 @@ namespace U4DosRandomizer
         int MONSTER_SPAWN_TIER_THREE { get; }
         int MONSTER_QTY_ONE { get; }
         int MONSTER_QTY_TWO { get; }
+        int HERB_PRICES { get; }
+        int HERB_PRICE_INPUT { get; }
         int LB_TEXT_OFFSET { get; }
         int LB_HELP_TEXT_OFFSET { get; }
         int TAVERN_TEXT_OFFSET { get; }
@@ -60,8 +62,13 @@ namespace U4DosRandomizer
         int ITEM_USE_TRIGGER_CANDLE_Y_OFFSET { get; }
         int ITEM_USE_TRIGGER_SKULL_X_OFFSET { get; }
         int ITEM_USE_TRIGGER_SKULL_Y_OFFSET { get; }
+        int WEAPON_REQUIRED_FOR_ABYSS { get; }
         int WHIRLPOOL_EXIT_X_OFFSET { get; }
         int WHIRLPOOL_EXIT_Y_OFFSET { get; }
+        int USE_PRINCIPLE_ITEM_TEXT { get; }
+        int USE_PRINCIPLE_ITEM_BELL_TEXT_POINTERS_OFFSET { get; }
+        int USE_PRINCIPLE_ITEM_BOOK_TEXT_POINTERS_OFFSET { get; }
+        int USE_PRINCIPLE_ITEM_CANDLE_TEXT_POINTERS_OFFSET { get; }
         int ABYSS_EJECTION_LOCATIONS_X { get; }
         int ABYSS_EJECTION_LOCATIONS_Y { get; }
         int ABYSS_PARTY_COMPARISON { get; }

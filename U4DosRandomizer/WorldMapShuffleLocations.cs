@@ -45,14 +45,14 @@ namespace U4DosRandomizer
             //RemoveAvatarIsle();
         }
 
-        public override void Randomize(UltimaData ultimaData, Random random1, Random random2)
+        public override void Randomize(UltimaData ultimaData, Random random1, Random random2, Random random3)
         {
             var swapPool = new List<Tuple<TileDirtyWrapper, ICoordinate, int>>();
 
             for (int i = 0; i < ultimaData.Castles.Count; i++)
             {
                 //SpoilerLog.Add(SpoilerCategory.Location, $"{ultimaData.Castles[i].Y:X2}");
-                swapPool.Add(new Tuple<TileDirtyWrapper, ICoordinate, int>(ultimaData.Castles[i].Copy(this), ultimaData.AbyssEjectionLocations[8 + i], ultimaData.LOC_LYCAEUM + i));
+                swapPool.Add(new Tuple<TileDirtyWrapper, ICoordinate, int>(ultimaData.Castles[i].Copy(this), ultimaData.AbyssEjectionLocations[8 + i], UltimaData.LOC_LYCAEUM + i));
             }
 
             for (int i = 0; i < ultimaData.Towns.Count; i++)
@@ -96,7 +96,7 @@ namespace U4DosRandomizer
                     ultimaData.AbyssEjectionLocations[8 + i].X = swapPool[i].Item2.X;
                     ultimaData.AbyssEjectionLocations[8 + i].Y = swapPool[i].Item2.Y;
 
-                    SpoilerLog.Add(SpoilerCategory.Location, $"{ultimaData.LocationNames[i + ultimaData.LOC_LYCAEUM - 1]} moved to {ultimaData.LocationNames[swapPool[i].Item3-1]}");
+                    SpoilerLog.Add(SpoilerCategory.Location, $"{ultimaData.LocationNames[i + UltimaData.LOC_LYCAEUM - 1]} moved to {ultimaData.LocationNames[swapPool[i].Item3-1]}");
                 }
                 else
                 {

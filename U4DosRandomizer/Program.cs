@@ -97,6 +97,10 @@ namespace U4DosRandomizer
                 "--runes",
                 "Randomize the location of the runes.",
                 CommandOptionType.NoValue);
+            CommandOption mysticsArg = commandLineApplication.Option(
+                "--mystics",
+                "Randomize the location of the mystics.",
+                CommandOptionType.NoValue);
             CommandOption mantrasArg = commandLineApplication.Option(
                 "--mantras",
                 "Randomize the mantras.",
@@ -141,6 +145,10 @@ namespace U4DosRandomizer
                 "--randomizeSpells",
                 "Randomizes the gate and resurrection spells that you learn in game.",
                 CommandOptionType.NoValue);
+            CommandOption herbArg = commandLineApplication.Option(
+                "--herbPrice",
+                "Changes how herb prices are modified. 1 for cheap reagents. 2 for shuffle reagent prices. 3 for expensive reagents.",
+                CommandOptionType.SingleValue);
             CommandOption sextantArg = commandLineApplication.Option(
                 "--sextant",
                 "Start with a sextant.",
@@ -160,6 +168,10 @@ namespace U4DosRandomizer
             CommandOption daemonTriggerArg = commandLineApplication.Option(
                 "--daemonTrigger",
                 "Fix daemon spawn in Abyss",
+                CommandOptionType.NoValue);
+            CommandOption requireMysticsArg = commandLineApplication.Option(
+                "--requireMystics",
+                "Require Mystics in the Abyss",
                 CommandOptionType.NoValue);
             CommandOption awakenUpgradeArg = commandLineApplication.Option(
                 "--awakenUpgrade",
@@ -268,6 +280,15 @@ namespace U4DosRandomizer
                     weaponDamage = weaponDamageTmp;
                 }
 
+                var herbPrices = 0;
+                if (herbArg.HasValue())
+                {
+                    if (!int.TryParse(herbArg.Value(), out herbPrices))
+                    {
+                        throw new InvalidCastException("Herb Prices argument must be a number");
+                    }
+                }
+
                 var path = Directory.GetCurrentDirectory();
                 if (pathArg.HasValue())
                 {
@@ -313,6 +334,7 @@ namespace U4DosRandomizer
                     flags.DiagonalAttack = diagonalAttackArg.HasValue();
                     flags.SacrificeFix = sacrificeFixArg.HasValue();
                     flags.Runes = runesArg.HasValue();
+                    flags.Mystics = mysticsArg.HasValue();
                     flags.Mantras = mantrasArg.HasValue();
                     flags.WordOfPassage = wordOfPassageArg.HasValue();
                     flags.QuestItemPercentage = questItems;
@@ -324,11 +346,13 @@ namespace U4DosRandomizer
                     flags.MonsterQty = monsterQtyArg.HasValue();
                     flags.NoRequireFullParty = noRequireFullPartyArg.HasValue();
                     flags.RandomizeSpells = randomizeSpellsArg.HasValue();
+                    flags.HerbPrices = herbPrices;
                     flags.Sextant = sextantArg.HasValue();
                     flags.ClothMap = clothMapArg.HasValue();
                     flags.PrincipleItems = principleItemsArg.HasValue();
                     flags.TownSaves = townSavesArg.HasValue();
                     flags.DaemonTrigger = daemonTriggerArg.HasValue();
+                    flags.RequireMysticWeapons = requireMysticsArg.HasValue();
                     flags.AwakenUpgrade = awakenUpgradeArg.HasValue();
                     flags.ShopOverflowFix = shopOverflowArg.HasValue();
                     flags.Other = otherArg.HasValue();
@@ -439,10 +463,10 @@ namespace U4DosRandomizer
             if (flags.Fixes)
             {
                 spoilerLog.Add(SpoilerCategory.Fix, "Serpent Hold's Healer");
-                ultimaData.ShopLocations[ultimaData.LOC_SERPENT - 1][5] = 0x12;
+                ultimaData.ShopLocations[UltimaData.LOC_SERPENT - 1][5] = 0x12;
             }
 
-            worldMap.Randomize(ultimaData, new Random(randomValues[3]), new Random(randomValues[4]));
+            worldMap.Randomize(ultimaData, new Random(randomValues[3]), new Random(randomValues[4]), new Random(randomValues[7]));
             dungeons.Randomize(new Random(randomValues[6]), flags);
 
             if (flags.ClothMap)
@@ -524,17 +548,17 @@ namespace U4DosRandomizer
             if(flags.PrincipleItems)
             {
                 //https://www.youtube.com/watch?v=GhnCj7Fvqt0
-                var values = new List<Tuple<int, int>> { new Tuple<int,int>(0, ultimaData.PrincipleItemRequirements[1]), new Tuple<int, int>(1, ultimaData.PrincipleItemRequirements[2]), new Tuple<int, int>(2, ultimaData.PrincipleItemRequirements[0]) };
+                var values = new List<Tuple<int, PrincipleItem>> { new Tuple<int, PrincipleItem>(0, ultimaData.PrincipleItemRequirements[0]), new Tuple<int, PrincipleItem>(1, ultimaData.PrincipleItemRequirements[1]), new Tuple<int, PrincipleItem>(2, ultimaData.PrincipleItemRequirements[2]) };
                 values.Shuffle(random);
                 
                 for(int i = 0; i < values.Count(); i++)
                 {
-                    ultimaData.PrincipleItemRequirements[values[i].Item1] = values[(i+1) % values.Count()].Item2;
+                    ultimaData.PrincipleItemRequirements[values[i].Item1].RequiredMask = values[(i+1) % values.Count()].Item2.UsedMask;
+                    ultimaData.PrincipleItemRequirements[values[i].Item1].Order = (values.Count() - i) % values.Count();
                 }
                 // Make the dependency for the first item be owning itself instead of one of the other items being used so there is an item you can start with
-                ultimaData.PrincipleItemRequirements[values[0].Item1] = 1 << (4 - values[0].Item1);
+                ultimaData.PrincipleItemRequirements[values[0].Item1].RequiredMask = 1 << (4 - values[0].Item1);
             }
-
 
             //worldMap.TestAbyssEjection();
 
@@ -631,20 +655,53 @@ namespace U4DosRandomizer
                 }
             }
 
-            if(flags.Runes)
+            var usedSpots = new List<Item>();
+            if (flags.Runes)
             {
                 spoilerLog.Add(SpoilerCategory.Feature, $"Rune locations randomized");
                 var usedLocations = new List<byte>();
                 for (int i = UltimaData.ITEM_RUNE_HONESTY; i < 8 + UltimaData.ITEM_RUNE_HONESTY; i++)
                 {
-                    var possibleOptions = ItemOptions.ItemToItemOptions[i].Where(x => !usedLocations.Contains(x.Item.Location)).ToList();
+                    var possibleOptions = ItemOptions.ItemToItemOptions[i].Where(x => !usedSpots.Contains(x.Item)).ToList();
+                    possibleOptions = possibleOptions.Where(x => !usedLocations.Contains(x.Item.Location)).ToList();
                     var selectedItemOption = possibleOptions[random.Next(0, possibleOptions.Count)];
                     ultimaData.Items[i].X = selectedItemOption.Item.X;
                     ultimaData.Items[i].Y = selectedItemOption.Item.Y;
                     ultimaData.Items[i].Location = selectedItemOption.Item.Location;
 
                     ultimaData.ItemOptions.Add(i, selectedItemOption);
+                    usedSpots.Add(selectedItemOption.Item);
                     usedLocations.Add(selectedItemOption.Item.Location);
+                }
+            }
+            else
+            {
+                for (int i = UltimaData.ITEM_RUNE_HONESTY; i < 8 + UltimaData.ITEM_RUNE_HONESTY; i++)
+                {
+                    usedSpots.Add(ItemOptions.ItemToItemOptions[i][0].Item);
+                }
+            }
+
+            if (flags.Mystics)
+            {
+                spoilerLog.Add(SpoilerCategory.Feature, $"Mystics locations randomized");
+                for (int i = UltimaData.ITEM_ARMOR; i < 2 + UltimaData.ITEM_ARMOR; i++)
+                {
+                    var possibleOptions = ItemOptions.ItemToItemOptions[i].Where(x => !usedSpots.Contains(x.Item)).ToList();
+                    var selectedItemOption = possibleOptions[random.Next(0, possibleOptions.Count)];
+                    ultimaData.Items[i].X = selectedItemOption.Item.X;
+                    ultimaData.Items[i].Y = selectedItemOption.Item.Y;
+                    ultimaData.Items[i].Location = selectedItemOption.Item.Location;
+
+                    ultimaData.ItemOptions.Add(i, selectedItemOption);
+                    usedSpots.Add(selectedItemOption.Item);
+                }
+            }
+            else
+            {
+                for (int i = UltimaData.ITEM_ARMOR; i < 2 + UltimaData.ITEM_ARMOR; i++)
+                {
+                    usedSpots.Add(ItemOptions.ItemToItemOptions[i][0].Item);
                 }
             }
 
@@ -716,6 +773,27 @@ namespace U4DosRandomizer
                 ultimaData.WordLove = selection.Item2;
                 ultimaData.WordCourage = selection.Item3;
                 ultimaData.WordOfPassage = selection.Item1 + selection.Item2 + selection.Item3;
+            }
+
+            if (flags.HerbPrices == 2)
+            {
+                ultimaData.HerbPrices.Shuffle(random);
+            }
+            else if (flags.HerbPrices == 1)
+            {
+                ultimaData.HerbPrices.Shuffle(random);
+                for (int i = 0; i < ultimaData.HerbPrices.Count; i++)
+                {
+                    ultimaData.HerbPrices[i] = 1;
+                }
+            }
+            else if (flags.HerbPrices == 3)
+            {
+                ultimaData.HerbPrices.Shuffle(random);
+                for (int i = 0; i < ultimaData.HerbPrices.Count; i++)
+                {
+                    ultimaData.HerbPrices[i] = (byte)(ultimaData.HerbPrices[i]*3);
+                }
             }
             
             //ultimaData.StartingStones = 0XFF;
@@ -840,14 +918,7 @@ namespace U4DosRandomizer
 
         }
 
-        static public double Linear(double x, double x0, double x1, double y0, double y1)
-        {
-            if ((x1 - x0) == 0)
-            {
-                return (y0 + y1) / 2;
-            }
-            return y0 + (x - x0) * (y1 - y0) / (x1 - x0);
-        }
+        
 
         
     }

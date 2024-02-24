@@ -62,6 +62,8 @@ namespace U4DosRandomizer
 
         public int MONSTER_QTY_ONE { get; } = 0x80EF;
         public int MONSTER_QTY_TWO { get; } = 0x8100;
+        public int HERB_PRICES { get; } = 0x1340B;
+        public int HERB_PRICE_INPUT { get; } = 0xCDFD;
 
         public int TAVERN_TEXT_OFFSET { get; } = 0x14EA7;
         public int LB_TEXT_OFFSET { get; } = 0x156ca;
@@ -99,8 +101,15 @@ namespace U4DosRandomizer
         public int ITEM_USE_TRIGGER_SKULL_X_OFFSET { get; } = 0x07E3;
         public int ITEM_USE_TRIGGER_SKULL_Y_OFFSET { get; } = 0x07EA;
 
+        public int WEAPON_REQUIRED_FOR_ABYSS { get; } = 0x06223; 
+
         public int WHIRLPOOL_EXIT_X_OFFSET { get; } = 0x7A92;
         public int WHIRLPOOL_EXIT_Y_OFFSET { get; } = 0x7A97;
+
+        public int USE_PRINCIPLE_ITEM_TEXT { get; } = 0xF568;
+        public int USE_PRINCIPLE_ITEM_BELL_TEXT_POINTERS_OFFSET { get; } = 0x06AB;
+        public int USE_PRINCIPLE_ITEM_BOOK_TEXT_POINTERS_OFFSET { get; } = 0x06E9;
+        public int USE_PRINCIPLE_ITEM_CANDLE_TEXT_POINTERS_OFFSET { get; } = 0x072E;
 
         public int ABYSS_EJECTION_LOCATIONS_X { get; } = 0xFEAD; // Length 13 - Not sure what these are for yet. Appear to be exit coords for when you fail tests in the Abyss https://github.com/ergonomy-joe/u4-decompiled/blob/c2c2108fa3bb346bcd1d8c207c526f33a4c8f5ef/SRC/U4_END.C#L37
         public int ABYSS_EJECTION_LOCATIONS_Y { get; } = 0xFEBB;

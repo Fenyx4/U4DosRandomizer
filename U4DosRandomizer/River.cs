@@ -6,6 +6,7 @@ namespace U4DosRandomizer
 {
     public class River
     {
+        public int RandomSeed { get; set; }
         public RiverNode Tree { get; internal set; }
         public Tuple<int, int> Direction { get; internal set; }
 

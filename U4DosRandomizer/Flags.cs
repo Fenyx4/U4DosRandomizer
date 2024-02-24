@@ -31,6 +31,7 @@ namespace U4DosRandomizer
         public bool DiagonalAttack { get; internal set; }
         public bool SacrificeFix { get; internal set; }
         public bool Runes { get; internal set; }
+        public bool Mystics { get; internal set; }
         public bool Mantras { get; internal set; }
         public bool WordOfPassage { get; internal set; }
         public int MonsterDamage { get; internal set; }
@@ -39,12 +40,14 @@ namespace U4DosRandomizer
         public bool MonsterQty { get; internal set; }
         public bool NoRequireFullParty { get; internal set; }
         public bool RandomizeSpells { get; internal set; }
+        public int HerbPrices { get; set; }
         public bool Sextant { get; internal set; }
         public bool ClothMap { get; internal set; }
         public bool PrincipleItems { get; internal set; }
         public bool SpoilerLog { get; internal set; }
         public bool VGAPatch { get; internal set; }
         public bool TownSaves { get; internal set; }
+        public bool RequireMysticWeapons { get; internal set; }        
         public bool DaemonTrigger { get; internal set; }
         public bool AwakenUpgrade { get; internal set; }
         public bool ShopOverflowFix { get; internal set; }
@@ -99,6 +102,8 @@ namespace U4DosRandomizer
             mask = SET_MSK(mask, AwakenUpgrade, 1);
             mask = SET_MSK(mask, ShopOverflowFix, 2);
             mask = SET_MSK(mask, Other, 3);
+            mask = SET_MSK(mask, Mystics, 4);
+            mask = SET_MSK(mask, RequireMysticWeapons, 5);
             encoded.Add((byte)mask);
 
             // Add another one just for a bit of future proofing
@@ -122,6 +127,7 @@ namespace U4DosRandomizer
             encoded.AddRange(BitConverter.GetBytes(spellRemoveMask));
 
             encoded.Add((byte)Dungeon);
+            encoded.Add((byte)HerbPrices);
 
             return Convert.ToBase64String(encoded.ToArray());
         }
@@ -173,6 +179,8 @@ namespace U4DosRandomizer
             AwakenUpgrade = TST_MSK(mask, 1);
             ShopOverflowFix = TST_MSK(mask, 2);
             Other = TST_MSK(mask, 3);
+            Mystics = TST_MSK(mask, 4);
+            RequireMysticWeapons = TST_MSK(mask, 5);
 
             mask = encoded[9];
 
@@ -201,7 +209,8 @@ namespace U4DosRandomizer
                 }
             }
 
-            Dungeon = encoded[17];
+            Dungeon = encoded[20];
+            HerbPrices = encoded[21];
         }
 
         private static int SET_MSK(int mask, bool bit, int offset)

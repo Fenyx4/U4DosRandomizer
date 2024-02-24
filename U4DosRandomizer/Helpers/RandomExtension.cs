@@ -10,5 +10,10 @@ namespace U4DosRandomizer.Helpers
         {
             return Convert.ToInt32(Math.Floor(Math.Abs(random.NextDouble() - random.NextDouble()) * (1 + max - min) + min));
         }
+
+        public static double NextDouble(this Random random, double minimum, double maximum)
+        {
+            return random.NextDouble() * (maximum - minimum) + minimum;
+        }
     }
 }

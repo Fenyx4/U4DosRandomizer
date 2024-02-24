@@ -25,7 +25,7 @@ namespace U4DosRandomizer
         {
             var file = Path.Combine(path, filename);
 
-            if(flags.VGAPatch && HashHelper.BytesToString(HashHelper.GetHashSha256(file)) == upgradeFileHash)
+            if (flags.VGAPatch && HashHelper.BytesToString(HashHelper.GetHashSha256(file)) == upgradeFileHash)
             {
                 DowngradeVGAPatch(file);
             }
@@ -76,7 +76,7 @@ namespace U4DosRandomizer
 
             // LCB
             var lcb = new List<Tile>();
-            var lcbLoc = worldMap.GetCoordinate(avatarBytes[AvatarOffset.AREA_X_OFFSET + data.LOC_LCB - 1], avatarBytes[AvatarOffset.AREA_Y_OFFSET + data.LOC_LCB - 1]);
+            var lcbLoc = worldMap.GetCoordinate(avatarBytes[AvatarOffset.AREA_X_OFFSET + UltimaData.LOC_LCB - 1], avatarBytes[AvatarOffset.AREA_Y_OFFSET + UltimaData.LOC_LCB - 1]);
             lcb.Add(lcbLoc);
             lcb.Add(worldMap.GetCoordinate(lcbLoc.X - 1, lcbLoc.Y));
             lcb.Add(worldMap.GetCoordinate(lcbLoc.X + 1, lcbLoc.Y));
@@ -92,7 +92,7 @@ namespace U4DosRandomizer
 
             // Towns
             var towns = new List<TileDirtyWrapper>();
-            for (byte offset = 0; offset < 8+4; offset++)
+            for (byte offset = 0; offset < 8 + 4; offset++)
             {
                 towns.Add(new TileDirtyWrapper(worldMap.GetCoordinate(avatarBytes[AvatarOffset.AREA_X_OFFSET + data.LOC_TOWNS + offset - 1], avatarBytes[AvatarOffset.AREA_Y_OFFSET + data.LOC_TOWNS + offset - 1]), worldMap));
             }
@@ -222,15 +222,21 @@ namespace U4DosRandomizer
                 textOffset++;
             }
 
-            data.PrincipleItemRequirements.Add(BitConverter.ToUInt16(avatarBytes, AvatarOffset.BELL_REQUIREMENT_OFFSET-1));
-            data.PrincipleItemRequirements.Add(BitConverter.ToUInt16(avatarBytes, AvatarOffset.BOOK_REQUIREMENT_OFFSET-1));
-            data.PrincipleItemRequirements.Add(BitConverter.ToUInt16(avatarBytes, AvatarOffset.CANDLE_REQUIREMENT_OFFSET-1));
+            var result = GetListOfText(AvatarOffset.USE_PRINCIPLE_ITEM_TEXT, 3);
+            OriginalUsePrincipleItemText = result.Item1;
+            OriginalUsePrincipleItemTextStartOffset = result.Item2;
+            data.UsePrincipleItemText.Clear();
+            data.UsePrincipleItemText.AddRange(OriginalUsePrincipleItemText);
+
+            data.PrincipleItemRequirements.Add(new PrincipleItem() { Name = "Bell", UsedMask = BitConverter.ToUInt16(avatarBytes, AvatarOffset.BOOK_REQUIREMENT_OFFSET - 1), RequiredMask = BitConverter.ToUInt16(avatarBytes, AvatarOffset.BELL_REQUIREMENT_OFFSET - 1) });
+            data.PrincipleItemRequirements.Add(new PrincipleItem() { Name = "Book", UsedMask = BitConverter.ToUInt16(avatarBytes, AvatarOffset.CANDLE_REQUIREMENT_OFFSET - 1), RequiredMask = BitConverter.ToUInt16(avatarBytes, AvatarOffset.BOOK_REQUIREMENT_OFFSET - 1) });
+            data.PrincipleItemRequirements.Add(new PrincipleItem() { Name = "Candle", UsedMask = BitConverter.ToUInt16(avatarBytes, AvatarOffset.BELL_REQUIREMENT_OFFSET - 1), RequiredMask = BitConverter.ToUInt16(avatarBytes, AvatarOffset.CANDLE_REQUIREMENT_OFFSET - 1) });
 
             var wordOfPassageTextBytes = new List<byte>();
 
             for (int offSet = 0; offSet < 9; offSet++)
             {
-                wordOfPassageTextBytes.Add(avatarBytes[AvatarOffset.WORD_OF_PASSAGE+offSet]);
+                wordOfPassageTextBytes.Add(avatarBytes[AvatarOffset.WORD_OF_PASSAGE + offSet]);
             }
             data.WordOfPassage = System.Text.Encoding.Default.GetString(wordOfPassageTextBytes.ToArray());
 
@@ -240,7 +246,7 @@ namespace U4DosRandomizer
             data.DaemonSpawnY2 = avatarBytes[AvatarOffset.DEMON_SPAWN_TRIGGER_Y2_OFFSET];
             data.DaemonSpawnLocationX = avatarBytes[AvatarOffset.DEMON_SPAWN_LOCATION_X_OFFSET];
 
-            for(int i = 0; i < 8; i++)
+            for (int i = 0; i < 8; i++)
             {
                 data.PirateCove.Add(new Coordinate(avatarBytes[i + AvatarOffset.PIRATE_COVE_X_OFFSET], avatarBytes[i + AvatarOffset.PIRATE_COVE_Y_OFFSET]));
             }
@@ -255,6 +261,12 @@ namespace U4DosRandomizer
                 data.SpellsRecipes.Add(new ByteDirtyWrapper(avatarBytes[AvatarOffset.SPELL_RECIPE_OFFSET + i]));
             }
 
+            data.HerbPrices = new List<byte>();
+            for(int i = 0; i < 4*6; i++)
+            {
+                data.HerbPrices.Add(avatarBytes[AvatarOffset.HERB_PRICES + i]);
+            }
+
             data.BlinkCastExclusionX1 = avatarBytes[AvatarOffset.BLINK_CAST_EXCLUSION_X1_OFFSET];
             data.BlinkCastExclusionX2 = avatarBytes[AvatarOffset.BLINK_CAST_EXCLUSION_X2_OFFSET];
             data.BlinkCastExclusionY1 = avatarBytes[AvatarOffset.BLINK_CAST_EXCLUSION_Y1_OFFSET];
@@ -264,7 +276,7 @@ namespace U4DosRandomizer
             data.BlinkDestinationExclusionX2 = avatarBytes[AvatarOffset.BLINK_DESTINATION_EXCLUSION_X2_OFFSET];
             data.BlinkDestinationExclusionY1 = avatarBytes[AvatarOffset.BLINK_DESTINATION_EXCLUSION_Y1_OFFSET];
             data.BlinkDestinationExclusionY2 = avatarBytes[AvatarOffset.BLINK_DESTINATION_EXCLUSION_Y2_OFFSET];
-                      
+
             data.BlinkDestinationExclusion2X1 = avatarBytes[AvatarOffset.BLINK_DESTINATION2_EXCLUSION_X1_OFFSET];
             data.BlinkDestinationExclusion2X2 = avatarBytes[AvatarOffset.BLINK_DESTINATION2_EXCLUSION_X2_OFFSET];
             data.BlinkDestinationExclusion2Y1 = avatarBytes[AvatarOffset.BLINK_DESTINATION2_EXCLUSION_Y1_OFFSET];
@@ -278,11 +290,32 @@ namespace U4DosRandomizer
             for (int townIdx = 0; townIdx < 16; townIdx++)
             {
                 data.ShopLocations.Add(new List<byte>());
-                for(int shopIdx = 0; shopIdx < 8; shopIdx++)
+                for (int shopIdx = 0; shopIdx < 8; shopIdx++)
                 {
                     data.ShopLocations[townIdx].Add(avatarBytes[townIdx * 8 + shopIdx + AvatarOffset.SHOP_LOCATION_OFFSET]);
                 }
             }
+        }
+
+        private (List<string>, List<int>) GetListOfText(int textOffset, int quantity)
+        {
+            var offsets = new List<int>();
+            var text = new List<string>();
+            var textBytes = new List<byte>();
+            var currentOffset = textOffset;
+            for (int i = 0; i < quantity; i++)
+            {
+                offsets.Add(currentOffset);
+                for (; avatarBytes[currentOffset] != 0x00; currentOffset++)
+                {
+                    textBytes.Add(avatarBytes[currentOffset]);
+                }
+                text.Add(System.Text.Encoding.Default.GetString(textBytes.ToArray()));
+                textBytes.Clear();
+                currentOffset++;
+            }
+
+            return (text, offsets);
         }
 
         private void DowngradeVGAPatch(string file)
@@ -353,8 +386,8 @@ namespace U4DosRandomizer
                 avatarBytes[AvatarOffset.MOONGATE_Y_OFFSET + offset] = data.Moongates[offset].Y;
             }
 
-            avatarBytes[AvatarOffset.AREA_X_OFFSET + data.LOC_LCB - 1] = data.LCB[0].X;
-            avatarBytes[AvatarOffset.AREA_Y_OFFSET + data.LOC_LCB - 1] = data.LCB[0].Y;
+            avatarBytes[AvatarOffset.AREA_X_OFFSET + UltimaData.LOC_LCB - 1] = data.LCB[0].X;
+            avatarBytes[AvatarOffset.AREA_Y_OFFSET + UltimaData.LOC_LCB - 1] = data.LCB[0].Y;
 
             avatarBytes[AvatarOffset.DEATH_EXIT_X_OFFSET] = data.LCB[0].X;
             avatarBytes[AvatarOffset.DEATH_EXIT_Y_OFFSET] = data.LCB[0].Y;
@@ -451,6 +484,34 @@ namespace U4DosRandomizer
             }
             avatarBytes = avatarBytesList.ToArray();
 
+
+            //WriteTextToAvatarBytes("Use Principle", OriginalUsePrincipleItemText, data.UsePrincipleItemText, OriginalUsePrincipleItemTextStartOffset, avatarBytesList, out avatarBytes);
+            var currentUsePrincipleOffset = 0;
+            var maxUsePrincipleSize = 0;
+            for(int i = 0; i < OriginalUsePrincipleItemText.Count; i++)
+            {
+                maxUsePrincipleSize += OriginalUsePrincipleItemText[i].Length + 1;
+            }
+            for (int i = 0; i < OriginalUsePrincipleItemText.Count; i++)
+            {
+                avatarBytesList.RemoveRange(OriginalUsePrincipleItemTextStartOffset[0] + currentUsePrincipleOffset, OriginalUsePrincipleItemText[i].Length+1);
+                avatarBytesList.InsertRange(OriginalUsePrincipleItemTextStartOffset[0] + currentUsePrincipleOffset, Encoding.ASCII.GetBytes(data.UsePrincipleItemText[i] + "\0"));
+                currentUsePrincipleOffset += data.UsePrincipleItemText[i].Length + 1;
+
+                if( currentUsePrincipleOffset > maxUsePrincipleSize)
+                {
+                    throw new Exception($"Use Principle text is too long.");
+                }
+            }
+            avatarBytes = avatarBytesList.ToArray();
+            var principleTextSize = 0;
+            avatarBytes[AvatarOffset.USE_PRINCIPLE_ITEM_BELL_TEXT_POINTERS_OFFSET] = (byte)(avatarBytes[AvatarOffset.USE_PRINCIPLE_ITEM_BELL_TEXT_POINTERS_OFFSET] + principleTextSize);
+            principleTextSize += data.UsePrincipleItemText[0].Length + 1;
+            avatarBytes[AvatarOffset.USE_PRINCIPLE_ITEM_BOOK_TEXT_POINTERS_OFFSET] = (byte)(avatarBytes[AvatarOffset.USE_PRINCIPLE_ITEM_BELL_TEXT_POINTERS_OFFSET] + principleTextSize);
+            principleTextSize += data.UsePrincipleItemText[1].Length + 1;
+            avatarBytes[AvatarOffset.USE_PRINCIPLE_ITEM_CANDLE_TEXT_POINTERS_OFFSET] = (byte)(avatarBytes[AvatarOffset.USE_PRINCIPLE_ITEM_BELL_TEXT_POINTERS_OFFSET] + principleTextSize);
+            principleTextSize += data.UsePrincipleItemText[2].Length + 1;
+
             var currentMantraOffset = 0;
             var mantraSize = 0;
             for(int i = 0; i < data.Mantras.Count; i++)
@@ -473,11 +534,11 @@ namespace U4DosRandomizer
                 }
             }
 
-            if (data.PrincipleItemRequirements[0] != 1024)
+            if (flags.PrincipleItems)
             {
-                avatarBytes.OverwriteBytes((ushort)data.PrincipleItemRequirements[0], AvatarOffset.BELL_REQUIREMENT_OFFSET-1);
-                avatarBytes.OverwriteBytes((ushort)data.PrincipleItemRequirements[1], AvatarOffset.BOOK_REQUIREMENT_OFFSET-1);
-                avatarBytes.OverwriteBytes((ushort)data.PrincipleItemRequirements[2], AvatarOffset.CANDLE_REQUIREMENT_OFFSET-1);
+                avatarBytes.OverwriteBytes((ushort)data.PrincipleItemRequirements[0].RequiredMask, AvatarOffset.BELL_REQUIREMENT_OFFSET-1);
+                avatarBytes.OverwriteBytes((ushort)data.PrincipleItemRequirements[1].RequiredMask, AvatarOffset.BOOK_REQUIREMENT_OFFSET-1);
+                avatarBytes.OverwriteBytes((ushort)data.PrincipleItemRequirements[2].RequiredMask, AvatarOffset.CANDLE_REQUIREMENT_OFFSET-1);
                 avatarBytes[AvatarOffset.ENABLE_PRINCIPLE_ITEM_REORDER_OFFSET] = (byte)0x0;
             }
 
@@ -511,6 +572,16 @@ namespace U4DosRandomizer
             for (int i = 0; i < data.SpellsRecipes.Count; i++)
             {
                 avatarBytes[AvatarOffset.SPELL_RECIPE_OFFSET + i] = data.SpellsRecipes[i].Byte;
+            }
+
+            for (int i = 0; i < data.HerbPrices.Count; i++)
+            {
+                avatarBytes[AvatarOffset.HERB_PRICES + i] = data.HerbPrices[i];
+            }
+
+            if(data.HerbPrices.FindAll( x => x >= 10).Count > 0)
+            {
+                avatarBytes[AvatarOffset.HERB_PRICE_INPUT] = 0x04;
             }
 
             // Cast exclusion isn't precise enough so allow them to cast anywhere and exclude the destination
@@ -686,6 +757,11 @@ namespace U4DosRandomizer
                 avatarBytes[AvatarOffset.ENABLE_DAEMON_TRIGGER_FIX] = (byte)0x0;
             }
 
+            if (flags.RequireMysticWeapons)
+            {
+                avatarBytes[AvatarOffset.WEAPON_REQUIRED_FOR_ABYSS] = (byte)0x0F;
+            }
+
             if (flags.Fixes)
             {
                 avatarBytes[AvatarOffset.ENABLE_MAP_EDGE_FIX1] = (byte)0x0;
@@ -710,6 +786,22 @@ namespace U4DosRandomizer
             }
         }
 
+        private void WriteTextToAvatarBytes(string textDescription, List<string> originalText, List<string> text, List<int> originalStartOffset, List<byte> avatarBytesList, out byte[] avatarBytes)
+        {
+            for (int i = 0; i < originalText.Count; i++)
+            {
+                if (text[i].Length > originalText[i].Length)
+                {
+                    throw new Exception($"{textDescription} text \"{text[i]}\" is too long.");
+                }
+                text[i] = text[i].PadRight(originalText[i].Length, ' ');
+
+                avatarBytesList.RemoveRange(originalStartOffset[i], originalText[i].Length);
+                avatarBytesList.InsertRange(originalStartOffset[i], Encoding.ASCII.GetBytes(text[i]));
+
+            }
+            avatarBytes = avatarBytesList.ToArray();
+        }
 
         public void Save(string path)
         {
@@ -728,7 +820,10 @@ namespace U4DosRandomizer
         public List<int> OriginalLBHelpTextStartOffset { get; private set; }
         public List<string> OriginalTavernText { get; private set; }
         public List<int> OriginalTavernTextStartOffset { get; private set; }
+        public List<string> OriginalUsePrincipleItemText { get; private set; }
+        public List<int> OriginalUsePrincipleItemTextStartOffset { get; private set; }
         public int MantraMaxSize { get; private set; }
+        public int PrincipleMaxSize { get; private set; }
         public IAvatarOffset AvatarOffset { get; private set; }
         private SpoilerLog SpoilerLog { get; }
     }

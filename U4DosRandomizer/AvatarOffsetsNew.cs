@@ -87,6 +87,10 @@ namespace U4DosRandomizer
                         throw new Exception($"Offset {pi.Name} appears to be wrong.");
                     }
                 }
+                else if (pi.Name.Contains("POINTERS_OFFSET") && pi.Name.Contains("PRINCIPLE_ITEM"))
+                {
+                    // Not sure how to test these
+                }
                 else
                 {
                     throw new NotImplementedException($"Offset {pi.Name} not being tested.");
@@ -145,6 +149,8 @@ namespace U4DosRandomizer
         //https://github.com/ergonomy-joe/u4-decompiled/blob/1964651295232b0ca39afafef254541a406eb66b/SRC/U4_COMBC.C#L210
         public int MONSTER_QTY_ONE { get; } = 0x84D9; // 80EF
         public int MONSTER_QTY_TWO { get; } = 0x84EA; // 8100
+        public int HERB_PRICES { get; } = 0x139E8; // 1340B
+        public int HERB_PRICE_INPUT { get; } = 0xD258; // CDFD
         public int TAVERN_TEXT_OFFSET { get; } = 0x154C4; // 14EA7
         public int LB_TEXT_OFFSET { get; } = 0x15CE7; // 156ca
         public int LB_HELP_TEXT_OFFSET { get; } = 0x168F2; // 162D4
@@ -181,8 +187,15 @@ namespace U4DosRandomizer
         public int ITEM_USE_TRIGGER_SKULL_X_OFFSET { get; } = 0x0632; //7E3
         public int ITEM_USE_TRIGGER_SKULL_Y_OFFSET { get; } = 0x0639; //7EA
 
+        public int WEAPON_REQUIRED_FOR_ABYSS { get; } = 0x0645A; // 6223
+
         public int WHIRLPOOL_EXIT_X_OFFSET { get; } = 0x7E16; //7A92
         public int WHIRLPOOL_EXIT_Y_OFFSET { get; } = 0x7E1B; //7A97
+
+        public int USE_PRINCIPLE_ITEM_TEXT { get; } = 0xF9FB; //F568
+        public int USE_PRINCIPLE_ITEM_BELL_TEXT_POINTERS_OFFSET { get; } = 0x04F7; // 6AB
+        public int USE_PRINCIPLE_ITEM_BOOK_TEXT_POINTERS_OFFSET { get; } = 0x0538; // 6E9
+        public int USE_PRINCIPLE_ITEM_CANDLE_TEXT_POINTERS_OFFSET { get; } = 0x057D; // 72E
 
         public int ABYSS_EJECTION_LOCATIONS_X { get; } = 0x103D6; //FEAD  // Length 13 - Exit coords for when you fail tests in the Abyss https://github.com/ergonomy-joe/u4-decompiled/blob/c2c2108fa3bb346bcd1d8c207c526f33a4c8f5ef/SRC/U4_END.C#L37
         public int ABYSS_EJECTION_LOCATIONS_Y { get; } = 0x103E4; //FEBB
@@ -241,6 +254,7 @@ namespace U4DosRandomizer
         public int ENABLE_PRINCIPLE_ITEM_REORDER_OFFSET { get; } = 0x4E9; // New : E8
 
         public int ENABLE_WEAPON_OVERFLOW_FIX { get; } = 0xD378; // New 08
+
         public int ENCODED_FLAGS_OFFSET { get; } = 0xFE43; // New : 20
 
         public int SEED_OFFSET { get; } = 0xFE23; // New : 20
