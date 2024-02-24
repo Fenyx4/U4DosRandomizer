@@ -21,7 +21,7 @@
 
   <ItemGroup>
     <PackageReference Include="Microsoft.Extensions.CommandLineUtils" Version="1.1.1" />
-    <PackageReference Include="Newtonsoft.Json" Version="12.0.3" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
     <PackageReference Include="Octopus.Octodiff" Version="2.0.546" />
     <PackageReference Include="SimplexNoise" Version="2.0.0" />
     <PackageReference Include="SixLabors.ImageSharp" Version="1.0.3" />
