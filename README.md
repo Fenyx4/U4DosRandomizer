@@ -50,6 +50,7 @@ Options:
   --awakenUpgrade            Awaken spell awakens all characters.
   --shopOverflow             Don't allow overflow exploit in shops.
   --other                    Allow other gender like in Ultima III.
+  --herbPrice				 Randomizes Herb prices. 1 for cheap herbs. 2 for randomized. 3 for randomized and cost times three.
   --vgaPatch                 VGA patch compatibility. Run randomizer after applying VGA patch.
   --spoilerLog               Output a spoiler log.
   -? | -h | --help           Show help information

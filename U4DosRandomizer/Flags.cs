@@ -13,45 +13,45 @@ namespace U4DosRandomizer
             Version = version;
         }
 
-        public bool MiniMap { get; internal set; }
-        public string SpellRemove { get; internal set; }
-        public bool StartingWeapons { get; internal set; }
-        public bool DngStone { get; internal set; }
-        public bool MixQuantity { get; internal set; }
-        public int Overworld { get; internal set; }
-        public int Dungeon  { get; internal set; }
-        public bool Fixes { get; internal set; }
-        public int QuestItemPercentage { get; internal set; }
-        public int KarmaSetPercentage { get; internal set; }
-        public int? KarmaValue { get; internal set; }
-        public bool FixHythloth { get; internal set; }
-        public bool SleepLockAssist { get; internal set; }
-        public bool ActivePlayer { get; internal set; }
-        public bool HitChance { get; internal set; }
-        public bool DiagonalAttack { get; internal set; }
-        public bool SacrificeFix { get; internal set; }
-        public bool Runes { get; internal set; }
-        public bool Mystics { get; internal set; }
-        public bool Mantras { get; internal set; }
-        public bool WordOfPassage { get; internal set; }
-        public int MonsterDamage { get; internal set; }
-        public int WeaponDamage { get; internal set; }
-        public bool EarlierMonsters { get; internal set; }
-        public bool MonsterQty { get; internal set; }
-        public bool NoRequireFullParty { get; internal set; }
-        public bool RandomizeSpells { get; internal set; }
+        public bool MiniMap { get; set; }
+        public string SpellRemove { get; set; }
+        public bool StartingWeapons { get; set; }
+        public bool DngStone { get; set; }
+        public bool MixQuantity { get; set; }
+        public int Overworld { get; set; }
+        public int Dungeon  { get; set; }
+        public bool Fixes { get; set; }
+        public int QuestItemPercentage { get; set; }
+        public int KarmaSetPercentage { get; set; }
+        public int? KarmaValue { get; set; }
+        public bool FixHythloth { get; set; }
+        public bool SleepLockAssist { get; set; }
+        public bool ActivePlayer { get; set; }
+        public bool HitChance { get; set; }
+        public bool DiagonalAttack { get; set; }
+        public bool SacrificeFix { get; set; }
+        public bool Runes { get; set; }
+        public bool Mystics { get; set; }
+        public bool Mantras { get; set; }
+        public bool WordOfPassage { get; set; }
+        public int MonsterDamage { get; set; }
+        public int WeaponDamage { get; set; }
+        public bool EarlierMonsters { get; set; }
+        public bool MonsterQty { get; set; }
+        public bool NoRequireFullParty { get; set; }
+        public bool RandomizeSpells { get; set; }
         public int HerbPrices { get; set; }
-        public bool Sextant { get; internal set; }
-        public bool ClothMap { get; internal set; }
-        public bool PrincipleItems { get; internal set; }
-        public bool SpoilerLog { get; internal set; }
-        public bool VGAPatch { get; internal set; }
-        public bool TownSaves { get; internal set; }
-        public bool RequireMysticWeapons { get; internal set; }        
-        public bool DaemonTrigger { get; internal set; }
-        public bool AwakenUpgrade { get; internal set; }
-        public bool ShopOverflowFix { get; internal set; }
-        public bool Other { get; internal set; }
+        public bool Sextant { get; set; }
+        public bool ClothMap { get; set; }
+        public bool PrincipleItems { get; set; }
+        public bool SpoilerLog { get; set; }
+        public bool VGAPatch { get; set; }
+        public bool TownSaves { get; set; }
+        public bool RequireMysticWeapons { get; set; }        
+        public bool DaemonTrigger { get; set; }
+        public bool AwakenUpgrade { get; set; }
+        public bool ShopOverflowFix { get; set; }
+        public bool Other { get; set; }
 
         public List<int> SupportedVersions = new List<int>() { 9 };
 

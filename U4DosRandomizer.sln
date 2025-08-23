@@ -1,9 +1,9 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
-VisualStudioVersion = 17.14.36414.22 d17.14
+VisualStudioVersion = 17.14.36414.22
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "U4DosRandomizer", "U4DosRandomizer\U4DosRandomizer.csproj", "{800FCB8A-0CA9-4E9A-B2C7-02C670F4AAEA}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "U4DosRandomizer.CLI", "U4DosRandomizer.CLI\U4DosRandomizer.CLI.csproj", "{800FCB8A-0CA9-4E9A-B2C7-02C670F4AAEA}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "U4DosRandomizer.UnitTests", "U4DosRandomizer.UnitTests\U4DosRandomizer.UnitTests.csproj", "{1E9EC3BC-4626-4DF0-AA29-7BF1B42A8BF5}"
 EndProject
@@ -24,6 +24,11 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "U4Randomizer.Visualizer", "U4Randomizer.Visualizer\U4Randomizer.Visualizer.csproj", "{A4206EBD-CC3D-431A-A6A6-254C21A71098}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "U4DosRandomizer.UI", "U4DosRandomizer.UI\U4DosRandomizer.UI.csproj", "{045031A0-ED46-45E7-B1A8-75BBDDABB2CE}"
+	ProjectSection(ProjectDependencies) = postProject
+		{800FCB8A-0CA9-4E9A-B2C7-02C670F4AAEA} = {800FCB8A-0CA9-4E9A-B2C7-02C670F4AAEA}
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "U4DosRandomizer", "U4DosRandomizer\U4DosRandomizer.csproj", "{E75A236F-DBF9-4A45-994F-296A79F587D6}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -57,6 +62,10 @@ Global
 		{045031A0-ED46-45E7-B1A8-75BBDDABB2CE}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{045031A0-ED46-45E7-B1A8-75BBDDABB2CE}.Release|Any CPU.Build.0 = Release|Any CPU
 		{045031A0-ED46-45E7-B1A8-75BBDDABB2CE}.Release|Any CPU.Deploy.0 = Release|Any CPU
+		{E75A236F-DBF9-4A45-994F-296A79F587D6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E75A236F-DBF9-4A45-994F-296A79F587D6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E75A236F-DBF9-4A45-994F-296A79F587D6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E75A236F-DBF9-4A45-994F-296A79F587D6}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
