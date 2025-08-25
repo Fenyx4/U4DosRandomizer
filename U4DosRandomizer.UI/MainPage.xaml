@@ -1,8 +1,9 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             x:Class="U4DosRandomizer.UI.MainPage">
-
+             x:Class="U4DosRandomizer.UI.MainPage"
+             xmlns:viewmodel="clr-namespace:U4DosRandomizer.UI"
+             x:DataType="viewmodel:MainViewModel">
     <ScrollView>
         <VerticalStackLayout
             Padding="30,0"
@@ -24,11 +25,27 @@
                 SemanticProperties.HeadingLevel="Level2"
                 SemanticProperties.Description="Welcome to dot net Multi platform App U I" />
 
+            <!--<StackLayout Orientation="Horizontal" VerticalOptions="Center" ToolTipProperties.Text="Generate a Cloth Map">
+                <Label Text="Generate Cloth Map:" VerticalOptions="Center" Margin="0,0,10,0"/>
+                <Entry x:Name="FilePath"
+                   Placeholder="Enter text"
+                   TextChanged="OnEntryTextChanged"
+                   Completed="OnEntryCompleted" />
+            </StackLayout>-->
+            <StackLayout Orientation="Horizontal" VerticalOptions="Center" ToolTipProperties.Text="Generate a Cloth Map">
+                <Label Text="Generate Cloth Map:" VerticalOptions="Center" Margin="0,0,10,0"/>
+                <Switch 
+                    x:Name="ClothMapSwitch"
+                    SemanticProperties.Hint="Generate a Cloth Map"
+                   IsToggled="{Binding GenerateClothMap}" />
+            </StackLayout>
+            
+            
             <Button
                 x:Name="CounterBtn"
                 Text="Click me" 
                 SemanticProperties.Hint="Counts the number of times you click"
-                Clicked="OnCounterClicked"
+                Command="{Binding Clicked}"
                 HorizontalOptions="Fill" />
         </VerticalStackLayout>
     </ScrollView>
