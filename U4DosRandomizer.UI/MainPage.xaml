@@ -1,9 +1,19 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
              x:Class="U4DosRandomizer.UI.MainPage"
              xmlns:viewmodel="clr-namespace:U4DosRandomizer.UI"
              x:DataType="viewmodel:MainViewModel">
+    <ContentPage.Resources>
+        <Style x:Key="InvalidEntryStyle" TargetType="Entry">
+            <Setter Property="TextColor" Value="Red" />
+        </Style>
+        <Style x:Key="ValidEntryStyle" TargetType="Entry">
+            <Setter Property="TextColor" Value="Green" />
+        </Style>
+    </ContentPage.Resources>
+    
     <ScrollView>
         <VerticalStackLayout
             Padding="30,0"
@@ -25,22 +35,333 @@
                 SemanticProperties.HeadingLevel="Level2"
                 SemanticProperties.Description="Welcome to dot net Multi platform App U I" />
 
-            <!--<StackLayout Orientation="Horizontal" VerticalOptions="Center" ToolTipProperties.Text="Generate a Cloth Map">
-                <Label Text="Generate Cloth Map:" VerticalOptions="Center" Margin="0,0,10,0"/>
-                <Entry x:Name="FilePath"
-                   Placeholder="Enter text"
-                   TextChanged="OnEntryTextChanged"
-                   Completed="OnEntryCompleted" />
-            </StackLayout>-->
+            
+
+            <StackLayout Orientation="Horizontal" VerticalOptions="Center" ToolTipProperties.Text="Install Path">
+                <Button Command="{Binding PickFolderCommand}"
+                    Text="Select Install Path"
+                    HorizontalOptions="Center" Margin="0,0,10,0"/>
+                <Label Text="{Binding UltimaIVInstallPath}" VerticalOptions="Center" Margin="0,0,10,0"/>
+            </StackLayout>
+
+            <StackLayout Orientation="Horizontal" VerticalOptions="Center" ToolTipProperties.Text="Seed Override">
+                <Label Text="Seed Override:" VerticalOptions="Center" Margin="0,0,10,0"/>
+                <Entry 
+                    SemanticProperties.Hint="Seed for randomization. Leave blank for random or override to get consistent results."
+                    MinimumWidthRequest="120"
+                    Text="{Binding Seed}" >
+                    <Entry.Behaviors>
+                        <toolkit:NumericValidationBehavior 
+                            InvalidStyle="{StaticResource InvalidEntryStyle}"
+                            ValidStyle="{StaticResource ValidEntryStyle}"
+                            Flags="ValidateOnValueChanged"
+                            MaximumDecimalPlaces="0" />
+                    </Entry.Behaviors>
+                </Entry>
+            </StackLayout>
+            
             <StackLayout Orientation="Horizontal" VerticalOptions="Center" ToolTipProperties.Text="Generate a Cloth Map">
                 <Label Text="Generate Cloth Map:" VerticalOptions="Center" Margin="0,0,10,0"/>
                 <Switch 
-                    x:Name="ClothMapSwitch"
                     SemanticProperties.Hint="Generate a Cloth Map"
                    IsToggled="{Binding GenerateClothMap}" />
             </StackLayout>
+            <StackLayout Orientation="Horizontal" VerticalOptions="Center" ToolTipProperties.Text="Generate a Mini Map">
+                <Label Text="MiniMap:" VerticalOptions="Center" Margin="0,0,10,0"/>
+                <Switch 
+                    SemanticProperties.Hint="Generate a Mini Map"
+                   IsToggled="{Binding MiniMap}" />
+            </StackLayout>
+
+            <StackLayout Orientation="Horizontal" VerticalOptions="Center" ToolTipProperties.Text="Is VGA Patch Installed">
+                <Label Text="Is VGA Patch Installed:" VerticalOptions="Center" Margin="0,0,10,0"/>
+                <Switch 
+                    SemanticProperties.Hint="VGA Patch Support"
+                   IsToggled="{Binding VgaPatch}" />
+            </StackLayout>
+
+            <StackLayout Orientation="Horizontal" VerticalOptions="Center" ToolTipProperties.Text="Output Spoiler Log">
+                <Label Text="Output Spoiler Log:" VerticalOptions="Center" Margin="0,0,10,0"/>
+                <Switch 
+                    SemanticProperties.Hint="Output Spoiler Log"
+                   IsToggled="{Binding SpoilerLog}" />
+            </StackLayout>
+
+            <StackLayout Orientation="Horizontal" VerticalOptions="Center" ToolTipProperties.Text="Randomize Over World" RadioButtonGroup.GroupName="OverWorld" RadioButtonGroup.SelectedValue="{Binding OverWorld}">
+                <Label Text="Randomize Over World:" VerticalOptions="Center" Margin="0,0,10,0"/>
+                <RadioButton Content="No Change" Value="1" />
+                <RadioButton Content="Shuffle Locations" Value="2" />
+                <RadioButton Content="Randomize the entire map" Value="5"
+                 IsChecked="true" />
+                <!--<Switch d
+                    SemanticProperties.Hint="Randomize Over World"
+                   IsToggled="{Binding OverWorld}" />-->
+            </StackLayout>
+
+            <StackLayout Orientation="Horizontal" VerticalOptions="Center" ToolTipProperties.Text="Randomize Starting Weapons">
+                <Label Text="Randomize Starting Weapons:" VerticalOptions="Center" Margin="0,0,10,0"/>
+                <Switch 
+                    SemanticProperties.Hint="Randomize Starting Weapons"
+                   IsToggled="{Binding StartingWeapons}" />
+            </StackLayout>
+
+            <StackLayout Orientation="Horizontal" VerticalOptions="Center" ToolTipProperties.Text="Randomize Dungeon" RadioButtonGroup.GroupName="Dungeon" RadioButtonGroup.SelectedValue="{Binding Dungeon}">
+                <Label Text="Randomize Dungeon:" VerticalOptions="Center" Margin="0,0,10,0"/>
+                <RadioButton Content="No Change" Value="1" IsChecked="true" />
+                <RadioButton Content="Super Simple" Value="2" />
+                <RadioButton Content="Randomize Stones" Value="3" />
+                <!--<RadioButton Content="Randomize the entire map" Value="5"
+                 IsChecked="true" /> -->
+                            <!--<Switch d
+                    SemanticProperties.Hint="Randomize Over World"
+                   IsToggled="{Binding OverWorld}" />-->
+            </StackLayout>
+
+            <StackLayout Orientation="Horizontal" VerticalOptions="Center" ToolTipProperties.Text="Randomize Runes">
+                <Label Text="Randomize Runes:" VerticalOptions="Center" Margin="0,0,10,0"/>
+                <Switch 
+                    SemanticProperties.Hint="Randomize Runes"
+                   IsToggled="{Binding Runes}" />
+            </StackLayout>
+
+            <StackLayout Orientation="Horizontal" VerticalOptions="Center" ToolTipProperties.Text="Randomize Mystics">
+                <Label Text="Randomize Mystics:" VerticalOptions="Center" Margin="0,0,10,0"/>
+                <Switch 
+                    SemanticProperties.Hint="Randomize Mystics"
+                   IsToggled="{Binding Mystics}" />
+            </StackLayout>
+
+            <StackLayout Orientation="Horizontal" VerticalOptions="Center" ToolTipProperties.Text="Randomize Mantras">
+                <Label Text="Randomize Mantras:" VerticalOptions="Center" Margin="0,0,10,0"/>
+                <Switch 
+                    SemanticProperties.Hint="Randomize Mantras"
+                   IsToggled="{Binding Mantras}" />
+            </StackLayout>
+
+            <StackLayout Orientation="Horizontal" VerticalOptions="Center" ToolTipProperties.Text="Randomize Word of Passage">
+                <Label Text="Randomize Word of Passage:" VerticalOptions="Center" Margin="0,0,10,0"/>
+                <Switch 
+                    SemanticProperties.Hint="Randomize Word of Passage"
+                   IsToggled="{Binding WordOfPassage}" />
+            </StackLayout>
+
+            <StackLayout Orientation="Horizontal" VerticalOptions="Center" ToolTipProperties.Text="Randomize Spells">
+                <Label Text="Randomize Spells:" VerticalOptions="Center" Margin="0,0,10,0"/>
+                <Switch 
+                    SemanticProperties.Hint="Randomize Spells"
+                   IsToggled="{Binding RandomizeSpells}" />
+            </StackLayout>
+
+            <StackLayout Orientation="Horizontal" VerticalOptions="Center" ToolTipProperties.Text="Randomize Principle Items">
+                <Label Text="Randomize Principle Items:" VerticalOptions="Center" Margin="0,0,10,0"/>
+                <Switch 
+                    SemanticProperties.Hint="Randomize Principle Items"
+                   IsToggled="{Binding PrincipleItems}" />
+            </StackLayout>
+
+            <!-- Difficulty -->
             
+            <StackLayout Orientation="Horizontal" VerticalOptions="Center" ToolTipProperties.Text="Starting Quest Item %">
+                <Label Text="{Binding QuestItems, StringFormat='Starting Quest Item {0}%:'}" VerticalOptions="Center" Margin="0,0,10,0"/>
+                <Slider 
+                    Value="{Binding QuestItems}"
+                    Minimum="0"
+                    Maximum="100"
+                    WidthRequest="100"
+                    SemanticProperties.Hint="Starting Quest Item %" />
+            </StackLayout>
+
+            <StackLayout Orientation="Horizontal" VerticalOptions="Center" ToolTipProperties.Text="Starting Karma Value">
+                <Label Text="{Binding KarmaValue, StringFormat='Starting Karma Value {0}:'}" VerticalOptions="Center" Margin="0,0,10,0"/>
+                <CheckBox
+                    IsChecked="{Binding KarmaValueOn}"
+                    />
+                <Slider 
+                    IsEnabled="{Binding KarmaValueOn}"
+                    Value="{Binding KarmaValue}"
+                    Minimum="0"
+                    Maximum="100"
+                    WidthRequest="100"
+                    SemanticProperties.Hint="Starting Karma Value" />
+            </StackLayout>
+
+            <StackLayout Orientation="Horizontal" VerticalOptions="Center" ToolTipProperties.Text="Starting Karma Override Chance %">
+                <Label Text="{Binding KarmaPercentage, StringFormat='Starting Karma Override Chance {0}%:'}" VerticalOptions="Center" Margin="0,0,10,0"/>
+                <Slider 
+                    Value="{Binding KarmaPercentage}"
+                    Minimum="0"
+                    Maximum="100"
+                    WidthRequest="100"
+                    SemanticProperties.Hint="Starting Karma Override Chance %" />
+            </StackLayout>
+
+            <StackLayout Orientation="Horizontal" VerticalOptions="Center" ToolTipProperties.Text="Spell Removal">
+                <Label Text="Spell Removal:" VerticalOptions="Center" Margin="0,0,10,0"/>
+                <!--<Entry 
+                    SemanticProperties.Hint="Seed for randomization. Leave blank for random or override to get consistent results."
+                    MinimumWidthRequest="120"
+                    Text="{Binding Seed}" >
+                    <Entry.Behaviors>
+                        <toolkit:NumericValidationBehavior 
+                            InvalidStyle="{StaticResource InvalidEntryStyle}"
+                            ValidStyle="{StaticResource ValidEntryStyle}"
+                            Flags="ValidateOnValueChanged"
+                            MaximumDecimalPlaces="0" />
+                    </Entry.Behaviors>
+                </Entry>-->
+            </StackLayout>
+
+            <StackLayout Orientation="Horizontal" VerticalOptions="Center" ToolTipProperties.Text="Sleep Lock Assist">
+                <Label Text="Sleep Lock Assist:" VerticalOptions="Center" Margin="0,0,10,0"/>
+                <Switch 
+                    SemanticProperties.Hint="Sleep Lock Assist"
+                   IsToggled="{Binding SleepLockAssist}" />
+            </StackLayout>
+
+            <StackLayout Orientation="Horizontal" VerticalOptions="Center" ToolTipProperties.Text="Awaken Upgrade">
+                <Label Text="Awaken Upgrade:" VerticalOptions="Center" Margin="0,0,10,0"/>
+                <Switch 
+        SemanticProperties.Hint="Awaken Upgrade"
+       IsToggled="{Binding AwkaenUpgrade}" />
+            </StackLayout>
+
+            <StackLayout Orientation="Horizontal" VerticalOptions="Center" ToolTipProperties.Text="Diagonal Attack">
+                <Label Text="Diagonal Attack:" VerticalOptions="Center" Margin="0,0,10,0"/>
+                <Switch 
+        SemanticProperties.Hint="Diagonal Attack"
+       IsToggled="{Binding DiagonalAttack}" />
+            </StackLayout>
+
+            <StackLayout Orientation="Horizontal" VerticalOptions="Center" ToolTipProperties.Text="Apple Hit Chance">
+                <Label Text="Apple Hit Chance:" VerticalOptions="Center" Margin="0,0,10,0"/>
+                <Switch 
+        SemanticProperties.Hint="Apple Hit Chance"
+       IsToggled="{Binding appleHitChance}" />
+            </StackLayout>
+
+            <StackLayout Orientation="Horizontal" VerticalOptions="Center" ToolTipProperties.Text="Earlier Monsters">
+                <Label Text="Earlier Monsters:" VerticalOptions="Center" Margin="0,0,10,0"/>
+                <Switch 
+        SemanticProperties.Hint="Earlier Monsters"
+       IsToggled="{Binding EarlierMonsters}" />
+            </StackLayout>
+
+            <StackLayout Orientation="Horizontal" VerticalOptions="Center" ToolTipProperties.Text="More monsters from the start">
+                <Label Text="Monster Quantity:" VerticalOptions="Center" Margin="0,0,10,0"/>
+                <Switch 
+        SemanticProperties.Hint="Monster Quantity"
+       IsToggled="{Binding MonsterQty}" />
+            </StackLayout>
+
+            <StackLayout Orientation="Horizontal" VerticalOptions="Center" ToolTipProperties.Text="Don't require the full party in the Abyss">
+                <Label Text="Don't Require Full Party:" VerticalOptions="Center" Margin="0,0,10,0"/>
+                <Switch 
+        SemanticProperties.Hint="Don't Require Full Party"
+       IsToggled="{Binding NoRequireFullParty}" />
+            </StackLayout>
+
+            <StackLayout Orientation="Horizontal" VerticalOptions="Center" ToolTipProperties.Text="Only Mystics Weapons work in the Abyss">
+                <Label Text="Require Mystics:" VerticalOptions="Center" Margin="0,0,10,0"/>
+                <Switch 
+ SemanticProperties.Hint="Require Mystics"
+IsToggled="{Binding RequireMystics}" />
+            </StackLayout>
+
+            <StackLayout Orientation="Horizontal" VerticalOptions="Center" ToolTipProperties.Text="Start with a sextant">
+                <Label Text="Sextant:" VerticalOptions="Center" Margin="0,0,10,0"/>
+                <Switch 
+        SemanticProperties.Hint="Sextant"
+       IsToggled="{Binding Sextant}" />
+            </StackLayout>
+
+            <StackLayout Orientation="Horizontal" VerticalOptions="Center" ToolTipProperties.Text="Monster Damage" RadioButtonGroup.GroupName="MonsterDamage" RadioButtonGroup.SelectedValue="{Binding MonsterDamage}">
+                <Label Text="Monster Damage:" VerticalOptions="Center" Margin="0,0,10,0"/>
+                <RadioButton Content="Quad Damage" Value="0" />
+                <RadioButton Content="More Damage" Value="1" />
+                <RadioButton Content="Normal" Value="2" IsChecked="true" />
+                <RadioButton Content="Less Damage" Value="4" />
+            </StackLayout>
+
+            <StackLayout Orientation="Horizontal" VerticalOptions="Center" ToolTipProperties.Text="Weapon Damage" RadioButtonGroup.GroupName="Weapon Damage" RadioButtonGroup.SelectedValue="{Binding WeaponDamage}">
+                <Label Text="Weapon Damage:" VerticalOptions="Center" Margin="0,0,10,0"/>
+                <RadioButton Content="More Damage" Value="1"  />
+                <RadioButton Content="Normal" Value="2" IsChecked="true" />
+                <RadioButton Content="Less Damage" Value="3" />
+            </StackLayout>
+
+            <StackLayout Orientation="Horizontal" VerticalOptions="Center" ToolTipProperties.Text="Reagent Prices" RadioButtonGroup.GroupName="Dungeon" RadioButtonGroup.SelectedValue="{Binding HerbPrice}">
+                <Label Text="Reagent Prices:" VerticalOptions="Center" Margin="0,0,10,0"/>
+                <RadioButton Content="Cheap" Value="1" />
+                <RadioButton Content="Normal" Value="0" IsChecked="true" />
+                <RadioButton Content="Randomized" Value="2" />
+                <RadioButton Content="Randomized and 3x" Value="3" />
+            </StackLayout>
             
+            <!-- Quality of Life -->
+            <StackLayout Orientation="Horizontal" VerticalOptions="Center" ToolTipProperties.Text="Lets you input how much of a spell you want to mix">
+                <Label Text="Mix Quantity:" VerticalOptions="Center" Margin="0,0,10,0"/>
+                <Switch 
+ SemanticProperties.Hint="Mix Quantity"
+IsToggled="{Binding MixQuantity}" />
+            </StackLayout>
+
+            <StackLayout Orientation="Horizontal" VerticalOptions="Center" ToolTipProperties.Text="Allows selecting which characters are active in combat">
+                <Label Text="Active Player:" VerticalOptions="Center" Margin="0,0,10,0"/>
+                <Switch 
+ SemanticProperties.Hint="Active Player"
+IsToggled="{Binding ActivePlayer}" />
+            </StackLayout>
+
+            <StackLayout Orientation="Horizontal" VerticalOptions="Center" ToolTipProperties.Text="Enable saving in towns">
+                <Label Text="Town Saves:" VerticalOptions="Center" Margin="0,0,10,0"/>
+                <Switch 
+ SemanticProperties.Hint="Town Saves"
+IsToggled="{Binding TownSaves}" />
+            </StackLayout>
+
+            <StackLayout Orientation="Horizontal" VerticalOptions="Center" ToolTipProperties.Text="Allow other gender like in Ultima III">
+                <Label Text="Other:" VerticalOptions="Center" Margin="0,0,10,0"/>
+                <Switch 
+ SemanticProperties.Hint="Other"
+IsToggled="{Binding Other}" />
+            </StackLayout>
+            
+            <!-- Bug Fix -->
+            <StackLayout Orientation="Horizontal" VerticalOptions="Center" ToolTipProperties.Text="Large collection of non-gameplay fixes">
+                <Label Text="Fixes:" VerticalOptions="Center" Margin="0,0,10,0"/>
+                <Switch 
+ SemanticProperties.Hint="Fixes"
+IsToggled="{Binding Fixes}" />
+            </StackLayout>
+
+            <StackLayout Orientation="Horizontal" VerticalOptions="Center" ToolTipProperties.Text="Fixes an issue with Hythloth dungeon room">
+                <Label Text="Hythloth Fix:" VerticalOptions="Center" Margin="0,0,10,0"/>
+                <Switch 
+ SemanticProperties.Hint="Hythloth Fix"
+IsToggled="{Binding hythlothFix}" />
+            </StackLayout>
+
+            <StackLayout Orientation="Horizontal" VerticalOptions="Center" ToolTipProperties.Text="Adds a way to gain sacrifice which the shrine says should work">
+                <Label Text="Sacrifice Fix:" VerticalOptions="Center" Margin="0,0,10,0"/>
+                <Switch 
+ SemanticProperties.Hint="Sacrifice Fix"
+IsToggled="{Binding SacrificeFix}" />
+            </StackLayout>
+
+            <StackLayout Orientation="Horizontal" VerticalOptions="Center" ToolTipProperties.Text="Fix daemon spawn in Abyss">
+                <Label Text="Daemon Trigger:" VerticalOptions="Center" Margin="0,0,10,0"/>
+                <Switch 
+ SemanticProperties.Hint="Daemon Trigger"
+IsToggled="{Binding DaemonTrigger}" />
+            </StackLayout>
+
+            <StackLayout Orientation="Horizontal" VerticalOptions="Center" ToolTipProperties.Text="Don't allow overflow exploit in shops">
+                <Label Text="Shop Overflow:" VerticalOptions="Center" Margin="0,0,10,0"/>
+                <Switch 
+ SemanticProperties.Hint="Shop Overflow"
+IsToggled="{Binding ShopOverflow}" />
+            </StackLayout>
+
             <Button
                 x:Name="CounterBtn"
                 Text="Click me" 
