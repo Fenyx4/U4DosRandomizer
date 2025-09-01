@@ -5,10 +5,10 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     xmlns:local="clr-namespace:U4DosRandomizer.UI"
     Shell.FlyoutBehavior="Disabled"
-    Title="U4DosRandomizer.UI">
+    Title="U4DosRandomizer">
 
     <ShellContent
-        Title="Home"
+        Title="Randomizer Options"
         ContentTemplate="{DataTemplate local:MainPage}"
         Route="MainPage" />
 

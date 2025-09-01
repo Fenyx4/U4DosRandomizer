@@ -17,11 +17,18 @@ namespace U4DosRandomizer.UI
         public MainViewModel(IFolderPicker folderPicker, IPopupService popupService)
         {
             Clicked = new Command(OnClicked);
+            EncodedChanged = new Command(OnEncodedChanged);
             seed = "";
             ultimaIVInstallPath = "";
+            GenerateClothMap = true;
             this.folderPicker = folderPicker;
             this.popupService = popupService;
         }
+
+        [ObservableProperty]
+        public bool busy;
+
+        // Settings
 
         [ObservableProperty]
         public bool generateClothMap;
@@ -36,6 +43,9 @@ namespace U4DosRandomizer.UI
         public bool spoilerLog;
 
         [ObservableProperty]
+        public string encoded;
+
+        [ObservableProperty]
         public string seed;
 
         [ObservableProperty]
@@ -46,13 +56,13 @@ namespace U4DosRandomizer.UI
         // Randomize
 
         [ObservableProperty]
-        public int overWorld = 5;
+        public string overWorld = "5";
 
         [ObservableProperty]
         public bool startingWeapons;
 
         [ObservableProperty]
-        public int dungeon = 1;
+        public string dungeon = "1";
 
         [ObservableProperty]
         public bool runes;
@@ -90,10 +100,10 @@ namespace U4DosRandomizer.UI
         public bool appleHitChance;
 
         [ObservableProperty]
-        public int monsterDamage = 2;
+        public string monsterDamage = "2";
 
         [ObservableProperty]
-        public int weaponDamage = 0;
+        public string weaponDamage = "0";
 
         [ObservableProperty]
         public int questItems;
@@ -123,7 +133,7 @@ namespace U4DosRandomizer.UI
         public bool sextant;
 
         [ObservableProperty]
-        public int herbPrice;
+        public string herbPrice = "0";
 
         // ---------- Quality of life -------------
 
@@ -162,6 +172,7 @@ namespace U4DosRandomizer.UI
 
 
         public ICommand Clicked { get; }
+        public ICommand EncodedChanged { get; }
 
         [RelayCommand]
         async Task PickFolder(CancellationToken cancellationToken)
@@ -178,22 +189,92 @@ namespace U4DosRandomizer.UI
             //}
         }
 
+        public async void OnEncodedChanged()
+        {
+            try
+            {
+                
+                Convert.FromBase64String(Encoded);
+                Flags flags = new Flags(7, 9);
+                flags.DecodeAndSet(encoded);
+
+                Seed = flags.Seed.ToString();
+
+                OverWorld = flags.Overworld.ToString();
+                MiniMap = flags.MiniMap;
+                Dungeon = flags.Dungeon.ToString();
+                //SpellRemove = flags.SpellRemove;
+                StartingWeapons = flags.StartingWeapons;
+                MixQuantity = flags.MixQuantity;
+                Fixes = flags.Fixes;
+                HythlothFix = flags.FixHythloth;
+                SleepLockAssist = flags.SleepLockAssist;
+                ActivePlayer = flags.ActivePlayer;
+                AppleHitChance = flags.HitChance;
+                DiagonalAttack = flags.DiagonalAttack;
+                SacrificeFix = flags.SacrificeFix;
+                Runes = flags.Runes;
+                Mystics = flags.Mystics;
+                Mantras = flags.Mantras;
+                WordOfPassage = flags.WordOfPassage;
+                QuestItems = flags.QuestItemPercentage;
+                KarmaPercentage = flags.KarmaSetPercentage;
+                if (flags.KarmaValue is null)
+                {
+                    KarmaValueOn = false;
+                    KarmaValue = 0;
+                }
+                else
+                {
+                    KarmaValueOn = true;
+                    KarmaValue = flags.KarmaValue.Value;
+                }
+                MonsterDamage = flags.MonsterDamage.ToString();
+                WeaponDamage = flags.WeaponDamage.ToString();
+                EarlierMonsters = flags.EarlierMonsters;
+                MonsterQty = flags.MonsterQty;
+                NoRequireFullParty = flags.NoRequireFullParty;
+                RandomizeSpells = flags.RandomizeSpells;
+                HerbPrice = flags.HerbPrices.ToString();
+                Sextant = flags.Sextant;
+                GenerateClothMap = flags.ClothMap;
+                PrincipleItems = flags.PrincipleItems;
+                TownSaves = flags.TownSaves;
+                DaemonTrigger = flags.DaemonTrigger;
+                RequireMystics = flags.RequireMysticWeapons;
+                AwakenUpgrade = flags.AwakenUpgrade;
+                ShopOverflow = flags.ShopOverflowFix;
+                Other = flags.Other;
+                SpoilerLog = flags.SpoilerLog;
+                VgaPatch = flags.VGAPatch;
+
+            }
+            catch(Exception e)
+            {
+
+            }
+            
+        }
+
         public async void OnClicked()
         {
+            //OverWorld = "1";
+            //return;
+
             var seedInt = Environment.TickCount;
-            if ( !string.IsNullOrEmpty(seed) )
+            if ( !string.IsNullOrEmpty(Seed) )
             {
-                seedInt = int.Parse(seed);
+                seedInt = int.Parse(Seed);
             }
 
 
             int? karmaValueInt = null;
-            if ( karmaValueOn)
+            if ( KarmaValueOn)
             {
-                karmaValueInt = karmaValue;
+                karmaValueInt = KarmaValue;
             }
 
-            var path = ultimaIVInstallPath;
+            var path = UltimaIVInstallPath;
             if (!Directory.Exists(path))
             {
                 popupService.ShowPopup("Path provided for game directory does not exist");
@@ -219,49 +300,53 @@ namespace U4DosRandomizer.UI
             //else
             //{
             Flags flags = new(seedInt, 9);
-            flags.Overworld = overWorld;
-            flags.MiniMap = miniMap;
-            flags.Dungeon = dungeon;
-            flags.SpellRemove = spellRemove;
-            flags.StartingWeapons = startingWeapons;
+            flags.Overworld = int.Parse(OverWorld);
+            flags.MiniMap = MiniMap;
+            flags.Dungeon = int.Parse(Dungeon);
+            flags.SpellRemove = SpellRemove;
+            flags.StartingWeapons = StartingWeapons;
             flags.DngStone = false; // deprecated
-            flags.MixQuantity = mixQuantity;
-            flags.Fixes = fixes;
-            flags.FixHythloth = hythlothFix;
-            flags.SleepLockAssist = sleepLockAssist;
-            flags.ActivePlayer = activePlayer;
-            flags.HitChance = appleHitChance;
-            flags.DiagonalAttack = diagonalAttack;
-            flags.SacrificeFix = sacrificeFix;
-            flags.Runes = runes;
-            flags.Mystics = mystics;
-            flags.Mantras = mantras;
-            flags.WordOfPassage = wordOfPassage;
-            flags.QuestItemPercentage = questItems;
-            flags.KarmaSetPercentage = karmaPercentage;
+            flags.MixQuantity = MixQuantity;
+            flags.Fixes = Fixes;
+            flags.FixHythloth = HythlothFix;
+            flags.SleepLockAssist = SleepLockAssist;
+            flags.ActivePlayer = ActivePlayer;
+            flags.HitChance = AppleHitChance;
+            flags.DiagonalAttack = DiagonalAttack;
+            flags.SacrificeFix = SacrificeFix;
+            flags.Runes = Runes;
+            flags.Mystics = Mystics;
+            flags.Mantras = Mantras;
+            flags.WordOfPassage = WordOfPassage;
+            flags.QuestItemPercentage = QuestItems;
+            flags.KarmaSetPercentage = KarmaPercentage;
             flags.KarmaValue = karmaValueInt;
-            flags.MonsterDamage = monsterDamage;
-            flags.WeaponDamage = weaponDamage;
-            flags.EarlierMonsters = earlierMonsters;
-            flags.MonsterQty = monsterQty;
-            flags.NoRequireFullParty = noRequireFullParty;
-            flags.RandomizeSpells = randomizeSpells;
-            flags.HerbPrices = herbPrice;
-            flags.Sextant = sextant;
-            flags.ClothMap = generateClothMap;
-            flags.PrincipleItems = principleItems;
-            flags.TownSaves = townSaves;
-            flags.DaemonTrigger = daemonTrigger;
-            flags.RequireMysticWeapons = requireMystics;
-            flags.AwakenUpgrade = awakenUpgrade;
-            flags.ShopOverflowFix = shopOverflow;
-            flags.Other = other;
-            flags.SpoilerLog = spoilerLog;
-            flags.VGAPatch = vgaPatch;
+            flags.MonsterDamage = int.Parse(MonsterDamage);
+            flags.WeaponDamage = int.Parse(WeaponDamage);
+            flags.EarlierMonsters = EarlierMonsters;
+            flags.MonsterQty = MonsterQty;
+            flags.NoRequireFullParty = NoRequireFullParty;
+            flags.RandomizeSpells = RandomizeSpells;
+            flags.HerbPrices = int.Parse(HerbPrice);
+            flags.Sextant = Sextant;
+            flags.ClothMap = GenerateClothMap;
+            flags.PrincipleItems = PrincipleItems;
+            flags.TownSaves = TownSaves;
+            flags.DaemonTrigger = DaemonTrigger;
+            flags.RequireMysticWeapons = RequireMystics;
+            flags.AwakenUpgrade = AwakenUpgrade;
+            flags.ShopOverflowFix = ShopOverflow;
+            flags.Other = Other;
+            flags.SpoilerLog = SpoilerLog;
+            flags.VGAPatch = VgaPatch;
 
             //Program.Randomize(seed, path, flags, encodedArg.Value());
             //path = "F:\\Gog-games\\Ultima 4";
-            DosRandomizer.Randomize(seedInt, path, flags, "");
+            Busy = true;
+            popupService.ShowBusy();
+            await Task.Run(() => DosRandomizer.Randomize(seedInt, path, flags, ""));
+            popupService.StopBusy();
+            Busy = false;
             //Console.WriteLine("Seed: " + seed);
             //var random = new Random(seed);
             //var worldMap = new WorldMap();

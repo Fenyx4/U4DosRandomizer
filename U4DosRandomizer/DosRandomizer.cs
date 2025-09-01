@@ -466,7 +466,7 @@ namespace U4DosRandomizer
             if (flags.MiniMap)
             {
                 var image = worldMap.ToImage();
-                image.SaveAsPng($"worldMap-{seed}.png");
+                image.SaveAsPng($"{path}worldMap-{seed}.png");
                 //image = worldMap.ToHeightMapImage();
                 //if (image != null)
                 //{

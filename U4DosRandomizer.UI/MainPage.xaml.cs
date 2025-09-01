@@ -26,16 +26,34 @@ namespace U4DosRandomizer.UI
     public interface IPopupService
     {
         void ShowPopup(String popupMessage);
+        void ShowBusy();
+        void StopBusy();
     }
 
     public class PopupService : IPopupService
     {
+        public void ShowBusy()
+        {
+            Page page = Application.Current?.MainPage ?? throw new NullReferenceException();
+            page.ShowPopupAsync(new ActivityIndicator { IsRunning = true}, new PopupOptions
+            {
+                CanBeDismissedByTappingOutsideOfPopup = false,
+                Shape = new RoundRectangle
+                {
+                    CornerRadius = new CornerRadius(20, 20, 20, 20),
+                    StrokeThickness = 2,
+                    Stroke = Colors.LightGray
+                }
+            });
+        }
+
         public void ShowPopup(String popupMessage)
         {
             Page page = Application.Current?.MainPage ?? throw new NullReferenceException();
             page.ShowPopupAsync(new Label
             {
-                Text = popupMessage
+                Text = popupMessage,
+                BackgroundColor = Colors.LightGray
             }, new PopupOptions
             {
                 Shape = new RoundRectangle
@@ -45,6 +63,12 @@ namespace U4DosRandomizer.UI
                     Stroke = Colors.LightGray
                 }
             });
+        }
+
+        public void StopBusy()
+        {
+            Page page = Application.Current?.MainPage ?? throw new NullReferenceException();
+            page.ClosePopupAsync();
         }
     }
 
