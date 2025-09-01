@@ -26,6 +26,6 @@ jobs:
     - name: Build CLI
       run: dotnet build ./U4DosRandomizer.CLI/U4DosRandomizer.CLI.csproj --configuration Release --no-restore
     - name: Build UI
-      run: dotnet build ./U4DosRandomizer.UI/U4DosRandomizer.UI.csproj --configuration Release --no-restore -f:net9.0-windows10.0.19041.0
+      run: dotnet build ./U4DosRandomizer.UI/U4DosRandomizer.UI.csproj --configuration Release --no-restore -f:net9.0-windows10.0.19041.0 -r win10-x86
     - name: Test
       run: dotnet test ./U4DosRandomizer.UnitTests/U4DosRandomizer.UnitTests.csproj --no-restore --verbosity normal
