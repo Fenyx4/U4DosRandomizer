@@ -12,14 +12,15 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v4
     - name: Setup .NET Core
-      uses: actions/setup-dotnet@v1
+      uses: actions/setup-dotnet@v4
       with:
-        dotnet-version: 3.1.301
+        dotnet-version: '9.0.x'
     - name: Install dependencies
       run: |
-        dotnet restore ./U4DosRandomizer/U4DosRandomizer.csproj
+        dotnet restore ./U4DosRandomizer/U4DosRandomizer.CLI.csproj
+        dotnet restore ./U4DosRandomizer/U4DosRandomizer.UI.csproj
         dotnet restore ./U4DosRandomizer.UnitTests/U4DosRandomizer.UnitTests.csproj
     - name: Build
       run: dotnet build ./U4DosRandomizer/U4DosRandomizer.csproj --configuration Release --no-restore
