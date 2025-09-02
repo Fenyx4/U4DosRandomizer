@@ -37,10 +37,15 @@ jobs:
           dotnet publish ./U4DosRandomizer.CLI/U4DosRandomizer.CLI.csproj -c Release -f net8.0 -r linux-x64 -p:PublishTrimmed=true --self-contained true -p:PublishSingleFile=true -o output-linux-x64
           tar -czf U4DosRandomizer-linux-x64.tar.gz output-linux-x64/U4DosRandomizer.CLI
 
+          echo "----- Start workload maui-tizen -----"
           dotnet workload install maui-tizen
+          echo "----- Start workload wasm-tools -----"
           dotnet workload install wasm-tools
+          echo "----- Start dotnet build -----"
           dotnet build ./U4DosRandomizer.UI/U4DosRandomizer.UI.csproj --configuration Release -f:net9.0-windows10.0.19041.0
+          echo "----- Start fotnet publish -----"
           dotnet publish ./U4DosRandomizer.UI/U4DosRandomizer.UI.csproj -f net9.0-windows10.0.19041.0 -c Release -p:PublishTrimmerd=true --self-contained -o output-ui
+          echo "----- Start zip -----"
           zip U4DosRandomizer-ui-win-x64 output-ui
       
       - name: Create Release
