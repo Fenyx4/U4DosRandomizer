@@ -12,12 +12,12 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
       
       - name: Setup .NET Core
-        uses: actions/setup-dotnet@v1
+        uses: actions/setup-dotnet@v4
         with:
-          dotnet-version: 3.1.301
+          dotnet-version: '9.0.x'
       - name: Install dependencies
         run: |
           dotnet restore ./U4DosRandomizer/U4DosRandomizer.csproj
@@ -36,6 +36,9 @@ jobs:
           zip --junk-paths U4DosRandomizer-osx-x64 output-osx-x64/U4DosRandomizer
           dotnet publish ./U4DosRandomizer/U4DosRandomizer.csproj -c Release -f netcoreapp3.1 -r linux-x64 -p:PublishTrimmed=true --self-contained true -p:PublishSingleFile=true -o output-linux-x64
           tar -czf U4DosRandomizer-linux-x64.tar.gz output-linux-x64/U4DosRandomizer
+
+          dotnet publish ./U4DosRandomizer.UI/U4DosRandomizer.UI.csproj -f net9.0-windows10.0.19041.0 -c Release -p:PublishTrimmerd=true --self-contained -o output-ui
+          zip U4DosRandomizer-ui-win-x64 output-ui
       
       - name: Create Release
         id: create_release
@@ -61,6 +64,17 @@ jobs:
           upload_url: ${{ steps.create_release.outputs.upload_url }} # This pulls from the CREATE RELEASE step above, referencing it's ID to get its outputs object, which include a `upload_url`. See this blog post for more info: https://jasonet.co/posts/new-features-of-github-actions/#passing-data-to-future-steps 
           asset_path: ./U4DosRandomizer-win-x86.zip
           asset_name: U4DosRandomizer-win-x86.zip
+          asset_content_type: application/zip
+
+      - name: Upload Release Asset
+        id: upload-release-ui-asset-win-x86 
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }} # This pulls from the CREATE RELEASE step above, referencing it's ID to get its outputs object, which include a `upload_url`. See this blog post for more info: https://jasonet.co/posts/new-features-of-github-actions/#passing-data-to-future-steps 
+          asset_path: ./U4DosRandomizer-ui-win-x86.zip
+          asset_name: U4DosRandomizer-ui-win-x86.zip
           asset_content_type: application/zip
 
 

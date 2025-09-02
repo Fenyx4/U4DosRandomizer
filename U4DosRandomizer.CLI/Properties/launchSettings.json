@@ -1,0 +1,16 @@
+{
+  "profiles": {
+    "U4DosRandomizer": {
+      "commandName": "Project",
+      "commandLineArgs": "-p \"F:\\Gog-games\\Ultima 4\" --townSaves --clothMap -s 1243162046"
+    },
+    "Reset": {
+      "commandName": "Project",
+      "commandLineArgs": "-p \"F:\\Gog-games\\Ultima 4\"  -r"
+    },
+    "Help": {
+      "commandName": "Project",
+      "commandLineArgs": "-p \"F:\\Gog-games\\Ultima 4\" -h"
+    }
+  }
+}

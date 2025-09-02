@@ -2604,8 +2604,11 @@ namespace U4DosRandomizer
                 }
 
                 var result = bestCandidate;
-                results.Add(result);
-                usedLocations.Add(result);
+                if (result != null)
+                {
+                    results.Add(result);
+                    usedLocations.Add(result);
+                }
             }
 
             return results;
@@ -2733,7 +2736,7 @@ namespace U4DosRandomizer
             for(int i = 0; i < Rivers.Count; i++)
             {
                 var river = Rivers[i];
-                PathBuilder pathBuilder = new PathBuilder();
+                SixLabors.ImageSharp.Drawing.PathBuilder pathBuilder = new SixLabors.ImageSharp.Drawing.PathBuilder();
                 var depth = 0;
                 river.LevelOrderTraversal(c => depth = Math.Max(c.depth, depth));
 
@@ -3057,7 +3060,7 @@ namespace U4DosRandomizer
                                                     using (var fontStream = new MemoryStream(ClothMap.runes))
                                                     {
                                                         FontFamily family = collection.Add(fontStream);
-                                                        Font font = family.CreateFont(22, FontStyle.Regular);
+                                                        SixLabors.Fonts.Font font = family.CreateFont(22, FontStyle.Regular);
 
                                                         DrawingOptions drawingOptions = new DrawingOptions()
                                                         {
@@ -3075,7 +3078,7 @@ namespace U4DosRandomizer
                                                                 KerningMode = KerningMode.Normal,
                                                                 TabWidth = 8, // a tab renders as 8 spaces wide
                                                                               //WrapTextWidth = 100, // greater than zero so we will word wrap at 100 pixels wide
-                                                                HorizontalAlignment = HorizontalAlignment.Center,
+                                                                HorizontalAlignment = SixLabors.Fonts.HorizontalAlignment.Center,
                                                                 //Origin = new System.Numerics.Vector2(x * 4, y * 4)
                                                             };
                                                             FontRectangle size = TextMeasurer.Measure(region.RunicName.ToUpper(), textOptions);
