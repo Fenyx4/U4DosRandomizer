@@ -28,13 +28,13 @@ jobs:
         run: dotnet test ./U4DosRandomizer.UnitTests/U4DosRandomizer.UnitTests.csproj --no-restore --verbosity normal
       - name: Publish
         run: |
-          dotnet publish ./U4DosRandomizer.CLI/U4DosRandomizer.CLI.csproj -c Release -f net9.0 -r win-x86 -p:PublishTrimmed=true --self-contained true -p:PublishSingleFile=true -o output
+          dotnet publish ./U4DosRandomizer.CLI/U4DosRandomizer.CLI.csproj -c Release -f net8.0 -r win-x86 -p:PublishTrimmed=true --self-contained true -p:PublishSingleFile=true -o output
           zip --junk-paths U4DosRandomizer-win-x86 output/U4DosRandomizer.exe
-          dotnet publish ./U4DosRandomizer.CLI/U4DosRandomizer.CLI.csproj -c Release -f net9.0 -r win-x64 -p:PublishTrimmed=true --self-contained true -p:PublishSingleFile=true -o output-win-x64
+          dotnet publish ./U4DosRandomizer.CLI/U4DosRandomizer.CLI.csproj -c Release -f net8.0 -r win-x64 -p:PublishTrimmed=true --self-contained true -p:PublishSingleFile=true -o output-win-x64
           zip --junk-paths U4DosRandomizer-win-x64 output-win-x64/U4DosRandomizer.exe
-          dotnet publish ./U4DosRandomizer.CLI/U4DosRandomizer.CLI.csproj -c Release -f net9.0 -r osx-x64 -p:PublishTrimmed=true --self-contained true -p:PublishSingleFile=true -o output-osx-x64
+          dotnet publish ./U4DosRandomizer.CLI/U4DosRandomizer.CLI.csproj -c Release -f net8.0 -r osx-x64 -p:PublishTrimmed=true --self-contained true -p:PublishSingleFile=true -o output-osx-x64
           zip --junk-paths U4DosRandomizer-osx-x64 output-osx-x64/U4DosRandomizer
-          dotnet publish ./U4DosRandomizer.CLI/U4DosRandomizer.CLI.csproj -c Release -f net9.0 -r linux-x64 -p:PublishTrimmed=true --self-contained true -p:PublishSingleFile=true -o output-linux-x64
+          dotnet publish ./U4DosRandomizer.CLI/U4DosRandomizer.CLI.csproj -c Release -f net8.0 -r linux-x64 -p:PublishTrimmed=true --self-contained true -p:PublishSingleFile=true -o output-linux-x64
           tar -czf U4DosRandomizer-linux-x64.tar.gz output-linux-x64/U4DosRandomizer
 
           dotnet publish ./U4DosRandomizer.UI/U4DosRandomizer.UI.csproj -f net9.0-windows10.0.19041.0 -c Release -p:PublishTrimmerd=true --self-contained -o output-ui
