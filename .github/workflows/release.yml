@@ -37,6 +37,7 @@ jobs:
           dotnet publish ./U4DosRandomizer.CLI/U4DosRandomizer.CLI.csproj -c Release -f net8.0 -r linux-x64 -p:PublishTrimmed=true --self-contained true -p:PublishSingleFile=true -o output-linux-x64
           tar -czf U4DosRandomizer-linux-x64.tar.gz output-linux-x64/U4DosRandomizer.CLI
 
+          dotnet workload restore ./U4DosRandomizer.UI/U4DosRandomizer.UI.csproj
           dotnet publish ./U4DosRandomizer.UI/U4DosRandomizer.UI.csproj -f net9.0-windows10.0.19041.0 -c Release -p:PublishTrimmerd=true --self-contained -o output-ui
           zip U4DosRandomizer-ui-win-x64 output-ui
       
