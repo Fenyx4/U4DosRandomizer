@@ -38,7 +38,7 @@ jobs:
           tar -czf U4DosRandomizer-linux-x64.tar.gz output-linux-x64/U4DosRandomizer
 
           dotnet publish ./U4DosRandomizer.UI/U4DosRandomizer.UI.csproj -f net9.0-windows10.0.19041.0 -c Release -p:PublishTrimmerd=true --self-contained -o output-ui
-          zip U4DosRandomizer-win-x64 output-ui
+          zip U4DosRandomizer-ui-win-x64 output-ui
       
       - name: Create Release
         id: create_release
@@ -64,6 +64,17 @@ jobs:
           upload_url: ${{ steps.create_release.outputs.upload_url }} # This pulls from the CREATE RELEASE step above, referencing it's ID to get its outputs object, which include a `upload_url`. See this blog post for more info: https://jasonet.co/posts/new-features-of-github-actions/#passing-data-to-future-steps 
           asset_path: ./U4DosRandomizer-win-x86.zip
           asset_name: U4DosRandomizer-win-x86.zip
+          asset_content_type: application/zip
+
+      - name: Upload Release Asset
+        id: upload-release-ui-asset-win-x86 
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }} # This pulls from the CREATE RELEASE step above, referencing it's ID to get its outputs object, which include a `upload_url`. See this blog post for more info: https://jasonet.co/posts/new-features-of-github-actions/#passing-data-to-future-steps 
+          asset_path: ./U4DosRandomizer-ui-win-x86.zip
+          asset_name: U4DosRandomizer-ui-win-x86.zip
           asset_content_type: application/zip
 
 
