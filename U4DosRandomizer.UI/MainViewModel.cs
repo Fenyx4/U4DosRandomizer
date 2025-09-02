@@ -196,7 +196,7 @@ namespace U4DosRandomizer.UI
                 
                 Convert.FromBase64String(Encoded);
                 Flags flags = new Flags(7, 9);
-                flags.DecodeAndSet(encoded);
+                flags.DecodeAndSet(Encoded);
 
                 Seed = flags.Seed.ToString();
 
