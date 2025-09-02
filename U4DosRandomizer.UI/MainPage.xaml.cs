@@ -1,4 +1,4 @@
-﻿using CommunityToolkit.Maui.Alerts;
+using CommunityToolkit.Maui.Alerts;
 using CommunityToolkit.Maui.Core;
 using CommunityToolkit.Maui;
 using CommunityToolkit.Maui.Storage;
@@ -10,6 +10,7 @@ using System.Reflection;
 using System.Runtime.CompilerServices;
 using U4DosRandomizer;
 using CommunityToolkit.Maui.Extensions;
+using Microsoft.Maui.Controls.PlatformConfiguration;
 
 namespace U4DosRandomizer.UI
 {
@@ -34,22 +35,25 @@ namespace U4DosRandomizer.UI
     {
         public void ShowBusy()
         {
-            Page page = Application.Current?.MainPage ?? throw new NullReferenceException();
-            page.ShowPopupAsync(new ActivityIndicator { IsRunning = true}, new PopupOptions
+            Page page = Application.Current?.Windows[0].Page ?? throw new NullReferenceException();
+            if (page is not null)
             {
-                CanBeDismissedByTappingOutsideOfPopup = false,
-                Shape = new RoundRectangle
+                page.ShowPopupAsync(new ActivityIndicator { IsRunning = true }, new PopupOptions
                 {
-                    CornerRadius = new CornerRadius(20, 20, 20, 20),
-                    StrokeThickness = 2,
-                    Stroke = Colors.LightGray
-                }
-            });
+                    CanBeDismissedByTappingOutsideOfPopup = false,
+                    Shape = new RoundRectangle
+                    {
+                        CornerRadius = new CornerRadius(20, 20, 20, 20),
+                        StrokeThickness = 2,
+                        Stroke = Colors.LightGray
+                    }
+                });
+            }
         }
 
         public void ShowPopup(String popupMessage)
         {
-            Page page = Application.Current?.MainPage ?? throw new NullReferenceException();
+            Page page = Application.Current?.Windows[0].Page ?? throw new NullReferenceException();
             page.ShowPopupAsync(new Label
             {
                 Text = popupMessage,
@@ -67,7 +71,7 @@ namespace U4DosRandomizer.UI
 
         public void StopBusy()
         {
-            Page page = Application.Current?.MainPage ?? throw new NullReferenceException();
+            Page page = Application.Current?.Windows[0].Page ?? throw new NullReferenceException();
             page.ClosePopupAsync();
         }
     }
