@@ -1,4 +1,4 @@
-﻿using System.Diagnostics;
+using System.Diagnostics;
 using Newtonsoft.Json;
 using SixLabors.ImageSharp;
 using U4DosRandomizer.Helpers;
@@ -472,6 +472,12 @@ namespace U4DosRandomizer
                 //{
                 //    image.SaveAsPng($"worldMap-hm-{seed}.png");
                 //}
+            }
+
+
+            for (int i = 0; i < ultimaData.Items.Count; i++)
+            {
+                spoilerLog.Add(SpoilerCategory.Location, $"{ultimaData.ItemNames[i]} at {Talk.GetSextantText(ultimaData.Items[i], ' ')}");
             }
 
             spoilerWriter.Close();

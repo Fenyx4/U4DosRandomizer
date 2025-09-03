@@ -464,7 +464,7 @@ HorizontalOptions="Center">
                         <RadioButton Content="Less Damage" Value="3" Margin="10,0,0,0" />
                     </StackLayout>
 
-                    <StackLayout Orientation="Vertical" Spacing="-15" Margin="0,0,0,10" VerticalOptions="Center" ToolTipProperties.Text="Reagent Prices" RadioButtonGroup.GroupName="Dungeon" RadioButtonGroup.SelectedValue="{Binding HerbPrice}">
+                    <StackLayout Orientation="Vertical" Spacing="-15" Margin="0,0,0,10" VerticalOptions="Center" ToolTipProperties.Text="Reagent Prices" RadioButtonGroup.GroupName="Herbs" RadioButtonGroup.SelectedValue="{Binding HerbPrice}">
                         <Label Text="Reagent Prices:" VerticalOptions="Center" Margin="0,0,10,10"/>
                         <RadioButton Content="Cheap" Value="1" Margin="10,0,0,0" />
                         <RadioButton Content="Normal" Value="0" Margin="10,0,0,0" IsChecked="true" />
