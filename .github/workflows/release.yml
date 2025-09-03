@@ -7,6 +7,9 @@ name: Create Release
 permissions:
     contents: write
 
+env:
+    GH_TOKEN: ${{ github.token }}
+
 jobs:
   build:
     name: Build & Upload UI
