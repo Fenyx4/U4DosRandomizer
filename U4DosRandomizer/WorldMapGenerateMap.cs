@@ -829,10 +829,6 @@ namespace U4DosRandomizer
             {
                 SpoilerLog.Add(SpoilerCategory.Location, $"Moongate at {Talk.GetSextantText(data.Moongates[i])}");
             }
-            for (int i = 0; i < data.Items.Count; i++)
-            {
-                SpoilerLog.Add(SpoilerCategory.Location, $"{data.ItemNames[i]} at {Talk.GetSextantText(data.Items[i], ' ')}");
-            }
         }
 
 
