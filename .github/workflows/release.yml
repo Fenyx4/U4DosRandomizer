@@ -65,7 +65,7 @@ jobs:
             tar -czf U4DosRandomizer-linux-x64.tar.gz output-linux-x64/U4DosRandomizer.CLI
 
             gh release upload ${{github.event.release.tag_name}} U4DosRandomizer-win-x86.zip
-            gh release upload ${{github.event.release.tag_name}} U4DosRandomizer-win-x86.zip
-            gh release upload ${{github.event.release.tag_name}} U4DosRandomizer-win-x86.zip
-            gh release upload ${{github.event.release.tag_name}} U4DosRandomizer-win-x86.zip
+            gh release upload ${{github.event.release.tag_name}} U4DosRandomizer-win-x64.zip
+            gh release upload ${{github.event.release.tag_name}} U4DosRandomizer-osx-x64.zip
+            gh release upload ${{github.event.release.tag_name}} U4DosRandomizer-linux-x64.tar.gz
 
