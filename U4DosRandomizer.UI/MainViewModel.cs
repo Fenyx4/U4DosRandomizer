@@ -17,6 +17,7 @@ namespace U4DosRandomizer.UI
         public MainViewModel(IFolderPicker folderPicker, IPopupService popupService)
         {
             Clicked = new Command(OnClicked);
+            RestoreClicked = new Command(OnRestore);
             EncodedChanged = new Command(OnEncodedChanged);
             seed = "";
             ultimaIVInstallPath = "";
@@ -172,6 +173,7 @@ namespace U4DosRandomizer.UI
 
 
         public ICommand Clicked { get; }
+        public ICommand RestoreClicked { get; }
         public ICommand EncodedChanged { get; }
 
         [RelayCommand]
@@ -254,6 +256,30 @@ namespace U4DosRandomizer.UI
 
             }
             
+        }
+
+        public async void OnRestore()
+        {
+            var path = UltimaIVInstallPath;
+            if (!Directory.Exists(path))
+            {
+                popupService.ShowPopup("Path provided for game directory does not exist");
+                return;
+            }
+            //path = "F:\\Gog-games\\Ultima 4";
+            if (!path.EndsWith(System.IO.Path.DirectorySeparatorChar.ToString()) &&
+                    !path.EndsWith(System.IO.Path.AltDirectorySeparatorChar.ToString()))
+            {
+                path = path + System.IO.Path.DirectorySeparatorChar;
+            }
+
+            Busy = true;
+            popupService.ShowBusy();
+            await Task.Run(() => DosRandomizer.Restore(path));
+            popupService.StopBusy();
+            Busy = false;
+            popupService.ShowPopup("Original game restored!");
+
         }
 
         public async void OnClicked()
