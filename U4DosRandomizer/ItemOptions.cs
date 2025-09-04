@@ -51,7 +51,7 @@ namespace U4DosRandomizer
 					new ItemOption { Item = new Item((byte)UltimaData.LOC_JHELOM, 0x05, 0x0A), People = new List<Person>() { new Person { KeywordResponse2 = "The rune is in the northern guard tower!", Name = "Nostro" } } },
 					new ItemOption { Item = new Item((byte)UltimaData.LOC_JHELOM, 0x12, 0x19), People = new List<Person>() { new Person { KeywordResponse2 = "Look in the eastern gatehouse of Serpent's Hold for the rune.", Name = "Nostro" } } },
 					new ItemOption { Item = new Item((byte)UltimaData.LOC_JHELOM, SextantCoordToHex('A', 'F'), SextantCoordToHex('B', 'L')), People = new List<Person>() { new Person { KeywordResponse2 = "The rune is hidden away with the inn's treasure!", Name = "Nostro" } } },
-					new ItemOption { Item = new Item((byte)UltimaData.LOC_JHELOM, SextantCoordToHex('A', 'F'), SextantCoordToHex('B', 'L')), People = new List<Person>() { new Person { KeywordResponse2 = "I left the rune at the healers!", Name = "Nostro" } } },
+					new ItemOption { Item = new Item((byte)UltimaData.LOC_JHELOM, SextantCoordToHex('A', 'I'), SextantCoordToHex('A', 'L')), People = new List<Person>() { new Person { KeywordResponse2 = "I left the rune at the healers!", Name = "Nostro" } } },
 				}
 			},
 			{

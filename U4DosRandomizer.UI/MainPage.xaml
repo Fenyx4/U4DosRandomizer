@@ -483,6 +483,13 @@ Text="Apply Settings"
 SemanticProperties.Hint="Applies settings"
 Command="{Binding Clicked}"
 HorizontalOptions="Fill" />
+            <Button
+x:Name="RestoreBtn"
+Text="Restore Original Game" 
+SemanticProperties.Hint="Restores the Original Game"
+Command="{Binding RestoreClicked}"
+HorizontalOptions="Fill" />
+            
 
         </FlexLayout>
 
