@@ -191,6 +191,14 @@ namespace U4DosRandomizer.UI
             //}
         }
 
+        partial void OnOverWorldChanged(string value)
+        {
+            if(OverWorld != "5")
+            {
+                GenerateClothMap = false;
+            }
+        }
+
         public async void OnEncodedChanged()
         {
             try
