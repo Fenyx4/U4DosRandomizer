@@ -97,12 +97,6 @@ Text="{Binding Encoded}"
                             </Entry>
                         </StackLayout>
 
-                        <StackLayout Orientation="Horizontal" VerticalOptions="Center" ToolTipProperties.Text="Generate a Cloth Map for the randomized world">
-                            <CheckBox 
-                    SemanticProperties.Hint="Generate a Cloth Map"
-                   IsChecked="{Binding GenerateClothMap}" />
-                            <Label Text="Generate Cloth Map" VerticalOptions="Center" Margin="0,0,10,0"/>
-                        </StackLayout>
                         <StackLayout Orientation="Horizontal" VerticalOptions="Center" ToolTipProperties.Text="Generate a Mini Map. One pixel per tile.">
                             <CheckBox 
                     SemanticProperties.Hint="Generate a Mini Map"
@@ -163,9 +157,9 @@ IsChecked="{Binding TownSaves}" />
 
                         <StackLayout Orientation="Horizontal" VerticalOptions="Center" ToolTipProperties.Text="Allow other gender like in Ultima III">
                             <CheckBox 
- SemanticProperties.Hint="Other"
+ SemanticProperties.Hint="Other Gender"
 IsChecked="{Binding Other}" />
-                            <Label Text="Other" VerticalOptions="Center" Margin="0,0,10,0"/>
+                            <Label Text="Other Gender" VerticalOptions="Center" Margin="0,0,10,0"/>
                         </StackLayout>
                     </VerticalStackLayout>
                 </Border>
@@ -193,11 +187,19 @@ HorizontalOptions="Fill">
                         <StackLayout Spacing="-15" Margin="0,0,0,10" Orientation="Vertical" VerticalOptions="Center" ToolTipProperties.Text="Randomize Over World" RadioButtonGroup.GroupName="OverWorld" RadioButtonGroup.SelectedValue="{Binding OverWorld, Mode=TwoWay}">
                             <RadioButton Content="No Change" Value="1" Margin="10,0,0,0" />
                             <RadioButton Content="Shuffle Locations" Value="2" Margin="10,0,0,0" />
-                            <RadioButton Content="Randomize the entire map" Value="5" Margin="10,0,0,0"
+                            <RadioButton x:Name="entiremap" Content="Randomize the entire map" Value="5" Margin="10,0,0,0"
                          IsChecked="true" />
                             <!--<CheckBox d
                             SemanticProperties.Hint="Randomize Over World"
                            IsChecked="{Binding OverWorld}" />-->
+                        </StackLayout>
+
+                        <StackLayout Orientation="Horizontal" VerticalOptions="Center" ToolTipProperties.Text="Generate a Cloth Map for the randomized world" Margin="15,0,0,0">
+                            <CheckBox 
+ SemanticProperties.Hint="Generate a Cloth Map"
+IsChecked="{Binding GenerateClothMap}" 
+                                IsEnabled="{Binding Source={x:Reference entiremap}, Path=IsChecked}"/>
+                            <Label Text="Generate Cloth Map" VerticalOptions="Center" Margin="0,0,10,0"/>
                         </StackLayout>
 
                         <StackLayout Spacing="-15" Margin="0,0,0,10" Orientation="Vertical" VerticalOptions="Center" ToolTipProperties.Text="Randomize Dungeon" RadioButtonGroup.GroupName="Dungeon" RadioButtonGroup.SelectedValue="{Binding Dungeon}">
