@@ -55,6 +55,8 @@ namespace U4DosRandomizer
 
         public List<int> SupportedVersions = new List<int>() { 9 };
 
+        public bool Test { get; set; }
+
         public string GetEncoded()
         {
             var encoded = new List<byte>();

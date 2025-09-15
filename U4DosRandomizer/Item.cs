@@ -8,14 +8,20 @@ namespace U4DosRandomizer
         private byte x;
         private byte location;
         private byte y;
+        private byte originalX;
+        private byte originalLocation;
+        private byte originalY;
 
         public byte Location
         {
             get => location;
             set
             {
-                Changed = true;
-                location = value;
+                if (location != value)
+                {
+                    Changed = true;
+                    location = value;
+                }
             }
         }
         public byte X
@@ -23,8 +29,11 @@ namespace U4DosRandomizer
             get => x;
             set
             {
-                Changed = true;
-                x = value;
+                if (x != value)
+                {
+                    Changed = true;
+                    x = value;
+                }
             }
         }
         public byte Y
@@ -32,9 +41,24 @@ namespace U4DosRandomizer
             get => y;
             set
             {
-                Changed = true;
-                y = value;
+                if (y != value)
+                {
+                    Changed = true;
+                    y = value;
+                }
             }
+        }
+        public byte OriginalLocation
+        {
+            get => originalLocation;
+        }
+        public byte OriginalX
+        {
+            get => originalX;
+        }
+        public byte OriginalY
+        {
+            get => originalY;
         }
         public bool Changed { get; private set; }
 
@@ -43,6 +67,11 @@ namespace U4DosRandomizer
             Location = location;
             X = x;
             Y = y;
+
+            originalLocation = location;
+            originalX = x;
+            originalY = y;
+
             Changed = false;
         }
 

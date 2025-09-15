@@ -1,6 +1,7 @@
-using System.Diagnostics;
-using Newtonsoft.Json;
+﻿using Newtonsoft.Json;
 using SixLabors.ImageSharp;
+using SixLabors.ImageSharp.Metadata.Profiles.Iptc;
+using System.Diagnostics;
 using U4DosRandomizer.Helpers;
 
 namespace U4DosRandomizer
@@ -289,6 +290,26 @@ namespace U4DosRandomizer
             var usedSpots = new List<Item>();
             if (flags.Runes)
             {
+
+                //           new ItemOption { Item = new Item((byte)UltimaData.LOC_MOONGLOW, 0x08, 0x06), People = new List<Person>() { new Person { KeywordResponse2 = "Search for the rune of honesty by Mariah's gold!", Name = "William" } } },
+                //new ItemOption { Item = new Item((byte)UltimaData.LOC_MOONGLOW, 0x1D, 0x01), People = new List<Person>() { new Person { KeywordResponse2 = "Search for the rune of honesty by Tracie's gold!", Name = "William" } } },
+                //new ItemOption { Item = new Item((byte)UltimaData.LOC_MOONGLOW, 0x1E, 0x06), People = new List<Person>() { new Person { KeywordResponse2 = "Search in the empty inn room for the rune of honesty!", Name = "William" } } },
+                //new ItemOption { Item = new Item((byte)UltimaData.LOC_MOONGLOW, 0x1C, 0x18), People = new List<Person>() { new Person { KeywordResponse2 = "Search in the empty bed at the healers for the rune of honesty!", Name = "William" } } },
+                //new ItemOption { Item = new Item((byte)UltimaData.LOC_MOONGLOW, 0x17, 0x24), People = new List<Person>() { new Person { KeywordResponse2 = "I left the rune of honesty as a tip at the Sage Deli.", Name = "William" } } },
+                //new ItemOption { Item = new Item((byte)UltimaData.LOC_LYCAEUM, 0x1B, 0x07), People = new List<Person>() { new Person { KeywordResponse2 = "The Lord of the Lycaeum has the rune of honesty in his treasury for safe keeping.", Name = "William" } } },
+                //new ItemOption { Item = new Item((byte)UltimaData.LOC_LYCAEUM, SextantCoordToHex('B', 'L'), SextantCoordToHex('A', 'E')), People = new List<Person>() { new Person { KeywordResponse2 = "It is kept in the Observatory.", Name = "William" } } },
+                //new ItemOption { Item = new Item((byte)UltimaData.LOC_MOONGLOW, 0x1F, 0x0F), People = new List<Person>() { new Person { KeywordResponse2 = "Search behind the Sage Deli.", Name = "William" } } },
+
+                spoilerLog.Add(SpoilerCategory.None, "------ RUNE DEBUG -----");
+                for (int i = 0; i < ItemOptions.ItemToItemOptions[UltimaData.ITEM_RUNE_HONESTY].Count; i++)
+                {
+                    var itemOption = ItemOptions.ItemToItemOptions[UltimaData.ITEM_RUNE_HONESTY][i];
+                    spoilerLog.Add(SpoilerCategory.None, itemOption.Item.X.ToString("X") + " " + itemOption.Item.Y.ToString("X") + " " + Talk.GetSextantText(itemOption.Item) + itemOption.People[0].KeywordResponse2 + "\r\n");
+                }
+
+
+
+
                 spoilerLog.Add(SpoilerCategory.Feature, $"Rune locations randomized");
                 var usedLocations = new List<byte>();
                 for (int i = UltimaData.ITEM_RUNE_HONESTY; i < 8 + UltimaData.ITEM_RUNE_HONESTY; i++)
