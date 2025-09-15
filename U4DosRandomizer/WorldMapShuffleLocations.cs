@@ -222,7 +222,7 @@ namespace U4DosRandomizer
             }
         }
 
-        private void Swap(ReadOnlyCollection<Item> locations, int a, int b)
+        public static void Swap(ReadOnlyCollection<Item> locations, int a, int b)
         {
             var x = locations[a].X;
             var y = locations[a].Y;

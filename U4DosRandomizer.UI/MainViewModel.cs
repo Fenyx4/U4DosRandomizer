@@ -370,6 +370,7 @@ namespace U4DosRandomizer.UI
             //path = "F:\\Gog-games\\Ultima 4";
             Busy = true;
             popupService.ShowBusy();
+            //flags.Test = true;
             await Task.Run(() => DosRandomizer.Randomize(seedInt, path, flags, ""));
             popupService.StopBusy();
             Busy = false;

@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using System.Text.RegularExpressions;
 using U4DosRandomizer.Helpers;
@@ -360,66 +361,7 @@ namespace U4DosRandomizer
             }
             else if (flags.Overworld == 2)
             {
-                var talkToLocation = new Dictionary<Tuple<byte, byte, byte>, Tuple<string, string>>();
-                talkToLocation.Add(new Tuple<byte, byte, byte>(0x00, 0xB6, 0x36), new Tuple<string,string>("<Item> is found in the Bloody Plains where the ground is always damp.", "<Item> is found in the Bloody Plains where the ground is always damp. Search on the darkest of nights!"));
-                talkToLocation.Add(new Tuple<byte, byte, byte>(0x00, 0x64, 0xA5), new Tuple<string,string>("<Item> is found in the Fens of the Dead where the ground is always damp.", "<Item> is found in the Fens of the Dead where the ground is always damp. Search on the darkest of nights!"));
-                talkToLocation.Add(new Tuple<byte, byte, byte>(0x00, 0x2E, 0x95), new Tuple<string,string>("<Item> may be found only near lat-J'F\" long-C'O\"!", "<Item> may be found only near lat-J'F\" long-C'O\" only on the darkest of nights!"));
-                talkToLocation.Add(new Tuple<byte, byte, byte>(0x00, 0xCD, 0x2C), new Tuple<string,string>("<Item> may be found in the forest outside the shrine in the lake east of the Bloody Plains!", "<Item> may be found in the forest outside the shrine in the lake east of the Bloody Plains only on the darkest of nights!"));
-                talkToLocation.Add(new Tuple<byte, byte, byte>(0x00, 0xB0, 0xD0), new Tuple<string,string>("<Item> lies at the bottom of a deep well at sea found at lat-N'A\" long-L'A\".", "<Item> lies at the bottom of a deep well at sea found at lat-N'A\" long-L'A\" but can only be found on the darkest of nights."));
-                talkToLocation.Add(new Tuple<byte, byte, byte>(0x00, 0x2D, 0xAD), new Tuple<string,string>("Some say that <Item> is buried on a small isle off the tip of Spiritwood.", "Some say that <Item> is buried on a small isle off the tip of Spiritwood and can be found when the moons go dark."));
-                talkToLocation.Add(new Tuple<byte, byte, byte>(0x00, 0x60, 0xD7), new Tuple<string,string>("Search the deep waters of the bay in the Cape of Heroes!", "Search the deep waters of the bay in the Cape of Heroes when the moons go dark!"));
-                talkToLocation.Add(new Tuple<byte, byte, byte>(0x00, 0xC5, 0xF5), new Tuple<string,string>("It can be found at lat-P'F\" long-M'F\"!", "It can be found at lat-P'F\" long-M'F\" on the darkest night!"));
-                talkToLocation.Add(new Tuple<byte, byte, byte>(0x00, 0xE0, 0x85), new Tuple<string,string>("Stand where the gate of both moons dark shall appear.", "Stand where the gate of both moons dark shall appear. Search when the moons go dark!"));
-                talkToLocation.Add(new Tuple<byte, byte, byte>(0x00, 0x40, 0x50), new Tuple<string, string>("<Item> sits atop the Serpent's Spine. It can only be reached by one who floats within the clouds.", "<Item> sits atop the Serpent's Spine. It can only be reached by one who floats within the clouds and when the moons go dark."));
-
-                var item = ultimaData.Items[ultimaData.ITEM_BELL];
-                var talkString = talkToLocation[new Tuple<byte, byte, byte>(item.Location, item.X, item.Y)].Item1;
-                talkString = talkString.Replace("<Item>", "the bell of courage").CapitalizeFirstLetter();
-                person = FindPerson("Garam");
-                person.KeywordResponse2 = talkString;
-
-                item = ultimaData.Items[ultimaData.ITEM_SKULL];
-                talkString = talkToLocation[new Tuple<byte, byte, byte>(item.Location, item.X, item.Y)].Item2;
-                talkString = talkString.Replace("<Item>", "the skull").CapitalizeFirstLetter();
-                person = FindPerson("Jude");
-                person.Yes = talkString;
-
-                item = ultimaData.Items[ultimaData.ITEM_NIGHTSHADE];
-                talkString = talkToLocation[new Tuple<byte, byte, byte>(item.Location, item.X, item.Y)].Item2;
-                talkString = talkString.Replace("<Item>", "nightshade").CapitalizeFirstLetter();
-                person = FindPerson("Virgil");
-                person.KeywordResponse2 = talkString;
-
-                item = ultimaData.Items[ultimaData.ITEM_MANDRAKE];
-                talkString = talkToLocation[new Tuple<byte, byte, byte>(item.Location, item.X, item.Y)].Item1;
-                talkString = talkString.Replace("<Item>", "mandrake").CapitalizeFirstLetter();
-                person = FindPerson("Calumny");
-                person.KeywordResponse2 = talkString;
-
-                item = ultimaData.Items[ultimaData.ITEM_HORN];
-                talkString = talkToLocation[new Tuple<byte, byte, byte>(item.Location, item.X, item.Y)].Item1;
-                talkString = talkString.Replace("<Item>", "the silver horn").CapitalizeFirstLetter();
-                person = FindPerson("Malchor");
-                person.KeywordResponse2 = talkString;
-
-                item = ultimaData.Items[ultimaData.ITEM_WHEEL];
-                talkString = talkToLocation[new Tuple<byte, byte, byte>(item.Location, item.X, item.Y)].Item1;
-                talkString = talkString.Replace("<Item>", "the magical wheel").CapitalizeFirstLetter();
-                person = FindPerson("Lassorn");
-                person.KeywordResponse2 = talkString;
-
-                item = ultimaData.Items[ultimaData.ITEM_BLACK_STONE];
-                talkString = talkToLocation[new Tuple<byte, byte, byte>(item.Location, item.X, item.Y)].Item2;
-                talkString = talkString.Replace("<Item>", "the black stone").CapitalizeFirstLetter();
-                person = FindPerson("Merlin");
-                person.KeywordResponse1 = talkString;
-
-                item = ultimaData.Items[ultimaData.ITEM_WHITE_STONE];
-                talkString = talkToLocation[new Tuple<byte, byte, byte>(item.Location, item.X, item.Y)].Item1;
-                talkString = talkString.Replace("<Item>", "the white stone").CapitalizeFirstLetter();
-                person = FindPerson("Isaac");
-                person.KeywordResponse2 = talkString;
-                ultimaData.ShrineText[6 * 3 + 2] = "If thou dost seek the White Stone rest at the Inn of Spirits.";
+                ShuffleOverworld(ultimaData, flags.Test);
             }
 
             if (flags.NoRequireFullParty)
@@ -664,6 +606,142 @@ namespace U4DosRandomizer
 
         }
 
+        private struct SwapItem
+        {
+            public SwapItem(Item item, string normalText, string darkText)
+            {
+                this.Item = item;
+                this.NormalText = normalText;
+                this.DarkText = darkText;
+            }
+
+            public Item Item { get; }
+            public string NormalText { get; }
+            public string DarkText { get; }
+        }
+        public void ShuffleOverworld(UltimaData ultimaData, bool test)
+        {
+            Person person;
+            var talkToLocation = new Dictionary<Tuple<byte, byte, byte>, SwapItem>();
+            var item = ultimaData.Items[ultimaData.ITEM_MANDRAKE];
+            talkToLocation.Add(new Tuple<byte, byte, byte>(item.OriginalLocation, item.OriginalX, item.OriginalY), new SwapItem(item, "<Item> is found in the Bloody Plains where the ground is always damp.", "On the darkest of nights <Item> is found in the Bloody Plains where the ground is always damp!"));
+            item = ultimaData.Items[ultimaData.ITEM_MANDRAKE2];
+            talkToLocation.Add(new Tuple<byte, byte, byte>(item.OriginalLocation, item.OriginalX, item.OriginalY), new SwapItem(item, "<Item> is found in the Fens of the Dead where the ground is always damp.", "On the darkest of nights <Item> is found in the Fens of the Dead where the ground is always damp."));
+            item = ultimaData.Items[ultimaData.ITEM_NIGHTSHADE];
+            talkToLocation.Add(new Tuple<byte, byte, byte>(item.OriginalLocation, item.OriginalX, item.OriginalY), new SwapItem(item, "<Item> may be found only near lat-J'F\" long-C'O\"!", "<Item> may be found only near lat-J'F\" long-C'O\" only on the darkest of nights!"));
+            item = ultimaData.Items[ultimaData.ITEM_NIGHTSHADE2];
+            talkToLocation.Add(new Tuple<byte, byte, byte>(item.OriginalLocation, item.OriginalX, item.OriginalY), new SwapItem(item, "<Item> may be found in the forest outside the shrine in the lake east of the Bloody Plains!", "Find <Item> in the woods near the shrine in the lake east of the Bloody Plains when all is dark!"));
+            item = ultimaData.Items[ultimaData.ITEM_BELL];                                                          
+            talkToLocation.Add(new Tuple<byte, byte, byte>(item.OriginalLocation, item.OriginalX, item.OriginalY), new SwapItem(item, "<Item> lies at the bottom of a deep well at sea found at lat-N'A\" long-L'A\".", "<Item> lies at the bottom of the sea at lat-N'A\" long-L'A\" and appears on the darkest of nights."));
+            item = ultimaData.Items[ultimaData.ITEM_HORN];                                                         
+            talkToLocation.Add(new Tuple<byte, byte, byte>(item.OriginalLocation, item.OriginalX, item.OriginalY), new SwapItem(item, "Some say that <Item> is buried on a small isle off the tip of Spiritwood.", "<Item> is buried on a small isle off the tip of Spiritwood and can be found when the moons go dark."));
+            item = ultimaData.Items[ultimaData.ITEM_WHEEL];                                                         
+            talkToLocation.Add(new Tuple<byte, byte, byte>(item.OriginalLocation, item.OriginalX, item.OriginalY), new SwapItem(item, "Search the deep waters of the bay in the Cape of Heroes!", "Search the deep waters of the bay in the Cape of Heroes when the moons go dark!"));
+            item = ultimaData.Items[ultimaData.ITEM_SKULL];                                                        
+            talkToLocation.Add(new Tuple<byte, byte, byte>(item.OriginalLocation, item.OriginalX, item.OriginalY), new SwapItem(item, "It can be found at lat-P'F\" long-M'F\"!", "It can be found at lat-P'F\" long-M'F\" on the darkest night!"));
+            //talkToLocation.Add(new Tuple<byte, byte, byte>(0x00, 0xE0, 0x85), new Tuple<string,string>("Stand where the gate of both moons dark shall appear.", "Stand where the gate of both moons dark shall appear. Search when the moons go dark!"));
+            var blackMoongate = ultimaData.Moongates[0];
+            talkToLocation.Add(new Tuple<byte, byte, byte>(0x00, blackMoongate.X, blackMoongate.Y), new SwapItem(ultimaData.Items[ultimaData.ITEM_BLACK_STONE], "Stand where the gate of both moons dark shall appear.", "Stand where the gate of both moons dark shall appear. Search when the moons go dark!"));
+            item = ultimaData.Items[ultimaData.ITEM_WHITE_STONE];
+            talkToLocation.Add(new Tuple<byte, byte, byte>(item.OriginalLocation, item.OriginalX, item.OriginalY), new SwapItem(item, "<Item> sits atop the Serpent's Spine. It can only be reached by one who floats within the clouds.", "<Item> sits atop the Serpent's Spine. You must float within the clouds and search in the dark."));
+
+            var testTimes = 1;
+            if( test )
+            {
+                testTimes = 10;
+            }
+
+            for (int i = 0; i < testTimes; i++)
+            {
+                item = ultimaData.Items[ultimaData.ITEM_BELL];
+                var talkString = talkToLocation[new Tuple<byte, byte, byte>(item.Location, item.X, item.Y)].NormalText;
+                talkString = talkString.Replace("<Item>", "the bell of courage").CapitalizeFirstLetter();
+                person = FindPerson("Garam");
+                person.KeywordResponse2 = talkString;
+
+                item = ultimaData.Items[ultimaData.ITEM_SKULL];
+                talkString = talkToLocation[new Tuple<byte, byte, byte>(item.Location, item.X, item.Y)].DarkText;
+                talkString = talkString.Replace("<Item>", "it").CapitalizeFirstLetter();
+                person = FindPerson("Jude");
+                person.Yes = talkString;
+
+                item = ultimaData.Items[ultimaData.ITEM_NIGHTSHADE];
+                talkString = talkToLocation[new Tuple<byte, byte, byte>(item.Location, item.X, item.Y)].DarkText;
+                talkString = talkString.Replace("<Item>", "nightshade").CapitalizeFirstLetter();
+                person = FindPerson("Virgil");
+                person.KeywordResponse2 = talkString;
+
+                item = ultimaData.Items[ultimaData.ITEM_MANDRAKE];
+                talkString = talkToLocation[new Tuple<byte, byte, byte>(item.Location, item.X, item.Y)].NormalText;
+                talkString = talkString.Replace("<Item>", "mandrake").CapitalizeFirstLetter();
+                person = FindPerson("Calumny");
+                person.KeywordResponse2 = talkString;
+
+                item = ultimaData.Items[ultimaData.ITEM_HORN];
+                talkString = talkToLocation[new Tuple<byte, byte, byte>(item.Location, item.X, item.Y)].NormalText;
+                talkString = talkString.Replace("<Item>", "the silver horn").CapitalizeFirstLetter();
+                person = FindPerson("Malchor");
+                person.KeywordResponse2 = talkString;
+
+                item = ultimaData.Items[ultimaData.ITEM_WHEEL];
+                talkString = talkToLocation[new Tuple<byte, byte, byte>(item.Location, item.X, item.Y)].NormalText;
+                talkString = talkString.Replace("<Item>", "the magical wheel").CapitalizeFirstLetter();
+                person = FindPerson("Lassorn");
+                person.KeywordResponse2 = talkString;
+
+                item = ultimaData.Items[ultimaData.ITEM_BLACK_STONE];
+                if (item.Changed)
+                {
+                    talkString = talkToLocation[new Tuple<byte, byte, byte>(item.Location, item.X, item.Y)].DarkText;
+                    talkString = talkString.Replace("<Item>", "the black stone").CapitalizeFirstLetter();
+                    person = FindPerson("Merlin");
+                    person.KeywordResponse1 = "The black stone is lost!";
+                    person.Keyword2 = "LOST";
+                    person.KeywordResponse2 = talkString;
+                }
+                else
+                {
+                    person.KeywordResponse1 = "The black stone\r\nis caught in a\r\nmoon gate!";
+                    person.Keyword2 = "GATE";
+                    person.KeywordResponse2 = "Stand where the\r\ngate of both\r\nmoons dark shall\r\nappear. Search\r\nwhen the moons\r\ngo dark!";
+                }
+
+
+                    item = ultimaData.Items[ultimaData.ITEM_WHITE_STONE];
+                talkString = talkToLocation[new Tuple<byte, byte, byte>(item.Location, item.X, item.Y)].NormalText;
+                talkString = talkString.Replace("<Item>", "the white stone").CapitalizeFirstLetter();
+                person = FindPerson("Isaac");
+                person.KeywordResponse2 = talkString;
+                ultimaData.ShrineText[6 * 3 + 2] = "If thou dost seek the White Stone rest at the Inn of Spirits.";
+
+                if( test )
+                {
+                    // Test each one to see if they are too long
+                    person = FindPerson("Garam"); // Serpent's Hold
+                    person.GetBytes();
+                    person = FindPerson("Jude"); // Minoc
+                    person.GetBytes();
+                    person = FindPerson("Virgil"); //Trinsic
+                    person.GetBytes();
+                    person = FindPerson("Calumny"); // Yew
+                    person.GetBytes();
+                    person = FindPerson("Malchor"); // empath Abbey
+                    person.GetBytes();
+                    person = FindPerson("Lassorn"); // Serpent's Hold
+                    person.GetBytes();
+                    person = FindPerson("Merlin"); // Cove
+                    person.GetBytes();
+                    person = FindPerson("Isaac"); // Skara Brae
+                    person.GetBytes();
+                    // Rotate the items around once
+                    for (int j = 0; j < 10-1; j++)
+                    {
+                        WorldMapShuffleLocations.Swap(ultimaData.Items, j, j + 1);
+                    }
+                }
+            }
+        }
+
         private void SetItemTalkFromOptions(UltimaData ultimaData, int offset, int count)
         {
             for (int i = 0; i < count; i++)
@@ -815,44 +893,7 @@ namespace U4DosRandomizer
 
                 foreach(var person in towns[townName])
                 {
-                    var personBytes = new List<byte>();
-                    personBytes.Add(person.QuestionFlag);
-                    personBytes.Add(person.Humility);
-                    personBytes.Add(person.TurningAwayProbability);
-                    personBytes.AddRange(Encoding.ASCII.GetBytes(person.Name));
-                    personBytes.Add(0);
-                    personBytes.AddRange(Encoding.ASCII.GetBytes(person.Pronoun));
-                    personBytes.Add(0);
-                    personBytes.AddRange(Encoding.ASCII.GetBytes(person.Look));
-                    personBytes.Add(0);
-                    personBytes.AddRange(Encoding.ASCII.GetBytes(person.Job));
-                    personBytes.Add(0);
-                    personBytes.AddRange(Encoding.ASCII.GetBytes(person.Health));
-                    personBytes.Add(0);
-                    personBytes.AddRange(Encoding.ASCII.GetBytes(person.KeywordResponse1));
-                    personBytes.Add(0);
-                    personBytes.AddRange(Encoding.ASCII.GetBytes(person.KeywordResponse2));
-                    personBytes.Add(0);
-                    personBytes.AddRange(Encoding.ASCII.GetBytes(person.Question));
-                    personBytes.Add(0);
-                    personBytes.AddRange(Encoding.ASCII.GetBytes(person.Yes));
-                    personBytes.Add(0);
-                    personBytes.AddRange(Encoding.ASCII.GetBytes(person.No));
-                    personBytes.Add(0);
-                    personBytes.AddRange(Encoding.ASCII.GetBytes(person.Keyword1));
-                    personBytes.Add(0);
-                    personBytes.AddRange(Encoding.ASCII.GetBytes(person.Keyword2));
-                    personBytes.Add(0);
-
-                    while (personBytes.Count < 0x120)
-                    {
-                        personBytes.Add(0);
-                    }
-                    
-                    if (personBytes.Count > 0x120)
-                    {
-                        throw new Exception($"Text for {townName}:{person.Name} too long by {personBytes.Count - 0x120} bytes.");
-                    }
+                    var personBytes = person.GetBytes();
 
                     townBytes.AddRange(personBytes);
                 }
