@@ -409,7 +409,6 @@ C_5712()
 			C_5062(loc_F, u4_sign((char)u_rand_a()), u4_sign((char)u_rand_a()), 1);
 		else
 			C_5062(loc_F, loc_A, loc_B, 2);
-#undef loc_H
 	} while(--loc_F >= 0);
 }
 
